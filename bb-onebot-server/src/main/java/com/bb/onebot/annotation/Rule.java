@@ -38,7 +38,7 @@ public @interface Rule {
     /**
      * 规则关键字
      */
-    String[] keyword();
+    String[] keyword() default {};
 
     /**
      * 规则名称

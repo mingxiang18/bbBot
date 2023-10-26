@@ -1,0 +1,5 @@
+# 数据库配置
+mysql:
+  address: localhost:3306/bb_bot
+  username: root
+  password: root

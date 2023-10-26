@@ -1,10 +1,12 @@
 package com.bb.onebot.entity;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import lombok.Data;
 
 /**
  * @author ren
  */
+@Data
 public class ReceiveNotice {
     /**
      * 提醒类型

@@ -438,29 +438,35 @@ public class SplatoonHandler {
         //活动时间获取
         JSONArray timePeriods = eventObject.getJSONArray("timePeriods");
         //绘制活动时间1
-        ImageUtils.writeWordInImage(imageFile,
-                "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                "活动时间1：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(0).getString("startTime"), timePeriods.getJSONObject(0).getString("endTime")),
-                x+95, y+260,
-                600, 600,
-                0,
-                imageFile.getAbsolutePath());
+        if (timePeriods.size() >= 1) {
+            ImageUtils.writeWordInImage(imageFile,
+                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
+                    "活动时间1：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(0).getString("startTime"), timePeriods.getJSONObject(0).getString("endTime")),
+                    x + 95, y + 260,
+                    600, 600,
+                    0,
+                    imageFile.getAbsolutePath());
+        }
         //绘制活动时间2
-        ImageUtils.writeWordInImage(imageFile,
-                "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                "活动时间2：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(1).getString("startTime"), timePeriods.getJSONObject(1).getString("endTime")),
-                x+95, y+280,
-                600, 600,
-                0,
-                imageFile.getAbsolutePath());
+        if (timePeriods.size() >= 2) {
+            ImageUtils.writeWordInImage(imageFile,
+                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
+                    "活动时间2：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(1).getString("startTime"), timePeriods.getJSONObject(1).getString("endTime")),
+                    x + 95, y + 280,
+                    600, 600,
+                    0,
+                    imageFile.getAbsolutePath());
+        }
         //绘制活动时间3
-        ImageUtils.writeWordInImage(imageFile,
-                "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                "活动时间3：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(2).getString("startTime"), timePeriods.getJSONObject(2).getString("endTime")),
-                x+95, y+300,
-                600, 600,
-                0,
-                imageFile.getAbsolutePath());
+        if (timePeriods.size() >= 3) {
+            ImageUtils.writeWordInImage(imageFile,
+                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
+                    "活动时间3：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(2).getString("startTime"), timePeriods.getJSONObject(2).getString("endTime")),
+                    x + 95, y + 300,
+                    600, 600,
+                    0,
+                    imageFile.getAbsolutePath());
+        }
     }
 
     /**
