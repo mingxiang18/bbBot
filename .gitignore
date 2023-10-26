@@ -1,0 +1,3 @@
+# Project exclude paths
+/bb-onebot-sdk/target/
+/bb-onebot-server/target/
