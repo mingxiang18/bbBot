@@ -10,13 +10,16 @@
 ### 环境相关
 - 开发语言：Java
 - 开发环境：JDK1.8
-- 基本框架：SpringBoot
+- 基本框架：SpringBoot、Mybatis
+- 数据库：MySQL8
 - 机器人协议：OneBot11
 - 机器人实现端：go-cqhttp
 
 ### 实现功能
 - 每日抽签
 - Splatoon3地图、活动、祭典获取
+- 戳一戳回复
+- 聊天消息记录
 
 ### 路径规范
 - 绝对路径/从根目录定义的路径/URL，最后必须带/，如：/home/app/files/，http://127.0.0.1:8082/
