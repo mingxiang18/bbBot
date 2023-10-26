@@ -4,7 +4,7 @@
 
 ### 模块划分
 
-- bb-onebot-sdk sdk模块（提供oneBot规范的各种事件和api）
+- bb-onebot-sdk sdk模块（提供接入oneBot规范实现端的各种事件和api）
 - bb-onebot-server 机器人服务模块
 
 ### 环境相关
