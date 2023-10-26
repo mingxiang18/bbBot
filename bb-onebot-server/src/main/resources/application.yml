@@ -1,22 +1,23 @@
-# 开发环境配置
-server:
-  # 服务器的HTTP端口，默认为8080
-  port: 8099
-
+#----------------------必须配置--------------------------------------------------------
 bot:
   #机器人的qq号
   qq: 2068468537
 
 onebot:
   socket:
+    # 机器人实现端的ws地址
     url: ws://localhost:8282
     # 断线重连等待时间（毫秒）
     reconnectTime: 5000
 
-
 file:
   path: /D:/develop/bot/bbBot/bb-onebot-server/src/main/resources/static/
 
+#----------------------可选配置--------------------------------------------------------
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8099
 
 spring:
   #配置文件
