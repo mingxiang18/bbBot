@@ -85,8 +85,6 @@ public class OneBotWebSocketClient extends WebSocketClient {
         this.hasConnection.set(false);
         this.hasMessage.set(false);
         log.info("机器人WebSocket客户端连接关闭:" + s);
-        //通过spring事件机制发布WebSocket客户端连接关闭消息
-        publisher.publishEvent(new WebSocketConnectEvent(false));
     }
 
     /**

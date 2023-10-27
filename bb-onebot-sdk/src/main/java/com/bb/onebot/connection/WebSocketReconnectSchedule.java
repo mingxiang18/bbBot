@@ -1,11 +1,10 @@
 package com.bb.onebot.connection;
 
-import com.bb.onebot.event.WebSocketConnectEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class WebSocketReconnectListener {
+@EnableScheduling
+public class WebSocketReconnectSchedule {
 
     /**
      * socket连接地址
@@ -25,15 +25,16 @@ public class WebSocketReconnectListener {
     @Autowired
     private OneBotWebSocketClient oneBotWebSocketClient;
 
-    @Async("eventDispatcherExecutor")
-    @EventListener
-    public void listenEvent(WebSocketConnectEvent event) {
-        if (!event.connectionStatus()) {
-            log.error("机器人WebSocket客户端等待" + reconnectTime + "毫秒后开始重连");
+    /**
+     * 每10s检查一次连接状态
+     */
+    @Scheduled(cron = "0/10 * * * * *")
+    public void botConnectCheck() {
+        if(!oneBotWebSocketClient.hasConnection.get()) {
+            log.error("检查到机器人WebSocket客户端未连接，尝试重新连接");
             try {
-                Thread.sleep(reconnectTime);
                 oneBotWebSocketClient.reconnect();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.error("机器人WebSocket客户端重连异常", e);
             }
         }

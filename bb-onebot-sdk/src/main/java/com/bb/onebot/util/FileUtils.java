@@ -2,13 +2,9 @@ package com.bb.onebot.util;
 
 import com.bb.onebot.config.FilePathConfig;
 import lombok.SneakyThrows;
-import org.apache.commons.codec.binary.Base64;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +97,7 @@ public class FileUtils {
      * @return String 文件Base64字符串
      */
     public static String fileToBase64(String filePath) {
-        return new BASE64Encoder().encode(getFile(filePath));
+        return Base64.getEncoder().encodeToString(getFile(filePath));
     }
 
     /**
@@ -116,7 +112,7 @@ public class FileUtils {
             in = new FileInputStream(file);
             byte[] bytes = new byte[(int) file.length()];
             in.read(bytes);
-            base64 = new String(Base64.encodeBase64(bytes),"UTF-8");
+            base64 = new String(Base64.getEncoder().encode(bytes),"UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -215,6 +211,31 @@ public class FileUtils {
             return file.getAbsolutePath();
         } finally {
             fos.close();
+        }
+    }
+
+    /**
+     * 删除指定目录下的所有文件
+     *
+     * @param file 文件
+     * @return
+     */
+    public static void deleteAllFileFromFolder(File file){
+        //判断文件不为null或文件目录存在
+        if (file == null || !file.exists()){
+            System.out.println("文件删除失败,请检查文件路径是否正确");
+            return;
+        }
+        //取得这个目录下的所有子文件对象
+        File[] files = file.listFiles();
+        //遍历该目录下的文件对象
+        for (File f: files){
+            //判断子目录是否存在子目录,如果是文件则删除
+            if (f.isDirectory()){
+                deleteAllFileFromFolder(f);
+            }else {
+                f.delete();
+            }
         }
     }
 
