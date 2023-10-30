@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bb.onebot.database.chatHistory.mapper.ChatHitstoryMapper">
+<mapper namespace="com.bb.onebot.database.chatHistory.mapper.ChatHistoryMapper">
     
-    <resultMap type="com.bb.onebot.database.chatHistory.entity.ChatHitstory" id="ChatHitstoryResult">
+    <resultMap type="com.bb.onebot.database.chatHistory.entity.ChatHistory" id="ChatHistoryResult">
         <result property="id"    column="id"    />
         <result property="messageId"    column="message_id"    />
         <result property="userQq"    column="user_qq"    />
@@ -13,7 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
     </resultMap>
 
-    <sql id="selectChatHitstoryVo">
-        select id, message_id, user_qq, group_id, text, create_time from chat_hitstory
+    <sql id="selectChatHistoryVo">
+        select id, message_id, user_qq, group_id, text, create_time from chat_history
     </sql>
 </mapper>

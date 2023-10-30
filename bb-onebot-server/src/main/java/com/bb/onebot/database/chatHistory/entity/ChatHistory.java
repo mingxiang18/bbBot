@@ -10,15 +10,15 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 聊天消息历史记录对象 chat_hitstory
+ * 聊天消息历史记录对象 chat_history
  *
  * @author rym
  * @date 2023-10-26
  */
 @Data
 @ApiModel("聊天消息历史记录")
-@TableName(value = "chat_hitstory")
-public class ChatHitstory {
+@TableName(value = "chat_history")
+public class ChatHistory {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键")
