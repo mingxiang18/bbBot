@@ -37,6 +37,9 @@ public class ChatHistory {
     @ApiModelProperty("消息")
     private String text;
 
+    @ApiModelProperty("类型")
+    private String type;
+
     @ApiModelProperty("创建时间")
     private LocalDateTime createTime;
 
