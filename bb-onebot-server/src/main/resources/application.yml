@@ -21,7 +21,7 @@ file:
   path: /bot/static/
 
 #----------------------可选配置--------------------------------------------------------
-# 开发环境配置
+# 服务配置
 server:
   # 服务器的HTTP端口，默认为8080
   port: 8199
@@ -61,3 +61,17 @@ spring:
         enabled: false
       statViewServlet:
         enabled: false
+
+rest:
+  # 代理相关配置
+  proxyIp:
+  proxyPort:
+
+#ai聊天相关配置
+aiChat:
+  #如果为0则不回复，否则随机一个0-1之间的数，回复数值大于此数值则回复
+  replyNum: 0.95d
+
+# chatGPT相关配置
+chatGPT:
+  apiKey:

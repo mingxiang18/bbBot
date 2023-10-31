@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志存放路径 -->
-    <property name="log.path" value="D:/logs"/>
+    <property name="log.path" value="logs"/>
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] %msg%n"/>
 
@@ -19,20 +19,12 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
             <fileNamePattern>${log.path}/sys-info.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 60天 -->
-            <maxHistory>60</maxHistory>
+            <!-- 日志最大的历史 5天 -->
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <!-- 过滤的级别 -->
-            <level>INFO</level>
-            <!-- 匹配时的操作：接收（记录） -->
-            <onMatch>ACCEPT</onMatch>
-            <!-- 不匹配时的操作：拒绝（不记录） -->
-            <onMismatch>DENY</onMismatch>
-        </filter>
     </appender>
 
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -41,8 +33,8 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
             <fileNamePattern>${log.path}/sys-error.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 60天 -->
-            <maxHistory>60</maxHistory>
+            <!-- 日志最大的历史 5天 -->
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -57,28 +49,10 @@
         </filter>
     </appender>
 
-    <!-- 用户访问日志输出  -->
-    <appender name="sys-user" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/sys-user.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 按天回滚 daily -->
-            <fileNamePattern>${log.path}/sys-user.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 60天 -->
-            <maxHistory>60</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>${log.pattern}</pattern>
-        </encoder>
-    </appender>
-
     <!-- 系统模块日志级别控制  -->
     <logger name="com.lancoo" level="info"/>
     <!-- Spring日志级别控制  -->
     <logger name="org.springframework" level="warn"/>
-
-    <!-- 开发时如果没有mq，又嫌日志一直输出错误，可以打开以下配置，但请注意修改不要提交到git远程分支  -->
-<!--    <logger name="org.springframework.amqp.rabbit" level="off" />-->
-<!--    <logger name="org.springframework.jms" level="off" />-->
 
     <root level="info">
         <appender-ref ref="console"/>
@@ -89,9 +63,4 @@
         <appender-ref ref="file_info"/>
         <appender-ref ref="file_error"/>
     </root>
-
-    <!--系统用户操作日志-->
-    <logger name="sys-user" level="info">
-        <appender-ref ref="sys-user"/>
-    </logger>
 </configuration>

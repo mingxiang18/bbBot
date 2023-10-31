@@ -1,11 +1,15 @@
 package com.bb.onebot.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 /**
  *@author Ren yuming
@@ -16,11 +20,17 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-    @Value("${rest.readTimeout:20000}")
+    @Value("${rest.readTimeout:50000}")
     private int readTimeout;
 
-    @Value("${rest.connectTimeout:20000}")
+    @Value("${rest.connectTimeout:50000}")
     private int connectTimeout;
+
+    @Value("${rest.proxyIp:}")
+    private String proxyIp;
+
+    @Value("${rest.proxyPort:}")
+    private Integer proxyPort;
 
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
@@ -33,9 +43,13 @@ public class RestTemplateConfig {
      */
     @Bean
     public ClientHttpRequestFactory clientHttpRequestFactory() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setReadTimeout(readTimeout);
         factory.setConnectTimeout(connectTimeout);
+        //如果代理不为空，设置代理
+        if (StringUtils.isNoneBlank(proxyIp) && proxyPort != null) {
+            factory.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIp, proxyPort)));
+        }
         return factory;
     }
 

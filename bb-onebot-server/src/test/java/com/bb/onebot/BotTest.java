@@ -2,6 +2,7 @@ package com.bb.onebot;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.onebot.handler.aiChat.AiChatHandler;
 import com.bb.onebot.util.DateUtils;
 import com.bb.onebot.util.FileUtils;
 import com.bb.onebot.util.ImageUtils;
@@ -25,6 +26,15 @@ public class BotTest {
 
     @Autowired
     private RestClient restClient;
+
+    @Autowired
+    private AiChatHandler aiChatHandler;
+
+    @Test
+    public void aiChat() throws Exception {
+        String reply = aiChatHandler.askChatGPT("你好", null);
+        System.out.println(reply);
+    }
 
     @Test
     public void saveImage() throws Exception {

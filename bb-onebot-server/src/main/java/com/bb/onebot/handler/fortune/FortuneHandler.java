@@ -1,4 +1,4 @@
-package com.bb.onebot.handler;
+package com.bb.onebot.handler.fortune;
 
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson2.JSON;

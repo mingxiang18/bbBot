@@ -1,4 +1,4 @@
-package com.bb.onebot.handler;
+package com.bb.onebot.handler.poke;
 
 import com.bb.onebot.annotation.BootEventHandler;
 import com.bb.onebot.annotation.Rule;

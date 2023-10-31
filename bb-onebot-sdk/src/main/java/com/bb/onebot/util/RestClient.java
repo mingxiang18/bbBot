@@ -30,12 +30,8 @@ public class RestClient {
         return t;
     }
 
-    @SneakyThrows
-    public <T> T post(String url, Object params, Class<T> clazz) {
+    public <T> T post(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
         String jsonParams = JSON.toJSONString(params);
-        
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);
 
         log.info("向外部接口发起POST请求，url：{}，请求报文：{}", url, jsonParams);
@@ -45,6 +41,14 @@ public class RestClient {
         T t = JSON.parseObject(resultString, clazz);
 
         return t;
+    }
+
+    @SneakyThrows
+    public <T> T post(String url, Object params, Class<T> clazz) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        return post(url, httpHeaders, params, clazz);
     }
 
     @SneakyThrows

@@ -1,4 +1,4 @@
-package com.bb.onebot.handler;
+package com.bb.onebot.handler.splatoon;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;

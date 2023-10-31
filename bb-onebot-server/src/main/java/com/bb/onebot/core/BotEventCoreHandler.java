@@ -42,7 +42,7 @@ public class BotEventCoreHandler {
     /**
      * 用于@某人的cq码正则
      */
-    private Pattern atCompile = Pattern.compile("\\[CQ:at.*?\\]");
+    public static Pattern atCompile = Pattern.compile("\\[CQ:at.*?\\]");
 
     /**
      * 机器人事件处理者构造函数
