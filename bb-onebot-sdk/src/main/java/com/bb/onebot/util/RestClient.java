@@ -30,6 +30,18 @@ public class RestClient {
         return t;
     }
 
+    @SneakyThrows
+    public <T> T get(String url, HttpHeaders httpHeaders, Class<T> clazz) {
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+
+        log.info("向外部接口发起GET请求，url：{}", url);
+        ResponseEntity<String> resultEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        log.info("外部接口返回报文:{}", resultEntity.getBody());
+
+        T t = JSON.parseObject(resultEntity.getBody(), clazz);
+        return t;
+    }
+
     public <T> T post(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
         String jsonParams = JSON.toJSONString(params);
         HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);

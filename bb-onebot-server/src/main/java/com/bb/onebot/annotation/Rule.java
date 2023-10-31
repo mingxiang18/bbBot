@@ -3,6 +3,7 @@ package com.bb.onebot.annotation;
 import com.bb.onebot.constant.EventType;
 import com.bb.onebot.constant.MessageType;
 import com.bb.onebot.constant.RuleType;
+import com.bb.onebot.constant.SyncType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -49,4 +50,10 @@ public @interface Rule {
      * 是否需要@自己，仅群组消息会进行判断
      */
     boolean needAtMe() default false;
+
+    /**
+     * 是否需要同步执行（默认异步）
+     * 如果是同步，则后面的匹配规则需要等待该方法执行后再运行，否则（异步情况）是并发执行
+     */
+    String syncType() default SyncType.ASYNC;
 }

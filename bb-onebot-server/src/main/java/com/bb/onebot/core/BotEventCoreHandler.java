@@ -6,20 +6,25 @@ import com.bb.onebot.config.BotConfig;
 import com.bb.onebot.constant.EventType;
 import com.bb.onebot.constant.MessageType;
 import com.bb.onebot.constant.RuleType;
+import com.bb.onebot.constant.SyncType;
 import com.bb.onebot.event.ReceiveMessageEvent;
 import com.bb.onebot.event.ReceiveNoticeEvent;
 import com.bb.onebot.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 机器人事件处理者
@@ -50,22 +55,27 @@ public class BotEventCoreHandler {
     public BotEventCoreHandler() {
         //获取所有包含BootEventHandler注解的机器人事件处理者的Bean
         Map<String, Object> beansWithRule = SpringUtils.getBeansWithAnnotation(BootEventHandler.class);
+        //按order排序并封装成List
+        List<Object> handlerBeanList = beansWithRule.entrySet().stream().map(Map.Entry::getValue).sorted(Comparator.comparing(o -> {
+            return AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).order();
+        })).collect(Collectors.toList());
+
         //遍历
-        for (Map.Entry<String, Object> entry : beansWithRule.entrySet()) {
+        for (Object handlerObject : handlerBeanList) {
             //反射获取机器人事件处理者的所有方法
-            Method[] declaredMethods = entry.getValue().getClass().getDeclaredMethods();
+            Method[] declaredMethods = handlerObject.getClass().getDeclaredMethods();
             for (Method declaredMethod : declaredMethods) {
                 //如果方法中包含Rule注解
-                Rule annotation = declaredMethod.getAnnotation(Rule.class);
+                Rule annotation = AnnotationUtils.findAnnotation(declaredMethod, Rule.class);
                 if (annotation == null) {
                     continue;
                 }
 
                 //将对应类型的事件放置到对应Map
                 if (EventType.MESSAGE.equals(annotation.eventType())) {
-                    messageHandlerMap.put(declaredMethod, entry.getValue());
+                    messageHandlerMap.put(declaredMethod, handlerObject);
                 }else if (EventType.NOTICE.equals(annotation.eventType())) {
-                    noticeHandlerMap.put(declaredMethod, entry.getValue());
+                    noticeHandlerMap.put(declaredMethod, handlerObject);
                 }
             }
         }
@@ -76,15 +86,24 @@ public class BotEventCoreHandler {
      */
     public void handleMessage(ReceiveMessageEvent messageEvent) {
         for (Map.Entry<Method, Object> entry : messageHandlerMap.entrySet()) {
-            //通过线程池异步执行消息处理
-            eventHandlerExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (messageRuleMatch(messageEvent, entry.getKey().getAnnotation(Rule.class))) {
-                        handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
-                    }
+            Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
+
+            if (SyncType.SYNC.equals(rule.syncType())) {
+                //如果执行类型是同步执行，则进行同步调用
+                if (messageRuleMatch(messageEvent, rule)) {
+                    handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
                 }
-            });
+            }else if (SyncType.ASYNC.equals(rule.syncType())) {
+                //如果执行类型是异步执行, 则通过线程池异步执行消息处理
+                eventHandlerExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (messageRuleMatch(messageEvent, rule)) {
+                            handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                        }
+                    }
+                });
+            }
         }
     }
 

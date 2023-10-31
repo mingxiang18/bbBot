@@ -17,4 +17,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BootEventHandler {
 
+    /**
+     * 排序
+     */
+    int order() default 50;
 }
