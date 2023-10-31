@@ -87,7 +87,7 @@ public class AiChatHandler {
      * ai聊天
      * @author ren
      */
-    @Rule(eventType = EventType.MESSAGE, name = "ai聊天处理者")
+    @Rule(eventType = EventType.MESSAGE, name = "ai聊天")
     public void aiChatHandle(ReceiveMessageEvent event) {
         //接收的消息内容
         ReceiveMessage message = event.getData();
@@ -101,8 +101,8 @@ public class AiChatHandler {
         if (MessageType.PRIVATE.equals(message.getMessageType())) {
             //如果是私人消息，默认回复
             replyFlag = true;
-        }else if (message.getMessage().contains("bb") || message.getMessage().contains(botConfig.getQq())){
-            //如果消息中包含bb或者机器人qq号（被@），默认回复
+        }else if (message.getMessage().contains(botConfig.getQq())){
+            //如果消息中包含机器人qq号（被@），默认回复
             replyFlag = true;
         }else {
             //如果以上都不满足，跟据配置的replyNum判断，如果replyNum为0则不回复，否则随机一个0-1之间的数，回复数值大于replyNum则回复
@@ -172,6 +172,10 @@ public class AiChatHandler {
         httpHeaders.set("Authorization", "Bearer " + chatGPTApiKey);
 
         List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
+
+        //构建机器人性格消息体
+        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, chatGPTPersonality));
+
         //如果聊天历史记录不为空，将历史记录构建成消息体
         if (!CollectionUtils.isEmpty(chatHistoryList)) {
             for (ChatHistory chatHistory : chatHistoryList) {
@@ -184,9 +188,6 @@ public class AiChatHandler {
                 }
             }
         }
-
-        //构建机器人性格消息体
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, chatGPTPersonality));
 
         //构建提问消息
         chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, question));
