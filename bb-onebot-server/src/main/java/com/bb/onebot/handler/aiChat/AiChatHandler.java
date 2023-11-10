@@ -131,7 +131,7 @@ public class AiChatHandler {
             //私聊
             chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
                     .eq(ChatHistory::getUserQq, userId)
-                    .eq(ChatHistory::getGroupId, null)
+                    .isNull(ChatHistory::getGroupId)
                     .last("limit " + chatHistoryNum))
                     .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
         }

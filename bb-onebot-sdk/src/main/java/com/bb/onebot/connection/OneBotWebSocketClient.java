@@ -94,7 +94,7 @@ public class OneBotWebSocketClient extends WebSocketClient {
      */
     @Override
     public void onError(Exception e) {
-        log.info("机器人WebSocket客户端出现异常", e);
+        log.info("机器人WebSocket客户端出现异常: " + e.getMessage());
     }
 
     @Override

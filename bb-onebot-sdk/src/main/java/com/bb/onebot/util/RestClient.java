@@ -99,7 +99,9 @@ public class RestClient {
     @SneakyThrows
     public InputStream getFileInputStream(String url) {
         log.info("向外部接口发起GET请求获取文件，url：{}", url);
-        ResponseEntity<Resource> entity = restTemplate.getForEntity(url, Resource.class);
-        return entity.getBody().getInputStream();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        ResponseEntity<Resource> resultEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeaders), Resource.class);
+        return resultEntity.getBody().getInputStream();
     }
 }
