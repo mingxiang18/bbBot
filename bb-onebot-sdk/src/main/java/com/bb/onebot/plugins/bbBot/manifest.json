@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "type": "framework",
+    "name": "bbBot",
+    "slug": "bbBot",
+    "description": "bbBot机器人",
+    "version": "1.0",
+    "thumbnail": "./icon.png",
+    "author": [
+        {
+            "name": "rym",
+            "link": ""
+        }
+    ],
+    "repository": {
+        "repo": "",
+        "branch": "main"
+    },
+    "platform": [
+        "win32",
+        "linux",
+        "darwin"
+    ],
+    "injects": {
+        "renderer": "./src/renderer.js"
+    }
+}

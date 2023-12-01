@@ -2,13 +2,13 @@ package com.bb.onebot.connection;
 
 import com.bb.onebot.handler.BotEventHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
+import org.java_websocket.WebSocket;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.net.URI;
+import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -16,13 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author ren
  */
 @Slf4j
-public class OneBotWebSocketClient extends WebSocketClient {
-
-    /**
-     * socket连接地址
-     */
-    @Value("${onebot.socket.url}")
-    private String webSocketUri;
+public class OneBotWebSocketServer extends WebSocketServer {
 
     @Autowired
     private BotEventHandler botEventHandler;
@@ -43,21 +37,19 @@ public class OneBotWebSocketClient extends WebSocketClient {
     /**
      * 构造方法
      *
-     * @param serverUri
+     * @param port 端口号
      */
-    public OneBotWebSocketClient(URI serverUri) {
-        super(serverUri);
-        log.info("机器人WebSocket客户端初始化:" + serverUri.toString());
+    public OneBotWebSocketServer(int port) {
+        super(new InetSocketAddress(port));
+        log.info("机器人WebSocket服务器初始化:" + port);
     }
 
     /**
      * 打开连接时的方法
-     *
-     * @param serverHandshake
      */
     @Override
-    public void onOpen(ServerHandshake serverHandshake) {
-        log.info("机器人WebSocket客户端连接成功");
+    public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
+        log.info("机器人WebSocket服务器连接成功");
     }
 
     /**
@@ -66,8 +58,9 @@ public class OneBotWebSocketClient extends WebSocketClient {
      * @param s
      */
     @Override
-    public void onMessage(String s) {
+    public void onMessage(WebSocket webSocket, String s) {
         hasMessage.set(true);
+        log.info("接收到消息：" + s);
         //调用机器人事件处理者分发接收到的消息
         botEventHandler.handleMessage(s);
     }
@@ -78,12 +71,11 @@ public class OneBotWebSocketClient extends WebSocketClient {
      * @param i
      * @param s
      * @param b
-     */
-    @Override
-    public void onClose(int i, String s, boolean b) {
+     */@Override
+    public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         this.hasConnection.set(false);
         this.hasMessage.set(false);
-        log.info("机器人WebSocket客户端连接关闭:" + s);
+        log.info("机器人WebSocket服务器连接关闭:" + s);
     }
 
     /**
@@ -92,21 +84,11 @@ public class OneBotWebSocketClient extends WebSocketClient {
      * @param e
      */
     @Override
-    public void onError(Exception e) {
-        log.info("机器人WebSocket客户端出现异常: " + e.getMessage());
+    public void onError(WebSocket webSocket, Exception e) {
+        log.error("机器人WebSocket服务器出现异常", e);
     }
 
     @Override
-    public void connect() {
-        if(!this.hasConnection.get()){
-            super.connect();
-            hasConnection.set(true);
-        }
-    }
-
-    @Override
-    public void reconnect() {
-        super.reconnect();
-        hasConnection.set(true);
+    public void onStart() {
     }
 }

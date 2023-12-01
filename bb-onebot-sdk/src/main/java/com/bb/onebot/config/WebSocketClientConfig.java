@@ -1,6 +1,7 @@
 package com.bb.onebot.config;
 
 import com.bb.onebot.connection.OneBotWebSocketClient;
+import com.bb.onebot.connection.OneBotWebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,19 @@ public class WebSocketClientConfig {
         }
         OneBotWebSocketClient webSocketClient = new OneBotWebSocketClient(uri);
         //启动时创建客户端连接
-        webSocketClient.connect();
+        //webSocketClient.connect();
         return webSocketClient;
+    }
+
+    /**
+     * 注入Socket服务端
+     * @return
+     */
+    @Bean
+    public OneBotWebSocketServer initWebSocketServer(){
+        OneBotWebSocketServer server = new OneBotWebSocketServer(8888);
+        server.start();
+        System.out.println("服务器端启动，端口号为：" + server.getPort());
+        return server;
     }
 }

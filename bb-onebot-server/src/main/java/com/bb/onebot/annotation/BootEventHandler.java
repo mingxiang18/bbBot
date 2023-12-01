@@ -1,5 +1,6 @@
 package com.bb.onebot.annotation;
 
+import com.bb.onebot.constant.BotType;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
@@ -21,4 +22,9 @@ public @interface BootEventHandler {
      * 排序
      */
     int order() default 50;
+
+    /**
+     * 机器人类型：oneBot、qqnt
+     */
+    String botType() default BotType.ONEBOT;
 }

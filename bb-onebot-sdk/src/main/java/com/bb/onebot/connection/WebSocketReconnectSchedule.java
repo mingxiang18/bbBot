@@ -28,7 +28,7 @@ public class WebSocketReconnectSchedule {
     /**
      * 每10s检查一次连接状态
      */
-    @Scheduled(cron = "0/10 * * * * *")
+    //@Scheduled(cron = "0/10 * * * * *")
     public void botConnectCheck() {
         if(!oneBotWebSocketClient.hasConnection.get()) {
             log.error("检查到机器人WebSocket客户端未连接，尝试重新连接");

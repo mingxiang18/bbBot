@@ -1,8 +1,12 @@
 package com.bb.onebot;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.onebot.handler.aiChat.AiChatHandler;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.onebot.database.japaneseLearn.entity.JapaneseFifty;
+import com.bb.onebot.database.japaneseLearn.mapper.JapaneseFiftyMapper;
+import com.bb.onebot.handler.oneBot.aiChat.AiChatHandler;
 import com.bb.onebot.util.DateUtils;
 import com.bb.onebot.util.FileUtils;
 import com.bb.onebot.util.ImageUtils;
@@ -19,7 +23,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.*;
+import java.util.List;
 
 @SpringBootTest
 public class BotTest {
@@ -29,6 +34,54 @@ public class BotTest {
 
     @Autowired
     private AiChatHandler aiChatHandler;
+
+    @Autowired
+    private JapaneseFiftyMapper japaneseFiftyMapper;
+
+    @Test
+    public void randomJapaneseFifty() throws Exception {
+        boolean loop = true;
+
+        while (loop) {
+            Integer jpFiftyCount = japaneseFiftyMapper.selectCount(null);
+            int randomInt = RandomUtil.randomInt(0, jpFiftyCount);
+
+            //如果随机数命中常出现的词，则再随机一次，减少重复出现概率
+            List<Integer> frequencyNum = Arrays.asList(1,2,6,7,8,16,19,20,25,40);
+            if (frequencyNum.contains(randomInt-1) || randomInt > 45) {
+                randomInt = RandomUtil.randomInt(0, jpFiftyCount);
+            }
+            //再再随机一次，减少重复出现概率
+            if (frequencyNum.contains(randomInt-1) || randomInt > 45) {
+                randomInt = RandomUtil.randomInt(0, jpFiftyCount);
+            }
+
+            JapaneseFifty japaneseFifty = japaneseFiftyMapper.selectOne(new LambdaQueryWrapper<JapaneseFifty>()
+                    .last("limit 1 offset " + randomInt));
+
+            String question = null;
+            //随机抽取
+            int num = RandomUtil.randomInt(0, 3);
+            if (num == 0) {
+                question = japaneseFifty.getHiragana();
+            } else if (num == 1) {
+                question = japaneseFifty.getKatakana();
+            } else if (num == 2) {
+                question = japaneseFifty.getPhonetic();
+            }
+
+            System.out.println(question);
+
+            Scanner sc = new Scanner(System.in);//System.in代表标准输入(即键盘输入)
+            String answer = sc.nextLine();
+
+            System.out.println("平假名：" + japaneseFifty.getHiragana() + ", 片假名：" + japaneseFifty.getKatakana() + ", 音标：" + japaneseFifty.getPhonetic() + ", 提示词：" + japaneseFifty.getTips());
+
+            if (answer.equals("exit")) {
+                loop = false;
+            }
+        }
+    }
 
     @Test
     public void aiChat() throws Exception {

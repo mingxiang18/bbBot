@@ -2,22 +2,22 @@ package com.bb.onebot.handler;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.onebot.entity.ReceiveMessage;
-import com.bb.onebot.entity.ReceiveNotice;
-import com.bb.onebot.event.ReceiveMessageEvent;
-import com.bb.onebot.event.ReceiveNoticeEvent;
+import com.bb.onebot.entity.oneBot.ReceiveMessage;
+import com.bb.onebot.entity.oneBot.ReceiveNotice;
+import com.bb.onebot.event.oneBot.ReceiveMessageEvent;
+import com.bb.onebot.event.oneBot.ReceiveNoticeEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 /**
  * OneBot机器人事件分发处理者
  * @author ren
  */
 @Slf4j
-@Component
+@ConditionalOnProperty(prefix = "bot.type", value = "onebot", matchIfMissing = false)
 public class OneBotEventHandler implements BotEventHandler {
 
     @Autowired
