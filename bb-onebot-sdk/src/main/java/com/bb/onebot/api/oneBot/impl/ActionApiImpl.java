@@ -1,7 +1,7 @@
 package com.bb.onebot.api.oneBot.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.bb.onebot.connection.OneBotWebSocketClient;
+import com.bb.onebot.connection.BotWebSocketClient;
 import com.bb.onebot.entity.oneBot.Action;
 import com.bb.onebot.entity.oneBot.Message;
 import com.bb.onebot.entity.oneBot.MessageContent;
@@ -19,8 +19,8 @@ import java.util.List;
 @Component
 public class ActionApiImpl implements ActionApi {
 
-    @Autowired
-    private OneBotWebSocketClient webSocketClient;
+    @Autowired(required = false)
+    private BotWebSocketClient webSocketClient;
 
     @Override
     public boolean sendPrivateMessage(String userId, String message) {

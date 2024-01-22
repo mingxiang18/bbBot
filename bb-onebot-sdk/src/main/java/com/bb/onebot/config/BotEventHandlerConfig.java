@@ -2,6 +2,7 @@ package com.bb.onebot.config;
 
 import com.bb.onebot.handler.BotEventHandler;
 import com.bb.onebot.handler.OneBotEventHandler;
+import com.bb.onebot.handler.QqBotEventHandler;
 import com.bb.onebot.handler.QqntBotEventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,14 +17,20 @@ import org.springframework.context.annotation.Configuration;
 public class BotEventHandlerConfig {
 
     @Bean
-    @ConditionalOnProperty(prefix = "bot.type", value = "onebot", matchIfMissing = false)
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "onebot")
     public BotEventHandler getOneBotEventHandler() {
         return new OneBotEventHandler();
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "bot.type", value = "qqnt", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qqnt")
     public BotEventHandler getQqntBotEventHandler() {
         return new QqntBotEventHandler();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qq")
+    public BotEventHandler getQqBotEventHandler() {
+        return new QqBotEventHandler();
     }
 }

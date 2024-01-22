@@ -6,6 +6,7 @@ import com.bb.onebot.entity.qqnt.QqntReceiveMessage;
 import com.bb.onebot.event.qqnt.ReceiveMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @author ren
  */
 @Slf4j
+@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qqnt")
 public class QqntBotEventHandler implements BotEventHandler {
 
     @Autowired
@@ -28,5 +30,10 @@ public class QqntBotEventHandler implements BotEventHandler {
         List<QqntReceiveMessage> messageList = JSON.parseObject(s, new TypeReference<List<QqntReceiveMessage>>() {});
         //通过spring事件机制发布消息
         publisher.publishEvent(new ReceiveMessageEvent(messageList.get(0)));
+    }
+
+    @Override
+    public void closeConnect() {
+
     }
 }

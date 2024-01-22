@@ -1,5 +1,8 @@
 package com.bb.onebot.connection;
 
+import com.alibaba.fastjson2.JSON;
+import com.bb.onebot.entity.qq.SocketMessageEntity;
+import com.bb.onebot.util.LocalCacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,25 +20,38 @@ import org.springframework.stereotype.Component;
 public class WebSocketReconnectSchedule {
 
     /**
-     * socket连接地址
+     * 定时任务时间表达式cron
      */
-    @Value("${onebot.socket.reconnectTime}")
-    private Integer reconnectTime;
+    @Value("${bot.type}")
+    private String botType;
 
-    @Autowired
-    private OneBotWebSocketClient oneBotWebSocketClient;
+    @Autowired(required = false)
+    private BotWebSocketClient botWebSocketClient;
 
     /**
-     * 每10s检查一次连接状态
+     * 每30s检查一次连接状态
      */
-    //@Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "${bot.socket.cron:0/30 * * * * *}")
     public void botConnectCheck() {
-        if(!oneBotWebSocketClient.hasConnection.get()) {
+        if(!botWebSocketClient.hasConnection.get()) {
             log.error("检查到机器人WebSocket客户端未连接，尝试重新连接");
             try {
-                oneBotWebSocketClient.reconnect();
+                botWebSocketClient.reconnect();
             } catch (Exception e) {
                 log.error("机器人WebSocket客户端重连异常", e);
+            }
+        }else {
+            //如果已连接，发送心跳
+            if ("qq".equals(botType)) {
+                //封装心跳消息
+                SocketMessageEntity socketMessageEntity = new SocketMessageEntity();
+                socketMessageEntity.setOp(1);
+                socketMessageEntity.setD(LocalCacheUtils.getCacheObject("qq.seq"));
+
+                //发送心跳消息
+                String sendMessage = JSON.toJSONString(socketMessageEntity);
+                log.info("发送心跳消息: " + sendMessage);
+                botWebSocketClient.send(sendMessage);
             }
         }
     }

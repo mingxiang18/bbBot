@@ -2,7 +2,7 @@ package com.bb.onebot.api.qqnt.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.bb.onebot.api.qqnt.MessageApi;
-import com.bb.onebot.connection.OneBotWebSocketServer;
+import com.bb.onebot.connection.BotWebSocketServer;
 import com.bb.onebot.entity.qqnt.Peer;
 import com.bb.onebot.entity.qqnt.QqntSendMessage;
 import com.bb.onebot.entity.qqnt.SendMessageElement;
@@ -21,8 +21,8 @@ import java.util.List;
 @Component
 public class MessageApiImpl implements MessageApi {
 
-    @Autowired
-    private OneBotWebSocketServer webSocketServer;
+    @Autowired(required = false)
+    private BotWebSocketServer webSocketServer;
 
     @Override
     public boolean sendMessage(Peer peer, String message) {

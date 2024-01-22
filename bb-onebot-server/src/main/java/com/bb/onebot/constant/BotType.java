@@ -14,4 +14,9 @@ public class BotType {
      * qqnt
      */
     public static final String QQNT = "qqnt";
+
+    /**
+     * qq
+     */
+    public static final String QQ = "qq";
 }

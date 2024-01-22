@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author ren
  */
 @Slf4j
-public class OneBotWebSocketServer extends WebSocketServer {
+public class BotWebSocketServer extends WebSocketServer {
 
     @Autowired
     private BotEventHandler botEventHandler;
@@ -39,7 +39,7 @@ public class OneBotWebSocketServer extends WebSocketServer {
      *
      * @param port 端口号
      */
-    public OneBotWebSocketServer(int port) {
+    public BotWebSocketServer(int port) {
         super(new InetSocketAddress(port));
         log.info("机器人WebSocket服务器初始化:" + port);
     }

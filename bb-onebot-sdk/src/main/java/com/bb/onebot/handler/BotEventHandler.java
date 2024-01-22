@@ -11,4 +11,6 @@ public interface BotEventHandler {
 
     @Async("eventDispatcherExecutor")
     public void handleMessage(String message);
+
+    public void closeConnect();
 }

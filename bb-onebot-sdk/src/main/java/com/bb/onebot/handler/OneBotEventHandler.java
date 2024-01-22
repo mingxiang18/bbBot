@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Async;
  * @author ren
  */
 @Slf4j
-@ConditionalOnProperty(prefix = "bot.type", value = "onebot", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "onebot")
 public class OneBotEventHandler implements BotEventHandler {
 
     @Autowired
@@ -52,6 +52,11 @@ public class OneBotEventHandler implements BotEventHandler {
             //如果类型是提醒，通过spring事件机制发布提醒
             publisher.publishEvent(new ReceiveNoticeEvent(JSON.parseObject(s, ReceiveNotice.class)));
         }
+
+    }
+
+    @Override
+    public void closeConnect() {
 
     }
 }

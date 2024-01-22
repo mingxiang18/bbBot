@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author ren
  */
 @Slf4j
-public class OneBotWebSocketClient extends WebSocketClient {
+public class BotWebSocketClient extends WebSocketClient {
 
     /**
      * socket连接地址
@@ -45,7 +45,7 @@ public class OneBotWebSocketClient extends WebSocketClient {
      *
      * @param serverUri
      */
-    public OneBotWebSocketClient(URI serverUri) {
+    public BotWebSocketClient(URI serverUri) {
         super(serverUri);
         log.info("机器人WebSocket客户端初始化:" + serverUri.toString());
     }
