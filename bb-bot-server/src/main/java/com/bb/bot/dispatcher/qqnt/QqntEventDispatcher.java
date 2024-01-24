@@ -1,12 +1,12 @@
 package com.bb.bot.dispatcher.qqnt;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
-import com.bb.bot.config.BotConfig;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
+import com.bb.bot.common.config.BotConfig;
 import com.bb.bot.constant.BotType;
-import com.bb.bot.constant.MessageType;
-import com.bb.bot.constant.RuleType;
-import com.bb.bot.constant.SyncType;
+import com.bb.bot.common.constant.MessageType;
+import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.constant.SyncType;
 import com.bb.bot.entity.qqnt.MessageElement;
 import com.bb.bot.entity.qqnt.QqntReceiveMessage;
 import com.bb.bot.event.qqnt.ReceiveMessageEvent;

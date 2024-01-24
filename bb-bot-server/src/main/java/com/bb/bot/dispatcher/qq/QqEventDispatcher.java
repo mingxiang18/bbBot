@@ -1,11 +1,11 @@
 package com.bb.bot.dispatcher.qq;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
-import com.bb.bot.config.BotConfig;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
+import com.bb.bot.common.config.BotConfig;
 import com.bb.bot.constant.BotType;
-import com.bb.bot.constant.RuleType;
-import com.bb.bot.constant.SyncType;
+import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.constant.SyncType;
 import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;

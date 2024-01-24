@@ -1,4 +1,4 @@
-package com.bb.bot.constant;
+package com.bb.bot.common.constant;
 
 /**
  * 规则类型常量

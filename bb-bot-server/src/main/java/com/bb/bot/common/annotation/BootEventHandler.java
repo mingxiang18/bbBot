@@ -1,4 +1,4 @@
-package com.bb.bot.annotation;
+package com.bb.bot.common.annotation;
 
 import com.bb.bot.constant.BotType;
 import org.springframework.stereotype.Component;

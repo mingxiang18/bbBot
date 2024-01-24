@@ -1,4 +1,4 @@
-package com.bb.bot.constant;
+package com.bb.bot.common.constant;
 
 /**
  * 同步类型

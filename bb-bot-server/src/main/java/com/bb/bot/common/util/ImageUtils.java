@@ -1,4 +1,4 @@
-package com.bb.bot.util;
+package com.bb.bot.common.util;
 
 import java.awt.*;
 import java.awt.color.ColorSpace;
@@ -13,6 +13,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import com.bb.bot.util.FileUtils;
 import lombok.SneakyThrows;
 import sun.font.FontDesignMetrics;
 

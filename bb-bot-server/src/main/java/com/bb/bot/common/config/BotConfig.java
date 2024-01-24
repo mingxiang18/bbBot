@@ -1,4 +1,4 @@
-package com.bb.bot.config;
+package com.bb.bot.common.config;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

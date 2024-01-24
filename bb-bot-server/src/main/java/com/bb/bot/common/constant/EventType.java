@@ -1,4 +1,4 @@
-package com.bb.bot.constant;
+package com.bb.bot.common.constant;
 
 /**
  * 事件类型常量

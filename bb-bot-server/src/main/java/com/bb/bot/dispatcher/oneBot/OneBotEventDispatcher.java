@@ -1,8 +1,12 @@
 package com.bb.bot.dispatcher.oneBot;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
-import com.bb.bot.config.BotConfig;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
+import com.bb.bot.common.config.BotConfig;
+import com.bb.bot.common.constant.EventType;
+import com.bb.bot.common.constant.MessageType;
+import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.constant.SyncType;
 import com.bb.bot.constant.*;
 import com.bb.bot.event.oneBot.ReceiveMessageEvent;
 import com.bb.bot.event.oneBot.ReceiveNoticeEvent;

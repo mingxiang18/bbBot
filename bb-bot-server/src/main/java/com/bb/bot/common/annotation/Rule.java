@@ -1,9 +1,9 @@
-package com.bb.bot.annotation;
+package com.bb.bot.common.annotation;
 
-import com.bb.bot.constant.EventType;
-import com.bb.bot.constant.MessageType;
-import com.bb.bot.constant.RuleType;
-import com.bb.bot.constant.SyncType;
+import com.bb.bot.common.constant.EventType;
+import com.bb.bot.common.constant.MessageType;
+import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.constant.SyncType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

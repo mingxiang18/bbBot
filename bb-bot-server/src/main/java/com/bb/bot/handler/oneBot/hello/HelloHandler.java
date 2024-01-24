@@ -1,11 +1,11 @@
 package com.bb.bot.handler.oneBot.hello;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.oneBot.ActionApi;
-import com.bb.bot.constant.EventType;
-import com.bb.bot.constant.MessageType;
-import com.bb.bot.constant.RuleType;
+import com.bb.bot.common.constant.EventType;
+import com.bb.bot.common.constant.MessageType;
+import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
 import com.bb.bot.event.oneBot.ReceiveMessageEvent;
 import org.springframework.beans.factory.annotation.Autowired;

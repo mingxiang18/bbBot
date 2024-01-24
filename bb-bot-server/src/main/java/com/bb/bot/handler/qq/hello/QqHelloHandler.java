@@ -1,11 +1,11 @@
 package com.bb.bot.handler.qq.hello;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.qq.QqMessageApi;
 import com.bb.bot.constant.BotType;
-import com.bb.bot.constant.EventType;
-import com.bb.bot.constant.RuleType;
+import com.bb.bot.common.constant.EventType;
+import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.entity.qq.QqMessage;
 import org.springframework.beans.factory.annotation.Autowired;

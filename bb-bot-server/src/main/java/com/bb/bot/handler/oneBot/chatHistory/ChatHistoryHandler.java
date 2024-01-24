@@ -1,10 +1,10 @@
 package com.bb.bot.handler.oneBot.chatHistory;
 
-import com.bb.bot.annotation.BootEventHandler;
-import com.bb.bot.annotation.Rule;
+import com.bb.bot.common.annotation.BootEventHandler;
+import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.oneBot.ActionApi;
-import com.bb.bot.constant.EventType;
-import com.bb.bot.constant.SyncType;
+import com.bb.bot.common.constant.EventType;
+import com.bb.bot.common.constant.SyncType;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
