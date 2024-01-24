@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>bb-onebot-sdk</module>
-        <module>bb-onebot-server</module>
+        <module>bb-bot-sdk</module>
+        <module>bb-bot-server</module>
     </modules>
 
     <properties>

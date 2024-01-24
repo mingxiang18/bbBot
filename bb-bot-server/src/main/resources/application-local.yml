@@ -1,0 +1,15 @@
+#----------------------本地配置--------------------------------------------------------
+# 数据库配置
+mysql:
+  address: localhost:3306/bb_bot
+  username: root
+  password: root
+
+file:
+  #文件保存目录
+  path: /D:/develop/bot/bbBot/bb-bot-server/src/main/resources/static/
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8099
