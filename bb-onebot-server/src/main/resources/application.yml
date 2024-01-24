@@ -5,15 +5,18 @@ bot:
   #机器人的qq号
   qq: 3889004605
 
-onebot:
+webSocket:
   server:
     # 机器人服务端的端口号
     port: 8888
   socket:
     # 机器人实现端的ws地址
     url: ws://localhost:8282
-    # 断线重连等待时间（毫秒）
-    reconnectTime: 5000
+
+#环境变量bot.type为qq时，qq官方机器人必须配置
+qq:
+  appId:
+  clientSecret:
 
 # 数据库配置
 mysql:
@@ -24,12 +27,6 @@ mysql:
 file:
   #文件保存目录
   path: /bot/static/
-
-
-#qq官方机器人必须配置
-qq:
-  appId:
-  clientSecret:
 
 #----------------------可选配置--------------------------------------------------------
 # 服务配置

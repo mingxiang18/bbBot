@@ -24,17 +24,14 @@ public class WebSocketClientConfig {
     /**
      * socket连接地址
      */
-    @Value("${onebot.socket.url}")
+    @Value("${webSocket.socket.url}")
     private String webSocketUri;
 
-    @Value("${onebot.server.port:8888}")
+    @Value("${webSocket.server.port:8888}")
     private Integer serverPort;
 
     @Autowired
     private QqApiCaller qqApiCaller;
-
-    @Value("${bot.type}")
-    private String qq;
 
     /**
      * 注入Socket客户端

@@ -34,6 +34,9 @@ public class WebSocketReconnectSchedule {
      */
     @Scheduled(cron = "${bot.socket.cron:0/30 * * * * *}")
     public void botConnectCheck() {
+        if (botWebSocketClient == null) {
+            return;
+        }
         if(!botWebSocketClient.hasConnection.get()) {
             log.error("检查到机器人WebSocket客户端未连接，尝试重新连接");
             try {

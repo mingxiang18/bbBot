@@ -18,12 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class BotWebSocketClient extends WebSocketClient {
 
-    /**
-     * socket连接地址
-     */
-    @Value("${onebot.socket.url}")
-    private String webSocketUri;
-
     @Autowired
     private BotEventHandler botEventHandler;
 
