@@ -15,21 +15,21 @@ import org.springframework.stereotype.Component;
 public class OneBotEventListener {
 
     @Autowired
-    private OneBotEventCoreHandler oneBotEventCoreHandler;
+    private OneBotEventDispatcher oneBotEventDispatcher;
 
     @Autowired
     private ActionApi actionApi;
 
     @EventListener
     public void listenMessageEvent(ReceiveMessageEvent event) {
-        //执行消息事件处理
-        oneBotEventCoreHandler.handleMessage(event);
+        //执行消息事件分发
+        oneBotEventDispatcher.handleMessage(event);
     }
 
     @EventListener
     public void listenNoticeEvent(ReceiveNoticeEvent event) {
-        //执行提醒事件处理
-        oneBotEventCoreHandler.handleNotice(event);
+        //执行提醒事件分发
+        oneBotEventDispatcher.handleNotice(event);
     }
 
 }

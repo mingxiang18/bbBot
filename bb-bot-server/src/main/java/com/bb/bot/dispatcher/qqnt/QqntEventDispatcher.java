@@ -25,12 +25,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 机器人事件处理者
+ * 机器人事件分发者
  * @author ren
  */
 @Slf4j
 @Component
-public class QqntEventCoreHandler {
+public class QqntEventDispatcher {
 
     @Autowired
     private BotConfig botConfig;
@@ -41,9 +41,9 @@ public class QqntEventCoreHandler {
     private Map<Method, Object> messageHandlerMap = new LinkedHashMap<>();
 
     /**
-     * 机器人事件处理者构造函数
+     * 机器人事件分发者构造函数
      */
-    public QqntEventCoreHandler() {
+    public QqntEventDispatcher() {
         //获取所有包含BootEventHandler注解的机器人事件处理者的Bean
         Map<String, Object> beansWithRule = SpringUtils.getBeansWithAnnotation(BootEventHandler.class);
         //按order排序并封装成List
@@ -71,7 +71,7 @@ public class QqntEventCoreHandler {
     }
 
     /**
-     * 机器人消息事件处理
+     * 机器人消息事件分发
      */
     public void handleMessage(ReceiveMessageEvent messageEvent) {
         for (Map.Entry<Method, Object> entry : messageHandlerMap.entrySet()) {

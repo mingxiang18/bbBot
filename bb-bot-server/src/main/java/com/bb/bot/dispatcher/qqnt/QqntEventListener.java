@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component;
 public class QqntEventListener {
 
     @Autowired
-    private QqntEventCoreHandler qqntEventCoreHandler;
+    private QqntEventDispatcher qqntEventDispatcher;
 
     @Autowired
     private ActionApi actionApi;
 
     @EventListener
     public void listenMessageEvent(ReceiveMessageEvent event) {
-        //执行消息事件处理
-        qqntEventCoreHandler.handleMessage(event);
+        //执行消息事件分发
+        qqntEventDispatcher.handleMessage(event);
     }
 
 }
