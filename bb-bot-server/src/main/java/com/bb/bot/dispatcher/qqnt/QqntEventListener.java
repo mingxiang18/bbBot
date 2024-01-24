@@ -1,4 +1,4 @@
-package com.bb.bot.core.qqnt;
+package com.bb.bot.dispatcher.qqnt;
 
 import com.bb.bot.api.oneBot.ActionApi;
 import com.bb.bot.event.qqnt.ReceiveMessageEvent;

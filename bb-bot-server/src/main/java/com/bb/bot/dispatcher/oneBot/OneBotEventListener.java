@@ -1,4 +1,4 @@
-package com.bb.bot.core.oneBot;
+package com.bb.bot.dispatcher.oneBot;
 
 import com.bb.bot.api.oneBot.ActionApi;
 import com.bb.bot.event.oneBot.ReceiveMessageEvent;

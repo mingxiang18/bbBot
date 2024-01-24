@@ -1,4 +1,4 @@
-package com.bb.bot.core.qq;
+package com.bb.bot.dispatcher.qq;
 
 import com.bb.bot.api.qq.QqMessageApi;
 import com.bb.bot.entity.qq.QqMessage;

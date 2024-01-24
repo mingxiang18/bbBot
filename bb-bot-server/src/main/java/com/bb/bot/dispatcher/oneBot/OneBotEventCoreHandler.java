@@ -1,25 +1,24 @@
-package com.bb.bot.core.qqnt;
+package com.bb.bot.dispatcher.oneBot;
 
 import com.bb.bot.annotation.BootEventHandler;
 import com.bb.bot.annotation.Rule;
 import com.bb.bot.config.BotConfig;
-import com.bb.bot.constant.BotType;
-import com.bb.bot.constant.MessageType;
-import com.bb.bot.constant.RuleType;
-import com.bb.bot.constant.SyncType;
-import com.bb.bot.entity.qqnt.MessageElement;
-import com.bb.bot.entity.qqnt.QqntReceiveMessage;
-import com.bb.bot.event.qqnt.ReceiveMessageEvent;
+import com.bb.bot.constant.*;
+import com.bb.bot.event.oneBot.ReceiveMessageEvent;
+import com.bb.bot.event.oneBot.ReceiveNoticeEvent;
 import com.bb.bot.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class QqntEventCoreHandler {
+public class OneBotEventCoreHandler {
 
     @Autowired
     private BotConfig botConfig;
@@ -40,15 +39,22 @@ public class QqntEventCoreHandler {
 
     private Map<Method, Object> messageHandlerMap = new LinkedHashMap<>();
 
+    private Map<Method, Object> noticeHandlerMap = new LinkedHashMap<>();
+
+    /**
+     * 用于@某人的cq码正则
+     */
+    public static Pattern atCompile = Pattern.compile("\\[CQ:at.*?\\]");
+
     /**
      * 机器人事件处理者构造函数
      */
-    public QqntEventCoreHandler() {
+    public OneBotEventCoreHandler() {
         //获取所有包含BootEventHandler注解的机器人事件处理者的Bean
         Map<String, Object> beansWithRule = SpringUtils.getBeansWithAnnotation(BootEventHandler.class);
         //按order排序并封装成List
         List<Object> handlerBeanList = beansWithRule.entrySet().stream().map(Map.Entry::getValue)
-                .filter(o -> BotType.QQNT.equals(AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).botType()))
+                .filter(o -> BotType.ONEBOT.equals(AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).botType()))
                 .sorted(Comparator.comparing(o -> {
                     return AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).order();
                 })).collect(Collectors.toList());
@@ -65,7 +71,11 @@ public class QqntEventCoreHandler {
                 }
 
                 //将对应类型的事件放置到对应Map
-                messageHandlerMap.put(declaredMethod, handlerObject);
+                if (EventType.MESSAGE.equals(annotation.eventType())) {
+                    messageHandlerMap.put(declaredMethod, handlerObject);
+                }else if (EventType.NOTICE.equals(annotation.eventType())) {
+                    noticeHandlerMap.put(declaredMethod, handlerObject);
+                }
             }
         }
     }
@@ -97,6 +107,21 @@ public class QqntEventCoreHandler {
     }
 
     /**
+     * 机器人提醒事件处理
+     */
+    public void handleNotice(ReceiveNoticeEvent noticeEvent) {
+        for (Map.Entry<Method, Object> entry : noticeHandlerMap.entrySet()) {
+            //通过线程池异步执行提醒处理
+            eventHandlerExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    handlerExecute(entry.getKey(), entry.getValue(), noticeEvent);
+                }
+            });
+        }
+    }
+
+    /**
      * 通用的事件执行方法
      */
     private void handlerExecute(Method method, Object instance, Object event) {
@@ -111,16 +136,18 @@ public class QqntEventCoreHandler {
      * 判断消息是否匹配规则
      */
     private boolean messageRuleMatch(ReceiveMessageEvent messageEvent, Rule rule) {
-        QqntReceiveMessage receiveMessage = messageEvent.getData();
-        List<MessageElement> elementList = !CollectionUtils.isEmpty(receiveMessage.getRaw().getElements()) ? receiveMessage.getRaw().getElements() : new ArrayList<>();
         //判断是否命中@规则
-        if (rule.needAtMe() && "group".equals(receiveMessage.getPeer().getChatType())) {
+        if (rule.needAtMe() && StringUtils.isNoneBlank(messageEvent.getData().getGroupId())) {
+            Matcher matcher = atCompile.matcher(messageEvent.getData().getMessage());
             boolean match = false;
-            for (MessageElement messageElement : elementList) {
-                if (Integer.valueOf(1).equals(messageElement.getElementType())
-                        && botConfig.getQq().equals(messageElement.getTextElement().getAtUid())) {
+
+            //查找at匹配
+            while (matcher.find()) {
+                String atCQCode = matcher.group();
+                //如果匹配项是自己的qq，则匹配成功
+                if (atCQCode.contains(botConfig.getQq())) {
                     match = true;
-                    break;
+
                 }
             }
 
@@ -131,13 +158,18 @@ public class QqntEventCoreHandler {
         }
 
         //判断消息类型
+        //todo 目前逻辑是没有group_id就属于私人消息，有就属于群组消息,可能逻辑不准确
         if (!MessageType.ALL.equals(rule.messageType())) {
-            if (MessageType.GROUP.equals(rule.messageType()) && !"group".equals(receiveMessage.getPeer().getChatType())) {
-                return false;
+            if (MessageType.GROUP.equals(rule.messageType())) {
+                if (StringUtils.isBlank(messageEvent.getData().getGroupId())) {
+                    return false;
+                }
             }
 
-            if (MessageType.PRIVATE.equals(rule.messageType()) && !"friend".equals(receiveMessage.getPeer().getChatType())) {
-                return false;
+            if (MessageType.PRIVATE.equals(rule.messageType())) {
+                if (StringUtils.isNoneBlank(messageEvent.getData().getGroupId())) {
+                    return false;
+                }
             }
         }
 
@@ -146,29 +178,26 @@ public class QqntEventCoreHandler {
         if (rule.keyword() == null || rule.keyword().length == 0) {
             return true;
         }
-        for (MessageElement messageElement : elementList) {
-            if (Integer.valueOf(1).equals(messageElement.getElementType())) {
-                String message = messageElement.getTextElement().getContent();
-                if (RuleType.MATCH.equals(rule.ruleType())) {
-                    for (String keyword : rule.keyword()) {
-                        if (message.equals(keyword)) {
-                            return true;
-                        }
-                    }
-                } else if (RuleType.FUZZY.equals(rule.ruleType())) {
-                    for (String keyword : rule.keyword()) {
-                        if (message.contains(keyword)) {
-                            return true;
-                        }
-                    }
-                } else if (RuleType.REGEX.equals(rule.ruleType())) {
-                    for (String keyword : rule.keyword()) {
-                        Pattern compile = Pattern.compile(keyword);
-                        Matcher matcher = compile.matcher(message);
-                        while (matcher.find()) {
-                            return true;
-                        }
-                    }
+        //先将消息中的@字段的cq码去除
+        String message = messageEvent.getData().getMessage().replaceAll("\\[CQ:at.*?\\]\\s?", "");
+        if (RuleType.MATCH.equals(rule.ruleType())) {
+            for (String keyword : rule.keyword()) {
+                if (message.equals(keyword)) {
+                    return true;
+                }
+            }
+        }else if (RuleType.FUZZY.equals(rule.ruleType())) {
+            for (String keyword : rule.keyword()) {
+                if (message.contains(keyword)) {
+                    return true;
+                }
+            }
+        }else if (RuleType.REGEX.equals(rule.ruleType())) {
+            for (String keyword : rule.keyword()) {
+                Pattern compile = Pattern.compile(keyword);
+                Matcher matcher = compile.matcher(message);
+                while (matcher.find()) {
+                    return true;
                 }
             }
         }

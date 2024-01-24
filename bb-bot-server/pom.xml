@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>com.bb</groupId>
-            <artifactId>bb-onebot-sdk</artifactId>
+            <artifactId>bb-bot-sdk</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
