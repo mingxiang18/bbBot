@@ -26,7 +26,7 @@ public class ChatHistory {
     private Long id;
 
     @ApiModelProperty("消息Id")
-    private Long messageId;
+    private String messageId;
 
     @ApiModelProperty("用户qq号")
     private String userQq;

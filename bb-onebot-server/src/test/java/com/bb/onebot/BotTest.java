@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.onebot.database.japaneseLearn.entity.JapaneseFifty;
 import com.bb.onebot.database.japaneseLearn.mapper.JapaneseFiftyMapper;
 import com.bb.onebot.handler.oneBot.aiChat.AiChatHandler;
-import com.bb.onebot.util.DateUtils;
-import com.bb.onebot.util.FileUtils;
-import com.bb.onebot.util.ImageUtils;
-import com.bb.onebot.util.RestClient;
+import com.bb.onebot.util.*;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,14 @@ public class BotTest {
 
     @Autowired
     private JapaneseFiftyMapper japaneseFiftyMapper;
+
+    @Autowired
+    private ImageUploadClient imageUploadClient;
+
+    @Test
+    public void imageUpload() throws Exception {
+        System.out.println(imageUploadClient.uploadImage(new File("C:\\Users\\ren\\Desktop\\Dingtalk_20231019160725.jpg")));
+    }
 
     @Test
     public void randomJapaneseFifty() throws Exception {

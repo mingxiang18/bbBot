@@ -1,8 +1,8 @@
 package com.bb.onebot.api.qq.impl;
 
 import com.bb.onebot.api.qq.QqMessageApi;
-import com.bb.onebot.entity.qq.SendChannelMessage;
-import com.bb.onebot.util.qq.QqUtils;
+import com.bb.onebot.entity.qq.ChannelMessage;
+import com.bb.onebot.handler.qq.QqApiCaller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 public class QqMessageApiImpl implements QqMessageApi {
 
     @Autowired
-    private QqUtils qqUtils;
+    private QqApiCaller qqApiCaller;
 
     @Override
-    public void sendChannelMessage(String channelId, SendChannelMessage sendChannelMessage) {
-        qqUtils.sendChannelMessage(channelId, sendChannelMessage);
+    public void sendChannelMessage(String channelId, ChannelMessage channelMessage) {
+        qqApiCaller.sendChannelMessage(channelId, channelMessage);
     }
 }

@@ -1,11 +1,13 @@
-package com.bb.onebot.handler;
+package com.bb.onebot.handler.onbot;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.onebot.constant.BotType;
 import com.bb.onebot.entity.oneBot.ReceiveMessage;
 import com.bb.onebot.entity.oneBot.ReceiveNotice;
 import com.bb.onebot.event.oneBot.ReceiveMessageEvent;
 import com.bb.onebot.event.oneBot.ReceiveNoticeEvent;
+import com.bb.onebot.handler.BotEventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,7 +19,7 @@ import org.springframework.scheduling.annotation.Async;
  * @author ren
  */
 @Slf4j
-@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "onebot")
+@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = BotType.ONEBOT)
 public class OneBotEventHandler implements BotEventHandler {
 
     @Autowired

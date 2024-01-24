@@ -2,7 +2,8 @@ package com.bb.onebot.config;
 
 import com.bb.onebot.connection.BotWebSocketClient;
 import com.bb.onebot.connection.BotWebSocketServer;
-import com.bb.onebot.util.qq.QqUtils;
+import com.bb.onebot.constant.BotType;
+import com.bb.onebot.handler.qq.QqApiCaller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ public class WebSocketClientConfig {
     private Integer serverPort;
 
     @Autowired
-    private QqUtils qqUtils;
+    private QqApiCaller qqApiCaller;
 
     @Value("${bot.type}")
     private String qq;
@@ -40,7 +41,7 @@ public class WebSocketClientConfig {
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "onebot")
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = BotType.ONEBOT)
     public BotWebSocketClient initWebSocketClient(){
         URI uri = null;
         try {
@@ -59,7 +60,7 @@ public class WebSocketClientConfig {
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qqnt")
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = BotType.QQNT)
     public BotWebSocketServer initWebSocketServer(){
         BotWebSocketServer server = new BotWebSocketServer(serverPort);
         server.start();
@@ -72,9 +73,9 @@ public class WebSocketClientConfig {
      * @return
      */
     @Bean
-    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qq")
+    @ConditionalOnProperty(prefix = "bot", name = "type", havingValue = BotType.QQ)
     public BotWebSocketClient initQqWebSocketClient(){
-        URI uri = URI.create(qqUtils.getWebSocketUrl());
+        URI uri = URI.create(qqApiCaller.getWebSocketUrl());
         BotWebSocketClient webSocketClient = new BotWebSocketClient(uri);
         //启动时创建客户端连接
         webSocketClient.connect();

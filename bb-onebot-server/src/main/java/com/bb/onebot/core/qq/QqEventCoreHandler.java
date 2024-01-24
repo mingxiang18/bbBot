@@ -37,6 +37,11 @@ public class QqEventCoreHandler {
     private Map<Method, Object> messageHandlerMap = new LinkedHashMap<>();
 
     /**
+     * 用于@的cq码正则
+     */
+    public static String atCompileReg = "<@.*?>\\s?";
+
+    /**
      * 机器人事件处理者构造函数
      */
     public QqEventCoreHandler() {
@@ -112,7 +117,26 @@ public class QqEventCoreHandler {
         if (rule.keyword() == null || rule.keyword().length == 0) {
             return true;
         }
-        String message = messageEvent.getContent();
+        if (messageEvent.getContent() == null) {
+            return false;
+        }
+
+        //如果需要@自己，判断消息体中是否有@机器人的参数
+        if (rule.needAtMe()) {
+            boolean atMe = false;
+            List<QqMessage.QqUser> mentions = messageEvent.getMentions();
+            for (QqMessage.QqUser mention : mentions) {
+                if (mention.getBot()) {
+                    atMe = true;
+                    break;
+                }
+            }
+            if (!atMe) {
+                return false;
+            }
+        }
+
+        String message = messageEvent.getContent().replaceAll(atCompileReg, "");
         if (RuleType.MATCH.equals(rule.ruleType())) {
             for (String keyword : rule.keyword()) {
                 if (message.equals(keyword)) {

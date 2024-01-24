@@ -1,6 +1,7 @@
 package com.bb.onebot.connection;
 
 import com.alibaba.fastjson2.JSON;
+import com.bb.onebot.constant.BotType;
 import com.bb.onebot.entity.qq.SocketMessageEntity;
 import com.bb.onebot.util.LocalCacheUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class WebSocketReconnectSchedule {
             }
         }else {
             //如果已连接，发送心跳
-            if ("qq".equals(botType)) {
+            if (BotType.QQ.equals(botType)) {
                 //封装心跳消息
                 SocketMessageEntity socketMessageEntity = new SocketMessageEntity();
                 socketMessageEntity.setOp(1);
@@ -50,7 +51,7 @@ public class WebSocketReconnectSchedule {
 
                 //发送心跳消息
                 String sendMessage = JSON.toJSONString(socketMessageEntity);
-                log.info("发送心跳消息: " + sendMessage);
+                log.debug("发送心跳消息: " + sendMessage);
                 botWebSocketClient.send(sendMessage);
             }
         }

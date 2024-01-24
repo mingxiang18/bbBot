@@ -34,7 +34,7 @@ public class QqntChatHistoryHandler {
         QqntReceiveMessage message = event.getData();
 
         ChatHistory chatHistory = new ChatHistory();
-        chatHistory.setMessageId(message.getRaw().getMsgId());
+        chatHistory.setMessageId(String.valueOf(message.getRaw().getMsgId()));
         chatHistory.setUserQq(message.getSender().getUid());
         if ("group".equals(message.getPeer().getChatType())) {
             chatHistory.setGroupId(message.getPeer().getUid());

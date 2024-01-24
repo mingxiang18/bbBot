@@ -1,9 +1,11 @@
-package com.bb.onebot.handler;
+package com.bb.onebot.handler.qqnt;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.bb.onebot.constant.BotType;
 import com.bb.onebot.entity.qqnt.QqntReceiveMessage;
 import com.bb.onebot.event.qqnt.ReceiveMessageEvent;
+import com.bb.onebot.handler.BotEventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,7 +19,7 @@ import java.util.List;
  * @author ren
  */
 @Slf4j
-@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = "qqnt")
+@ConditionalOnProperty(prefix = "bot", name = "type", havingValue = BotType.QQNT)
 public class QqntBotEventHandler implements BotEventHandler {
 
     @Autowired

@@ -47,7 +47,7 @@ public @interface Rule {
     String name();
 
     /**
-     * 是否需要@自己，仅群组消息会进行判断
+     * 是否需要@自己，仅onebot、qqnt会生效
      */
     boolean needAtMe() default false;
 

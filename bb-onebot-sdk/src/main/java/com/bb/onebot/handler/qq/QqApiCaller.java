@@ -1,6 +1,6 @@
-package com.bb.onebot.util.qq;
+package com.bb.onebot.handler.qq;
 
-import com.bb.onebot.entity.qq.SendChannelMessage;
+import com.bb.onebot.entity.qq.ChannelMessage;
 import com.bb.onebot.util.LocalCacheUtils;
 import com.bb.onebot.util.RestClient;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class QqUtils {
+public class QqApiCaller {
 
     @Autowired
     private RestClient restClient;
@@ -78,7 +78,7 @@ public class QqUtils {
     /**
      * 发送频道消息
      */
-    public void sendChannelMessage(String channelId, SendChannelMessage channelMessage) {
+    public void sendChannelMessage(String channelId, ChannelMessage channelMessage) {
         postForQQ(baseUrl + sendChannelMessageUrl.replace("{channel_id}", channelId),
                 channelMessage, String.class);
     }
@@ -102,5 +102,15 @@ public class QqUtils {
         httpHeaders.set("X-Union-Appid", appId);
         httpHeaders.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
         return restClient.post(url, httpHeaders, request, clazz);
+    }
+
+    /**
+     * qq的api通用请求post方法
+     */
+    private  <T> T postFormForQQ(String url, Object request, Class<T> clazz) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Authorization", getToken());
+        httpHeaders.set("X-Union-Appid", appId);
+        return restClient.postForForm(url, httpHeaders, request, clazz);
     }
 }

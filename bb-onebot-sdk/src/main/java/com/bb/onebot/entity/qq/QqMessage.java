@@ -3,6 +3,8 @@ package com.bb.onebot.entity.qq;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * qq消息对象
  * 
@@ -48,7 +50,7 @@ public class QqMessage {
     //private String embeds;
 
     //消息中@的人
-    private QqUser mentions;
+    private List<QqUser> mentions;
 
     //消息创建者的member信息
     //private String member;
