@@ -15,13 +15,17 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author ren
@@ -38,21 +42,39 @@ public class RestClient {
         String resultString = restTemplate.getForObject(url, String.class);
         log.info("外部接口返回报文:{}", resultString);
 
-        T t = JSON.parseObject(resultString, clazz);
-        return t;
+        if (clazz == String.class) {
+            return (T) resultString;
+        }else {
+            T t = JSON.parseObject(resultString, clazz);
+            return t;
+        }
     }
 
     @SneakyThrows
     public <T> T get(String url, HttpHeaders httpHeaders, Class<T> clazz) {
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        if (!httpHeaders.containsKey(HttpHeaders.USER_AGENT)) {
+            httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        }
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
         log.info("向外部接口发起GET请求，url：{}", url);
-        ResponseEntity<String> resultEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        log.info("外部接口返回报文:{}", resultEntity.getBody());
+        ResponseEntity<byte[]> resultEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
 
-        T t = JSON.parseObject(resultEntity.getBody(), clazz);
-        return t;
+        byte[] response = resultEntity.getBody();
+        // 如果请求头是gzip格式，解压gzip响应体
+        if (resultEntity.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
+                && "gzip".equalsIgnoreCase(resultEntity.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
+            response = unGZip(new ByteArrayInputStream(resultEntity.getBody()));
+        }
+        String responseStr = new String(response, StandardCharsets.UTF_8);
+        log.info("外部接口返回报文:{}", responseStr);
+
+        if (clazz == String.class) {
+            return (T) responseStr;
+        }else {
+            T t = JSON.parseObject(responseStr, clazz);
+            return t;
+        }
     }
 
     public <T> T post(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
@@ -60,10 +82,18 @@ public class RestClient {
         HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);
 
         log.info("向外部接口发起POST请求，url：{}，请求报文：{}", url, jsonParams);
-        String resultString = restTemplate.postForObject(url, httpEntity, String.class);
-        log.info("外部接口返回报文:{}", resultString);
+        ResponseEntity<byte[]> resultEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, byte[].class);
 
-        T t = JSON.parseObject(resultString, clazz);
+        byte[] response = resultEntity.getBody();
+        // 如果请求头是gzip格式，解压gzip响应体
+        if (resultEntity.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
+                && "gzip".equalsIgnoreCase(resultEntity.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
+            response = unGZip(new ByteArrayInputStream(resultEntity.getBody()));
+        }
+        String responseStr = new String(response, StandardCharsets.UTF_8);
+        log.info("外部接口返回报文:{}", responseStr);
+
+        T t = JSON.parseObject(responseStr, clazz);
 
         return t;
     }
@@ -78,14 +108,15 @@ public class RestClient {
     }
 
     public <T> T postForForm(String url, Object params, Class<T> clazz) {
-        return postForForm(url, new HttpHeaders(), params, clazz);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        //头部类型
+        httpHeaders.set("Content-Type", "multipart/form-data");
+        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        return postForForm(url, httpHeaders, params, clazz);
     }
 
     @SneakyThrows
     public <T> T postForForm(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
-        //头部类型
-        httpHeaders.set("Content-Type", "multipart/form-data");
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         MultiValueMap<String, Object> map = packageParamMultiValueMap(params);
 
         //构造实体对象
@@ -141,6 +172,26 @@ public class RestClient {
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         ResponseEntity<Resource> resultEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeaders), Resource.class);
         return resultEntity.getBody().getInputStream();
+    }
+
+    /**
+     * Gzip解压缩
+     * @param inputStream
+     * @return
+     */
+    @SneakyThrows
+    public byte[] unGZip(InputStream inputStream) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {
+            byte[] buf = new byte[4096];
+            int len = -1;
+            while ((len = gzipInputStream.read(buf, 0, buf.length)) != -1) {
+                byteArrayOutputStream.write(buf, 0, len);
+            }
+            return byteArrayOutputStream.toByteArray();
+        } finally {
+            byteArrayOutputStream.close();
+        }
     }
 
     /**

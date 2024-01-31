@@ -117,6 +117,12 @@
             <artifactId>springfox-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <!-- 爬虫框架 jsoup HTML parser library @ http://jsoup.org/ -->
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

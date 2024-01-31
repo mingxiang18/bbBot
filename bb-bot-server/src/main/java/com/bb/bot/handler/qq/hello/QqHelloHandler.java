@@ -25,6 +25,7 @@ public class QqHelloHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent("你好呀");
         channelMessage.setMsgId(event.getId());
+        //channelMessage.setImage("https://raw.githubusercontent.com/mingxiang18/bbBot/master/bb-bot-server/src/main/resources/static/splatoon/background/1698202998352.png");
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
 }

@@ -1,5 +1,6 @@
 package com.bb.bot.common.util;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.util.RestClient;
 import lombok.SneakyThrows;
@@ -16,6 +17,8 @@ import org.springframework.util.MultiValueMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 图片上传工具，上传并获取链接
@@ -67,5 +70,33 @@ public class ImageUploadClient {
             log.error("上传文件出错", e);
         }
         return null;
+    }
+
+    /**
+     * 删除所有上传的图片
+     * 图片仅是临时保存，用于中转给qq接收，定时清理图片，防止图床占用满了
+     */
+    public void deleteAllImage() {
+        List<String> deleteImageHash = new ArrayList<>();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        httpHeaders.set("Authorization", token);
+
+        //调用上传历史记录接口
+        JSONObject response = restClient.get(webUrl + "/upload_history", httpHeaders, JSONObject.class);
+        JSONArray data = response.getJSONArray("data");
+        if (data != null && data.size() > 0) {
+            for (int i = 0; i < data.size(); i++) {
+                JSONObject jsonObject = data.getJSONObject(i);
+                deleteImageHash.add(jsonObject.getString("hash"));
+            }
+        }
+
+        //调用删除接口全部删除
+        for (String imageHash : deleteImageHash) {
+            //调用删除接口
+            restClient.get(webUrl + "/delete/" + imageHash, httpHeaders, JSONObject.class);
+        }
     }
 }
