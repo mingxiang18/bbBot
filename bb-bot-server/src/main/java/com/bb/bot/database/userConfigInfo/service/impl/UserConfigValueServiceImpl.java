@@ -1,5 +1,6 @@
 package com.bb.bot.database.userConfigInfo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bb.bot.database.userConfigInfo.mapper.UserConfigValueMapper;
@@ -18,5 +19,15 @@ public class UserConfigValueServiceImpl extends ServiceImpl<UserConfigValueMappe
     @Autowired
     private UserConfigValueMapper userConfigValueMapper;
 
+    @Override
+    public void resetUserConfigValue(UserConfigValue userConfigValue) {
+        //先删除原来的设置记录
+        userConfigValueMapper.delete(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, userConfigValue.getUserId())
+                .eq(UserConfigValue::getType, userConfigValue.getType())
+                .eq(UserConfigValue::getKeyName, userConfigValue.getKeyName()));
 
+        //重新设置
+        userConfigValueMapper.insert(userConfigValue);
+    }
 }

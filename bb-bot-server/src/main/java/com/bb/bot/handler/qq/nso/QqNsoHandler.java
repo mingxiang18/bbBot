@@ -1,11 +1,14 @@
 package com.bb.bot.handler.qq.nso;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.api.qq.QqMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.NsoApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
@@ -17,6 +20,8 @@ import com.bb.bot.util.LocalCacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -91,19 +96,16 @@ public class QqNsoHandler {
             String sessionToken = nsoApiCaller.getSessionToken(loginInAnswer,
                     LocalCacheUtils.getCacheObject(event.getAuthor().getId() + "-" + "auth_code_verifier"));
 
-            //先删除原来的设置记录
-            userConfigValueService.remove(new LambdaQueryWrapper<UserConfigValue>()
-                    .eq(UserConfigValue::getUserId, event.getAuthor().getId())
-                    .eq(UserConfigValue::getType, "NSO")
-                    .eq(UserConfigValue::getKeyName, "session_token"));
-
-            //重新设置
+            //重新设置session_token
             UserConfigValue userConfigValue = new UserConfigValue();
             userConfigValue.setUserId(event.getAuthor().getId());
             userConfigValue.setType("NSO");
             userConfigValue.setKeyName("session_token");
             userConfigValue.setValueName(sessionToken);
-            userConfigValueService.save(userConfigValue);
+            userConfigValueService.resetUserConfigValue(userConfigValue);
+
+            //重新设置账户token
+            resetUserToken(event.getAuthor().getId());
 
             ChannelMessage channelMessage = new ChannelMessage();
             channelMessage.setContent("已完成设置");
@@ -116,5 +118,138 @@ public class QqNsoHandler {
             channelMessage.setMsgId(event.getId());
             qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
         }
+    }
+
+    /**
+     * 获取自己账户ns的sw码
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"sw码", "/sw码"}, name = "获取自己的sw码")
+    public void getNsSwCode(QqMessage event) {
+        //获取用户的accessToken
+        UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "webAccessToken"));
+        if(webAccessTokenConfig == null) {
+            ChannelMessage channelMessage = new ChannelMessage();
+            channelMessage.setContent("当前用户未设置nso登录码");
+            channelMessage.setMsgId(event.getId());
+            qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        }
+
+        JSONObject accountInfo = nsoApiCaller.getNsAccountInfo(webAccessTokenConfig.getValueName());
+
+        //如果token过期，重新设置token并获取用户信息
+        if (9404 == accountInfo.getInteger("status")) {
+            resetUserToken(event.getAuthor().getId());
+            //获取token
+            webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                    .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                    .eq(UserConfigValue::getType, "NSO")
+                    .eq(UserConfigValue::getKeyName, "webAccessToken"));
+            accountInfo = nsoApiCaller.getNsFriendList(webAccessTokenConfig.getValueName());
+        }
+
+        String swCode = "SW-" + accountInfo.getJSONObject("result").getJSONObject("links").getJSONObject("friendCode").getString("id");
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent(swCode);
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 获取ns好友列表
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"ns好友列表", "/ns好友列表"}, name = "获取好友列表")
+    public void getNsFriendList(QqMessage event) {
+        //获取用户的accessToken
+        UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "webAccessToken"));
+        if(webAccessTokenConfig == null) {
+            ChannelMessage channelMessage = new ChannelMessage();
+            channelMessage.setContent("当前用户未设置nso登录码");
+            channelMessage.setMsgId(event.getId());
+            qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        }
+
+        StringBuilder returnMessage = new StringBuilder();
+        JSONObject nsFriendList = nsoApiCaller.getNsFriendList(webAccessTokenConfig.getValueName());
+
+        //如果token过期，重新设置token并获取好友列表
+        if (9404 == nsFriendList.getInteger("status")) {
+            resetUserToken(event.getAuthor().getId());
+            //获取token
+            webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                    .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                    .eq(UserConfigValue::getType, "NSO")
+                    .eq(UserConfigValue::getKeyName, "webAccessToken"));
+            nsFriendList = nsoApiCaller.getNsFriendList(webAccessTokenConfig.getValueName());
+        }
+
+        //拼装好友登录状态
+        JSONArray friendMessageList = nsFriendList.getJSONObject("result").getJSONArray("friends");
+        for (Object friendMessage : friendMessageList) {
+            returnMessage.append("好友名：【" + ((JSONObject) friendMessage).getString("name") + "】" +
+                    ",  在线状态：" + ((JSONObject) friendMessage).getJSONObject("presence").getString("state") +
+                    ",  上次在线：" + LocalDateTime.ofEpochSecond(((JSONObject) friendMessage).getJSONObject("presence").getLong("updatedAt"), 0, ZoneOffset.ofHours(8)).format(DateUtils.normalTimePattern) + "\n");
+        }
+
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent(returnMessage.toString());
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 刷新用户token
+     */
+    public void resetUserToken(String userId) {
+        //如果accessToken不存在，获取用户的sessionToken
+        UserConfigValue sessionTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, userId)
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "session_token"));
+        if (sessionTokenConfig == null) {
+            throw new RuntimeException("未设置nso登录码，无法获取信息");
+        }
+        String sessionToken = sessionTokenConfig.getValueName();
+
+        //获取用户token
+        JSONObject userToken = nsoApiCaller.getUserToken(sessionToken);
+        String accessToken = userToken.getString("access_token");
+        String idToken = userToken.getString("id_token");
+
+        //获取用户账号信息
+        JSONObject userInfo = nsoApiCaller.getUserInfo(accessToken);
+
+        //重新设置用户账号信息
+        UserConfigValue userInfoConfig = new UserConfigValue();
+        userInfoConfig.setUserId(userId);
+        userInfoConfig.setType("NSO");
+        userInfoConfig.setKeyName("userInfo");
+        userInfoConfig.setValueName(userInfo.toJSONString());
+        userConfigValueService.resetUserConfigValue(userInfoConfig);
+
+        //获取登录token
+        JSONObject webLoginToken = nsoApiCaller.getLoginToken(userInfo, idToken);
+        String webAccessToken = webLoginToken.getJSONObject("result").getJSONObject("webApiServerCredential").getString("accessToken");
+        String coralUserId  = webLoginToken.getJSONObject("result").getJSONObject("user").getString("id");
+
+        //重新设置token信息
+        UserConfigValue accessTokenConfig = new UserConfigValue();
+        accessTokenConfig.setUserId(userId);
+        accessTokenConfig.setType("NSO");
+        accessTokenConfig.setKeyName("webAccessToken");
+        accessTokenConfig.setValueName(webAccessToken);
+        userConfigValueService.resetUserConfigValue(accessTokenConfig);
+        //重新设置coralUserId信息
+        UserConfigValue coralUserIdConfig = new UserConfigValue();
+        coralUserIdConfig.setUserId(userId);
+        coralUserIdConfig.setType("NSO");
+        coralUserIdConfig.setKeyName("coralUserId");
+        coralUserIdConfig.setValueName(coralUserId);
+        userConfigValueService.resetUserConfigValue(coralUserIdConfig);
     }
 }
