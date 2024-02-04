@@ -99,6 +99,38 @@ public class ImageUtils{
     }
 
     /**
+     * 等比例缩放图片
+     * @param srcImagePath 读取图形路径
+     * @param ratio	放大比例
+     */
+    public static BufferedImage enlargementImageEqualProportion(String srcImagePath, double ratio) {
+        try{
+            //读入文件
+            File file = new File(srcImagePath);
+            // 构造Image对象
+            BufferedImage src = ImageIO.read(file);
+            int width = src.getWidth();
+            int height = src.getHeight();
+
+            int afterWidth = (int) (width * ratio);
+            int afterHeight = (int) (height * ratio);
+            // 放大边长
+            BufferedImage tag = new BufferedImage(afterWidth, afterHeight, BufferedImage.TYPE_INT_RGB);
+            //绘制放大后的图片
+            Graphics2D g = tag.createGraphics();
+
+            // 下面两行解决png透明图片会变黑的问题
+            tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
+            g = tag.createGraphics();
+
+            g.drawImage(src, 0, 0, afterWidth, afterHeight, null);
+            return tag;
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 重置图形的边长大小
      * @param srcImagePath
      * @param toImagePath
@@ -422,6 +454,24 @@ public class ImageUtils{
     }
 
     /**
+     * 将附加图片合并到底图的指定坐标
+     * @param g2d 底图文件创建的g2d对象
+     * @param additionImage	附加图片文件
+     * @param x		起始的x坐标
+     * @param y		起始的y坐标
+     */
+    @SneakyThrows
+    public static void mergeImageToOtherImage(Graphics2D g2d, File additionImage,
+                                              int x, int y, double ratio) {
+        try{
+            BufferedImage ratioImage = enlargementImageEqualProportion(additionImage.getAbsolutePath(), ratio);
+            g2d.drawImage(ratioImage, x, y,null);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 在源图片上设置水印文字
      * @param imageFile	源图片文件
      * @param fontPath	字体（例如：宋体）
@@ -455,6 +505,7 @@ public class ImageUtils{
             // VALUE_TEXT_ANTIALIAS_ON 改为 VALUE_TEXT_ANTIALIAS_LCD_HRGB
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             g2d.getDeviceConfiguration().createCompatibleImage(xWidth, yHeight, Transparency.TRANSLUCENT);
             //设置文字字体名称、样式、大小
             Font fontF = getFont(fontPath, fontStyle, fontSize);
@@ -478,6 +529,74 @@ public class ImageUtils{
             if(fos!=null){
                 fos.close();
             }
+        }
+    }
+
+    /**
+     * 从图片构建默认的g2d
+     */
+    public static Graphics2D createDefaultG2dFromFile(BufferedImage image) {
+        //创建java2D对象
+        Graphics2D g2d = image.createGraphics();
+        // 抗锯齿 添加文字
+        // VALUE_TEXT_ANTIALIAS_ON 改为 VALUE_TEXT_ANTIALIAS_LCD_HRGB
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        return g2d;
+    }
+
+    /**
+     * 绘制g2d图片，输出文件
+     */
+    @SneakyThrows
+    public static void writeG2dToFile(Graphics2D g2d, BufferedImage image, File imageFile) {
+        FileOutputStream fos=null;
+        try {
+            g2d.dispose();
+            fos=new FileOutputStream(imageFile);
+            ImageIO.write(image, imageFile.getName().substring(imageFile.getName().lastIndexOf(".") + 1), fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(fos!=null){
+                fos.close();
+            }
+        }
+    }
+
+    /**
+     * 在源图片上设置水印文字
+     * @param fontPath	字体（例如：宋体）
+     * @param fontStyle		字体格式(例如：普通样式--Font.PLAIN、粗体--Font.BOLD )
+     * @param fontSize	字体大小
+     * @param color	字体颜色(例如：黑色--Color.BLACK)
+     * @param inputWords		输入显示在图片上的文字
+     * @param x		文字显示起始的x坐标
+     * @param y		文字显示起始的y坐标
+     * @param xWidth    x坐标最大宽度
+     * @param yHeight   y坐标最大高度
+     * @param way   文字方向，0-横向， 1-纵向
+     */
+    public static void writeWordInImage(Graphics2D g2d,
+                                        String fontPath, int fontStyle, int fontSize,
+                                        Color color,
+                                        String inputWords,
+                                        int x, int y,
+                                        int xWidth, int yHeight,
+                                        int way) {
+        //设置文字字体名称、样式、大小
+        Font fontF = getFont(fontPath, fontStyle, fontSize);
+        g2d.setFont(fontF);
+        //设置字体颜色
+        g2d.setColor(color);
+        //按文字方向绘制文字
+        if (way == 0) {
+            // 横向换行算法
+            drawLineWord(g2d, fontF, inputWords, x, y, xWidth);
+        }else if (way == 1) {
+            // 竖向换行算法
+            drawVerticalWord(g2d, fontF, inputWords, x, y, yHeight);
         }
     }
 

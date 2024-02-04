@@ -147,7 +147,7 @@ public class QqNsoHandler {
                     .eq(UserConfigValue::getUserId, event.getAuthor().getId())
                     .eq(UserConfigValue::getType, "NSO")
                     .eq(UserConfigValue::getKeyName, "webAccessToken"));
-            accountInfo = nsoApiCaller.getNsFriendList(webAccessTokenConfig.getValueName());
+            accountInfo = nsoApiCaller.getNsAccountInfo(webAccessTokenConfig.getValueName());
         }
 
         String swCode = "SW-" + accountInfo.getJSONObject("result").getJSONObject("links").getJSONObject("friendCode").getString("id");
@@ -160,13 +160,14 @@ public class QqNsoHandler {
     /**
      * 获取ns好友列表
      */
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"ns好友列表", "/ns好友列表"}, name = "获取好友列表")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"ns好友", "/ns好友"}, name = "获取好友列表")
     public void getNsFriendList(QqMessage event) {
         //获取用户的accessToken
         UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, event.getAuthor().getId())
                 .eq(UserConfigValue::getType, "NSO")
                 .eq(UserConfigValue::getKeyName, "webAccessToken"));
+        //如果为空，告诉用户未设置nso登录码
         if(webAccessTokenConfig == null) {
             ChannelMessage channelMessage = new ChannelMessage();
             channelMessage.setContent("当前用户未设置nso登录码");

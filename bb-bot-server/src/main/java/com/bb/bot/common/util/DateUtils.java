@@ -18,6 +18,15 @@ public class DateUtils {
     public static DateTimeFormatter timePatternHourAndMinute = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
+     * 将日期时间字符串从英国时间转换到北京时间，并返回格式yyyy-MM-dd HH:mm-HH:mm的LocalDateTime
+     * @author ren
+     */
+    public static LocalDateTime convertUTCTimeToCNLocalDateTime(String time) {
+        //字符串时间转换成时间类型
+        return LocalDateTime.parse(time, timePattern).plusHours(8);
+    }
+
+    /**
      * 将日期时间字符串从英国时间转换到北京时间，并返回格式yyyy-MM-dd HH:mm-HH:mm的字符串
      * @author ren
      */

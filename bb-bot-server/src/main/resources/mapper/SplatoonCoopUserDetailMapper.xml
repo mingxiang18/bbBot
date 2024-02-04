@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bb.bot.database.splatoon.mapper.SplatoonCoopUserDetailMapper">
+    
+    <resultMap type="com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail" id="SplatoonCoopUserDetailResult">
+        <result property="id"    column="id"    />
+        <result property="coopId"    column="coop_id"    />
+        <result property="meFlag"    column="me_flag"    />
+        <result property="playerId"    column="player_id"    />
+        <result property="playerName"    column="player_name"    />
+        <result property="playerCode"    column="player_code"    />
+        <result property="playerTag"    column="player_tag"    />
+        <result property="playerClothesName"    column="player_clothes_name"    />
+        <result property="weapons"    column="weapons"    />
+        <result property="specialWeaponId"    column="special_weapon_id"    />
+        <result property="specialWeaponName"    column="special_weapon_name"    />
+        <result property="defeatEnemyCount"    column="defeat_enemy_count"    />
+        <result property="deliverRedCount"    column="deliver_red_count"    />
+        <result property="deliverGlodenCount"    column="deliver_gloden_count"    />
+        <result property="assistGlodenCount"    column="assist_gloden_count"    />
+        <result property="rescueCount"    column="rescue_count"    />
+        <result property="rescuedCount"    column="rescued_count"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSplatoonCoopUserDetailVo">
+        select id, coop_id, me_flag, player_id, player_name, player_code, player_tag, player_clothes_name, weapons, special_weapon_id, special_weapon_name, defeat_enemy_count, deliver_red_count, deliver_gloden_count, assist_gloden_count, rescue_count, rescued_count, create_time from splatoon_coop_user_detail
+    </sql>
+</mapper>

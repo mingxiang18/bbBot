@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bb.bot.database.splatoon.mapper.SplatoonCoopRecordsMapper">
+    
+    <resultMap type="com.bb.bot.database.splatoon.entity.SplatoonCoopRecord" id="SplatoonCoopRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="coopId"    column="coop_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="rule"    column="rule"    />
+        <result property="playedTime"    column="played_time"    />
+        <result property="coopStageId"    column="coop_stage_id"    />
+        <result property="coopStageName"    column="coop_stage_name"    />
+        <result property="dangerRate"    column="danger_rate"    />
+        <result property="afterGradeId"    column="after_grade_id"    />
+        <result property="afterGradeName"    column="after_grade_name"    />
+        <result property="afterGradePoint"    column="after_grade_point"    />
+        <result property="resultWave"    column="result_wave"    />
+        <result property="teamGlodenCount"    column="team_gloden_count"    />
+        <result property="teamRedCount"    column="team_red_count"    />
+        <result property="bossId"    column="boss_id"    />
+        <result property="bossName"    column="boss_name"    />
+        <result property="goldScale"    column="gold_scale"    />
+        <result property="silverScale"    column="silver_scale"    />
+        <result property="bronzeScale"    column="bronze_scale"    />
+        <result property="weapon1"    column="weapon1"    />
+        <result property="weapon2"    column="weapon2"    />
+        <result property="weapon3"    column="weapon3"    />
+        <result property="weapon4"    column="weapon4"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSplatoonCoopRecordsVo">
+        select id, coop_id, user_id, rule, played_time, coop_stage_id, coop_stage_name, danger_rate, after_grade_id, after_grade_name, after_grade_point, result_wave, team_gloden_count, team_red_count, boss_id, boss_name, gold_scale, silver_scale, bronze_scale, weapon1, weapon2, weapon3, weapon4, create_time from splatoon_coop_records
+    </sql>
+</mapper>

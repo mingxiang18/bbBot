@@ -194,6 +194,36 @@ public class FileUtils {
     }
 
     /**
+     * 如果目标文件不存在，获取指定路径的文件数据并保存到目标文件中
+     *
+     * @param source 数据
+     * @param dest 目标文件
+     */
+    @SneakyThrows
+    public static void writeSourceFileToDestFile(String source, String dest) {
+        File destFile = new File(dest);
+        //判断目标文件是否存在
+        if (!destFile.exists()) {
+            //判断目录是否存在，不存在则创建
+            if (!destFile.getParentFile().exists()) {
+                destFile.getParentFile().mkdirs();
+            }
+            destFile.createNewFile();
+            //获取源文件
+            byte[] data = getFile(source);
+            try {
+                //写入数据到目标文件
+                writeBytes(data, dest);
+            }catch (Exception e) {
+                //写入失败要删除文件
+                File file = new File(dest);
+                file.delete();
+                throw e;
+            }
+        }
+    }
+
+    /**
      * 写数据到文件中
      *
      * @param data 数据
@@ -202,15 +232,13 @@ public class FileUtils {
      * @throws IOException IO异常
      */
     public static String writeBytes(byte[] data, String uploadDir) throws IOException {
-        FileOutputStream fos = null;
-        String pathName = "";
-        try {
-            File file = new File(uploadDir);
-            fos = new FileOutputStream(file);
+        File file = new File(uploadDir);
+        try (
+                FileOutputStream fos = new FileOutputStream(file);){
             fos.write(data);
             return file.getAbsolutePath();
-        } finally {
-            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
