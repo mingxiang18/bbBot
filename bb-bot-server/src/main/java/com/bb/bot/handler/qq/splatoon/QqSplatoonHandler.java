@@ -6,7 +6,7 @@ import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.qq.QqMessageApi;
 import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.common.util.ImageUploadClient;
+import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.common.util.ImageUtils;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.common.constant.EventType;
@@ -43,7 +43,7 @@ public class QqSplatoonHandler {
     private RestClient restClient;
 
     @Autowired
-    private ImageUploadClient imageUploadClient;
+    private ImageUploadApi imageUploadApi;
 
     private HashMap<String, String> ruleModeMap = new HashMap<String, String>() {{
         put("Turf War", "涂地");
@@ -115,7 +115,7 @@ public class QqSplatoonHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
@@ -163,7 +163,7 @@ public class QqSplatoonHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
@@ -260,7 +260,7 @@ public class QqSplatoonHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
@@ -299,7 +299,7 @@ public class QqSplatoonHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }

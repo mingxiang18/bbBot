@@ -1,4 +1,4 @@
-package com.bb.bot.common.util;
+package com.bb.bot.common.util.imageUpload;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,11 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 图片上传工具，上传并获取链接
+ * sm图床的图片上传工具
  */
 @Slf4j
 @Component
-public class ImageUploadClient {
+@ConditionalOnProperty(prefix="imageUpload",name = "type", havingValue = "sm", matchIfMissing = false)
+public class SmImageUploadApiImpl implements ImageUploadApi{
 
     @Autowired
     private RestClient restClient;
@@ -36,6 +38,7 @@ public class ImageUploadClient {
     @Value("${imageUpload.token:}")
     private String token;
 
+    @Override
     @SneakyThrows
     public String uploadImage(File file) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -76,6 +79,7 @@ public class ImageUploadClient {
      * 删除所有上传的图片
      * 图片仅是临时保存，用于中转给qq接收，定时清理图片，防止图床占用满了
      */
+    @Override
     public void deleteAllImage() {
         List<String> deleteImageHash = new ArrayList<>();
 

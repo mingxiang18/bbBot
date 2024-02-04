@@ -1,6 +1,6 @@
 package com.bb.bot.schedule;
 
-import com.bb.bot.common.util.ImageUploadClient;
+import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class TmpImageCleanSchedule {
 
     @Autowired
-    private ImageUploadClient imageUploadClient;
+    private ImageUploadApi imageUploadApi;
 
     /**
      * 每天23点30清理一次临时图片
@@ -26,6 +26,6 @@ public class TmpImageCleanSchedule {
      */
     @Scheduled(cron = "0 30 23 * * *")
     public void cleanTmpImage(){
-        imageUploadClient.deleteAllImage();
+        imageUploadApi.deleteAllImage();
     }
 }

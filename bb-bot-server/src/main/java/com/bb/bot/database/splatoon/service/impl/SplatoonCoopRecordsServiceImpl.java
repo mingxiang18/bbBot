@@ -70,8 +70,10 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
                 FileUtils.getAbsolutePath("nso_splatoon/coop/stage/") + splatoonCoopRecord.getCoopStageName() + ".png");
 
         splatoonCoopRecord.setDangerRate(String.valueOf(coopDetail.getBigDecimal("dangerRate").multiply(new BigDecimal(100)).intValue()));
-        splatoonCoopRecord.setAfterGradeId(coopDetail.getJSONObject("afterGrade").getString("id"));
-        splatoonCoopRecord.setAfterGradeName(coopDetail.getJSONObject("afterGrade").getString("name"));
+        if(coopDetail.getJSONObject("afterGrade") != null) {
+            splatoonCoopRecord.setAfterGradeId(coopDetail.getJSONObject("afterGrade").getString("id"));
+            splatoonCoopRecord.setAfterGradeName(coopDetail.getJSONObject("afterGrade").getString("name"));
+        }
         splatoonCoopRecord.setAfterGradePoint(coopDetail.getInteger("afterGradePoint"));
         splatoonCoopRecord.setGradePointDiff(coopRecord.getString("gradePointDiff"));
         splatoonCoopRecord.setResultWave(coopDetail.getInteger("resultWave"));

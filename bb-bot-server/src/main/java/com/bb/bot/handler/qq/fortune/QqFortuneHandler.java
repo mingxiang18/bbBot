@@ -13,7 +13,7 @@ import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.util.FileUtils;
-import com.bb.bot.common.util.ImageUploadClient;
+import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.common.util.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class QqFortuneHandler {
     private QqMessageApi qqMessageApi;
 
     @Autowired
-    private ImageUploadClient imageUploadClient;
+    private ImageUploadApi imageUploadApi;
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/抽签"}, name = "抽签")
     public void helloHandle(QqMessage event) {
@@ -80,7 +80,7 @@ public class QqFortuneHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }

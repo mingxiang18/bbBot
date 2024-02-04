@@ -83,3 +83,9 @@ aiChat:
 # chatGPT相关配置
 chatGPT:
   apiKey:
+
+tencent:
+  #腾讯云对象存储配置
+  cos:
+    secretId:
+    secretKey:

@@ -157,6 +157,35 @@ public class ImageUtils{
     }
 
     /**
+     * 重置图形的边长大小
+     * @param srcImagePath
+     * @param width
+     * @param height
+     */
+    public static BufferedImage resizeImage(String srcImagePath, int width, int height) {
+        try{
+            //读入文件
+            File file = new File(srcImagePath);
+            // 构造Image对象
+            BufferedImage src = ImageIO.read(file);
+
+            // 放大边长
+            BufferedImage tag = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            //绘制放大后的图片
+            Graphics2D g = tag.createGraphics();
+
+            // 下面两行解决png透明图片会变黑的问题
+            tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
+            g = tag.createGraphics();
+
+            g.drawImage(src, 0, 0, width, height, null);
+            return tag;
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * 横向拼接图片（两张）
      * @param firstSrcImagePath 第一张图片的路径
      * @param secondSrcImagePath	第二张图片的路径
@@ -465,6 +494,27 @@ public class ImageUtils{
                                               int x, int y, double ratio) {
         try{
             BufferedImage ratioImage = enlargementImageEqualProportion(additionImage.getAbsolutePath(), ratio);
+            g2d.drawImage(ratioImage, x, y,null);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将附加图片缩放到指定尺寸并合并到底图的指定坐标
+     * @param g2d 底图文件创建的g2d对象
+     * @param additionImage	附加图片文件
+     * @param x		起始的x坐标
+     * @param y		起始的y坐标
+     * @param xWeight   缩放后的图片宽度
+     * @param yHeight	缩放后的图片高度
+     */
+    @SneakyThrows
+    public static void mergeImageToOtherImage(Graphics2D g2d, File additionImage,
+                                              int x, int y,
+                                              int xWeight, int yHeight) {
+        try{
+            BufferedImage ratioImage = resizeImage(additionImage.getAbsolutePath(), xWeight, yHeight);
             g2d.drawImage(ratioImage, x, y,null);
         }catch(Exception e){
             e.printStackTrace();

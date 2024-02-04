@@ -9,6 +9,7 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.*;
+import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
@@ -24,6 +25,7 @@ import com.bb.bot.util.RestClient;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
@@ -51,7 +53,7 @@ public class QqSplatoonUserHandler {
     private RestClient restClient;
 
     @Autowired
-    private ImageUploadClient imageUploadClient;
+    private ImageUploadApi imageUploadApi;
 
     @Autowired
     private Splatoon3ApiCaller splatoon3ApiCaller;
@@ -75,6 +77,12 @@ public class QqSplatoonUserHandler {
         put("UP", "↑");
         put("DOWN", "↓");
         put("KEEP", "→");
+    }};
+
+    private Map<String, String> ruleMap = new HashMap<String, String>() {{
+        put("REGULAR", "普通打工");
+        put("TEAM_CONTEST", "团队工");
+        put("BIG_RUN", "大型跑");
     }};
 
     /**
@@ -152,7 +160,7 @@ public class QqSplatoonUserHandler {
      * 打工记录
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.FUZZY, keyword = {"打工记录", "/打工记录"}, name = "打工记录")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^打工记录", "^/打工记录"}, name = "打工记录")
     public void getCoopRecords(QqMessage event) {
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("打工记录(\\d+)");
@@ -207,7 +215,7 @@ public class QqSplatoonUserHandler {
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadClient.uploadImage(imageFile));
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
@@ -250,16 +258,16 @@ public class QqSplatoonUserHandler {
 
         //武器1绘制
         File weapon1 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png"));
-        ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 0.12);
+        ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 35, 35);
         //武器2绘制
         File weapon2 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png"));
-        ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 0.12);
+        ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 35, 35);
         //武器3绘制
         File weapon3 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png"));
-        ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 0.12);
+        ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 35, 35);
         //武器4绘制
         File weapon4 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png"));
-        ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 0.12);
+        ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
 
         //绘制运蛋数
         ImageUtils.writeWordInImage(g2d,
@@ -277,14 +285,25 @@ public class QqSplatoonUserHandler {
                 200, 30,
                 0);
 
-        String pointDiff = pointDiffMap.get(record.getGradePointDiff());
-        //绘制分数
-        ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
-                record.getAfterGradeName() + " " + record. getAfterGradePoint() + " " + pointDiff,
-                20, startY + 80,
-                200, 30,
-                0);
+        if (StringUtils.isNoneBlank(record.getAfterGradeId())) {
+            String pointDiff = pointDiffMap.get(record.getGradePointDiff());
+            //绘制分数
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
+                    record.getAfterGradeName() + " " + record. getAfterGradePoint() + " " + pointDiff,
+                    20, startY + 90,
+                    200, 30,
+                    0);
+        }else {
+            String ruleName = ruleMap.get(record.getRule());
+            //如果没有分数，绘制模式名称
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
+                    "模式：" + ruleName,
+                    20, startY + 90,
+                    200, 30,
+                    0);
+        }
 
         int userX = 140;
         Color color = Color.YELLOW;
