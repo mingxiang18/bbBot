@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 任天堂online登录事件处理器
@@ -160,8 +162,20 @@ public class QqNsoHandler {
     /**
      * 获取ns好友列表
      */
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"ns好友", "/ns好友"}, name = "获取好友列表")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^ns好友", "^/ns好友"}, name = "获取好友列表")
     public void getNsFriendList(QqMessage event) {
+        // 定义正则表达式模式
+        Pattern pattern = Pattern.compile("ns好友(\\d+)");
+        Matcher matcher = pattern.matcher(event.getContent());
+        Integer pageNum = 1;
+        Integer pageSize = 10;
+        Integer pageStart = 0;
+        // 如果找到匹配项
+        if (matcher.find()) {
+            pageNum = Integer.valueOf(matcher.group(1));
+        }
+        pageStart = (pageNum-1) * pageSize;
+
         //获取用户的accessToken
         UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, event.getAuthor().getId())
@@ -191,10 +205,21 @@ public class QqNsoHandler {
 
         //拼装好友登录状态
         JSONArray friendMessageList = nsFriendList.getJSONObject("result").getJSONArray("friends");
-        for (Object friendMessage : friendMessageList) {
-            returnMessage.append("好友名：【" + ((JSONObject) friendMessage).getString("name") + "】" +
-                    ",  在线状态：" + ((JSONObject) friendMessage).getJSONObject("presence").getString("state") +
-                    ",  上次在线：" + LocalDateTime.ofEpochSecond(((JSONObject) friendMessage).getJSONObject("presence").getLong("updatedAt"), 0, ZoneOffset.ofHours(8)).format(DateUtils.normalTimePattern) + "\n");
+        returnMessage.append("好友数：" + friendMessageList.size() + "\n");
+        returnMessage.append("页数：" + pageNum + "/" + (friendMessageList.size() % pageSize == 0 ? (friendMessageList.size() / pageSize) : (friendMessageList.size() / pageSize + 1)) + "\n");
+
+        for (int i = pageStart; i < friendMessageList.size() && i < pageStart + pageSize; i++) {
+            JSONObject friendMessage = friendMessageList.getJSONObject(i);
+            String state = friendMessage.getJSONObject("presence").getString("state");
+            if ("ONLINE".equals(state)) {
+                JSONObject gameInfo = friendMessage.getJSONObject("presence").getJSONObject("game");
+                state = "在线" + (gameInfo == null ? "" : "，游戏中：" + gameInfo.getString("name"));
+            }else if ("OFFLINE".equals(state)) {
+                state = "离线，上次在线：" + LocalDateTime.ofEpochSecond(friendMessage.getJSONObject("presence").getLong("updatedAt"), 0, ZoneOffset.ofHours(8)).format(DateUtils.normalTimePattern);
+            }
+
+            returnMessage.append("好友名：【" + friendMessage.getString("name") + "】" +
+                    "（" + state + "）\n");
         }
 
         ChannelMessage channelMessage = new ChannelMessage();

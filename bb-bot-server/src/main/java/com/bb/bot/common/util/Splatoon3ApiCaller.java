@@ -33,6 +33,8 @@ public class Splatoon3ApiCaller {
     public static final String SPLATNET3_URL = "https://api.lp1.av5ja.srv.nintendo.net";
     public static final String GRAPHQL_URL = SPLATNET3_URL + "/api/graphql";
     public static final UUID S3S_NAMESPACE = UUID.fromString("b3a2dbf5-2c09-4792-b78c-00b548b70aeb");
+    //web版本号获取正则
+    private static final Pattern WEB_VERSION_PATTERN = Pattern.compile("\\b(?<revision>[0-9a-f]{40})\\b[\\S]*?void 0[\\S]*?\"revision_info_not_set\"\\}`,.*?=`(?<version>\\d+\\.\\d+\\.\\d+)-");
 
     private static final String[] SUPPORTED_KEYS = {
             "ignore_private",
@@ -399,27 +401,14 @@ public class Splatoon3ApiCaller {
             headers.set("Cookie", "_dnt=1");
             String mainJsBodyText = restClient.get("https://api.lp1.av5ja.srv.nintendo.net" + mainJsUrl, headers, String.class);
 
-            // 定义正则表达式模式
-            Pattern pattern = Pattern.compile("REACT_APP_REVISION:\"([^\"]+)\"");
-            // 在 main_js_body_text 中搜索匹配项
-            Matcher matcher = pattern.matcher(mainJsBodyText);
+            // 在 main_js_body_text 中搜索版本号正则匹配项
+            Matcher matcher = WEB_VERSION_PATTERN.matcher(mainJsBodyText);
             String revision = null;
-            // 如果找到匹配项
-            if (matcher.find()) {
-                revision = matcher.group(1);
-            } else {
-                // 如果没有找到匹配项
-                throw new RuntimeException("无法找到指定web版本匹配项");
-            }
-
-            // 使用正则表达式匹配版本号
-            Pattern pattern2 = Pattern.compile("I0=`([^-]+)-");
-            // 在 main_js_body_text 中搜索匹配项
-            Matcher matcher2 = pattern2.matcher(mainJsBodyText);
             String version = null;
             // 如果找到匹配项
-            if (matcher2.find()) {
-                version = matcher2.group(1);
+            if (matcher.find()) {
+                revision = matcher.group("revision");
+                version = matcher.group("version");
             } else {
                 // 如果没有找到匹配项
                 throw new RuntimeException("无法找到指定web版本匹配项");

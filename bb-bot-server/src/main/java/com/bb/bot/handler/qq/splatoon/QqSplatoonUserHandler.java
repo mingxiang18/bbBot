@@ -88,8 +88,20 @@ public class QqSplatoonUserHandler {
     /**
      * 获取喷喷好友列表
      */
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"喷喷好友", "/喷喷好友"}, name = "获取喷喷好友列表")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^喷喷好友", "^/喷喷好友"}, name = "获取喷喷好友列表")
     public void getSplatoon3FriendList(QqMessage event) {
+        // 定义正则表达式模式
+        Pattern pattern = Pattern.compile("喷喷好友(\\d+)");
+        Matcher matcher = pattern.matcher(event.getContent());
+        Integer pageNum = 1;
+        Integer pageSize = 10;
+        Integer pageStart = 0;
+        // 如果找到匹配项
+        if (matcher.find()) {
+            pageNum = Integer.valueOf(matcher.group(1));
+        }
+        pageStart = (pageNum-1) * pageSize;
+
         //获取token
         TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
         //调用接口获取数据
@@ -98,9 +110,27 @@ public class QqSplatoonUserHandler {
         StringBuilder returnMessage = new StringBuilder();
         //拼装好友登录状态
         JSONArray friendMessageList = friends.getJSONObject("data").getJSONObject("friends").getJSONArray("nodes");
-        for (Object friendMessage : friendMessageList) {
-            returnMessage.append("好友名：【" + ((JSONObject) friendMessage).getString("nickname") + "】" +
-                    ",  在线状态：" + ((JSONObject) friendMessage).getString("onlineState") + "\n");
+        returnMessage.append("好友数：" + friendMessageList.size() + "\n");
+        returnMessage.append("页数：" + pageNum + "/" + (friendMessageList.size() % pageSize == 0 ? (friendMessageList.size() / pageSize) : (friendMessageList.size() / pageSize + 1)) + "\n");
+
+        for (int i = pageStart; i < friendMessageList.size() && i < pageStart + pageSize; i++) {
+            JSONObject friendMessage = friendMessageList.getJSONObject(i);
+            String onlineState = friendMessage.getString("onlineState");
+            if ("VS_MODE_FIGHTING".equals(onlineState)) {
+                onlineState = "比赛中";
+            }else if ("VS_MODE_MATCHING".equals(onlineState)) {
+                onlineState = "比赛匹配中";
+            }else if ("COOP_MODE_FIGHTING".equals(onlineState)) {
+                onlineState = "打工中";
+            }else if ("COOP_MODE_MATCHING".equals(onlineState)) {
+                onlineState = "打工匹配中";
+            }else if ("ONLINE".equals(onlineState)) {
+                onlineState = "在线";
+            }else if ("OFFLINE".equals(onlineState)) {
+                onlineState = "离线";
+            }
+            returnMessage.append("好友名：【" + friendMessage.getString("nickname") + "】" +
+                    ",  " + onlineState + "\n");
         }
 
         ChannelMessage channelMessage = new ChannelMessage();
