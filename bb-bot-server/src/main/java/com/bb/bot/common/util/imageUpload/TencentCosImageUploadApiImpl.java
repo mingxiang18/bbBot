@@ -26,7 +26,7 @@ import java.util.Date;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix="imageUpload",name = "type", havingValue = "tencentCos", matchIfMissing = true)
+@ConditionalOnProperty(prefix="imageUpload",name = "type", havingValue = "tencentCos", matchIfMissing = false)
 public class TencentCosImageUploadApiImpl implements ImageUploadApi{
 
     @Autowired
