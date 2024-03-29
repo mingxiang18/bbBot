@@ -53,10 +53,17 @@ public class QqSplatoonHandler {
         put("Rainmaker", "抢鱼");
     }};
 
+    private HashMap<String, String> bossImgMap = new HashMap<String, String>() {{
+        put("Q29vcEVuZW15LTI0", "nso_splatoon/coop/boss/chenlong.png");
+        put("Q29vcEVuZW15LTI1", "nso_splatoon/coop/boss/jue.png");
+        put("Q29vcEVuZW15LTIz", "nso_splatoon/coop/boss/henggang.png");
+    }};
+
     /**
      * splatoon3对战地图获取
      * @author ren
      */
+    @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/图", "/下图", "/下下图", "/下下下图", "图", "下图", "下下图", "下下下图"}, name = "对战地图获取")
     public void regularMapHandle(QqMessage event) {
         //接收的消息内容
@@ -84,32 +91,37 @@ public class QqSplatoonHandler {
         File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 587);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
 
         //涂地地图绘制
         JSONObject scheduleObject = dataObject.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
-        regularMapWriteFromSchedules(imageFile, scheduleObject, 20, 15, "regular");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 15, "regular");
 
         //单排地图绘制
         scheduleObject = dataObject.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(0);
-        regularMapWriteFromSchedules(imageFile, scheduleObject, 20, 145, "rank");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 145, "rank");
 
         //组排地图绘制
         scheduleObject = dataObject.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(1);
-        regularMapWriteFromSchedules(imageFile, scheduleObject, 20, 275, "league1");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 275, "league1");
 
         //x比赛地图绘制
         scheduleObject = dataObject.getJSONObject("xSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("xMatchSetting");
-        regularMapWriteFromSchedules(imageFile, scheduleObject, 20, 405, "x");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 405, "x");
 
         //绘制对战模式时间
         JSONObject timeObject = dataObject.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 23, Color.WHITE,
                 "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
                 230, 555,
                 500, 500,
-                0,
-                imageFile.getAbsolutePath());
+                0);
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
         ChannelMessage channelMessage = new ChannelMessage();
@@ -124,6 +136,7 @@ public class QqSplatoonHandler {
      * splatoon3打工地图获取
      * @author ren
      */
+    @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/工", "/下工", "/下下工", "/下下下工", "工", "下工", "下下工", "下下下工"}, name = "打工地图获取")
     public void coopMapHandle(QqMessage event) {
         //接收的消息内容
@@ -151,13 +164,19 @@ public class QqSplatoonHandler {
         File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 754, 674);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
 
         //获取打工日程节点
         JSONArray scheduleArray = dataObject.getJSONObject("coopGroupingSchedule").getJSONObject("regularSchedules").getJSONArray("nodes");
         //绘制打工地图1
-        coopMapWriteFromSchedules(imageFile, scheduleArray.getJSONObject(timeIndex), 40, 50);
+        coopMapWriteFromSchedules(g2d, scheduleArray.getJSONObject(timeIndex), 40, 50);
         //绘制打工地图2
-        coopMapWriteFromSchedules(imageFile, scheduleArray.getJSONObject(timeIndex+1), 40, 370);
+        coopMapWriteFromSchedules(g2d, scheduleArray.getJSONObject(timeIndex+1), 40, 370);
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
         ChannelMessage channelMessage = new ChannelMessage();
@@ -172,6 +191,7 @@ public class QqSplatoonHandler {
      * splatoon3祭典日程
      * @author ren
      */
+    @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/祭典", "/上祭典", "/上上祭典", "祭典", "上祭典", "上上祭典"}, name = "祭典日程")
     public void festivalHandle(QqMessage event) {
         //接收的消息内容
@@ -201,6 +221,9 @@ public class QqSplatoonHandler {
         File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
         //裁剪部分背景
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 450);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
 
         //获取祭典节点
         JSONObject festivalObject = dataObject.getJSONObject("festRecords").getJSONArray("nodes").getJSONObject(timeIndex);
@@ -208,53 +231,51 @@ public class QqSplatoonHandler {
 
         //绘制祭典标题
         String festivalName = transferObject.getJSONObject("festivals").getJSONObject(id).getString("title");
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 33, Color.WHITE,
                 "祭典主题：" + festivalName,
                 40, 75,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //绘制祭典图片
         String imageUrl = festivalObject.getJSONObject("image").getString("url");
-        ImageUtils.mergeImageToOtherImage(imageFile, getImageFile(imageUrl, "festival"), 40, 120, 0.3, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, getImageFile(imageUrl, "festival"), 40, 120, 0.3);
 
         //绘制祭典分组名称
         JSONArray festivalTeams = transferObject.getJSONObject("festivals").getJSONObject(id).getJSONArray("teams");
         //莎莎队
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(0).getString("teamName"),
                 70, 360,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
         //曼曼队
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(1).getString("teamName"),
                 250, 360,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
         //鬼蝠队
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(2).getString("teamName"),
                 430, 360,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //绘制祭典时间
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
                 "祭典时间：" + DateUtils.convertUTCTimeToALLShowString(festivalObject.getString("startTime"), festivalObject.getString("endTime")),
                 100, 410,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
         ChannelMessage channelMessage = new ChannelMessage();
@@ -269,6 +290,7 @@ public class QqSplatoonHandler {
      * splatoon3活动日程
      * @author ren
      */
+    @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/活动", "活动"}, name = "活动日程")
     public void eventHandle(QqMessage event) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -286,14 +308,20 @@ public class QqSplatoonHandler {
         File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
         //裁剪部分背景
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 674);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
 
         //绘制活动1
-        eventMapWriteFromSchedules(imageFile, dataObject.getJSONObject("eventSchedules").getJSONArray("nodes").getJSONObject(0),
+        eventMapWriteFromSchedules(g2d, dataObject.getJSONObject("eventSchedules").getJSONArray("nodes").getJSONObject(0),
                 transferObject, 0, 0);
 
         //绘制活动2
-        eventMapWriteFromSchedules(imageFile, dataObject.getJSONObject("eventSchedules").getJSONArray("nodes").getJSONObject(1),
+        eventMapWriteFromSchedules(g2d, dataObject.getJSONObject("eventSchedules").getJSONArray("nodes").getJSONObject(1),
                 transferObject, 0, 335);
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
         ChannelMessage channelMessage = new ChannelMessage();
@@ -307,7 +335,7 @@ public class QqSplatoonHandler {
     /**
      * 对战地图绘制
      */
-    private void regularMapWriteFromSchedules(File imageFile, JSONObject scheduleObject, int x, int y, String modeName) {
+    private void regularMapWriteFromSchedules(Graphics2D g2d, JSONObject scheduleObject, int x, int y, String modeName) {
         //对战模式获取
         String ruleMode = scheduleObject.getJSONObject("vsRule").getString("name");
 
@@ -322,148 +350,137 @@ public class QqSplatoonHandler {
         File imageFile2 = getImageFile(imageUrl2, "stages");
 
         //绘制对战模式名称
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 42, Color.WHITE,
                 ruleModeMap.get(ruleMode),
                 x+10, y+40,
                 30, 30,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //绘制地图1
-        ImageUtils.mergeImageToOtherImage(imageFile, imageFile1, x+75, y, 0.6, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, imageFile1, x+75, y, 0.6);
 
         //绘制地图2
-        ImageUtils.mergeImageToOtherImage(imageFile, imageFile2, x+325, y, 0.6, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, imageFile2, x+325, y, 0.6);
 
         //绘制对战图标
         File iconImage = new File(FileUtils.getAbsolutePath("splatoon/mode/" + modeName + ".png"));
-        ImageUtils.mergeImageToOtherImage(imageFile, iconImage, x+290, y+25, 0.5, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, iconImage, x+290, y+25, 0.5);
     }
 
 
     /**
      * 绘制打工地图
      */
-    private void coopMapWriteFromSchedules(File imageFile, JSONObject scheduleObject, int x, int y) {
+    private void coopMapWriteFromSchedules(Graphics2D g2d, JSONObject scheduleObject, int x, int y) {
+        //绘制boss图标
+        JSONObject bassInfo = scheduleObject.getJSONObject("setting").getJSONObject("boss");
+        if (bassInfo != null) {
+            String imgPath = bossImgMap.get(bassInfo.getString("id"));
+            if (imgPath != null) {
+                File bossImg = new File(FileUtils.getAbsolutePath(imgPath));
+                ImageUtils.mergeImageToOtherImage(g2d, bossImg, x, y-25, 40, 40);
+            }
+        }
+
         //绘制打工时间
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 25, Color.WHITE,
                 "所处时段：" + DateUtils.convertUTCTimeToALLShowString(scheduleObject.getString("startTime"), scheduleObject.getString("endTime")),
-                x, y,
+                x + 50, y,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
+
 
         //绘制打工地图
         //地图获取
         String mapUrl = scheduleObject.getJSONObject("setting").getJSONObject("coopStage").getJSONObject("thumbnailImage").getString("url");
         File mapFile = getImageFile(mapUrl, "coop");
         //绘制地图
-        ImageUtils.mergeImageToOtherImage(imageFile, mapFile, x, y+40, 1, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, mapFile, x, y+40, 1);
 
         //绘制武器
         JSONArray weapons = scheduleObject.getJSONObject("setting").getJSONArray("weapons");
-        writeFileToBackground(imageFile, getImageFile(weapons.getJSONObject(0).getJSONObject("image").getString("url"), "weapons"),
+        writeFileToBackground(g2d, getImageFile(weapons.getJSONObject(0).getJSONObject("image").getString("url"), "weapons"),
                 x+440, y+40, 90);
-        writeFileToBackground(imageFile, getImageFile(weapons.getJSONObject(1).getJSONObject("image").getString("url"), "weapons"),
+        writeFileToBackground(g2d, getImageFile(weapons.getJSONObject(1).getJSONObject("image").getString("url"), "weapons"),
                 x+560, y+40, 90);
-        writeFileToBackground(imageFile, getImageFile(weapons.getJSONObject(2).getJSONObject("image").getString("url"), "weapons"),
+        writeFileToBackground(g2d, getImageFile(weapons.getJSONObject(2).getJSONObject("image").getString("url"), "weapons"),
                 x+440, y+150, 90);
-        writeFileToBackground(imageFile, getImageFile(weapons.getJSONObject(3).getJSONObject("image").getString("url"), "weapons"),
+        writeFileToBackground(g2d, getImageFile(weapons.getJSONObject(3).getJSONObject("image").getString("url"), "weapons"),
                 x+560, y+150, 90);
     }
 
     /**
      * 活动地图绘制
      */
-    private void eventMapWriteFromSchedules(File imageFile, JSONObject eventObject, JSONObject transferObject, int x, int y) {
+    private void eventMapWriteFromSchedules(Graphics2D g2d, JSONObject eventObject, JSONObject transferObject, int x, int y) {
         //获取活动详情
         JSONObject scheduleObject = eventObject.getJSONObject("leagueMatchSetting");
         String id = scheduleObject.getJSONObject("leagueMatchEvent").getString("id");
 
         //获取活动图标
         File iconImage = new File(FileUtils.getAbsolutePath("splatoon/mode/event.png"));
-        ImageUtils.mergeImageToOtherImage(imageFile, iconImage, x+15, y, 1.2, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, iconImage, x+15, y, 1.2);
 
         //获取活动名称
         String eventName = transferObject.getJSONObject("events").getJSONObject(id).getString("name");
         //绘制活动名称
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
                 eventName,
                 x+95, y+50,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //获取活动描述
         String eventDesc = transferObject.getJSONObject("events").getJSONObject(id).getString("desc");
         //绘制活动描述
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 20, Color.WHITE,
                 eventDesc,
                 x+95, y+90,
                 600, 600,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //对战模式获取
         String ruleMode = scheduleObject.getJSONObject("vsRule").getString("name");
         //绘制对战模式名称
-        ImageUtils.writeWordInImage(imageFile,
+        ImageUtils.writeWordInImage(g2d,
                 "font/sakura.ttf", Font.PLAIN, 42, Color.WHITE,
                 ruleModeMap.get(ruleMode),
                 x+30, y+160,
                 30, 30,
-                0,
-                imageFile.getAbsolutePath());
+                0);
 
         //地图1获取
         String imageUrl1 = scheduleObject.getJSONArray("vsStages")
                 .getJSONObject(0).getJSONObject("image").getString("url");
         File imageFile1 = getImageFile(imageUrl1, "stages");
         //绘制地图1
-        ImageUtils.mergeImageToOtherImage(imageFile, imageFile1, x+95, y+110, 0.6, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, imageFile1, x+95, y+110, 0.6);
 
         //地图2获取
         String imageUrl2 = scheduleObject.getJSONArray("vsStages")
                 .getJSONObject(1).getJSONObject("image").getString("url");
         File imageFile2 = getImageFile(imageUrl2, "stages");
         //绘制地图2
-        ImageUtils.mergeImageToOtherImage(imageFile, imageFile2, x+345, y+110, 0.6, imageFile);
+        ImageUtils.mergeImageToOtherImage(g2d, imageFile2, x+345, y+110, 0.6);
 
         //活动时间获取
         JSONArray timePeriods = eventObject.getJSONArray("timePeriods");
-        //绘制活动时间1
-        if (timePeriods.size() >= 1) {
-            ImageUtils.writeWordInImage(imageFile,
-                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                    "活动时间1：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(0).getString("startTime"), timePeriods.getJSONObject(0).getString("endTime")),
-                    x + 95, y + 260,
+        int offsetY = 250;
+        int offsetLength = 16;
+        for (int i = 0; i < timePeriods.size(); i++) {
+            JSONObject timePeriod = timePeriods.getJSONObject(i);
+            //活动时间绘制
+            ImageUtils.writeWordInImage(g2d,
+                    "font/sakura.ttf", Font.PLAIN, 16, Color.YELLOW,
+                    "活动时间" + (i + 1) + "：" + DateUtils.convertUTCTimeToShowString(timePeriod.getString("startTime"), timePeriod.getString("endTime")),
+                    x + 195, y + offsetY,
                     600, 600,
-                    0,
-                    imageFile.getAbsolutePath());
-        }
-        //绘制活动时间2
-        if (timePeriods.size() >= 2) {
-            ImageUtils.writeWordInImage(imageFile,
-                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                    "活动时间2：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(1).getString("startTime"), timePeriods.getJSONObject(1).getString("endTime")),
-                    x + 95, y + 280,
-                    600, 600,
-                    0,
-                    imageFile.getAbsolutePath());
-        }
-        //绘制活动时间3
-        if (timePeriods.size() >= 3) {
-            ImageUtils.writeWordInImage(imageFile,
-                    "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
-                    "活动时间3：" + DateUtils.convertUTCTimeToShowString(timePeriods.getJSONObject(2).getString("startTime"), timePeriods.getJSONObject(2).getString("endTime")),
-                    x + 95, y + 300,
-                    600, 600,
-                    0,
-                    imageFile.getAbsolutePath());
+                    0);
+            offsetY = offsetY + offsetLength;
         }
     }
 
@@ -472,11 +489,11 @@ public class QqSplatoonHandler {
      * @param width 宽度，会将图片等比缩放到该宽度
      */
     @SneakyThrows
-    private void writeFileToBackground(File backgroundFile, File subFile, int x, int y, int width) {
+    private void writeFileToBackground(Graphics2D g2d, File subFile, int x, int y, int width) {
         // 构造Image对象
         BufferedImage subImage = ImageIO.read(subFile);
         double ratio = ((double) width) / subImage.getWidth();
-        ImageUtils.mergeImageToOtherImage(backgroundFile, subFile, x, y, ratio, backgroundFile);
+        ImageUtils.mergeImageToOtherImage(g2d, subFile, x, y, ratio);
     }
 
     /**
