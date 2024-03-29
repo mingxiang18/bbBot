@@ -254,13 +254,8 @@ public class QqSplatoonUserHandler {
      * 绘制一条打工记录
      */
     private void writeOneCoopRecord(Graphics2D g2d, SplatoonCoopRecord record, List<SplatoonCoopUserDetail> userDetailList, int startY) {
-        //绘制分割线
-        ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.WHITE,
-                "-------------------------------------------------------------------------",
-                20, startY,
-                2000, 30,
-                0);
+        //绘制半透明底色
+        ImageUtils.createRoundRectOnImage(g2d, Color.ORANGE, 15, startY, 690, 130, 0.3f);
 
         //绘制记录序号
         ImageUtils.writeWordInImage(g2d,
@@ -272,7 +267,7 @@ public class QqSplatoonUserHandler {
 
         //绘制打工时间
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
                 record.getPlayedTime().format(DateUtils.normalTimePattern),
                 20, startY + 40,
                 200, 30,
@@ -298,6 +293,9 @@ public class QqSplatoonUserHandler {
         //武器4绘制
         File weapon4 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png"));
         ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
+
+        //绘制团队蛋数底色
+        ImageUtils.createRoundRectOnImage(g2d, Color.ORANGE, 580, startY + 3, 80, 40, 0.5f);
 
         //绘制运蛋数
         ImageUtils.writeWordInImage(g2d,
@@ -335,9 +333,12 @@ public class QqSplatoonUserHandler {
                     0);
         }
 
-        int userX = 140;
-        Color color = Color.YELLOW;
+        int userX = 120;
+        Color color = Color.WHITE;
         for (SplatoonCoopUserDetail splatoonCoopUserDetail : userDetailList) {
+            //绘制用户数据底色
+            ImageUtils.createRoundRectOnImage(g2d, Color.WHITE, userX, startY + 45, 130, 80 , 0.2f);
+
             //绘制名称
             ImageUtils.writeWordInImage(g2d,
                     FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, color,
@@ -368,7 +369,6 @@ public class QqSplatoonUserHandler {
                     0);
 
             userX += 150;
-            color = Color.WHITE;
         }
     }
 

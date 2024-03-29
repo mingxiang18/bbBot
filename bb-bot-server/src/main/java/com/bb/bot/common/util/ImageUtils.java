@@ -99,6 +99,28 @@ public class ImageUtils{
     }
 
     /**
+     * 在图片内部设置透明矩形
+     * @param g2d 图片g2d对象
+     * @param alpha	透明度
+     */
+    public static void createRoundRectOnImage(Graphics2D g2d, Color color, int x, int y, int width, int height, float alpha) {
+        //生成临时图片
+        BufferedImage tmpImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        //创建java2D对象
+        Graphics2D tmpG2d = ImageUtils.createDefaultG2dFromFile(tmpImage);
+        tmpImage = tmpG2d.getDeviceConfiguration().createCompatibleImage(tmpImage.getWidth(null), tmpImage.getHeight(null), Transparency.TRANSLUCENT);
+        tmpG2d = tmpImage.createGraphics();
+        // 创建透明度对象
+        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+        // 设置透明度
+        tmpG2d.setComposite(alphaComposite);
+        tmpG2d.setColor(color);
+        tmpG2d.fillRoundRect(0, 0, width, height, 10, 10);
+
+        g2d.drawImage(tmpImage, x, y, null);
+    }
+
+    /**
      * 等比例缩放图片
      * @param srcImagePath 读取图形路径
      * @param ratio	放大比例
