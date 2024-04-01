@@ -373,7 +373,7 @@ public class QqSplatoonUserHandler {
                     userX + 60, startY + 86, 18, 18);
             ImageUtils.writeWordInImage(g2d,
                     FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getDeliverGlodenCount() + "            " + splatoonCoopUserDetail.getDeliverRedCount(),
+                    splatoonCoopUserDetail.getDeliverGlodenCount() + "             " + splatoonCoopUserDetail.getDeliverRedCount(),
                     userX + 20, startY + 100,
                     200, 30,
                     0);
@@ -384,7 +384,7 @@ public class QqSplatoonUserHandler {
                     userX + 60, startY + 106, 36, 18);
             ImageUtils.writeWordInImage(g2d,
                     FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getRescueCount() + "            " + splatoonCoopUserDetail.getRescuedCount(),
+                    splatoonCoopUserDetail.getRescueCount() + "             " + splatoonCoopUserDetail.getRescuedCount(),
                     userX + 40, startY + 120,
                     200, 30,
                     0);
