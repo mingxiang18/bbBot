@@ -255,7 +255,7 @@ public class QqSplatoonUserHandler {
      */
     private void writeOneCoopRecord(Graphics2D g2d, SplatoonCoopRecord record, List<SplatoonCoopUserDetail> userDetailList, int startY) {
         //绘制半透明底色
-        ImageUtils.createRoundRectOnImage(g2d, Color.ORANGE, 15, startY, 690, 130, 0.3f);
+        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 15, startY, 690, 130, 0.3f);
 
         //绘制记录序号
         ImageUtils.writeWordInImage(g2d,
@@ -277,7 +277,7 @@ public class QqSplatoonUserHandler {
         ImageUtils.writeWordInImage(g2d,
                 FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 record.getCoopStageName(),
-                140, startY + 30,
+                120, startY + 30,
                 200, 30,
                 0);
 
@@ -294,22 +294,35 @@ public class QqSplatoonUserHandler {
         File weapon4 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png"));
         ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
 
-        //绘制团队蛋数底色
-        ImageUtils.createRoundRectOnImage(g2d, Color.ORANGE, 580, startY + 3, 80, 40, 0.5f);
+        //绘制危险度底色
+        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 560, startY + 3, 70, 38, 0.3f);
 
-        //绘制运蛋数
+        //绘制危险度
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.YELLOW,
-                "红蛋数：" + record.getTeamRedCount(),
-                580, startY + 15,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.YELLOW,
+                "危险度：" + record.getDangerRate() + "%",
+                560, startY + 25,
                 200, 30,
                 0);
 
-        //绘制运蛋数
+        //绘制团队蛋数底色
+        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 3, 60, 38, 0.3f);
+
+        //绘制金蛋数
+        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold.png")), 640, startY + 2, 18, 18);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.YELLOW,
-                "金蛋数：" + record.getTeamGlodenCount(),
-                580, startY + 35,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                String.valueOf(record.getTeamGlodenCount()),
+                660, startY + 15,
+                200, 30,
+                0);
+
+        //绘制红蛋数
+        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/red.png")), 640, startY + 22, 18, 18);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                String.valueOf(record.getTeamRedCount()),
+                660, startY + 35,
                 200, 30,
                 0);
 
@@ -337,7 +350,7 @@ public class QqSplatoonUserHandler {
         Color color = Color.WHITE;
         for (SplatoonCoopUserDetail splatoonCoopUserDetail : userDetailList) {
             //绘制用户数据底色
-            ImageUtils.createRoundRectOnImage(g2d, Color.WHITE, userX, startY + 45, 130, 80 , 0.2f);
+            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 135, 80 , 0.4f);
 
             //绘制名称
             ImageUtils.writeWordInImage(g2d,
@@ -354,17 +367,25 @@ public class QqSplatoonUserHandler {
                     200, 30,
                     0);
             //绘制运蛋数
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold.png")),
+                    userX, startY + 86, 18, 18);
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/red.png")),
+                    userX + 60, startY + 86, 18, 18);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "金蛋：" + splatoonCoopUserDetail.getDeliverGlodenCount() + "，红蛋：" + splatoonCoopUserDetail.getDeliverRedCount(),
-                    userX, startY + 100,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                    splatoonCoopUserDetail.getDeliverGlodenCount() + "            " + splatoonCoopUserDetail.getDeliverRedCount(),
+                    userX + 20, startY + 100,
                     200, 30,
                     0);
             //绘制救援数
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/rescue.png")),
+                    userX, startY + 106, 36, 18);
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/rescued.png")),
+                    userX + 60, startY + 106, 36, 18);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "救人：" + splatoonCoopUserDetail.getRescueCount() + "，死亡：" + splatoonCoopUserDetail.getRescuedCount(),
-                    userX, startY + 120,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                    splatoonCoopUserDetail.getRescueCount() + "            " + splatoonCoopUserDetail.getRescuedCount(),
+                    userX + 40, startY + 120,
                     200, 30,
                     0);
 
