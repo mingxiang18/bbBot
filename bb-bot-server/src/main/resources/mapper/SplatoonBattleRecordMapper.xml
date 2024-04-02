@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bb.bot.database.splatoon.mapper.SplatoonBattleRecordMapper">
+    
+    <resultMap type="com.bb.bot.database.splatoon.entity.SplatoonBattleRecord" id="SplatoonBattleRecordResult">
+        <result property="id"    column="id"    />
+        <result property="appBattleId"    column="app_battle_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="vsModeId"    column="vs_mode_id"    />
+        <result property="vsModeName"    column="vs_mode_name"    />
+        <result property="vsRuleId"    column="vs_rule_id"    />
+        <result property="vsRuleName"    column="vs_rule_name"    />
+        <result property="vsStageId"    column="vs_stage_id"    />
+        <result property="vsStageName"    column="vs_stage_name"    />
+        <result property="judgement"    column="judgement"    />
+        <result property="score"    column="score"    />
+        <result property="pointChange"    column="point_change"    />
+        <result property="power"    column="power"    />
+        <result property="playedTime"    column="played_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSplatoonBattleRecordVo">
+        select id, app_battle_id, user_id, vs_mode_id, vs_mode_name, vs_rule_id, vs_rule_name, vs_stage_id, vs_stage_name, judgement, score, point_change, power, played_time, create_time from splatoon_battle_record
+    </sql>
+</mapper>

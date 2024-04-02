@@ -11,8 +11,11 @@ import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.*;
 import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.constant.BotType;
+import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
+import com.bb.bot.database.splatoon.service.ISplatoonBattleRecordService;
+import com.bb.bot.database.splatoon.service.ISplatoonBattleUserDetailService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
@@ -66,6 +69,12 @@ public class QqSplatoonUserHandler {
 
     @Autowired
     private ISplatoonCoopUserDetailService coopUserDetailService;
+
+    @Autowired
+    private ISplatoonBattleRecordService battleRecordService;
+
+    @Autowired
+    private ISplatoonBattleUserDetailService battleUserDetailService;
 
     @Autowired
     private NsoApiCaller nsoApiCaller;
@@ -246,6 +255,53 @@ public class QqSplatoonUserHandler {
         channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
         channelMessage.setFile(imageFile);
         channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 上传对战记录
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传对战记录", "/上传对战记录"}, name = "上传对战记录")
+    public void syncBattleRecords(QqMessage event) {
+        //获取token
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        //调用接口获取数据
+        JSONObject battles = splatoon3ApiCaller.getRecentBattles(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        //获取用户账户信息的id
+        String userAccountId = tokenInfo.getUserInfo().getString("id");
+
+        //获取对战数据里的历史节点
+        JSONArray historyNodesArray = battles.getJSONObject("data").getJSONObject("latestBattleHistories").getJSONObject("historyGroups").getJSONArray("nodes");
+
+        for (int i = 0; i < historyNodesArray.size(); i++) {
+            //获取一个时段的对战信息
+            JSONObject coopGroup = historyNodesArray.getJSONObject(i);
+            //获取所有对战记录
+            JSONArray battleRecordNodes = coopGroup.getJSONObject("historyDetails").getJSONArray("nodes");
+            for (int j = 0; j < battleRecordNodes.size(); j++) {
+                JSONObject battleRecord = battleRecordNodes.getJSONObject(j);
+                String appBattleId = battleRecord.getString("id");
+                //查询数据库是否已存在记录
+                SplatoonBattleRecord record = battleRecordService.getOne(new LambdaQueryWrapper<SplatoonBattleRecord>()
+                        .eq(SplatoonBattleRecord::getUserId, userAccountId)
+                        .eq(SplatoonBattleRecord::getAppBattleId, appBattleId));
+
+                //如果不存在则开始记录
+                if (record == null) {
+                    //调用接口获取对战数据详情
+                    JSONObject battleDetail = splatoon3ApiCaller.getBattleDetail(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo(), appBattleId);
+                    battleDetail = battleDetail.getJSONObject("data").getJSONObject("vsHistoryDetail");
+
+                    //保存获取到的对战记录详情
+                    battleRecordService.saveBattleRecordDetail(userAccountId, battleRecord, battleDetail);
+                }
+
+            }
+        }
+
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent("上传对战记录完成");
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }

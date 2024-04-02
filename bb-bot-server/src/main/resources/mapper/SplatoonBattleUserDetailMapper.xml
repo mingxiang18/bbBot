@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bb.bot.database.splatoon.mapper.SplatoonBattleUserDetailMapper">
+    
+    <resultMap type="com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail" id="SplatoonBattleUserDetailResult">
+        <result property="id"    column="id"    />
+        <result property="battleId"    column="battle_id"    />
+        <result property="meFlag"    column="me_flag"    />
+        <result property="teamFlag"    column="team_flag"    />
+        <result property="playerId"    column="player_id"    />
+        <result property="playerName"    column="player_name"    />
+        <result property="playerCode"    column="player_code"    />
+        <result property="playerTag"    column="player_tag"    />
+        <result property="playerBadges"    column="player_badges"    />
+        <result property="playerBackground"    column="player_background"    />
+        <result property="playerHeadGear"    column="player_head_gear"    />
+        <result property="playerClothesGear"    column="player_clothes_gear"    />
+        <result property="playerShoesGear"    column="player_shoes_gear"    />
+        <result property="weaponId"    column="weapon_id"    />
+        <result property="weaponName"    column="weapon_name"    />
+        <result property="weaponSpecialId"    column="weapon_special_id"    />
+        <result property="weaponSpecialName"    column="weapon_special_name"    />
+        <result property="weaponSubWeaponId"    column="weapon_sub_weapon_id"    />
+        <result property="weaponSubWeaponName"    column="weapon_sub_weapon_name"    />
+        <result property="paint"    column="paint"    />
+        <result property="kill"    column="kill"    />
+        <result property="death"    column="death"    />
+        <result property="assist"    column="assist"    />
+        <result property="special"    column="special"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSplatoonBattleUserDetailVo">
+        select id, battle_id, me_flag, team_flag, player_id, player_name, player_code, player_tag, player_badges, player_background, player_head_gear, player_clothes_gear, player_shoes_gear, weapon_id, weapon_name, weapon_special_id, weapon_special_name, weapon_sub_weapon_id, weapon_sub_weapon_name, paint, kill, death, assist, special, create_time from splatoon_battle_user_detail
+    </sql>
+</mapper>
