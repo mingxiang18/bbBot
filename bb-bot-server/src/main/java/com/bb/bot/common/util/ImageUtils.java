@@ -126,6 +126,16 @@ public class ImageUtils{
      * @param ratio	放大比例
      */
     public static BufferedImage enlargementImageEqualProportion(String srcImagePath, double ratio) {
+        return enlargementImageEqualProportion(srcImagePath, ratio, 1);
+    }
+
+    /**
+     * 等比例缩放图片
+     * @param srcImagePath 读取图形路径
+     * @param ratio	放大比例
+     * @param alpha	透明度
+     */
+    public static BufferedImage enlargementImageEqualProportion(String srcImagePath, double ratio, float alpha) {
         try{
             //读入文件
             File file = new File(srcImagePath);
@@ -144,6 +154,8 @@ public class ImageUtils{
             // 下面两行解决png透明图片会变黑的问题
             tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
             g = tag.createGraphics();
+            // 设置透明度
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
             g.drawImage(src, 0, 0, afterWidth, afterHeight, null);
             return tag;
@@ -516,6 +528,25 @@ public class ImageUtils{
                                               int x, int y, double ratio) {
         try{
             BufferedImage ratioImage = enlargementImageEqualProportion(additionImage.getAbsolutePath(), ratio);
+            g2d.drawImage(ratioImage, x, y,null);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将附加图片合并到底图的指定坐标
+     * @param g2d 底图文件创建的g2d对象
+     * @param additionImage	附加图片文件
+     * @param x		起始的x坐标
+     * @param y		起始的y坐标
+     * @param alpha		透明度
+     */
+    @SneakyThrows
+    public static void mergeImageToOtherImage(Graphics2D g2d, File additionImage,
+                                              int x, int y, double ratio, float alpha) {
+        try{
+            BufferedImage ratioImage = enlargementImageEqualProportion(additionImage.getAbsolutePath(), ratio, alpha);
             g2d.drawImage(ratioImage, x, y,null);
         }catch(Exception e){
             e.printStackTrace();

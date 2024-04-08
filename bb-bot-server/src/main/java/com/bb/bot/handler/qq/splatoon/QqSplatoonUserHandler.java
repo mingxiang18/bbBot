@@ -12,6 +12,7 @@ import com.bb.bot.common.util.*;
 import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
+import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleRecordService;
@@ -25,6 +26,7 @@ import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.handler.qq.nso.QqNsoHandler;
 import com.bb.bot.util.FileUtils;
 import com.bb.bot.util.RestClient;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +37,15 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 喷喷获取已登录的用户事件处理器
@@ -82,16 +88,31 @@ public class QqSplatoonUserHandler {
     @Autowired
     private QqNsoHandler qqNsoHandler;
 
-    private Map<String, String> pointDiffMap = new HashMap<String, String>() {{
+    public static Map<String, String> pointDiffMap = new HashMap<String, String>() {{
         put("UP", "↑");
         put("DOWN", "↓");
         put("KEEP", "→");
     }};
 
-    private Map<String, String> ruleMap = new HashMap<String, String>() {{
+    public static Map<String, String> ruleMap = new HashMap<String, String>() {{
         put("REGULAR", "普通打工");
         put("TEAM_CONTEST", "团队工");
         put("BIG_RUN", "大型跑");
+    }};
+
+    public static Map<String, String> battleRuleMap = new HashMap<String, String>() {{
+        put("VnNSdWxlLTI=", "nso_splatoon/battle/rule/ta.png");
+        put("VnNSdWxlLTE=", "nso_splatoon/battle/rule/quyu.png");
+        put("VnNSdWxlLTM=", "nso_splatoon/battle/rule/yuhu.png");
+        put("VnNSdWxlLTQ=", "nso_splatoon/battle/rule/geli.png");
+    }};
+
+    public static Map<String, modeStyle> modeStyleMap = new HashMap<String, modeStyle>() {{
+        put("VnNNb2RlLTE=", new modeStyle("VnNNb2RlLTE=", "占地比赛", new Color(95, 255, 26), "nso_splatoon/battle/mode/regular.png"));
+        put("VnNNb2RlLTUx", new modeStyle("VnNNb2RlLTUx", "蛮颓比赛", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
+        put("VnNNb2RlLTQ=", new modeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
+        put("VnNNb2RlLTU=", new modeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
+        put("VnNNb2RlLTM=", new modeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
     }};
 
     /**
@@ -225,6 +246,10 @@ public class QqSplatoonUserHandler {
         File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
+
+        //记录图片绘制时间
+        LocalDateTime startTime = LocalDateTime.now();
+
         //从临时图片创建默认g2d对象
         BufferedImage image = ImageIO.read(imageFile);
         Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
@@ -249,6 +274,8 @@ public class QqSplatoonUserHandler {
 
         //将绘制完成的临时图片写入文件
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        //打印耗时日志
+        log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
         //发送消息
         ChannelMessage channelMessage = new ChannelMessage();
@@ -302,6 +329,75 @@ public class QqSplatoonUserHandler {
 
         ChannelMessage channelMessage = new ChannelMessage();
         channelMessage.setContent("上传对战记录完成");
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 对战记录
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^对战记录", "^/对战记录"}, name = "对战记录")
+    public void getBattleRecords(QqMessage event) {
+        // 定义正则表达式模式
+        Pattern pattern = Pattern.compile("对战记录(\\d+)");
+        Matcher matcher = pattern.matcher(event.getContent());
+        Integer pageNum = null;
+        Integer pageStart = null;
+        // 如果找到匹配项
+        if (matcher.find()) {
+            pageNum = Integer.valueOf(matcher.group(1));
+        }
+        if (pageNum != null) {
+            pageStart = (pageNum-1) * 5;
+        }
+
+        //获取token
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        //获取用户账户信息的id
+        String userAccountId = tokenInfo.getUserInfo().getString("id");
+
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+        //查询数据库记录
+        List<SplatoonBattleRecord> recordList = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
+                .eq(SplatoonBattleRecord::getUserId, userAccountId)
+                .orderByDesc(SplatoonBattleRecord::getPlayedTime)
+                .last("limit " + (pageStart == null ? "" : pageStart + ",") + "5"));
+
+        //记录图片绘制时间
+        LocalDateTime startTime = LocalDateTime.now();
+
+        int startY = 20;
+        for (SplatoonBattleRecord record : recordList) {
+            //查询数据库用户详细记录
+            List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
+                    .eq(SplatoonBattleUserDetail::getBattleId, record.getId().toString()));
+
+            //绘制当前对战记录
+            writeOneBattleRecord(g2d, record, userDetailList, startY);
+
+            startY += 140;
+        }
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        //打印耗时日志
+        log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
+
+        //发送消息
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
+        channelMessage.setFile(imageFile);
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
         channelMessage.setMsgId(event.getId());
         qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
@@ -450,6 +546,174 @@ public class QqSplatoonUserHandler {
     }
 
     /**
+     * 绘制一条对战记录
+     */
+    private void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
+        QqSplatoonUserHandler.modeStyle modeStyle = QqSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
+        //绘制半透明底色
+        ImageUtils.createRoundRectOnImage(g2d, modeStyle.getColor(), 15, startY, 700, 132, 0.3f);
+
+        //绘制记录序号
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                "序号：" + record.getId().toString(),
+                20, startY + 20,
+                200, 30,
+                0);
+
+        //绘制对战时间
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
+                record.getPlayedTime().format(DateUtils.normalTimePattern),
+                20, startY + 40,
+                200, 30,
+                0);
+
+        //绘制模式标志
+        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(modeStyle.getModeImgPath())),
+                120, startY + 8, 30, 30);
+
+        //绘制规则标志,涂地模式没有标志，是不绘制的
+        String ruleImgPath = QqSplatoonUserHandler.battleRuleMap.get(record.getVsRuleId());
+        if (StringUtils.isNoneBlank(ruleImgPath)) {
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(ruleImgPath)),
+                    150, startY + 8, 30, 30);
+        }
+
+        //绘制地图
+        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/battle/stage/" + record.getVsStageId() + ".png")),
+                190, startY + 8, 0.2, 1f);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                record.getVsStageName(),
+                360, startY + 30,
+                200, 30,
+                0);
+
+        //绘制胜负
+        Color judgeColor = Color.WHITE;
+        if ("WIN".equals(record.getJudgement())) {
+            judgeColor = Color.YELLOW;
+        }else if ("LOSE".equals(record.getJudgement())) {
+            judgeColor = Color.WHITE;
+        }
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 20, judgeColor,
+                record.getJudgement(),
+                40, startY + 90,
+                200, 30,
+                0);
+
+        //绘制分数变化
+        if (record.getPointChange() != null) {
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
+                    (record.getPointChange() > 0 ? "+" + record.getPointChange() : record.getPointChange()) + "p",
+                    560, startY + 25,
+                    200, 30,
+                    0);
+        }
+
+        //绘制xp数
+        if (record.getPower() != null) {
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, Color.WHITE,
+                    "xp" + record.getPower(),
+                    650, startY + 25,
+                    200, 30,
+                    0);
+        }
+
+        int userX = 120;
+        //排序用户
+        userDetailList = userDetailList.stream().sorted(new Comparator<SplatoonBattleUserDetail>() {
+            @Override
+            public int compare(SplatoonBattleUserDetail o1, SplatoonBattleUserDetail o2) {
+                if (o1.getMeFlag() == 1) {
+                    return -1;
+                }else if (o1.getTeamOrder() == null){
+                    return 1;
+                }else if (o2.getTeamOrder() == null){
+                    return -1;
+                }else {
+                    return o1.getTeamOrder().compareTo(o2.getTeamOrder());
+                }
+            }
+        }).collect(Collectors.toList());
+
+        Color winColor = Color.YELLOW;
+        Color teamColor = new Color(89, 181, 170);
+        File teamKillImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/kill.png"));
+        File teamDeathImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/death.png"));
+
+        for (int i = 0; i < userDetailList.size(); i++) {
+            SplatoonBattleUserDetail splatoonBattleUserDetail = userDetailList.get(i);
+            //绘制用户数据底色
+            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 146, 40 , 0.6f);
+
+            //绘制队伍标识
+            ImageUtils.createRoundRectOnImage(g2d, teamColor, userX - 2, startY + 48, 5, 5, 1f);
+
+            //绘制武器图片
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png")),
+                    userX - 2, startY + 50, 27, 27);
+            //绘制用户名称
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, winColor,
+                    splatoonBattleUserDetail.getPlayerName(),
+                    userX + 26, startY + 60,
+                    200, 30,
+                    0);
+            //绘制击倒数
+            ImageUtils.mergeImageToOtherImage(g2d, teamKillImg,
+                    userX + 21, startY + 65, 30, 15);
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    splatoonBattleUserDetail.getKillCount() == null ? "null" : splatoonBattleUserDetail.getKillCount() + "(" + splatoonBattleUserDetail.getAssistCount() + ")",
+                    userX + 50, startY + 76,
+                    200, 30,
+                    0);
+
+            //绘制死亡数
+            ImageUtils.mergeImageToOtherImage(g2d, teamDeathImg,
+                    userX + 73, startY + 65, 30, 15);
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    splatoonBattleUserDetail.getDeathCount() == null ? "null" : splatoonBattleUserDetail.getDeathCount().toString(),
+                    userX + 100, startY + 76,
+                    200, 30,
+                    0);
+            //绘制大招数
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/specialWeapon/" + splatoonBattleUserDetail.getWeaponSpecialId() + ".png")),
+                    userX + 113, startY + 65, 15, 15);
+            ImageUtils.writeWordInImage(g2d,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    splatoonBattleUserDetail.getSpecialCount() == null ? "null" : splatoonBattleUserDetail.getSpecialCount().toString(),
+                    userX + 128, startY + 76,
+                    200, 30,
+                    0);
+
+            //按照以下顺序切换xy坐标
+            //1 3 5 7
+            //2 4 6 8
+            if (i % 2 == 0) {
+                startY = startY + 44;
+            }else if (i % 2 != 0) {
+                userX = userX + 150;
+                startY = startY - 44;
+            }
+
+            //切换小队颜色和图片
+            if (i == 3) {
+                teamColor = new Color(180, 65, 106);
+                winColor = Color.GRAY;
+                teamKillImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/kill2.png"));
+                teamDeathImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/death2.png"));
+            }
+        }
+    }
+
+    /**
      * 喷喷用户token实体类
      */
     @Data
@@ -463,6 +727,18 @@ public class QqSplatoonUserHandler {
             this.bulletToken = bulletToken;
             this.userInfo = userInfo;
         }
+    }
+
+    /**
+     * 喷喷模式绘制配置实体类
+     */
+    @Data
+    @AllArgsConstructor
+    public static class modeStyle {
+        private String modeId;
+        private String modeName;
+        private Color color;
+        private String modeImgPath;
     }
 
     /**

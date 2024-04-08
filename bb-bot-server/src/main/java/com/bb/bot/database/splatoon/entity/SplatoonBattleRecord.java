@@ -36,6 +36,9 @@ public class SplatoonBattleRecord {
     @ApiModelProperty("对战模式名称")
     private String vsModeName;
 
+    @ApiModelProperty("对战子模式，仅蛮颓比赛有，open-开放，其他码值是挑战")
+    private String vsSubMode;
+
     @ApiModelProperty("对战规则id")
     private String vsRuleId;
 

@@ -53,6 +53,9 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         JSONObject vsMode = battleRecord.getJSONObject("vsMode");
         splatoonBattleRecord.setVsModeId(vsMode.getString("id"));
         splatoonBattleRecord.setVsModeName(vsMode.getString("mode"));
+        if (battleDetail.getJSONObject("bankaraMatch") != null) {
+            splatoonBattleRecord.setVsSubMode(battleDetail.getJSONObject("bankaraMatch").getString("mode"));
+        }
 
         //设置对战规则
         JSONObject vsRule = battleRecord.getJSONObject("vsRule");
@@ -70,8 +73,14 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         splatoonBattleRecord.setJudgement(battleRecord.getString("judgement"));
         //设置对战计数
         if (battleRecord.getJSONObject("myTeam") != null
-            && battleRecord.getJSONObject("result") != null) {
-            splatoonBattleRecord.setScore(battleRecord.getJSONObject("myTeam").getJSONObject("result").getInteger("score"));
+            && battleRecord.getJSONObject("myTeam").getJSONObject("result") != null) {
+            JSONObject teamResult = battleRecord.getJSONObject("myTeam").getJSONObject("result");
+            //涂地模式设置涂地数，其他模式设置分数
+            if (teamResult.getInteger("score") != null) {
+                splatoonBattleRecord.setScore(teamResult.getInteger("score"));
+            }else if (teamResult.getInteger("paintPoint") != null) {
+                splatoonBattleRecord.setScore(teamResult.getInteger("paintPoint"));
+            }
         }
 
         //设置段位,只有部分比赛模式有
