@@ -156,6 +156,17 @@
 
             </plugin>
         </plugins>
+        <resources>
+            <!-- 打包时手动排除下列文件 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <!-- 相对路径 -->
+                    <exclude>static/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <finalName>${project.artifactId}</finalName>
     </build>
 </project>
