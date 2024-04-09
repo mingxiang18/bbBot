@@ -107,12 +107,17 @@ public class QqSplatoonUserHandler {
         put("VnNSdWxlLTQ=", "nso_splatoon/battle/rule/geli.png");
     }};
 
-    public static Map<String, modeStyle> modeStyleMap = new HashMap<String, modeStyle>() {{
-        put("VnNNb2RlLTE=", new modeStyle("VnNNb2RlLTE=", "占地比赛", new Color(95, 255, 26), "nso_splatoon/battle/mode/regular.png"));
-        put("VnNNb2RlLTUx", new modeStyle("VnNNb2RlLTUx", "蛮颓比赛", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
-        put("VnNNb2RlLTQ=", new modeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
-        put("VnNNb2RlLTU=", new modeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
-        put("VnNNb2RlLTM=", new modeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
+    public static Map<String, ModeStyle> modeStyleMap = new HashMap<String, ModeStyle>() {{
+        put("VnNNb2RlLTE=", new ModeStyle("VnNNb2RlLTE=", "占地比赛", new Color(95, 255, 26), "nso_splatoon/battle/mode/regular.png"));
+        put("VnNNb2RlLTUx", new ModeStyle("VnNNb2RlLTUx", "蛮颓比赛", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
+        put("VnNNb2RlLTQ=", new ModeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
+        put("VnNNb2RlLTU=", new ModeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
+        put("VnNNb2RlLTM=", new ModeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
+    }};
+
+    public static Map<String, TeamStyle> teamStyleMap = new HashMap<String, TeamStyle>() {{
+        put("team1", new TeamStyle(new Color(89, 181, 170), "nso_splatoon/battle/icon/kill.png", "nso_splatoon/battle/icon/death.png"));
+        put("team2", new TeamStyle(new Color(180, 65, 106), "nso_splatoon/battle/icon/kill2.png", "nso_splatoon/battle/icon/death2.png"));
     }};
 
     /**
@@ -549,7 +554,7 @@ public class QqSplatoonUserHandler {
      * 绘制一条对战记录
      */
     private void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
-        QqSplatoonUserHandler.modeStyle modeStyle = QqSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
+        ModeStyle modeStyle = QqSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
         //绘制半透明底色
         ImageUtils.createRoundRectOnImage(g2d, modeStyle.getColor(), 15, startY, 700, 132, 0.3f);
 
@@ -592,8 +597,10 @@ public class QqSplatoonUserHandler {
 
         //绘制胜负
         Color judgeColor = Color.WHITE;
+        Boolean isWin = false;
         if ("WIN".equals(record.getJudgement())) {
             judgeColor = Color.YELLOW;
+            isWin = true;
         }else if ("LOSE".equals(record.getJudgement())) {
             judgeColor = Color.WHITE;
         }
@@ -616,8 +623,9 @@ public class QqSplatoonUserHandler {
 
         //绘制xp数
         if (record.getPower() != null) {
+            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 7, 60, 30 , 0.3f);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, Color.WHITE,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
                     "xp" + record.getPower(),
                     650, startY + 25,
                     200, 30,
@@ -625,47 +633,58 @@ public class QqSplatoonUserHandler {
         }
 
         int userX = 120;
-        //排序用户
+
+        //获取用户本人的队伍
+        int meTeam = 0;
+        for (SplatoonBattleUserDetail splatoonBattleUserDetail : userDetailList) {
+            if (splatoonBattleUserDetail.getMeFlag() == 1) {
+                meTeam = splatoonBattleUserDetail.getTeamOrder();
+            }
+        }
+        //排序用户顺序, 规则：用户本人在第一位，用户本人队伍在前，其他队伍在后
+        int finalMeTeam = meTeam;
         userDetailList = userDetailList.stream().sorted(new Comparator<SplatoonBattleUserDetail>() {
             @Override
             public int compare(SplatoonBattleUserDetail o1, SplatoonBattleUserDetail o2) {
                 if (o1.getMeFlag() == 1) {
                     return -1;
+                }else if (o2.getMeFlag() == 1) {
+                    return 1;
                 }else if (o1.getTeamOrder() == null){
                     return 1;
                 }else if (o2.getTeamOrder() == null){
                     return -1;
+                }else if (o1.getTeamOrder() == finalMeTeam){
+                    return -1;
+                }else if (o2.getTeamOrder() == finalMeTeam){
+                    return 1;
                 }else {
                     return o1.getTeamOrder().compareTo(o2.getTeamOrder());
                 }
             }
         }).collect(Collectors.toList());
 
-        Color winColor = Color.YELLOW;
-        Color teamColor = new Color(89, 181, 170);
-        File teamKillImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/kill.png"));
-        File teamDeathImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/death.png"));
-
+        TeamStyle teamStyle = teamStyleMap.get("team1");
         for (int i = 0; i < userDetailList.size(); i++) {
             SplatoonBattleUserDetail splatoonBattleUserDetail = userDetailList.get(i);
             //绘制用户数据底色
             ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 146, 40 , 0.6f);
 
             //绘制队伍标识
-            ImageUtils.createRoundRectOnImage(g2d, teamColor, userX - 2, startY + 48, 5, 5, 1f);
+            ImageUtils.createRoundRectOnImage(g2d, teamStyle.getTeamColor(), userX - 2, startY + 48, 5, 5, 1f);
 
             //绘制武器图片
             ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png")),
                     userX - 2, startY + 50, 27, 27);
             //绘制用户名称
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, winColor,
+                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, isWin ? Color.YELLOW : Color.GRAY,
                     splatoonBattleUserDetail.getPlayerName(),
                     userX + 26, startY + 60,
                     200, 30,
                     0);
             //绘制击倒数
-            ImageUtils.mergeImageToOtherImage(g2d, teamKillImg,
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(teamStyle.getTeamKillImg())),
                     userX + 21, startY + 65, 30, 15);
             ImageUtils.writeWordInImage(g2d,
                     FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
@@ -675,7 +694,7 @@ public class QqSplatoonUserHandler {
                     0);
 
             //绘制死亡数
-            ImageUtils.mergeImageToOtherImage(g2d, teamDeathImg,
+            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(teamStyle.getTeamDeathImg())),
                     userX + 73, startY + 65, 30, 15);
             ImageUtils.writeWordInImage(g2d,
                     FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
@@ -705,12 +724,33 @@ public class QqSplatoonUserHandler {
 
             //切换小队颜色和图片
             if (i == 3) {
-                teamColor = new Color(180, 65, 106);
-                winColor = Color.GRAY;
-                teamKillImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/kill2.png"));
-                teamDeathImg = new File(FileUtils.getAbsolutePath("nso_splatoon/battle/icon/death2.png"));
+                teamStyle = QqSplatoonUserHandler.teamStyleMap.get("team2");
+                isWin = !isWin;
             }
         }
+    }
+
+    /**
+     * 喷喷模式绘制配置实体类
+     */
+    @Data
+    @AllArgsConstructor
+    public static class ModeStyle {
+        private String modeId;
+        private String modeName;
+        private Color color;
+        private String modeImgPath;
+    }
+
+    /**
+     * 喷喷对战小队样式配置实体类
+     */
+    @Data
+    @AllArgsConstructor
+    public static class TeamStyle {
+        private Color teamColor;
+        private String teamKillImg;
+        private String teamDeathImg;
     }
 
     /**
@@ -727,18 +767,6 @@ public class QqSplatoonUserHandler {
             this.bulletToken = bulletToken;
             this.userInfo = userInfo;
         }
-    }
-
-    /**
-     * 喷喷模式绘制配置实体类
-     */
-    @Data
-    @AllArgsConstructor
-    public static class modeStyle {
-        private String modeId;
-        private String modeName;
-        private Color color;
-        private String modeImgPath;
     }
 
     /**
