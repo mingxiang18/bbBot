@@ -113,6 +113,8 @@ public class QqSplatoonUserHandler {
         put("VnNNb2RlLTQ=", new ModeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
         put("VnNNb2RlLTU=", new ModeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
         put("VnNNb2RlLTM=", new ModeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
+        put("VnNNb2RlLTY=", new ModeStyle("VnNNb2RlLTY=", "祭典比赛", new Color(34, 220, 255, 255), "nso_splatoon/battle/mode/fest.png"));
+        put("VnNNb2RlLTg=", new ModeStyle("VnNNb2RlLTg=", "三色夺宝比赛", new Color(34, 255, 248, 255), "nso_splatoon/battle/mode/fest.png"));
     }};
 
     public static Map<String, TeamStyle> teamStyleMap = new HashMap<String, TeamStyle>() {{
