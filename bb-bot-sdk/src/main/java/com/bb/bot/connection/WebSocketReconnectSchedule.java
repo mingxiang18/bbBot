@@ -38,7 +38,7 @@ public class WebSocketReconnectSchedule {
             return;
         }
         if(!botWebSocketClient.hasConnection.get()) {
-            log.error("检查到机器人WebSocket客户端未连接，尝试重新连接");
+            log.info("检查到机器人WebSocket客户端未连接，尝试重新连接");
             try {
                 botWebSocketClient.reconnect();
             } catch (Exception e) {
