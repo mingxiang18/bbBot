@@ -123,6 +123,43 @@ public class QqSplatoonUserHandler {
     }};
 
     /**
+     * 自动上传喷喷记录
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"自动上传喷喷记录", "/自动上传喷喷记录", "关闭自动上传喷喷记录", "/关闭自动上传喷喷记录"}, name = "自动上传喷喷记录")
+    public void autoUploadRecordsConfig(QqMessage event) {
+        //获取用户配置
+        UserConfigValue userConfigValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "autoUploadRecords"));
+
+        //判断是开启还是关闭
+        String openFlag = "0";
+        if (!event.getContent().contains("关闭")) {
+            openFlag = "1";
+        }
+
+        //保存配置到数据库
+        if (userConfigValue == null) {
+            userConfigValue = new UserConfigValue();
+            userConfigValue.setUserId(event.getAuthor().getId());
+            userConfigValue.setType("NSO");
+            userConfigValue.setKeyName("autoUploadRecords");
+            userConfigValue.setValueName(openFlag);
+            userConfigValueService.save(userConfigValue);
+        }else {
+            userConfigValue.setValueName(openFlag);
+            userConfigValueService.updateById(userConfigValue);
+        }
+
+        //回复消息
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录");
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
      * 获取喷喷好友列表
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^喷喷好友", "^/喷喷好友"}, name = "获取喷喷好友列表")
@@ -181,8 +218,22 @@ public class QqSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传打工记录", "/上传打工记录"}, name = "上传打工记录")
     public void syncCoopRecords(QqMessage event) {
+        //开始上传打工记录
+        syncCoopRecords(event.getAuthor().getId());
+
+        //发送回复消息
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent("上传打工记录完成");
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 上传打工记录
+     */
+    public void syncCoopRecords(String userId) {
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(userId);
         //调用接口获取数据
         JSONObject coops = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
         //获取用户账户信息的id
@@ -216,11 +267,6 @@ public class QqSplatoonUserHandler {
 
             }
         }
-
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent("上传打工记录完成");
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
 
     /**
@@ -298,8 +344,22 @@ public class QqSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传对战记录", "/上传对战记录"}, name = "上传对战记录")
     public void syncBattleRecords(QqMessage event) {
+        //开始上传对战记录
+        syncBattleRecords(event.getAuthor().getId());
+
+        //发送回复消息
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent("上传对战记录完成");
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
+     * 上传对战记录
+     */
+    public void syncBattleRecords(String userId) {
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(userId);
         //调用接口获取数据
         JSONObject battles = splatoon3ApiCaller.getRecentBattles(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
         //获取用户账户信息的id
@@ -333,11 +393,6 @@ public class QqSplatoonUserHandler {
 
             }
         }
-
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent("上传对战记录完成");
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
     }
 
     /**
