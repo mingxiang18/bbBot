@@ -29,7 +29,7 @@ public class SplatoonRecordsUploadSchedule {
     /**
      * 每4小时进行一次记录上传
      */
-    @Scheduled(cron = "${splaoon.recordsUpload.cron:* * 0/4 * * *}")
+    @Scheduled(cron = "${splaoon.recordsUpload.cron:0 0 0/4 * * *}")
     public void recordsUpload() {
         List<UserConfigValue> list = userConfigValueService.list(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getType, "NSO")
