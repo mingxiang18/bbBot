@@ -54,9 +54,9 @@ public class JapaneseLearnHandler {
 
         String content = null;
 
-        Integer jpFiftyCount = japaneseFiftyMapper.selectCount(null);
+        Long jpFiftyCount = japaneseFiftyMapper.selectCount(null);
         JapaneseFifty japaneseFifty = japaneseFiftyMapper.selectOne(new LambdaQueryWrapper<JapaneseFifty>()
-                .last("limit 1 offset " + RandomUtil.randomInt(0, jpFiftyCount)));
+                .last("limit 1 offset " + RandomUtil.randomInt(0, jpFiftyCount.intValue())));
 
         if ("随机平假名".equals(message.getMessage())) {
             content = japaneseFifty.getHiragana();
