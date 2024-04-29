@@ -10,8 +10,8 @@
 
 ### 环境相关
 - 开发语言：Java
-- 开发环境：JDK1.8
-- 基本框架：SpringBoot、Mybatis
+- 开发环境：JDK17
+- 基本框架：SpringBoot3、Mybatis
 - 数据库：MySQL8
 
 ### 实现功能
@@ -21,7 +21,3 @@
 - 日语学习相关（OneBot11）
 - 戳一戳回复（OneBot11）
 - 聊天消息记录（OneBot11、QQNT、QQ官方机器人）
-
-### 路径规范
-- 绝对路径/从根目录定义的路径/URL，最后必须带/，如：/home/app/files/，http://127.0.0.1:8082/
-- 相对路径，统一不带/，如：avatar/admin.png
