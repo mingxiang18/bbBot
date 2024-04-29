@@ -15,7 +15,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import com.bb.bot.util.FileUtils;
 import lombok.SneakyThrows;
-import sun.font.FontDesignMetrics;
 
 /*
  * 图片工具类
@@ -709,7 +708,7 @@ public class ImageUtils{
      * @Param []
      **/
     private static void drawLineWord(Graphics2D g2d, Font font, String words, int wordsX, int wordsY, int wordsWidth) {
-        FontDesignMetrics metrics = FontDesignMetrics.getMetrics(font);
+        FontMetrics metrics = g2d.getFontMetrics(font);
         // 获取字符的最高的高度
         int height = metrics.getHeight();
 
@@ -746,7 +745,7 @@ public class ImageUtils{
      * @Param []
      **/
     private static void drawVerticalWord(Graphics2D g2d, Font font, String words, int wordsX, int wordsY, int wordsHeight) {
-        FontDesignMetrics metrics = FontDesignMetrics.getMetrics(font);
+        FontMetrics metrics = g2d.getFontMetrics(font);
         // 获取字符的最高的高度
         int height = metrics.getHeight();
         // 获取换行宽度，为一个字加一个空格的宽度
