@@ -438,7 +438,7 @@ public class QqSplatoonUserHandler {
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
 
-        int startY = 20;
+        int startY = 10;
         for (SplatoonBattleRecord record : recordList) {
             //查询数据库用户详细记录
             List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
