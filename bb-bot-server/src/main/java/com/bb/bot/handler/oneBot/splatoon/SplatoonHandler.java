@@ -14,7 +14,7 @@ import com.bb.bot.event.oneBot.ReceiveMessageEvent;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.util.FileUtils;
 import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class SplatoonHandler {
     private ActionApi actionApi;
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     private HashMap<String, String> ruleModeMap = new HashMap<String, String>() {{
         put("Turf War", "涂地");
@@ -76,7 +76,7 @@ public class SplatoonHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -146,7 +146,7 @@ public class SplatoonHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -198,9 +198,9 @@ public class SplatoonHandler {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         //发起网络请求获取json数据
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/festivals.json", httpHeaders, JSONObject.class).getJSONObject("JP").getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/festivals.json", httpHeaders, JSONObject.class).getJSONObject("JP").getJSONObject("data");
         //发起网络请求获取中文json数据
-        JSONObject transferObject = restClient.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
+        JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -289,9 +289,9 @@ public class SplatoonHandler {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         //发起网络请求获取json数据
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
         //发起网络请求获取中文json数据
-        JSONObject transferObject = restClient.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
+        JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));

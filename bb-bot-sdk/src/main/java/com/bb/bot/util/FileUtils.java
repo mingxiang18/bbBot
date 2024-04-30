@@ -140,7 +140,7 @@ public class FileUtils {
         try {
             //如果是网络请求，读取网络文件
             if (filePath.contains("http")) {
-                fileInputStream = SpringUtils.getBean(RestClient.class).getFileInputStream(filePath);
+                fileInputStream = SpringUtils.getBean(RestUtils.class).getFileInputStream(filePath);
             }else {
                 if (!filePath.substring(0, 1).equals("/")) {
                     //如果第一个路径不是/号，则从相对路径取文件

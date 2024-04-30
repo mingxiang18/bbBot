@@ -2,7 +2,7 @@ package com.bb.bot.common.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.util.LocalCacheUtils;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -74,7 +74,7 @@ public class Splatoon3ApiCaller {
     }
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     @Autowired
     private NsoApiCaller nsoApiCaller;
@@ -255,7 +255,7 @@ public class Splatoon3ApiCaller {
     public JSONObject callSplatoon3Api(Object data, String bulletToken, String webServiceToken, JSONObject userInfo) {
         HttpHeaders headers = getBulletHead(bulletToken, webServiceToken, userInfo);
 
-        JSONObject response = restClient.post(GRAPHQL_URL, headers, data, JSONObject.class);
+        JSONObject response = restUtils.post(GRAPHQL_URL, headers, data, JSONObject.class);
         return response;
     }
 
@@ -322,7 +322,7 @@ public class Splatoon3ApiCaller {
         headers.set("X-Requested-With", "com.nintendo.znca");
         headers.set("Cookie", "_dnt=1;_gtoken=" + webServiceToken);
 
-        JSONObject bulletResponse = restClient.post("https://api.lp1.av5ja.srv.nintendo.net/api/bullet_tokens", headers, new HashMap<String, Object>(), JSONObject.class);
+        JSONObject bulletResponse = restUtils.post("https://api.lp1.av5ja.srv.nintendo.net/api/bullet_tokens", headers, new HashMap<String, Object>(), JSONObject.class);
 
         return bulletResponse.getString("bulletToken");
     }
@@ -338,7 +338,8 @@ public class Splatoon3ApiCaller {
         headers.set("X-ProductVersion", nsoApiCaller.getNsoAppVersion());
         headers.set("Authorization", "Bearer " + webAccessToken);
         headers.set("Content-Type", "application/json; charset=utf-8");
-        headers.set("Content-Length", "391");
+        //这个Content-Length手动设置会导致请求失败，应该是长度没对上，反正先去掉
+//        headers.set("Content-Length", "391");
         headers.set("Accept-Encoding", "gzip");
         headers.set("User-Agent", "com.nintendo.znca/" + nsoApiCaller.getNsoAppVersion() + " (Android/7.1.2)");
 
@@ -352,7 +353,7 @@ public class Splatoon3ApiCaller {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("parameter", subParamMap);
 
-        JSONObject webAuthResponse = restClient.post("https://api-lp1.znc.srv.nintendo.net/v2/Game/GetWebServiceToken", headers, paramMap, JSONObject.class);
+        JSONObject webAuthResponse = restUtils.post("https://api-lp1.znc.srv.nintendo.net/v2/Game/GetWebServiceToken", headers, paramMap, JSONObject.class);
         String web_service_token = webAuthResponse.getJSONObject("result").getString("accessToken");
         return web_service_token;
     }
@@ -377,7 +378,7 @@ public class Splatoon3ApiCaller {
             headers.set("Sec-Fetch-User", "?1");
             headers.set("Sec-Fetch-Dest", "document");
             headers.set("Cookie", "_dnt=1");
-            String webHtml = restClient.get("https://api.lp1.av5ja.srv.nintendo.net", headers, String.class);
+            String webHtml = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net", headers, String.class);
             Document document = Jsoup.parse(webHtml);
             // 使用选择器查找包含'static'字符串的script元素
             Elements mainJs = document.select("script[src*=static]");
@@ -399,7 +400,7 @@ public class Splatoon3ApiCaller {
             headers.set("Sec-Fetch-Dest", "script");
             headers.set("Referer", "https://api.lp1.av5ja.srv.nintendo.net");
             headers.set("Cookie", "_dnt=1");
-            String mainJsBodyText = restClient.get("https://api.lp1.av5ja.srv.nintendo.net" + mainJsUrl, headers, String.class);
+            String mainJsBodyText = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net" + mainJsUrl, headers, String.class);
 
             // 在 main_js_body_text 中搜索版本号正则匹配项
             Matcher matcher = WEB_VERSION_PATTERN.matcher(mainJsBodyText);

@@ -25,7 +25,6 @@ import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.handler.qq.nso.QqNsoHandler;
 import com.bb.bot.util.FileUtils;
-import com.bb.bot.util.RestClient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -57,9 +56,6 @@ public class QqSplatoonUserHandler {
 
     @Autowired
     private QqMessageApi qqMessageApi;
-
-    @Autowired
-    private RestClient restClient;
 
     @Autowired
     private ImageUploadApi imageUploadApi;

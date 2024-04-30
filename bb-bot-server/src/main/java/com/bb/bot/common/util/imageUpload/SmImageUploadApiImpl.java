@@ -2,7 +2,7 @@ package com.bb.bot.common.util.imageUpload;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.List;
 public class SmImageUploadApiImpl implements ImageUploadApi{
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     @Value("${imageUpload.url:https://sm.ms/api/v2}")
     private String webUrl;
@@ -65,7 +65,7 @@ public class SmImageUploadApiImpl implements ImageUploadApi{
             paramMap.add("smfile", resource);
 
             //调用上传接口
-            JSONObject response = restClient.postForForm(webUrl + "/upload", httpHeaders, paramMap, JSONObject.class);
+            JSONObject response = restUtils.postForForm(webUrl + "/upload", httpHeaders, paramMap, JSONObject.class);
 
             //返回图片url
             return response.containsKey("images") ? response.getString("images") : response.getJSONObject("data").getString("url");
@@ -88,7 +88,7 @@ public class SmImageUploadApiImpl implements ImageUploadApi{
         httpHeaders.set("Authorization", token);
 
         //调用上传历史记录接口
-        JSONObject response = restClient.get(webUrl + "/upload_history", httpHeaders, JSONObject.class);
+        JSONObject response = restUtils.get(webUrl + "/upload_history", httpHeaders, JSONObject.class);
         JSONArray data = response.getJSONArray("data");
         if (data != null && data.size() > 0) {
             for (int i = 0; i < data.size(); i++) {
@@ -100,7 +100,7 @@ public class SmImageUploadApiImpl implements ImageUploadApi{
         //调用删除接口全部删除
         for (String imageHash : deleteImageHash) {
             //调用删除接口
-            restClient.get(webUrl + "/delete/" + imageHash, httpHeaders, JSONObject.class);
+            restUtils.get(webUrl + "/delete/" + imageHash, httpHeaders, JSONObject.class);
         }
     }
 }

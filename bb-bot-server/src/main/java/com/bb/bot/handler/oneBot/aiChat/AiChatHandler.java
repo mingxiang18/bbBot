@@ -13,7 +13,7 @@ import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
 import com.bb.bot.event.oneBot.ReceiveMessageEvent;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class AiChatHandler {
     private ActionApi actionApi;
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     @Autowired
     private BotConfig botConfig;
@@ -192,7 +192,7 @@ public class AiChatHandler {
         chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, question));
 
         //发送请求
-        JSONObject chatGPTResponse = restClient.post(chatGPTUrl, httpHeaders, new ChatGPTRequest(chatGPTContentList), JSONObject.class);
+        JSONObject chatGPTResponse = restUtils.post(chatGPTUrl, httpHeaders, new ChatGPTRequest(chatGPTContentList), JSONObject.class);
         //返回chatGPT回复
         return chatGPTResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
     }

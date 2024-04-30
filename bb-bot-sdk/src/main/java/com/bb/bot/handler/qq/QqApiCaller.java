@@ -2,7 +2,7 @@ package com.bb.bot.handler.qq;
 
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.util.LocalCacheUtils;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class QqApiCaller {
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     @Value("${qq.appId}")
     private String appId;
@@ -54,7 +54,7 @@ public class QqApiCaller {
             Map<String, String> request = new HashMap<>();
             request.put("appId", appId);
             request.put("clientSecret", clientSecret);
-            Map response = restClient.post(getAppAccessTokenUrl, request, Map.class);
+            Map response = restUtils.post(getAppAccessTokenUrl, request, Map.class);
             String token = "QQBot " + (String) response.get("access_token");
             //缓存设置token
             LocalCacheUtils.setCacheObject("qq.token",
@@ -90,7 +90,7 @@ public class QqApiCaller {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", getToken());
         httpHeaders.set("X-Union-Appid", appId);
-        return restClient.get(url, httpHeaders, clazz);
+        return restUtils.get(url, httpHeaders, clazz);
     }
 
     /**
@@ -101,7 +101,7 @@ public class QqApiCaller {
         httpHeaders.set("Authorization", getToken());
         httpHeaders.set("X-Union-Appid", appId);
         httpHeaders.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        return restClient.post(url, httpHeaders, request, clazz);
+        return restUtils.post(url, httpHeaders, request, clazz);
     }
 
     /**
@@ -111,6 +111,6 @@ public class QqApiCaller {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", getToken());
         httpHeaders.set("X-Union-Appid", appId);
-        return restClient.postForForm(url, httpHeaders, request, clazz);
+        return restUtils.postForForm(url, httpHeaders, request, clazz);
     }
 }

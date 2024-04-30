@@ -3,7 +3,7 @@ package com.bb.bot.common.util;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.util.LocalCacheUtils;
-import com.bb.bot.util.RestClient;
+import com.bb.bot.util.RestUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 @Component
 public class NsoApiCaller {
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     /**
      * 获取nso的app版本
@@ -46,7 +46,7 @@ public class NsoApiCaller {
 
         if (StringUtils.isBlank(nsoAppVersion)) {
             //如果为空，调用接口获取
-            String response = restClient.get("https://apps.apple.com/us/app/nintendo-switch-online/id1234806557", String.class);
+            String response = restUtils.get("https://apps.apple.com/us/app/nintendo-switch-online/id1234806557", String.class);
             Document document = Jsoup.parse(response);
             Elements elementsByClass = document.getElementsByClass("whats-new__latest__version");
             nsoAppVersion = elementsByClass.get(0).text().replaceAll("Version ", "");
@@ -86,7 +86,7 @@ public class NsoApiCaller {
         paramMap.put("id", UUID.randomUUID().toString());
         paramMap.put("parameter", null);
 
-        JSONObject response = restClient.post(url, headers, paramMap, JSONObject.class);
+        JSONObject response = restUtils.post(url, headers, paramMap, JSONObject.class);
         return response;
     }
 
@@ -138,7 +138,7 @@ public class NsoApiCaller {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("parameter", subParamMap);
 
-        JSONObject webResponse = restClient.post("https://api-lp1.znc.srv.nintendo.net/v3/Account/Login", headers, paramMap, JSONObject.class);
+        JSONObject webResponse = restUtils.post("https://api-lp1.znc.srv.nintendo.net/v3/Account/Login", headers, paramMap, JSONObject.class);
         return webResponse;
     }
 
@@ -161,7 +161,7 @@ public class NsoApiCaller {
             paramMap.put("coral_user_id", coralUserId);
         }
 
-        return restClient.post("https://api.imink.app/f", headers, paramMap, JSONObject.class);
+        return restUtils.post("https://api.imink.app/f", headers, paramMap, JSONObject.class);
     }
 
     /**
@@ -176,7 +176,7 @@ public class NsoApiCaller {
         headers.set("Content-Type", "application/json");
         headers.set("Connection", "Keep-Alive");
         headers.set("Accept-Encoding", "gzip");
-        JSONObject userInfo = restClient.get("https://api.accounts.nintendo.com/2.0.0/users/me", headers, JSONObject.class);
+        JSONObject userInfo = restUtils.get("https://api.accounts.nintendo.com/2.0.0/users/me", headers, JSONObject.class);
         return userInfo;
     }
 
@@ -197,7 +197,7 @@ public class NsoApiCaller {
         paramMap.put("session_token", sessionToken);
         paramMap.put("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer-session-token");
 
-        String response = restClient.post("https://accounts.nintendo.com/connect/1.0.0/api/token", headers, paramMap, String.class);
+        String response = restUtils.post("https://accounts.nintendo.com/connect/1.0.0/api/token", headers, paramMap, String.class);
 
         JSONObject gToken = JSON.parseObject(response);
         return gToken;
@@ -225,7 +225,7 @@ public class NsoApiCaller {
         paramMap.add("session_token_code", authCode);
         paramMap.add("session_token_code_verifier", authCodeVerifier);
 
-        JSONObject sessionResponse = restClient.postForForm("https://accounts.nintendo.com/connect/1.0.0/api/session_token", headers, paramMap, JSONObject.class);
+        JSONObject sessionResponse = restUtils.postForForm("https://accounts.nintendo.com/connect/1.0.0/api/session_token", headers, paramMap, JSONObject.class);
         return sessionResponse.getString("session_token");
     }
 

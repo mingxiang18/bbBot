@@ -40,7 +40,7 @@ public class QqSplatoonHandler {
     private QqMessageApi qqMessageApi;
 
     @Autowired
-    private RestClient restClient;
+    private RestUtils restUtils;
 
     @Autowired
     private ImageUploadApi imageUploadApi;
@@ -82,7 +82,7 @@ public class QqSplatoonHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -155,7 +155,7 @@ public class QqSplatoonHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -210,9 +210,9 @@ public class QqSplatoonHandler {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         //发起网络请求获取json数据
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/festivals.json", httpHeaders, JSONObject.class).getJSONObject("JP").getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/festivals.json", httpHeaders, JSONObject.class).getJSONObject("JP").getJSONObject("data");
         //发起网络请求获取中文json数据
-        JSONObject transferObject = restClient.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
+        JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
@@ -297,9 +297,9 @@ public class QqSplatoonHandler {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         //发起网络请求获取json数据
-        JSONObject dataObject = restClient.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
+        JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
         //发起网络请求获取中文json数据
-        JSONObject transferObject = restClient.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
+        JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
         File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));

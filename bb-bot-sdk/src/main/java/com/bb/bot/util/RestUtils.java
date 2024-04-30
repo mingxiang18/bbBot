@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -12,7 +13,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
@@ -32,14 +33,18 @@ import java.util.zip.GZIPInputStream;
  */
 @Slf4j
 @Component
-public class RestClient {
+public class RestUtils {
+
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @SneakyThrows
     public <T> T get(String url, Class<T> clazz) {
         log.info("向外部接口发起GET请求，url：{}", url);
-        String resultString = restTemplate.getForObject(url, String.class);
+        String resultString = restClient.get()
+                .uri(url)
+                .retrieve()
+                .body(String.class);
         log.info("外部接口返回报文:{}", resultString);
 
         if (clazz == String.class) {
@@ -55,18 +60,21 @@ public class RestClient {
         if (!httpHeaders.containsKey(HttpHeaders.USER_AGENT)) {
             httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         }
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
 
         log.info("向外部接口发起GET请求，url：{}", url);
-        ResponseEntity<byte[]> resultEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+        String responseStr = restClient.get()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .exchange((request, response) -> {
+                    // 如果请求头是gzip格式，解压gzip响应体
+                    if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
+                            && "gzip".equalsIgnoreCase(response.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
+                        return new String(unGZip(response.getBody()), StandardCharsets.UTF_8);
+                    }else {
+                        return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
+                    }
+                });
 
-        byte[] response = resultEntity.getBody();
-        // 如果请求头是gzip格式，解压gzip响应体
-        if (resultEntity.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
-                && "gzip".equalsIgnoreCase(resultEntity.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
-            response = unGZip(new ByteArrayInputStream(resultEntity.getBody()));
-        }
-        String responseStr = new String(response, StandardCharsets.UTF_8);
         log.info("外部接口返回报文:{}", responseStr);
 
         if (clazz == String.class) {
@@ -79,18 +87,21 @@ public class RestClient {
 
     public <T> T post(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
         String jsonParams = JSON.toJSONString(params);
-        HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);
 
         log.info("向外部接口发起POST请求，url：{}，请求报文：{}", url, jsonParams);
-        ResponseEntity<byte[]> resultEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, byte[].class);
-
-        byte[] response = resultEntity.getBody();
-        // 如果请求头是gzip格式，解压gzip响应体
-        if (resultEntity.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
-                && "gzip".equalsIgnoreCase(resultEntity.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
-            response = unGZip(new ByteArrayInputStream(resultEntity.getBody()));
-        }
-        String responseStr = new String(response, StandardCharsets.UTF_8);
+        String responseStr = restClient.post()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .body(jsonParams)
+                .exchange((request, response) -> {
+                    // 如果请求头是gzip格式，解压gzip响应体
+                    if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
+                            && "gzip".equalsIgnoreCase(response.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
+                        return new String(unGZip(response.getBody()), StandardCharsets.UTF_8);
+                    }else {
+                        return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
+                    }
+                });
         log.info("外部接口返回报文:{}", responseStr);
 
         T t = JSON.parseObject(responseStr, clazz);
@@ -119,11 +130,13 @@ public class RestClient {
     public <T> T postForForm(String url, HttpHeaders httpHeaders, Object params, Class<T> clazz) {
         MultiValueMap<String, Object> map = packageParamMultiValueMap(params);
 
-        //构造实体对象
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(map, httpHeaders);
-
         log.info("向外部接口发起form-data类型的post请求，url：{}", url);
-        String resultString = restTemplate.postForObject(url, httpEntity, String.class);
+        String resultString = restClient.post()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .body(map)
+                .retrieve()
+                .body(String.class);
         log.info("外部接口返回报文:{}", resultString);
 
         T t = JSON.parseObject(resultString, clazz);
@@ -137,30 +150,36 @@ public class RestClient {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);
 
         log.info("向外部接口发起PUT请求，url：{}，请求报文：{}", url, jsonParams);
-        ResponseEntity<String> resultEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
-        log.info("外部接口返回报文:{}", resultEntity.getBody());
+        String resultString = restClient.put()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .body(jsonParams)
+                .retrieve()
+                .body(String.class);
+        log.info("外部接口返回报文:{}", resultString);
 
-        T t = JSON.parseObject(resultEntity.getBody(), clazz);
+        T t = JSON.parseObject(resultString, clazz);
         return t;
     }
 
     @SneakyThrows
-    public <T> T delete(String url, Object params, Class<T> clazz) {
-        String jsonParams = JSON.toJSONString(params);
+    public <T> T delete(String url, Class<T> clazz) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        HttpEntity httpEntity = new HttpEntity(jsonParams, httpHeaders);
 
-        log.info("向外部接口发起DELETE请求，url：{}，请求报文：{}", url, jsonParams);
-        ResponseEntity<String> resultEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, String.class);
-        log.info("外部接口返回报文:{}", resultEntity.getBody());
+        log.info("向外部接口发起DELETE请求，url：{}", url);
+        String resultString = restClient.delete()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .retrieve()
+                .body(String.class);
+        log.info("外部接口返回报文:{}", resultString);
 
-        T t = JSON.parseObject(resultEntity.getBody(), clazz);
+        T t = JSON.parseObject(resultString, clazz);
         return t;
     }
 
@@ -179,8 +198,12 @@ public class RestClient {
     @SneakyThrows
     public InputStream getFileInputStream(String url, HttpHeaders httpHeaders) {
         log.info("向外部接口发起GET请求获取文件，url：{}", url);
-        ResponseEntity<Resource> resultEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeaders), Resource.class);
-        return resultEntity.getBody().getInputStream();
+        Resource resource = restClient.get()
+                .uri(url)
+                .headers(h -> httpHeaders.forEach(h::addAll))
+                .retrieve()
+                .body(Resource.class);
+        return resource.getInputStream();
     }
 
     /**
