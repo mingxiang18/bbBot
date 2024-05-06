@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.beans.PropertyDescriptor;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -40,19 +40,7 @@ public class RestUtils {
 
     @SneakyThrows
     public <T> T get(String url, Class<T> clazz) {
-        log.info("向外部接口发起GET请求，url：{}", url);
-        String resultString = restClient.get()
-                .uri(url)
-                .retrieve()
-                .body(String.class);
-        log.info("外部接口返回报文:{}", resultString);
-
-        if (clazz == String.class) {
-            return (T) resultString;
-        }else {
-            T t = JSON.parseObject(resultString, clazz);
-            return t;
-        }
+        return get(url, new HttpHeaders(), clazz);
     }
 
     @SneakyThrows
@@ -66,13 +54,7 @@ public class RestUtils {
                 .uri(url)
                 .headers(h -> httpHeaders.forEach(h::addAll))
                 .exchange((request, response) -> {
-                    // 如果请求头是gzip格式，解压gzip响应体
-                    if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
-                            && "gzip".equalsIgnoreCase(response.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
-                        return new String(unGZip(response.getBody()), StandardCharsets.UTF_8);
-                    }else {
-                        return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
-                    }
+                    return packageResponse(response);
                 });
 
         log.info("外部接口返回报文:{}", responseStr);
@@ -94,13 +76,7 @@ public class RestUtils {
                 .headers(h -> httpHeaders.forEach(h::addAll))
                 .body(jsonParams)
                 .exchange((request, response) -> {
-                    // 如果请求头是gzip格式，解压gzip响应体
-                    if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
-                            && "gzip".equalsIgnoreCase(response.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
-                        return new String(unGZip(response.getBody()), StandardCharsets.UTF_8);
-                    }else {
-                        return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
-                    }
+                    return packageResponse(response);
                 });
         log.info("外部接口返回报文:{}", responseStr);
 
@@ -204,6 +180,23 @@ public class RestUtils {
                 .retrieve()
                 .body(Resource.class);
         return resource.getInputStream();
+    }
+
+    /**
+     * 封装网络请求响应体
+     */
+    @SneakyThrows
+    private String packageResponse(ClientHttpResponse response) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("RestClientCallCodeException，code: " + response.getStatusCode().value());
+        }
+        // 如果请求头是gzip格式，解压gzip响应体
+        if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
+                && "gzip".equalsIgnoreCase(response.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING))) {
+            return new String(unGZip(response.getBody()), StandardCharsets.UTF_8);
+        }else {
+            return IOUtils.toString(response.getBody(), StandardCharsets.UTF_8);
+        }
     }
 
     /**
