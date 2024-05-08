@@ -2,6 +2,9 @@ package com.bb.bot.common.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
+import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.util.LocalCacheUtils;
 import com.bb.bot.util.RestUtils;
 import lombok.SneakyThrows;
@@ -37,10 +40,23 @@ public class NsoApiCaller {
     @Autowired
     private RestUtils restUtils;
 
+    @Autowired
+    private IUserConfigValueService userConfigValueService;
+
     /**
      * 获取nso的app版本
      */
     public String getNsoAppVersion() {
+        //查询数据库是否配置了nso版本号，如果已配置，以数据库为准，否则使用最新版本号
+        //nso的app更新有可能修改token规则，导致获取webAccessToken出现9403: Invalid token.，此时可以通过数据库配置旧版版本号来暂时解决，等待s3s更新后修改token校验代码
+        UserConfigValue configValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, "system")
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "nsoAppVersion"));
+        if (configValue != null) {
+            return configValue.getValueName();
+        }
+
         //从缓存获取版本
         String nsoAppVersion = LocalCacheUtils.getCacheObject("nso_app_version");
 
