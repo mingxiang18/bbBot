@@ -22,7 +22,7 @@ public class ImgController {
      * 获取图片
      */
     @GetMapping(value = "/getImage/{imgName}", produces = MediaType.IMAGE_PNG_VALUE)
-    @ApiOperation(value="获取Excel")
+    @ApiOperation(value="获取图片")
     public byte[] getImage(@PathVariable("imgName") String imgName) throws Exception {
         byte[] imgBytes = FileUtils.getFile(FileUtils.getAbsolutePath("tmp/" + imgName));
         return imgBytes;
