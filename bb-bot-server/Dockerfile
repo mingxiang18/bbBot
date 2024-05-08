@@ -16,4 +16,4 @@ RUN set -xe && apk --no-cache add ttf-dejavu fontconfig
 ENTRYPOINT ["java", "-jar","/bot/application.jar", "--spring.profiles.active=prod"]
 
 # 设置时区
-# RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+RUN echo "Asia/Shanghai" > /etc/timezone
