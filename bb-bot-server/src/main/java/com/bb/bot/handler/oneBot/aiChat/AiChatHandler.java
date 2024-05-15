@@ -9,6 +9,7 @@ import com.bb.bot.api.oneBot.ActionApi;
 import com.bb.bot.common.config.BotConfig;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.MessageType;
+import com.bb.bot.common.util.aiChat.AiChatClient;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
@@ -39,28 +40,10 @@ public class AiChatHandler {
     private ActionApi actionApi;
 
     @Autowired
-    private RestUtils restUtils;
-
-    @Autowired
     private BotConfig botConfig;
 
-    /**
-     * chatGPT的Url
-     */
-    @Value("${chatGPT.url:https://api.openai.com/v1/chat/completions}")
-    private String chatGPTUrl;
-
-    /**
-     * chatGPT的apiKey
-     */
-    @Value("${chatGPT.apiKey:}")
-    private String chatGPTApiKey;
-
-    /**
-     * chatGPT的性格
-     */
-    @Value("${chatGPT.personality:你的名字是冥想bb。你在一个群聊中，里面有零碎的各种消息，请尝试判断上下文，你的回复要像平时聊天一样。同时你是个鱿鱼偶像，请用最能表现偶像的活力和可爱的方式回复，回复时要加上颜文字。}")
-    private String chatGPTPersonality;
+    @Autowired
+    private AiChatClient aiChatClient;
 
     /**
      * ai随机回复数值
@@ -136,7 +119,7 @@ public class AiChatHandler {
         }
 
         //调用chatGPT获取回复消息
-        String content = askChatGPT(message.getMessage(), chatHistoryList);
+        String content = aiChatClient.askChatGPT(message.getMessage(), chatHistoryList);
         content = content.replaceAll(cqRegex, "");
 
         //将机器人回复内容也保存到数据库
@@ -152,48 +135,5 @@ public class AiChatHandler {
         }else {
             actionApi.sendPrivateMessage(userId, content);
         }
-    }
-
-    /**
-     * 询问chatGPT
-     * @Param question 问题
-     * @Param chatHistoryList 聊天历史
-     * @author ren
-     */
-    public String askChatGPT(String question, List<ChatHistory> chatHistoryList) {
-        //如果apiKey为空，不执行
-        if (StringUtils.isBlank(chatGPTApiKey)) {
-            return null;
-        }
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("Authorization", "Bearer " + chatGPTApiKey);
-
-        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
-
-        //构建机器人性格消息体
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, chatGPTPersonality));
-
-        //如果聊天历史记录不为空，将历史记录构建成消息体
-        if (!CollectionUtils.isEmpty(chatHistoryList)) {
-            for (ChatHistory chatHistory : chatHistoryList) {
-                //如果是机器人的qq号发送的消息，构建机器人消息体
-                if (botConfig.getQq().equals(chatHistory.getUserQq())) {
-                    chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.ASSISTANT_ROLE, chatHistory.getText()));
-                }else {
-                    //如果是用户的qq号发送的消息，构建用户消息体
-                    chatGPTContentList.add(new ChatGPTContent(chatHistory.getText()));
-                }
-            }
-        }
-
-        //构建提问消息
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, question));
-
-        //发送请求
-        JSONObject chatGPTResponse = restUtils.post(chatGPTUrl, httpHeaders, new ChatGPTRequest(chatGPTContentList), JSONObject.class);
-        //返回chatGPT回复
-        return chatGPTResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
     }
 }

@@ -1,4 +1,4 @@
-package com.bb.bot.handler.oneBot.aiChat;
+package com.bb.bot.common.util.aiChat;
 
 import lombok.Data;
 
@@ -14,9 +14,8 @@ public class ChatGPTRequest {
 
     /**
      * 模型
-     * 默认使用3.5
      */
-    private String model = "gpt-3.5-turbo";
+    private String model;
 
     /**
      * 消息

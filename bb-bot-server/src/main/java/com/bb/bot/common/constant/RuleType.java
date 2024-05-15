@@ -19,4 +19,9 @@ public class RuleType {
      * 正则匹配
      */
     public static final String REGEX = "regex";
+
+    /**
+     * 未满足任何规则时,采用该规则默认回复
+     */
+    public static final String DEFAULT = "default";
 }

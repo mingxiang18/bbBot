@@ -1,4 +1,4 @@
-package com.bb.bot.handler.oneBot.aiChat;
+package com.bb.bot.common.util.aiChat;
 
 import lombok.Data;
 

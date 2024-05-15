@@ -34,7 +34,14 @@ public class QqEventDispatcher {
     @Autowired
     private ThreadPoolTaskExecutor eventHandlerExecutor;
 
+    /**
+     * 消息处理方法Map
+     */
     private Map<Method, Object> messageHandlerMap = new LinkedHashMap<>();
+    /**
+     * 默认消息处理方法Map
+     */
+    private Map<Method, Object> defaultHandlerMap = new LinkedHashMap<>();
 
     /**
      * 用于@的cq码正则
@@ -65,8 +72,13 @@ public class QqEventDispatcher {
                     continue;
                 }
 
-                //将对应类型的事件放置到对应Map
-                messageHandlerMap.put(declaredMethod, handlerObject);
+                if (RuleType.DEFAULT.equals(annotation.ruleType())) {
+                    //将默认事件放置到默认Map
+                    defaultHandlerMap.put(declaredMethod, handlerObject);
+                }else {
+                    //将对应类型的事件放置到对应Map
+                    messageHandlerMap.put(declaredMethod, handlerObject);
+                }
             }
         }
     }
@@ -75,6 +87,9 @@ public class QqEventDispatcher {
      * 机器人消息事件分发
      */
     public void handleMessage(QqMessage messageEvent) {
+        //是否存在匹配的处理者
+        boolean matchFlag = false;
+        //遍历查找所有对应的处理者方法进行处理
         for (Map.Entry<Method, Object> entry : messageHandlerMap.entrySet()) {
             Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
 
@@ -82,15 +97,29 @@ public class QqEventDispatcher {
                 //如果执行类型是同步执行，则进行同步调用
                 if (messageRuleMatch(messageEvent, rule)) {
                     handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                    matchFlag = true;
                 }
             }else if (SyncType.ASYNC.equals(rule.syncType())) {
                 //如果执行类型是异步执行, 则通过线程池异步执行消息处理
+                if (messageRuleMatch(messageEvent, rule)) {
+                    eventHandlerExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                        }
+                    });
+                    matchFlag = true;
+                }
+            }
+        }
+
+        //如果没有匹配到任何规则，则调用默认处理者进行回复
+        if (!matchFlag) {
+            for (Map.Entry<Method, Object> entry : defaultHandlerMap.entrySet()) {
                 eventHandlerExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (messageRuleMatch(messageEvent, rule)) {
-                            handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
-                        }
+                        handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
                     }
                 });
             }
