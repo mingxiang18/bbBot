@@ -97,7 +97,10 @@ public class QqEventDispatcher {
                 //如果执行类型是同步执行，则进行同步调用
                 if (messageRuleMatch(messageEvent, rule)) {
                     handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
-                    matchFlag = true;
+                    //如果规则关键字不为空，说明匹配到了规则
+                    if (rule.keyword() != null && rule.keyword().length > 0) {
+                        matchFlag = true;
+                    }
                 }
             }else if (SyncType.ASYNC.equals(rule.syncType())) {
                 //如果执行类型是异步执行, 则通过线程池异步执行消息处理
@@ -108,7 +111,10 @@ public class QqEventDispatcher {
                             handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
                         }
                     });
-                    matchFlag = true;
+                    //如果规则关键字不为空，说明匹配到了规则
+                    if (rule.keyword() != null && rule.keyword().length > 0) {
+                        matchFlag = true;
+                    }
                 }
             }
         }
