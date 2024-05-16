@@ -188,7 +188,7 @@ public class RestUtils {
     @SneakyThrows
     private String packageResponse(ClientHttpResponse response) {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("RestClientCallCodeException，code: " + response.getStatusCode().value());
+            throw new RuntimeException("RestClientCallCodeException，code: " + response.getStatusCode().value() + ", message: " + IOUtils.toString(response.getBody(), StandardCharsets.UTF_8));
         }
         // 如果请求头是gzip格式，解压gzip响应体
         if (response.getHeaders().containsKey(HttpHeaders.CONTENT_ENCODING)
