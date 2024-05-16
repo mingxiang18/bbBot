@@ -211,6 +211,138 @@ public class QqSplatoonUserHandler {
     }
 
     /**
+     * 获取打工点数
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"打工点数", "/打工点数"}, name = "打工点数")
+    public void getCoopPoint(QqMessage event) {
+        //获取token
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        //调用接口获取数据
+        JSONObject userCoopData = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good2.jpg"));
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 360, 460);
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(imageFile);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+        JSONObject coopResult = userCoopData.getJSONObject("data").getJSONObject("coopResult");
+        JSONObject pointCard = coopResult.getJSONObject("pointCard");
+        JSONObject scaleData = coopResult.getJSONObject("scale");
+
+        //绘制标题
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 28, new Color(255, 48, 20),
+                "熊先生点数卡",
+                30, 40,
+                200, 30,
+                0);
+
+        //绘制半透明底色
+        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 24, 60, 312, 380, 0.5f);
+
+
+        //绘制半透明底色
+        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 218, 0), 28, 70, 300, 28, 0.3f);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                "累计点数: " + pointCard.getInteger("totalPoint"),
+                30, 90,
+                200, 30,
+                0);
+
+        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 28, 102, 340, 160, 0.1f);
+        Color wordColor = new Color(223, 223, 223, 255);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                "打工次数: " + pointCard.getInteger("playCount"),
+                30, 120,
+                400, 30,
+                0);
+
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                "已收集的金鲑鱼卵: " + pointCard.getInteger("goldenDeliverCount"),
+                30, 150,
+                400, 30,
+                0);
+
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                "已收集的鲑鱼卵: " + pointCard.getInteger("deliverCount"),
+                30, 180,
+                400, 30,
+                0);
+
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                "已击倒的头目鲑鱼: " + pointCard.getInteger("defeatBossCount"),
+                30, 210,
+                400, 30,
+                0);
+
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                "救援次数: " + pointCard.getInteger("rescueCount"),
+                30, 240,
+                400, 30,
+                0);
+
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 26, Color.GREEN,
+                "鳞片",
+                30, 290,
+                400, 30,
+                0);
+
+        //铜鳞片绘制
+        File bronzeScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/bronze_scale.png"));
+        ImageUtils.mergeImageToOtherImage(g2d, bronzeScale, 50, 310, 60, 60);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                "x" + scaleData.getInteger("bronze"),
+                60, 390,
+                200, 30,
+                0);
+
+        //银鳞片绘制
+        File sliverScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/sliver_scale.png"));
+        ImageUtils.mergeImageToOtherImage(g2d, sliverScale, 146, 310, 60, 60);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                "x" + scaleData.getInteger("silver"),
+                156, 390,
+                200, 30,
+                0);
+
+        //金鳞片绘制
+        File goldScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold_scale.png"));
+        ImageUtils.mergeImageToOtherImage(g2d, goldScale, 240, 310, 60, 60);
+        ImageUtils.writeWordInImage(g2d,
+                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                "x" + scaleData.getInteger("gold"),
+                250, 390,
+                200, 30,
+                0);
+
+        //将绘制完成的临时图片写入文件
+        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+
+        //发送消息
+        ChannelMessage channelMessage = new ChannelMessage();
+        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
+        channelMessage.setFile(imageFile);
+        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
+        channelMessage.setMsgId(event.getId());
+        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+    }
+
+    /**
      * 上传打工记录
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传打工记录", "/上传打工记录"}, name = "上传打工记录")
