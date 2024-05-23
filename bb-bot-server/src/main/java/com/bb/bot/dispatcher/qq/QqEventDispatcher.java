@@ -1,11 +1,14 @@
 package com.bb.bot.dispatcher.qq;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.config.BotConfig;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.constant.SyncType;
+import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
+import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,9 @@ public class QqEventDispatcher {
     @Autowired
     private ThreadPoolTaskExecutor eventHandlerExecutor;
 
+    @Autowired
+    private IUserConfigValueService userConfigValueService;
+
     /**
      * 消息处理方法Map
      */
@@ -42,6 +48,10 @@ public class QqEventDispatcher {
      * 默认消息处理方法Map
      */
     private Map<Method, Object> defaultHandlerMap = new LinkedHashMap<>();
+    /**
+     * 占用相关的消息处理方法Map
+     */
+    private Map<Method, Object> occupationHandlerMap = new LinkedHashMap<>();
 
     /**
      * 用于@的cq码正则
@@ -75,6 +85,9 @@ public class QqEventDispatcher {
                 if (RuleType.DEFAULT.equals(annotation.ruleType())) {
                     //将默认事件放置到默认Map
                     defaultHandlerMap.put(declaredMethod, handlerObject);
+                }else if (RuleType.OCCUPATION.equals(annotation.ruleType())) {
+                    //将占用事件放置到对应Map
+                    occupationHandlerMap.put(declaredMethod, handlerObject);
                 }else {
                     //将对应类型的事件放置到对应Map
                     messageHandlerMap.put(declaredMethod, handlerObject);
@@ -87,6 +100,22 @@ public class QqEventDispatcher {
      * 机器人消息事件分发
      */
     public void handleMessage(QqMessage messageEvent) {
+        //查询当前群组是否存在占用的方法
+        UserConfigValue useMethod = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getGroupId, messageEvent.getChannelId())
+                .eq(UserConfigValue::getType, RuleType.OCCUPATION));
+        //如果有，所有消息都由该方法接管
+        if (useMethod != null) {
+            for (Map.Entry<Method, Object> entry : occupationHandlerMap.entrySet()) {
+                if (entry.getKey().getName().equals(useMethod.getKeyName())) {
+                    handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                    return;
+                }
+            }
+            //如果没找到占用方法，抛出异常
+            throw new RuntimeException("未找到当前占用的处理方法");
+        }
+
         //是否存在匹配的处理者
         boolean matchFlag = false;
         //遍历查找所有对应的处理者方法进行处理
