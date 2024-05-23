@@ -184,9 +184,11 @@ public class QqHaiguitangHandler {
     }
 
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"设置海龟汤", "/设置海龟汤"}, name = "设置海龟汤")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^设置海龟汤", "^/设置海龟汤"}, name = "设置海龟汤")
     public void setHaiguitangHandle(QqMessage event) {
-        if (!event.getContent().contains("%n%")) {
+        String haiguitangContent = event.getContent().replace("设置海龟汤", "").replace("/设置海龟汤", "");
+
+        if (!haiguitangContent.contains("%n%")) {
             ChannelMessage channelMessage = new ChannelMessage();
             channelMessage.setContent("海龟汤格式不符合要求");
             channelMessage.setMsgId(event.getId());
@@ -197,7 +199,7 @@ public class QqHaiguitangHandler {
         haiguitangConfig.setUserId("system");
         haiguitangConfig.setType("haiguitang");
         haiguitangConfig.setKeyName("1");
-        haiguitangConfig.setValueName(event.getContent());
+        haiguitangConfig.setValueName(haiguitangContent);
         userConfigValueService.save(haiguitangConfig);
 
         ChannelMessage channelMessage = new ChannelMessage();
