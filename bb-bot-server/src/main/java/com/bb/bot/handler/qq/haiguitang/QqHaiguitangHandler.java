@@ -10,6 +10,7 @@ import com.bb.bot.common.util.aiChat.AiChatClient;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
+import com.bb.bot.dispatcher.qq.QqEventDispatcher;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.entity.qq.QqMessage;
 import lombok.SneakyThrows;
@@ -42,7 +43,7 @@ public class QqHaiguitangHandler {
             " 1. **你只能回答“是”、“不是”、“不相关”、“成功”来回答问题。**“是”和“不是”表示猜测符合答案的情景，“不相关”表示无论你的回答是“是”或者“不是”都与答案情景无关，“成功”表示已经完全猜出了答案，可以结束本局游戏。\n" +
             " 2. 不要输出任何其他文字和标点符号。\n" +
             " 3. 不要输出非以下范围内的内容：“是”、“不是”、“不相关”、“成功”。不要输出“是的”、“否”、“没有”等等。\\n" +
-            " 4. 除非是严重脱离情景，否则尽量少回答“不相关”。\n")
+            " 4. 除非猜题者的问题中出现海龟汤题目和答案中完全不存在的人和事件，否则不要回答“不相关”，根据事件实际的逻辑回答。\n")
     private String botPersonality;
 
     @SneakyThrows
@@ -186,7 +187,11 @@ public class QqHaiguitangHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^设置海龟汤", "^/设置海龟汤"}, name = "设置海龟汤")
     public void setHaiguitangHandle(QqMessage event) {
-        String haiguitangContent = event.getContent().replace("设置海龟汤", "").replace("/设置海龟汤", "");
+        //去除掉无用信息
+        String haiguitangContent = event.getContent()
+                .replaceAll(QqEventDispatcher.AT_COMPILE_REG, "")
+                .replace("设置海龟汤", "")
+                .replace("/设置海龟汤", "");
 
         if (!haiguitangContent.contains("%n%")) {
             ChannelMessage channelMessage = new ChannelMessage();

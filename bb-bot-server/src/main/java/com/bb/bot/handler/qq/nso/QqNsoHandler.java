@@ -93,7 +93,7 @@ public class QqNsoHandler {
     public void loginNsoApp(QqMessage event) {
         try {
             //删除qq自带信息后获取登录码内容
-            String loginInAnswer = event.getContent().replaceAll(QqEventDispatcher.atCompileReg, "").replaceAll("/?设置nso登录码\\s?", "");
+            String loginInAnswer = event.getContent().replaceAll(QqEventDispatcher.AT_COMPILE_REG, "").replaceAll("/?设置nso登录码\\s?", "");
             //通过登陆码获取session_token
             String sessionToken = nsoApiCaller.getSessionToken(loginInAnswer,
                     LocalCacheUtils.getCacheObject(event.getAuthor().getId() + "-" + "auth_code_verifier"));

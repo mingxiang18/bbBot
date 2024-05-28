@@ -56,7 +56,7 @@ public class QqEventDispatcher {
     /**
      * 用于@的cq码正则
      */
-    public static String atCompileReg = "<@.*?>\\s?";
+    public final static String AT_COMPILE_REG = "<@.*?>\\s?";
 
     /**
      * 机器人事件分发者构造函数
@@ -200,7 +200,7 @@ public class QqEventDispatcher {
             }
         }
 
-        String message = messageEvent.getContent().replaceAll(atCompileReg, "");
+        String message = messageEvent.getContent().replaceAll(AT_COMPILE_REG, "");
         if (RuleType.MATCH.equals(rule.ruleType())) {
             for (String keyword : rule.keyword()) {
                 if (message.equals(keyword)) {
