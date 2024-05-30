@@ -200,7 +200,9 @@ public class QqEventDispatcher {
             }
         }
 
-        String message = messageEvent.getContent().replaceAll(AT_COMPILE_REG, "");
+        //内容字符串移除开头的@机器人参数和末尾空行
+        String message = messageEvent.getContent().replaceAll(AT_COMPILE_REG, "").replaceAll("\\s+$", "");
+        messageEvent.setContent(message);
         if (RuleType.MATCH.equals(rule.ruleType())) {
             for (String keyword : rule.keyword()) {
                 if (message.equals(keyword)) {
