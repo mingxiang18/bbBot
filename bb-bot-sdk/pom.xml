@@ -71,5 +71,11 @@
             <artifactId>httpclient5</artifactId>
         </dependency>
 
+        <!-- 腾讯云对象存储 -->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

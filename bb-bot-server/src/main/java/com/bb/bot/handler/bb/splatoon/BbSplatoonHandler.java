@@ -1,19 +1,21 @@
-package com.bb.bot.handler.qq.splatoon;
+package com.bb.bot.handler.bb.splatoon;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
-import com.bb.bot.api.qq.QqMessageApi;
-import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
-import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.constant.BotType;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.entity.qq.ChannelMessage;
-import com.bb.bot.entity.qq.QqMessage;
-import com.bb.bot.util.*;
+import com.bb.bot.common.util.DateUtils;
+import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.util.imageUpload.ImageUploadApi;
+import com.bb.bot.constant.BotType;
+import com.bb.bot.entity.common.BbMessageContent;
+import com.bb.bot.entity.common.BbReceiveMessage;
+import com.bb.bot.entity.common.BbSendMessage;
+import com.bb.bot.util.FileUtils;
+import com.bb.bot.util.RestUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -33,11 +36,11 @@ import java.util.HashMap;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQ)
-public class QqSplatoonHandler {
+@BootEventHandler(botType = BotType.BB)
+public class BbSplatoonHandler {
 
     @Autowired
-    private QqMessageApi qqMessageApi;
+    private BbMessageApi bbMessageApi;
 
     @Autowired
     private RestUtils restUtils;
@@ -64,10 +67,10 @@ public class QqSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/图", "/下图", "/下下图", "/下下下图", "图", "下图", "下下图", "下下下图"}, name = "对战地图获取")
-    public void regularMapHandle(QqMessage event) {
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/图", "/下图", "/下下图", "/下下下图", "图", "下图", "下下图", "下下下图"}, name = "对战地图获取")
+    public void regularMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
-        String content = event.getContent();
+        String content = bbReceiveMessage.getMessage();
 
         //地图时间序号
         int timeIndex = 0;
@@ -124,12 +127,12 @@ public class QqSplatoonHandler {
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -137,10 +140,10 @@ public class QqSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/工", "/下工", "/下下工", "/下下下工", "工", "下工", "下下工", "下下下工"}, name = "打工地图获取")
-    public void coopMapHandle(QqMessage event) {
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/工", "/下工", "/下下工", "/下下下工", "工", "下工", "下下工", "下下下工"}, name = "打工地图获取")
+    public void coopMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
-        String content = event.getContent();
+        String content = bbReceiveMessage.getMessage();
 
         //地图时间序号
         int timeIndex = 0;
@@ -179,12 +182,12 @@ public class QqSplatoonHandler {
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -192,10 +195,10 @@ public class QqSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/祭典", "/上祭典", "/上上祭典", "祭典", "上祭典", "上上祭典"}, name = "祭典日程")
-    public void festivalHandle(QqMessage event) {
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/祭典", "/上祭典", "/上上祭典", "祭典", "上祭典", "上上祭典"}, name = "祭典日程")
+    public void festivalHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
-        String content = event.getContent();
+        String content = bbReceiveMessage.getMessage();
 
         //祭典时间序号
         int timeIndex = 0;
@@ -278,12 +281,12 @@ public class QqSplatoonHandler {
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -291,8 +294,8 @@ public class QqSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/活动", "活动"}, name = "活动日程")
-    public void eventHandle(QqMessage event) {
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/活动", "活动"}, name = "活动日程")
+    public void eventHandle(BbReceiveMessage bbReceiveMessage) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
@@ -324,12 +327,12 @@ public class QqSplatoonHandler {
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**

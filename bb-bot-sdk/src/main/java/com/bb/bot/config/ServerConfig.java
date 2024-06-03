@@ -1,4 +1,4 @@
-package com.bb.bot.common.config;
+package com.bb.bot.config;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -6,13 +6,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 机器人相关配置
+ * 服务器相关配置
  */
 @Slf4j
 @Data
 @Configuration
-public class BotConfig {
+public class ServerConfig {
 
-    @Value("${bot.qq}")
-    private String qq;
+    @Value("${server.ip}")
+    private String ip;
+
+    @Value("${server.port}")
+    private String port;
 }

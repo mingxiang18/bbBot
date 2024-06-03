@@ -1,8 +1,9 @@
-package com.bb.bot.handler.qq.splatoon;
+package com.bb.bot.schedule;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
+import com.bb.bot.handler.qq.splatoon.QqSplatoonUserHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;

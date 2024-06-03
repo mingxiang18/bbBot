@@ -1,26 +1,28 @@
-package com.bb.bot.handler.qq.fortune;
+package com.bb.bot.handler.bb.fortune;
 
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
-import com.bb.bot.api.qq.QqMessageApi;
-import com.bb.bot.constant.BotType;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.entity.qq.ChannelMessage;
-import com.bb.bot.entity.qq.QqMessage;
-import com.bb.bot.util.FileUtils;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
 import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.util.imageUpload.ImageUploadApi;
+import com.bb.bot.constant.BotType;
+import com.bb.bot.entity.common.BbMessageContent;
+import com.bb.bot.entity.common.BbReceiveMessage;
+import com.bb.bot.entity.common.BbSendMessage;
+import com.bb.bot.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.*;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,17 +31,17 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQ)
-public class QqFortuneHandler {
+@BootEventHandler(botType = BotType.BB)
+public class BbFortuneHandler {
 
     @Autowired
-    private QqMessageApi qqMessageApi;
+    private BbMessageApi bbMessageApi;
 
     @Autowired
     private ImageUploadApi imageUploadApi;
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/抽签"}, name = "抽签")
-    public void helloHandle(QqMessage event) {
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/抽签", "抽签"}, name = "抽签")
+    public void fortuneHandle(BbReceiveMessage bbReceiveMessage) {
         //随机抽取运气内容
         String luckContentJson = new String(FileUtils.getFile("fortune/copywriting.json"), StandardCharsets.UTF_8);
         List luckContentArray = JSON.parseObject(luckContentJson).getJSONArray("copywriting").stream().collect(Collectors.toList());
@@ -52,7 +54,7 @@ public class QqFortuneHandler {
         String luckName = luckArray.stream().filter(goodLuck -> {
             return luckContentObject.getInteger("good-luck") == ((JSONObject) goodLuck).getInteger("good-luck");
         }).map(goodLuck -> ((JSONObject) goodLuck).getString("name")).findFirst().get();
-        log.info("用户: " + event.getAuthor().getUsername() + ", 抽取到签：" + luckName);
+        log.info("用户: " + bbReceiveMessage.getUserId() + ", 抽取到签：" + luckName);
 
         //随机选取签的背景图片
         File backgroundImage = FileUtils.getRandomFileFromFolder("fortune/img");
@@ -76,12 +78,12 @@ public class QqFortuneHandler {
                 1,
                 imageFile.getAbsolutePath());
 
-
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        //发送消息
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 }

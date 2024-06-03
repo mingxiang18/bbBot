@@ -1,4 +1,4 @@
-package com.bb.bot.common.util.imageUpload;
+package com.bb.bot.util.imageUpload;
 
 import java.io.File;
 

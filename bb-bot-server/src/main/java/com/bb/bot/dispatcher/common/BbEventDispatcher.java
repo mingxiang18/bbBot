@@ -1,15 +1,17 @@
-package com.bb.bot.dispatcher.qq;
+package com.bb.bot.dispatcher.common;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.config.BotConfig;
-import com.bb.bot.constant.BotType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.constant.SyncType;
+import com.bb.bot.constant.BotType;
+import com.bb.bot.constant.MessageType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
-import com.bb.bot.entity.qq.QqMessage;
+import com.bb.bot.entity.common.BbReceiveMessage;
+import com.bb.bot.entity.common.MessageUser;
 import com.bb.bot.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class QqEventDispatcher {
+public class BbEventDispatcher {
 
     @Autowired
     private BotConfig botConfig;
@@ -54,19 +56,14 @@ public class QqEventDispatcher {
     private Map<Method, Object> occupationHandlerMap = new LinkedHashMap<>();
 
     /**
-     * 用于@的cq码正则
-     */
-    public final static String AT_COMPILE_REG = "<@.*?>\\s?";
-
-    /**
      * 机器人事件分发者构造函数
      */
-    public QqEventDispatcher() {
+    public BbEventDispatcher() {
         //获取所有包含BootEventHandler注解的机器人事件处理者的Bean
         Map<String, Object> beansWithRule = SpringUtils.getBeansWithAnnotation(BootEventHandler.class);
         //按order排序并封装成List
         List<Object> handlerBeanList = beansWithRule.entrySet().stream().map(Map.Entry::getValue)
-                .filter(o -> BotType.QQ.equals(AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).botType()))
+                .filter(o -> BotType.BB.equals(AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).botType()))
                 .sorted(Comparator.comparing(o -> {
                     return AnnotationUtils.findAnnotation(o.getClass(), BootEventHandler.class).order();
                 })).collect(Collectors.toList());
@@ -99,16 +96,21 @@ public class QqEventDispatcher {
     /**
      * 机器人消息事件分发
      */
-    public void handleMessage(QqMessage messageEvent) {
+    public void handleMessage(BbReceiveMessage bbReceiveMessage) {
+        //内容字符串移除开头空格和末尾空格
+        String message = bbReceiveMessage.getMessage().replaceAll("^\\s+", "").replaceAll("\\s+$", "");
+        bbReceiveMessage.setMessage(message);
+
         //查询当前群组是否存在占用的方法
         UserConfigValue useMethod = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getGroupId, messageEvent.getChannelId())
+                .eq(MessageType.GROUP.equals(bbReceiveMessage.getMessageType()), UserConfigValue::getGroupId, bbReceiveMessage.getGroupId())
+                .eq(MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType()), UserConfigValue::getUserId, bbReceiveMessage.getUserId())
                 .eq(UserConfigValue::getType, RuleType.OCCUPATION));
         //如果有，所有消息都由该方法接管
         if (useMethod != null) {
             for (Map.Entry<Method, Object> entry : occupationHandlerMap.entrySet()) {
                 if (entry.getKey().getName().equals(useMethod.getKeyName())) {
-                    handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                    handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
                     return;
                 }
             }
@@ -124,8 +126,8 @@ public class QqEventDispatcher {
 
             if (SyncType.SYNC.equals(rule.syncType())) {
                 //如果执行类型是同步执行，则进行同步调用
-                if (messageRuleMatch(messageEvent, rule)) {
-                    handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                if (messageRuleMatch(bbReceiveMessage, rule)) {
+                    handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
                     //如果规则关键字不为空，说明匹配到了规则
                     if (rule.keyword() != null && rule.keyword().length > 0) {
                         matchFlag = true;
@@ -133,11 +135,11 @@ public class QqEventDispatcher {
                 }
             }else if (SyncType.ASYNC.equals(rule.syncType())) {
                 //如果执行类型是异步执行, 则通过线程池异步执行消息处理
-                if (messageRuleMatch(messageEvent, rule)) {
+                if (messageRuleMatch(bbReceiveMessage, rule)) {
                     eventHandlerExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
                         }
                     });
                     //如果规则关键字不为空，说明匹配到了规则
@@ -151,10 +153,13 @@ public class QqEventDispatcher {
         //如果没有匹配到任何规则，则调用默认处理者进行回复
         if (!matchFlag) {
             for (Map.Entry<Method, Object> entry : defaultHandlerMap.entrySet()) {
+                Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
                 eventHandlerExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        handlerExecute(entry.getKey(), entry.getValue(), messageEvent);
+                        if (messageRuleMatch(bbReceiveMessage, rule)) {
+                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
+                        }
                     }
                 });
             }
@@ -175,34 +180,24 @@ public class QqEventDispatcher {
     /**
      * 判断消息是否匹配规则
      */
-    private boolean messageRuleMatch(QqMessage messageEvent, Rule rule) {
+    private boolean messageRuleMatch(BbReceiveMessage bbReceiveMessage, Rule rule) {
         //判断规则类型
+        //如果是群组消息，且规则配置需要@自己，判断消息体中是否有@机器人的参数
+        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) && rule.needAtMe()) {
+            Optional<MessageUser> atMeFlag = bbReceiveMessage.getAtUserList().stream().filter(MessageUser::getBotFlag).findFirst();
+            if (atMeFlag.isEmpty()) {
+                return false;
+            }
+        }
         //如果没有关键字，则默认匹配成功
         if (rule.keyword() == null || rule.keyword().length == 0) {
             return true;
         }
-        if (messageEvent.getContent() == null) {
+        if (bbReceiveMessage.getMessage() == null) {
             return false;
         }
 
-        //如果需要@自己，判断消息体中是否有@机器人的参数
-        if (rule.needAtMe()) {
-            boolean atMe = false;
-            List<QqMessage.QqUser> mentions = messageEvent.getMentions();
-            for (QqMessage.QqUser mention : mentions) {
-                if (mention.getBot()) {
-                    atMe = true;
-                    break;
-                }
-            }
-            if (!atMe) {
-                return false;
-            }
-        }
-
-        //内容字符串移除开头的@机器人参数和末尾空行
-        String message = messageEvent.getContent().replaceAll(AT_COMPILE_REG, "").replaceAll("\\s+$", "");
-        messageEvent.setContent(message);
+        String message = bbReceiveMessage.getMessage();
         if (RuleType.MATCH.equals(rule.ruleType())) {
             for (String keyword : rule.keyword()) {
                 if (message.equals(keyword)) {

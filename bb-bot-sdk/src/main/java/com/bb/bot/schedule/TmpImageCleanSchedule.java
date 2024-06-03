@@ -1,6 +1,6 @@
 package com.bb.bot.schedule;
 
-import com.bb.bot.common.util.imageUpload.ImageUploadApi;
+import com.bb.bot.util.imageUpload.ImageUploadApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;

@@ -1,6 +1,6 @@
-package com.bb.bot.common.util.imageUpload;
+package com.bb.bot.util.imageUpload;
 
-import com.bb.bot.common.config.ServerConfig;
+import com.bb.bot.config.ServerConfig;
 import com.bb.bot.util.FileUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

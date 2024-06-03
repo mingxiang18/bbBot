@@ -1,15 +1,16 @@
-package com.bb.bot.handler.qq.splatoon;
+package com.bb.bot.handler.bb.splatoon;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.bb.bot.api.qq.QqMessageApi;
+import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.common.util.*;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
+import com.bb.bot.common.util.DateUtils;
+import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.common.util.Splatoon3ApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
@@ -21,9 +22,10 @@ import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
-import com.bb.bot.entity.qq.ChannelMessage;
-import com.bb.bot.entity.qq.QqMessage;
-import com.bb.bot.handler.qq.nso.QqNsoHandler;
+import com.bb.bot.entity.common.BbMessageContent;
+import com.bb.bot.entity.common.BbReceiveMessage;
+import com.bb.bot.entity.common.BbSendMessage;
+import com.bb.bot.handler.bb.nso.BbNsoHandler;
 import com.bb.bot.util.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,10 +40,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -51,14 +51,11 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQ)
-public class QqSplatoonUserHandler {
+@BootEventHandler(botType = BotType.BB)
+public class BbSplatoonUserHandler {
 
     @Autowired
-    private QqMessageApi qqMessageApi;
-
-    @Autowired
-    private ImageUploadApi imageUploadApi;
+    private BbMessageApi bbMessageApi;
 
     @Autowired
     private Splatoon3ApiCaller splatoon3ApiCaller;
@@ -79,10 +76,7 @@ public class QqSplatoonUserHandler {
     private ISplatoonBattleUserDetailService battleUserDetailService;
 
     @Autowired
-    private NsoApiCaller nsoApiCaller;
-
-    @Autowired
-    private QqNsoHandler qqNsoHandler;
+    private BbNsoHandler bbNsoHandler;
 
     public static Map<String, String> pointDiffMap = new HashMap<String, String>() {{
         put("UP", "↑");
@@ -123,23 +117,23 @@ public class QqSplatoonUserHandler {
      * 自动上传喷喷记录
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"自动上传喷喷记录", "/自动上传喷喷记录", "关闭自动上传喷喷记录", "/关闭自动上传喷喷记录"}, name = "自动上传喷喷记录")
-    public void autoUploadRecordsConfig(QqMessage event) {
+    public void autoUploadRecordsConfig(BbReceiveMessage bbReceiveMessage) {
         //获取用户配置
         UserConfigValue userConfigValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getUserId, event.getAuthor().getId())
+                .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
                 .eq(UserConfigValue::getType, "NSO")
                 .eq(UserConfigValue::getKeyName, "autoUploadRecords"));
 
         //判断是开启还是关闭
         String openFlag = "0";
-        if (!event.getContent().contains("关闭")) {
+        if (!bbReceiveMessage.getMessage().contains("关闭")) {
             openFlag = "1";
         }
 
         //保存配置到数据库
         if (userConfigValue == null) {
             userConfigValue = new UserConfigValue();
-            userConfigValue.setUserId(event.getAuthor().getId());
+            userConfigValue.setUserId(bbReceiveMessage.getUserId());
             userConfigValue.setType("NSO");
             userConfigValue.setKeyName("autoUploadRecords");
             userConfigValue.setValueName(openFlag);
@@ -150,20 +144,22 @@ public class QqSplatoonUserHandler {
         }
 
         //回复消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录");
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildTextContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录"))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
      * 获取喷喷好友列表
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^喷喷好友", "^/喷喷好友"}, name = "获取喷喷好友列表")
-    public void getSplatoon3FriendList(QqMessage event) {
+    public void getSplatoon3FriendList(BbReceiveMessage bbReceiveMessage) {
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("喷喷好友(\\d+)");
-        Matcher matcher = pattern.matcher(event.getContent());
+        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
         Integer pageNum = 1;
         Integer pageSize = 10;
         Integer pageStart = 0;
@@ -174,7 +170,7 @@ public class QqSplatoonUserHandler {
         pageStart = (pageNum-1) * pageSize;
 
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
         //调用接口获取数据
         JSONObject friends = splatoon3ApiCaller.getFriends(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
 
@@ -204,10 +200,13 @@ public class QqSplatoonUserHandler {
                     ",  " + onlineState + "\n");
         }
 
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(returnMessage.toString());
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        //发送消息
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildTextContent(returnMessage.toString()))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -215,9 +214,9 @@ public class QqSplatoonUserHandler {
      */
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"打工点数", "/打工点数"}, name = "打工点数")
-    public void getCoopPoint(QqMessage event) {
+    public void getCoopPoint(BbReceiveMessage bbReceiveMessage) {
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
         //调用接口获取数据
         JSONObject userCoopData = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
 
@@ -334,27 +333,29 @@ public class QqSplatoonUserHandler {
         ImageUtils.writeG2dToFile(g2d, image, imageFile);
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
      * 上传打工记录
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传打工记录", "/上传打工记录"}, name = "上传打工记录")
-    public void syncCoopRecords(QqMessage event) {
+    public void syncCoopRecords(BbReceiveMessage bbReceiveMessage) {
         //开始上传打工记录
-        syncCoopRecords(event.getAuthor().getId());
+        syncCoopRecords(bbReceiveMessage.getUserId());
 
         //发送回复消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent("上传打工记录完成");
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildTextContent("上传打工记录完成"))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -403,10 +404,10 @@ public class QqSplatoonUserHandler {
      */
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^打工记录", "^/打工记录"}, name = "打工记录")
-    public void getCoopRecords(QqMessage event) {
+    public void getCoopRecords(BbReceiveMessage bbReceiveMessage) {
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("打工记录(\\d+)");
-        Matcher matcher = pattern.matcher(event.getContent());
+        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
         Integer pageNum = null;
         Integer pageStart = null;
         // 如果找到匹配项
@@ -418,7 +419,7 @@ public class QqSplatoonUserHandler {
         }
 
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
         //获取用户账户信息的id
         String userAccountId = tokenInfo.getUserInfo().getString("id");
 
@@ -460,27 +461,29 @@ public class QqSplatoonUserHandler {
         log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
      * 上传对战记录
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传对战记录", "/上传对战记录"}, name = "上传对战记录")
-    public void syncBattleRecords(QqMessage event) {
+    public void syncBattleRecords(BbReceiveMessage bbReceiveMessage) {
         //开始上传对战记录
-        syncBattleRecords(event.getAuthor().getId());
+        syncBattleRecords(bbReceiveMessage.getUserId());
 
         //发送回复消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent("上传对战记录完成");
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildTextContent("上传对战记录完成"))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -529,10 +532,10 @@ public class QqSplatoonUserHandler {
      */
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^对战记录", "^/对战记录"}, name = "对战记录")
-    public void getBattleRecords(QqMessage event) {
+    public void getBattleRecords(BbReceiveMessage bbReceiveMessage) {
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("对战记录(\\d+)");
-        Matcher matcher = pattern.matcher(event.getContent());
+        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
         Integer pageNum = null;
         Integer pageStart = null;
         // 如果找到匹配项
@@ -544,7 +547,7 @@ public class QqSplatoonUserHandler {
         }
 
         //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(event.getAuthor().getId());
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
         //获取用户账户信息的id
         String userAccountId = tokenInfo.getUserInfo().getString("id");
 
@@ -585,12 +588,12 @@ public class QqSplatoonUserHandler {
         log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
         //发送消息
-        ChannelMessage channelMessage = new ChannelMessage();
-        channelMessage.setContent(ChannelMessage.buildAtMessage(event.getAuthor().getId()));
-        channelMessage.setFile(imageFile);
-        channelMessage.setImage(imageUploadApi.uploadImage(imageFile));
-        channelMessage.setMsgId(event.getId());
-        qqMessageApi.sendChannelMessage(event.getChannelId(), channelMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+            BbMessageContent.buildLocalImageMessageContent(imageFile))
+        );
+        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     /**
@@ -740,7 +743,7 @@ public class QqSplatoonUserHandler {
      * 绘制一条对战记录
      */
     private void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
-        ModeStyle modeStyle = QqSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
+        ModeStyle modeStyle = BbSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
         //绘制半透明底色
         ImageUtils.createRoundRectOnImage(g2d, modeStyle.getColor(), 15, startY, 700, 132, 0.3f);
 
@@ -765,7 +768,7 @@ public class QqSplatoonUserHandler {
                 120, startY + 8, 30, 30);
 
         //绘制规则标志,涂地模式没有标志，是不绘制的
-        String ruleImgPath = QqSplatoonUserHandler.battleRuleMap.get(record.getVsRuleId());
+        String ruleImgPath = BbSplatoonUserHandler.battleRuleMap.get(record.getVsRuleId());
         if (StringUtils.isNoneBlank(ruleImgPath)) {
             ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(ruleImgPath)),
                     150, startY + 8, 30, 30);
@@ -910,7 +913,7 @@ public class QqSplatoonUserHandler {
 
             //切换小队颜色和图片
             if (i == 3) {
-                teamStyle = QqSplatoonUserHandler.teamStyleMap.get("team2");
+                teamStyle = BbSplatoonUserHandler.teamStyleMap.get("team2");
                 isWin = !isWin;
             }
         }
@@ -998,7 +1001,7 @@ public class QqSplatoonUserHandler {
      */
     private TokenInfo resetSplatoon3UserToken(String userId) {
         //重新设置nso用户token
-        qqNsoHandler.resetUserToken(userId);
+        bbNsoHandler.resetUserToken(userId);
 
         //数据库获取用户的userInfo和webAccessToken
         JSONObject userInfo = JSONObject.parseObject(userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()

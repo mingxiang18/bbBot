@@ -3,7 +3,7 @@ package com.bb.bot.handler.oneBot.poke;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.oneBot.ActionApi;
-import com.bb.bot.common.config.BotConfig;
+import com.bb.bot.config.BotConfig;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.entity.oneBot.MessageContent;
 import com.bb.bot.entity.oneBot.ReceiveNotice;

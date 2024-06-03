@@ -1,4 +1,4 @@
-package com.bb.bot.common.util.imageUpload;
+package com.bb.bot.util.imageUpload;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;

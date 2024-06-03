@@ -6,6 +6,10 @@ package com.bb.bot.constant;
  */
 public class BotType {
     /**
+     * BB协议
+     */
+    public static final String BB = "bb";
+    /**
      * oneBot
      */
     public static final String ONEBOT = "oneBot";

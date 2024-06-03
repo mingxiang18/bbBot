@@ -1,12 +1,11 @@
 package com.bb.bot.handler.oneBot.aiChat;
 
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.api.oneBot.ActionApi;
-import com.bb.bot.common.config.BotConfig;
+import com.bb.bot.config.BotConfig;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.MessageType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
@@ -14,14 +13,9 @@ import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
 import com.bb.bot.event.oneBot.ReceiveMessageEvent;
-import com.bb.bot.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
