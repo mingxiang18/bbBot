@@ -3,7 +3,7 @@ package com.bb.bot.schedule;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
-import com.bb.bot.handler.qq.splatoon.QqSplatoonUserHandler;
+import com.bb.bot.handler.splatoon.BbSplatoonUserHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,7 +25,7 @@ public class SplatoonRecordsUploadSchedule {
     private IUserConfigValueService userConfigValueService;
 
     @Autowired
-    private QqSplatoonUserHandler qqSplatoonUserHandler;
+    private BbSplatoonUserHandler bbSplatoonUserHandler;
 
     /**
      * 每4小时进行一次记录上传
@@ -44,8 +44,8 @@ public class SplatoonRecordsUploadSchedule {
             log.info("开始上传用户：{}，的斯普拉遁记录", userId);
 
             //开始上传记录
-            qqSplatoonUserHandler.syncCoopRecords(userId);
-            qqSplatoonUserHandler.syncBattleRecords(userId);
+            bbSplatoonUserHandler.syncCoopRecords(userId);
+            bbSplatoonUserHandler.syncBattleRecords(userId);
         }
     }
 }

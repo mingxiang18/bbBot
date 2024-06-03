@@ -1,6 +1,6 @@
 package com.bb.bot.api;
 
-import com.bb.bot.entity.common.BbSendMessage;
+import com.bb.bot.entity.bb.BbSendMessage;
 
 /**
  * 发起动作请求Api

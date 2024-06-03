@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.qqnt.QqntReceiveMessage;
-import com.bb.bot.event.qqnt.ReceiveMessageEvent;
+import com.bb.bot.oldNotUse.event.qqnt.ReceiveMessageEvent;
 import com.bb.bot.handler.BotEventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
