@@ -15,9 +15,11 @@
 - 数据库：MySQL8
 
 ### 实现功能
-- 每日抽签（OneBot11、QQNT、QQ官方机器人）
-- Splatoon3地图、活动、祭典获取（OneBot11、QQNT、QQ官方机器人）
-- chatGPT聊天回复（OneBot11、QQNT）
-- 日语学习相关（OneBot11）
-- 戳一戳回复（OneBot11）
-- 聊天消息记录（OneBot11、QQNT、QQ官方机器人）
+- 每日抽签
+- Nintendo Switch Online登录和数据获取
+- Splatoon3地图、活动、祭典获取
+- Splatoon3个人数据记录和获取
+- AI聊天回复
+- 日语学习相关
+- 海龟汤
+- 聊天消息记录
