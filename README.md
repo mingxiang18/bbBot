@@ -19,7 +19,8 @@
 - Nintendo Switch Online登录和数据获取
 - Splatoon3地图、活动、祭典获取
 - Splatoon3个人数据记录和获取
-- AI聊天回复
+- AI聊天
 - 日语学习相关
 - 海龟汤
-- 聊天消息记录
+- 聊天历史消息
+- 跑团骰子投掷
