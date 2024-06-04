@@ -26,7 +26,7 @@ public class RuleType {
     public static final String OCCUPATION = "occupation";
 
     /**
-     * 未满足任何规则时,采用该规则默认回复
+     * 未满足任何规则时,采用该规则的处理者进行默认回复
      */
     public static final String DEFAULT = "default";
 }
