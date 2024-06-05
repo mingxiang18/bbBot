@@ -1,4 +1,4 @@
-package com.bb.bot.handler.horseRace;
+package com.bb.bot.handler.horseRace.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

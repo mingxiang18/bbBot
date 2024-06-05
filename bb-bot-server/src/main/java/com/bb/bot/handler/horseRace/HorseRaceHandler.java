@@ -52,7 +52,7 @@ public class HorseRaceHandler {
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
-            ruleType = RuleType.REGEX, keyword = {"/?下注(\\d+)号位"}, name = "下注赛马")
+            ruleType = RuleType.REGEX, keyword = {"^/?下注(\\d+)号位"}, name = "下注赛马")
     public void betGameHandle(BbReceiveMessage bbReceiveMessage) {
         try {
             //获取游戏
@@ -69,7 +69,7 @@ public class HorseRaceHandler {
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
-            ruleType = RuleType.REGEX, keyword = {"/?添加马匹\\s?"}, name = "添加马匹")
+            ruleType = RuleType.REGEX, keyword = {"^/?添加马匹\\s?"}, name = "添加马匹")
     public void addHorseHandle(BbReceiveMessage bbReceiveMessage) {
         try {
             Matcher matcher = emojiPattern.matcher(bbReceiveMessage.getMessage());
@@ -153,7 +153,7 @@ public class HorseRaceHandler {
     /**
      * 初始化指定id的赛马比赛
      */
-    public static HorseRaceGame initGame(String id) {
+    private static HorseRaceGame initGame(String id) {
         HorseRaceGame game = new HorseRaceGame();
         horseRaceGameMap.put(id, game);
         return game;
@@ -162,9 +162,9 @@ public class HorseRaceHandler {
     /**
      * 获取指定id的赛马比赛
      */
-    public static HorseRaceGame getGame(String id) {
+    private static HorseRaceGame getGame(String id) {
         if (!horseRaceGameMap.containsKey(id)) {
-            throw new IllegalArgumentException("赛马游戏不存在");
+            throw new IllegalArgumentException("赛马游戏不存在，请发送“赛马”开始游戏");
         }else {
             return horseRaceGameMap.get(id);
         }
@@ -173,7 +173,7 @@ public class HorseRaceHandler {
     /**
      * 删除指定id的赛马比赛
      */
-    public static void deleteGame(String id) {
+    private static void deleteGame(String id) {
         horseRaceGameMap.remove(id);
     }
 }

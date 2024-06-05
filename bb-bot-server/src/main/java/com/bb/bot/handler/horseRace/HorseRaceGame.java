@@ -2,6 +2,8 @@ package com.bb.bot.handler.horseRace;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.bb.bot.handler.horseRace.entity.Horse;
+import com.bb.bot.handler.horseRace.entity.HorseRaceEvent;
 import com.bb.bot.util.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
