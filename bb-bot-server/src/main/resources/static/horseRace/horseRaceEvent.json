@@ -1,0 +1,182 @@
+[
+  {
+    "eventId": 1,
+    "eventName": "在比赛途中，{random_horse}意外撞上了时光机，瞬间穿越到了侏罗纪时代，恐龙们吓得四处奔逃。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 2,
+    "eventName": "一道神秘的闪电劈中了赛道，所有马匹瞬间获得了超能力，比赛变成了一场空中飞行赛。",
+    "eventType": 2,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 3,
+    "eventName": "{random_horse}遇见了一只会说话的乌鸦，乌鸦预言它今天必胜，{random_horse}信心爆棚。",
+    "eventType": 1,
+    "eventEffect": 1
+  },
+  {
+    "eventId": 4,
+    "eventName": "赛道旁突然出现了一个巨大的漩涡，所有的马匹都被卷进了异次元，最终又回到了赛道上。",
+    "eventType": 2,
+    "eventEffect": -2
+  },
+  {
+    "eventId": 5,
+    "eventName": "{random_horse}在跑道上发现了一瓶神秘的药水，喝下后立刻变成了一匹有八条腿的怪兽马，速度瞬间飙升。",
+    "eventType": 1,
+    "eventEffect": 3
+  },
+  {
+    "eventId": 6,
+    "eventName": "一道神秘的光束从天而降，{random_horse}被传送到了外星，外星人赠予它一个反重力装置。",
+    "eventType": 1,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 7,
+    "eventName": "一只巨大的章鱼突然从赛道旁的湖中爬出，伸出触手搅乱了比赛，所有马匹都受到惊吓。",
+    "eventType": 2,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 8,
+    "eventName": "{random_horse}发现了一本古老的魔法书，念出咒语后，瞬间被赋予了风之速度。",
+    "eventType": 1,
+    "eventEffect": 3
+  },
+  {
+    "eventId": 9,
+    "eventName": "赛道旁的观众突然全变成了僵尸，{random_horse}受到惊吓，一路狂奔不止。",
+    "eventType": 1,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 10,
+    "eventName": "一只小精灵飞过赛道，为每匹马都洒下了幸运粉末，所有马匹的速度都提高了。",
+    "eventType": 2,
+    "eventEffect": 1
+  },
+  {
+    "eventId": 11,
+    "eventName": "突然出现的彩虹桥吸引了所有马匹，大家纷纷跳上桥，比赛变成了一场七彩之旅。",
+    "eventType": 2,
+    "eventEffect": 1
+  },
+  {
+    "eventId": 12,
+    "eventName": "{random_horse}在路边遇见了一位隐居的武林高手，得到了绝世轻功秘籍。",
+    "eventType": 1,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 13,
+    "eventName": "赛道上空出现了一艘幽灵船，所有马匹都受到幽灵船长的诅咒，速度有所减慢。",
+    "eventType": 2,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 14,
+    "eventName": "{random_horse}被一阵突如其来的妖风吹到天上，学会了御风而行。",
+    "eventType": 1,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 15,
+    "eventName": "赛道变成了神秘的海底世界，所有马匹都必须适应在水中奔跑的奇异体验。",
+    "eventType": 2,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 16,
+    "eventName": "一只巨大的飞碟降落在赛道中央，{random_horse}被外星人抓走做了实验，速度被减慢了。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 17,
+    "eventName": "赛道上突然冒出一条火龙，{random_horse}被吓得腿都软了，只能慢慢前行。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 18,
+    "eventName": "所有马匹突然变成了霓虹色，赛道也变成了一个巨大的迪斯科舞厅，大家一起跳起了舞。",
+    "eventType": 2,
+    "eventEffect": -2
+  },
+  {
+    "eventId": 19,
+    "eventName": "一颗流星从天而降，砸中了{random_horse}的赛道，瞬间形成了一个大坑，{random_horse}掉了进去。",
+    "eventType": 1,
+    "eventEffect": -3
+  },
+  {
+    "eventId": 20,
+    "eventName": "{random_horse}吃了路边的奇怪蘑菇，结果肚子痛得不得了，只能慢慢挪动。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 21,
+    "eventName": "一只淘气的小猴子跳到{random_horse}的背上，不停地拉扯它的鬃毛，影响了速度。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 22,
+    "eventName": "赛道突然变成了一条巨大的滑梯，所有马匹都滑了下去，速度奇快无比。",
+    "eventType": 2,
+    "eventEffect": 3
+  },
+  {
+    "eventId": 23,
+    "eventName": "一道彩虹从天而降，{random_horse}被彩虹笼罩，获得了彩虹之力，速度大增。",
+    "eventType": 1,
+    "eventEffect": 2
+  },
+  {
+    "eventId": 24,
+    "eventName": "一群淘气的小精灵在赛道上撒满了香蕉皮，{random_horse}滑了一跤，摔得四蹄朝天。",
+    "eventType": 1,
+    "eventEffect": -3
+  },
+  {
+    "eventId": 25,
+    "eventName": "一个神秘的巫师出现在赛道旁，为{random_horse}施加了一个减速咒语。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 26,
+    "eventName": "一只巨大的章鱼突然出现，用触手抓住了{random_horse}，把它举到空中晃来晃去。",
+    "eventType": 1,
+    "eventEffect": -3
+  },
+  {
+    "eventId": 27,
+    "eventName": "赛道上出现了一个神秘的传送门，所有马匹被传送到了一片神奇的梦幻森林。",
+    "eventType": 2,
+    "eventEffect": 0
+  },
+  {
+    "eventId": 28,
+    "eventName": "{random_horse}捡到了一双神奇的飞马靴，穿上后速度暴增。",
+    "eventType": 1,
+    "eventEffect": 3
+  },
+  {
+    "eventId": 29,
+    "eventName": "一只巨大的独角兽突然出现在赛道上，{random_horse}被独角兽的美丽迷住，停下脚步欣赏。",
+    "eventType": 1,
+    "eventEffect": -1
+  },
+  {
+    "eventId": 30,
+    "eventName": "一阵魔法风暴突然袭来，所有马匹都被风暴卷起，进行了一次空中旅行。",
+    "eventType": 2,
+    "eventEffect": 0
+  }
+]
