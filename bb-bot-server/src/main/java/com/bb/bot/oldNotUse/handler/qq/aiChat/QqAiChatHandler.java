@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * ai聊天事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.QQ)
+//@BootEventHandler(botType = BotType.QQ)
 public class QqAiChatHandler {
 
     @Autowired

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQNT)
+////@BootEventHandler(botType = BotType.QQNT)
 public class QqntFortuneHandler {
 
     @Autowired

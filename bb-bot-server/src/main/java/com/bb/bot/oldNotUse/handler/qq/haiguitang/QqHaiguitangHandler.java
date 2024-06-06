@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
  * 海龟汤事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.QQ)
+//@BootEventHandler(botType = BotType.QQ)
 public class QqHaiguitangHandler {
 
     @Autowired

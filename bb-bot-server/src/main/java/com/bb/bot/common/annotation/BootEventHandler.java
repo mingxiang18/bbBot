@@ -24,7 +24,12 @@ public @interface BootEventHandler {
     int order() default 50;
 
     /**
-     * 机器人类型：oneBot、qqnt
+     * 机器人类型：bb
      */
-    String botType() default BotType.ONEBOT;
+    String botType() default BotType.BB;
+
+    /**
+     * 事件处理者名称
+     */
+    String name() default "";
 }

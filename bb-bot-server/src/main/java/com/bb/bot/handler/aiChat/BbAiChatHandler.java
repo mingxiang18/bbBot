@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * ai聊天事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "AI聊天")
 public class BbAiChatHandler {
 
     @Autowired

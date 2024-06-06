@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 打招呼事件处理器
  * @author ren
  */
-@BootEventHandler
+//@BootEventHandler
 public class HelloHandler {
 
     @Autowired

@@ -18,7 +18,7 @@ import java.util.List;
  * 打招呼事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.QQNT)
+////@BootEventHandler(botType = BotType.QQNT)
 public class QqntHelloHandler {
 
     @Autowired

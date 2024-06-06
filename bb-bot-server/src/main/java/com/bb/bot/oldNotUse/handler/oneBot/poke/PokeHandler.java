@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author ren
  */
 @Slf4j
-@BootEventHandler
+//@BootEventHandler
 public class PokeHandler {
 
     @Autowired

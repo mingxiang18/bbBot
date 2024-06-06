@@ -17,7 +17,7 @@ import java.util.Collections;
  * 打招呼事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "打招呼")
 public class BbHelloHandler {
 
     @Autowired

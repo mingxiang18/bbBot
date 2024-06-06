@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQ)
+//@BootEventHandler(botType = BotType.QQ)
 public class QqFortuneHandler {
 
     @Autowired

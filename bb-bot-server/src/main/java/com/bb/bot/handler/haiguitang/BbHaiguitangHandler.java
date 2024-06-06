@@ -25,7 +25,7 @@ import java.util.Collections;
  * 海龟汤事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "海龟汤")
 public class BbHaiguitangHandler {
 
     @Autowired
@@ -77,7 +77,7 @@ public class BbHaiguitangHandler {
             UserConfigValue occupationConfig = new UserConfigValue();
             occupationConfig.setGroupId(bbReceiveMessage.getGroupId());
             occupationConfig.setType(RuleType.OCCUPATION);
-            occupationConfig.setKeyName(this.getClass().getDeclaredMethod("haiguitangJudgeHandle", QqMessage.class).getName());
+            occupationConfig.setKeyName(this.getClass().getDeclaredMethod("haiguitangJudgeHandle", BbReceiveMessage.class).getName());
             occupationConfig.setValueName(haiguitangConfig.getId().toString());
             userConfigValueService.save(occupationConfig);
         }else {
@@ -98,7 +98,7 @@ public class BbHaiguitangHandler {
         UserConfigValue groupConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getGroupId, bbReceiveMessage.getGroupId())
                 .eq(UserConfigValue::getType, RuleType.OCCUPATION)
-                .eq(UserConfigValue::getKeyName, this.getClass().getDeclaredMethod("haiguitangJudgeHandle", QqMessage.class).getName()));
+                .eq(UserConfigValue::getKeyName, this.getClass().getDeclaredMethod("haiguitangJudgeHandle", BbReceiveMessage.class).getName()));
         if (groupConfig == null) {
             //删除占用
             userConfigValueService.remove(new LambdaQueryWrapper<UserConfigValue>()

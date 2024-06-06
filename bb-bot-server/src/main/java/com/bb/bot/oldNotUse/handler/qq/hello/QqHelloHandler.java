@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 打招呼事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.QQ)
+//@BootEventHandler(botType = BotType.QQ)
 public class QqHelloHandler {
 
     @Autowired

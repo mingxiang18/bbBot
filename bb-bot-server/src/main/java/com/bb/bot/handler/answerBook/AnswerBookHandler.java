@@ -18,7 +18,7 @@ import java.util.Random;
  * 答案之书处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "答案之书")
 public class AnswerBookHandler {
 
     @Autowired

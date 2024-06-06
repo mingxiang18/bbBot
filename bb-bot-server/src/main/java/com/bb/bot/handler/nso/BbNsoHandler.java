@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "NSO相关功能（需登录）")
 public class BbNsoHandler {
 
     @Autowired

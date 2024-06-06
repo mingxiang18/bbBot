@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 用于记录所有聊天消息
  * @author ren
  */
-@BootEventHandler(order = 1)
+//@BootEventHandler(order = 1)
 public class ChatHistoryHandler {
 
     @Autowired

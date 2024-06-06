@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "抽签")
 public class BbFortuneHandler {
 
     @Autowired

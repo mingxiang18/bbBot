@@ -34,7 +34,7 @@ import java.util.HashMap;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQNT)
+////@BootEventHandler(botType = BotType.QQNT)
 public class QqntSplatoonHandler {
 
     @Autowired

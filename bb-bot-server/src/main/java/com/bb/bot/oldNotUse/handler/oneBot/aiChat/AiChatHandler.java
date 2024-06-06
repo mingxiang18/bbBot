@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler
+//@BootEventHandler
 public class AiChatHandler {
 
     @Autowired

@@ -26,7 +26,7 @@ import java.util.List;
  * @author ren
  */
 @Slf4j
-@BootEventHandler
+//@BootEventHandler
 public class JapaneseLearnHandler {
 
     @Autowired

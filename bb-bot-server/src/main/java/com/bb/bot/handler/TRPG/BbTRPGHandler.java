@@ -17,7 +17,7 @@ import java.util.Collections;
  * 跑团事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "跑团相关")
 public class BbTRPGHandler {
 
     @Autowired

@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "斯普拉遁3用户数据（需登录）")
 public class BbSplatoonUserHandler {
 
     @Autowired

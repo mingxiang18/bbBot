@@ -36,7 +36,7 @@ import java.util.HashMap;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "斯普拉遁3")
 public class BbSplatoonHandler {
 
     @Autowired

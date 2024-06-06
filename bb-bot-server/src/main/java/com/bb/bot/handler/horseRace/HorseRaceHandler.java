@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * 赛马小游戏事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "赛马小游戏")
 public class HorseRaceHandler {
 
     @Autowired
@@ -84,7 +84,7 @@ public class HorseRaceHandler {
                 bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("添加马匹成功，当前马匹如下\n" + horseRaceGame.printHorses())));
                 bbMessageApi.sendMessage(bbSendMessage);
             }else {
-                throw new IllegalArgumentException("马图标格式不正确，只能为emoji表情");
+                throw new IllegalArgumentException("马匹图标格式不正确，只能为emoji表情");
             }
         }catch (Exception e) {
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);

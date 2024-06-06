@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * @author ren
  */
 @Slf4j
-@BootEventHandler(botType = BotType.QQ)
+//@BootEventHandler(botType = BotType.QQ)
 public class QqNsoHandler {
 
     @Autowired

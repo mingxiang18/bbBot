@@ -35,7 +35,7 @@ import java.util.HashMap;
  * @author ren
  */
 @Slf4j
-@BootEventHandler
+//@BootEventHandler
 public class SplatoonHandler {
 
     @Autowired

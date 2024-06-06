@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * 俄罗斯转盘事件处理器
  * @author ren
  */
-@BootEventHandler(botType = BotType.BB)
+@BootEventHandler(botType = BotType.BB, name = "俄罗斯转盘")
 public class RussianRouletteHandler {
 
     @Autowired
