@@ -23,7 +23,7 @@ public class BbTRPGHandler {
     @Autowired
     private BbMessageApi bbMessageApi;
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {DiceRoller.COMMAND_REG}, name = "跑团骰子投掷")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^" + DiceRoller.COMMAND_REG}, name = "跑团骰子投掷")
     public void diceRollerHandle(BbReceiveMessage bbReceiveMessage) {
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
         bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(DiceRoller.parseAndRoll(bbReceiveMessage.getMessage()))));

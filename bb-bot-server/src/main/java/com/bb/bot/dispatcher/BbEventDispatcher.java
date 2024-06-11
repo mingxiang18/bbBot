@@ -109,13 +109,13 @@ public class BbEventDispatcher {
         //如果有，所有消息都由该方法接管
         if (useMethod != null) {
             for (Map.Entry<Method, Object> entry : occupationHandlerMap.entrySet()) {
-                if (entry.getKey().getName().equals(useMethod.getKeyName())) {
+                Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
+                //如果找到占用方法且匹配规则，执行后直接结束
+                if (entry.getKey().getName().equals(useMethod.getKeyName()) && messageRuleMatch(bbReceiveMessage, rule)) {
                     handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
                     return;
                 }
             }
-            //如果没找到占用方法，抛出异常
-            throw new RuntimeException("未找到当前占用的处理方法");
         }
 
         //是否存在匹配的处理者

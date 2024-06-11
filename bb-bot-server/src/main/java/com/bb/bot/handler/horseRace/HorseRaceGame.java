@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class HorseRaceGame {
     /**
      * 马的属性和位置
      */
-    private final List<Horse> horseList = new ArrayList<>();
+    private final List<Horse> horseList = new CopyOnWriteArrayList<>();
 
     /**
      * 比赛状态，0-未开始，1-进行中，2-结束
