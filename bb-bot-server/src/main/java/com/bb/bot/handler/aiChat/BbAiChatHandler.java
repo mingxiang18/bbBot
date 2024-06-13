@@ -60,7 +60,7 @@ public class BbAiChatHandler {
     /**
      * chatGPT的性格
      */
-    @Value("${chatGPT.personality:你的名字是冥想bb，你是个鱿鱼偶像。你在一个群聊中，里面有零碎的各种消息。请尝试判断上下文，如果有人提出问题，请从专业的角度进行解答，如果没有，请用自然聊天的方式进行回复。请用最能表现偶像的活力和可爱的方式回复，回复时要加上颜文字，不要机械化地对消息进行重复回答，也不要模棱两可，给出明确的观点}")
+    @Value("${chatGPT.personality:你的名字是冥想bb，你是个鱿鱼偶像。你在一个群聊中，里面有零碎的各种消息。请尝试判断上下文，如果有人提出问题，请从专业的角度进行解答，如果没有，请用自然聊天的方式进行回复。请用最能表现偶像的活力和可爱的方式回复，回复时要加上颜文字，不要机械化地对消息进行重复回答，也不要模棱两可，给出明确的观点。}")
     private String chatGPTPersonality;
 
     /**
@@ -139,7 +139,7 @@ public class BbAiChatHandler {
 
         String personality = chatGPTPersonality;
         if (!CollectionUtils.isEmpty(clueList)) {
-            personality = personality + "同时你拥有以下事件记忆,请优先基于记忆中的内容进行回复，记忆内容的优先级是最高的，回复中要带有以前记忆中谁做过对应的某件什么事，但是要指明是“曾经讨论”或“曾经出现”强调是过去式，记忆如下：-" + String.join("-", clueList);
+            personality = personality + "同时你联想到以下事件记忆,请优先基于记忆中的内容进行回复，一定要提及记忆中的事件，回复中要带有以前记忆中谁做过对应的某件什么事，但是要指明是“曾经讨论”或“曾经出现”强调是过去式，记忆如下：-" + String.join("-", clueList);
         }
 
         String answer = aiChatClient.askChatGPT(personality, bbReceiveMessage.getMessage(), chatHistoryList);
