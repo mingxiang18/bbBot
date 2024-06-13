@@ -165,6 +165,17 @@ public class BbChatHistoryHandler {
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
     public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
+        if (!bbReceiveMessage.getUserId().equals("1105048721")) {
+            //发送消息
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("您当前不具备该权限噢"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
+        }
+
         List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);

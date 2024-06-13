@@ -10,7 +10,7 @@
         WHERE
             #{content} LIKE CONCAT('%', ak.key_name, '%')
         GROUP BY ac.id
-        ORDER BY ac.weight DESC
+        ORDER BY ac.weight, ac.create_time DESC
         LIMIT 5
     </select>
 

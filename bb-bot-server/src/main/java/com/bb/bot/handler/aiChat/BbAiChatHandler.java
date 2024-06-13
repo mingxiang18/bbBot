@@ -91,6 +91,8 @@ public class BbAiChatHandler {
             if (atMeFlag.isPresent()) {
                 //如果被@则回复
                 isReply = true;
+                //获取线索
+                clueList = aiClueService.selectClue(bbReceiveMessage.getMessage());
             }else {
                 //如果没有被@，查询群聊是否配置自动回复
                 UserConfigValue configValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()

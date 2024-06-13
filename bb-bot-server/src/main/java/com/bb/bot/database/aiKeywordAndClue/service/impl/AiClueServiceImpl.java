@@ -96,7 +96,7 @@ public class AiClueServiceImpl extends ServiceImpl<AiClueMapper, AiClue> impleme
             AiClue aiClue = new AiClue();
             aiClue.setId(IdWorker.getId());
             aiClue.setClueContent(clueDetail.getContent());
-            aiClue.setWeight(clueDetail.getWeight());
+            aiClue.setWeight(1d);
             saveClueList.add(aiClue);
 
             //封装关键字和线索关联
