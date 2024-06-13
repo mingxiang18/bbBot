@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bb.bot.database.aiKeywordAndClue.mapper.AiClueMapper">
+
+    <select id="selectClue" resultType="java.lang.String">
+        SELECT ac.clue_content
+        FROM ai_keyword ak
+        INNER JOIN ai_keyword_clue akc ON akc.keyword_id = ak.id
+        INNER JOIN ai_clue ac ON ac.id = akc.clue_id
+        WHERE
+            #{content} LIKE CONCAT('%', ak.key_name, '%')
+        GROUP BY ac.id
+        ORDER BY ac.weight DESC
+        LIMIT 5
+    </select>
+
+    <select id="selectClueDetail" resultType="com.bb.bot.database.aiKeywordAndClue.vo.ClueDetailVo">
+        SELECT
+            ac.clue_content AS clueContent, GROUP_CONCAT(ak.key_name) AS keywords, ac.weight
+        FROM ai_keyword ak
+        INNER JOIN ai_keyword_clue akc ON akc.keyword_id = ak.id
+        INNER JOIN ai_clue ac ON ac.id = akc.clue_id
+        GROUP BY ac.id
+    </select>
+
+    <delete id="deleteClue">
+        DELETE ac, akc
+        FROM ai_clue ac
+        INNER JOIN ai_keyword_clue akc ON akc.clue_id = ac.id
+        WHERE ac.id = #{clueId}
+    </delete>
+</mapper>

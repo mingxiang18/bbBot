@@ -45,30 +45,21 @@ public class AiChatClient {
     private String model;
 
     /**
-     * chatGPT的性格
-     */
-    @Value("${chatGPT.personality:你的名字是冥想bb，你是一个专业的解答助手。你在一个群聊中，里面有零碎的各种消息。请尝试判断上下文，如果有人提出问题，请从专业的角度进行解答，如果没有，请用自然聊天的方式进行回复。同时你是个鱿鱼偶像，请用最能表现偶像的活力和可爱的方式回复，回复时要加上颜文字。}")
-    private String chatGPTPersonality;
-
-    /**
      * 出现错误时重试次数
      */
     @Value("${chatGPT.retryNum:10}")
     private Integer retryNum;
 
     /**
-     * 询问chatGPT
-     * @Param question 问题
-     * @Param chatHistoryList 聊天历史
-     * @author ren
+     * 是否配置了ai
      */
-    public String askChatGPT(String question, List<ChatHistory> chatHistoryList) {
-        return askChatGPT(chatGPTPersonality, question, chatHistoryList);
+    public Boolean hasConfigAI() {
+        return StringUtils.isNoneBlank(chatGPTApiKey);
     }
 
     /**
      * 询问chatGPT
-     * @Param personality 机器人设定
+     * @Param personality 机器人设定/性格
      * @Param question 问题
      * @Param chatHistoryList 聊天历史
      * @author ren
@@ -86,17 +77,22 @@ public class AiChatClient {
         List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
 
         //构建机器人性格消息体
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
+        if (StringUtils.isNoneBlank(personality)) {
+            chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
+        }
 
         //如果聊天历史记录不为空，将历史记录构建成消息体
         if (!CollectionUtils.isEmpty(chatHistoryList)) {
+            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !chatHistory.getText().equals(question)).toList();
             for (ChatHistory chatHistory : chatHistoryList) {
                 //如果是机器人的qq号发送的消息，构建机器人消息体
                 if ("bot".equals(chatHistory.getUserQq())) {
                     chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.ASSISTANT_ROLE, chatHistory.getText()));
                 }else {
                     //如果是用户的qq号发送的消息，构建用户消息体
-                    chatGPTContentList.add(new ChatGPTContent(chatHistory.getText()));
+                    chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE,
+                            (StringUtils.isBlank(chatHistory.getUserName()) ? chatHistory.getUserQq() : chatHistory.getUserName()) + "：" + chatHistory.getText()
+                    ));
                 }
             }
         }
@@ -112,7 +108,7 @@ public class AiChatClient {
                 //返回chatGPT回复
                 return chatGPTResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
             } catch (Exception e) {
-                log.error("chatGPT请求失败，重试次数：" + nowRetryNum, e);
+                log.error("chatGPT请求失败，剩余重试次数：" + nowRetryNum, e);
             } finally {
                 nowRetryNum--;
             }

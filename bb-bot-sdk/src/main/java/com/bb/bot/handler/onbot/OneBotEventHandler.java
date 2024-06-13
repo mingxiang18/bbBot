@@ -11,6 +11,7 @@ import com.bb.bot.entity.bb.MessageUser;
 import com.bb.bot.entity.oneBot.ReceiveMessage;
 import com.bb.bot.handler.BotEventHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
@@ -67,6 +68,7 @@ public class OneBotEventHandler implements BotEventHandler {
                 bbReceiveMessage.setGroupId(receiveMessage.getGroupId());
             }
             bbReceiveMessage.setUserId(receiveMessage.getUserId());
+            bbReceiveMessage.setSender(new MessageUser(receiveMessage.getSender().getUserId(), receiveMessage.getSender().getNickname()));
             bbReceiveMessage.setMessageId(receiveMessage.getMessageId() == null ? UUID.randomUUID().toString() : receiveMessage.getMessageId().toString());
 
             //消息文本内容
@@ -82,7 +84,11 @@ public class OneBotEventHandler implements BotEventHandler {
                     String qq = detail.getJSONObject("data").getString("qq");
                     atUserList.add(new MessageUser(qq, botConfig.getQq().equals(qq)));
                 }else {
-                    messageTextContent.append(detail.getJSONObject("data").getString("text"));
+                    //如果是文本消息，添加到内容体
+                    String text = detail.getJSONObject("data").getString("text");
+                    if (StringUtils.isNoneBlank(text)) {
+                        messageTextContent.append(text);
+                    }
                 }
             }
             bbReceiveMessage.setMessage(messageTextContent.toString());

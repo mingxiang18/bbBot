@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bb.onebot.database.chatHistory.mapper.ChatHistoryMapper">
+<mapper namespace="com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper">
     
     <resultMap type="com.bb.bot.database.chatHistory.entity.ChatHistory" id="ChatHistoryResult">
         <result property="id"    column="id"    />

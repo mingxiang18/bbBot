@@ -31,8 +31,4 @@ public class ChatGPTContent {
         this.role = role;
         this.content = content;
     }
-
-    public ChatGPTContent(String content) {
-        this.content = content;
-    }
 }

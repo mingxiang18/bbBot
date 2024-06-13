@@ -193,6 +193,7 @@ public class BbHaiguitangHandler {
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
             bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("海龟汤格式不符合要求")));
             bbMessageApi.sendMessage(bbSendMessage);
+            return;
         }
 
         UserConfigValue haiguitangConfig = new UserConfigValue();

@@ -31,6 +31,9 @@ public class ChatHistory {
     @ApiModelProperty("用户qq号")
     private String userQq;
 
+    @ApiModelProperty("用户名")
+    private String userName;
+
     @ApiModelProperty("群号")
     private String groupId;
 

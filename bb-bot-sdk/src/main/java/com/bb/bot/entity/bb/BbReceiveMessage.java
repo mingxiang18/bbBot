@@ -22,6 +22,10 @@ public class BbReceiveMessage {
      */
     private String userId;
     /**
+     * 消息发送者详情
+     */
+    private MessageUser sender;
+    /**
      * 群组id
      */
     private String groupId;

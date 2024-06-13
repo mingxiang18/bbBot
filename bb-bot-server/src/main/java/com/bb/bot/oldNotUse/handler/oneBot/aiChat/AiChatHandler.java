@@ -113,7 +113,8 @@ public class AiChatHandler {
         }
 
         //调用chatGPT获取回复消息
-        String content = aiChatClient.askChatGPT(message.getMessage(), chatHistoryList);
+//        String content = aiChatClient.askChatGPT(message.getMessage(), chatHistoryList);
+        String content = "";
         content = content.replaceAll(cqRegex, "");
 
         //将机器人回复内容也保存到数据库

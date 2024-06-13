@@ -103,6 +103,7 @@ public class QqBotEventHandler implements BotEventHandler {
             BbReceiveMessage bbReceiveMessage = new BbReceiveMessage();
             bbReceiveMessage.setMessageType(MessageType.GROUP);
             bbReceiveMessage.setUserId(qqMessage.getAuthor().getId());
+            bbReceiveMessage.setSender(new MessageUser(qqMessage.getAuthor().getId(), qqMessage.getAuthor().getUsername()));
             bbReceiveMessage.setGroupId(qqMessage.getChannelId());
             bbReceiveMessage.setMessageId(qqMessage.getId());
             //设置消息内容，去掉@的cq码

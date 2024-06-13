@@ -27,8 +27,19 @@ public class MessageUser {
         this.userId = userId;
     }
 
+    public MessageUser(String userId, String nickname) {
+        this.userId = userId;
+        this.nickname = nickname;
+    }
+
     public MessageUser(String userId, Boolean isBot) {
         this.userId = userId;
         this.botFlag = isBot;
+    }
+
+    public MessageUser(String userId, String nickname, Boolean botFlag) {
+        this.userId = userId;
+        this.nickname = nickname;
+        this.botFlag = botFlag;
     }
 }

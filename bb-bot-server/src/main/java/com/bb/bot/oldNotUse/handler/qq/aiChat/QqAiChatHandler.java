@@ -57,7 +57,8 @@ public class QqAiChatHandler {
                     .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
         }
 
-        String answer = aiChatClient.askChatGPT(event.getContent(), chatHistoryList);
+//        String answer = aiChatClient.askChatGPT(event.getContent(), chatHistoryList);
+        String answer = "";
 
         //保存机器人回复
         ChatHistory chatHistory = new ChatHistory();
