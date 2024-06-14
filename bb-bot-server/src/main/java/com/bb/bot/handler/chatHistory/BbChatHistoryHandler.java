@@ -47,9 +47,6 @@ public class BbChatHistoryHandler {
     @Autowired
     private AiChatClient aiChatClient;
 
-    @Autowired
-    private IAiClueService aiClueService;
-
     /**
      * ai回复需要携带的历史记录数量
      */
@@ -159,29 +156,6 @@ public class BbChatHistoryHandler {
         bbSendMessage.setMessageList(Arrays.asList(
                 BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
                 BbMessageContent.buildTextContent("\n" + answer))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
-    }
-
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
-    public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
-        if (!bbReceiveMessage.getUserId().equals("1105048721")) {
-            //发送消息
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("您当前不具备该权限噢"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-
-        List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("\n" + JSON.toJSONString(clueDetailList)))
         );
         bbMessageApi.sendMessage(bbSendMessage);
     }

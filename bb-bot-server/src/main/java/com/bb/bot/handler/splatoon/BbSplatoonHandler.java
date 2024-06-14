@@ -67,7 +67,7 @@ public class BbSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/图", "/下图", "/下下图", "/下下下图", "图", "下图", "下下图", "下下下图"}, name = "对战地图获取")
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?下*图"}, name = "对战地图获取")
     public void regularMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
         String content = bbReceiveMessage.getMessage();
@@ -140,7 +140,7 @@ public class BbSplatoonHandler {
      * @author ren
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.MATCH, keyword = {"/工", "/下工", "/下下工", "/下下下工", "工", "下工", "下下工", "下下下工"}, name = "打工地图获取")
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?下*工"}, name = "打工地图获取")
     public void coopMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
         String content = bbReceiveMessage.getMessage();

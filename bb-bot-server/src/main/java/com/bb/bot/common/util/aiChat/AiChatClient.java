@@ -83,7 +83,8 @@ public class AiChatClient {
 
         //如果聊天历史记录不为空，将历史记录构建成消息体
         if (!CollectionUtils.isEmpty(chatHistoryList)) {
-            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !chatHistory.getText().equals(question)).toList();
+            //过滤掉重复消息
+            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !question.contains(chatHistory.getText())).toList();
             for (ChatHistory chatHistory : chatHistoryList) {
                 //如果是机器人的qq号发送的消息，构建机器人消息体
                 if ("bot".equals(chatHistory.getUserQq())) {

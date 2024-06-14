@@ -10,13 +10,13 @@
         WHERE
             #{content} LIKE CONCAT('%', ak.key_name, '%')
         GROUP BY ac.id
-        ORDER BY ac.weight, ac.create_time DESC
+        ORDER BY ac.weight DESC, ac.create_time DESC
         LIMIT 5
     </select>
 
     <select id="selectClueDetail" resultType="com.bb.bot.database.aiKeywordAndClue.vo.ClueDetailVo">
         SELECT
-            ac.clue_content AS clueContent, GROUP_CONCAT(ak.key_name) AS keywords, ac.weight
+            ac.clue_content AS clueContent, GROUP_CONCAT(ak.key_name) AS keywords, ac.weight, ac.create_time
         FROM ai_keyword ak
         INNER JOIN ai_keyword_clue akc ON akc.keyword_id = ak.id
         INNER JOIN ai_clue ac ON ac.id = akc.clue_id

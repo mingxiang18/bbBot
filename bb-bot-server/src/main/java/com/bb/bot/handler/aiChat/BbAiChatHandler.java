@@ -72,7 +72,7 @@ public class BbAiChatHandler {
     /**
      * ai自动回复概率
      */
-    @Value("${aiChat.autoReplyRate:0.9}")
+    @Value("${aiChat.autoReplyRate:0.99}")
     private Double autoReplyRate;
 
     @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.DEFAULT, name = "ai自动回复")
@@ -92,7 +92,8 @@ public class BbAiChatHandler {
                 //如果被@则回复
                 isReply = true;
                 //获取线索
-                clueList = aiClueService.selectClue(bbReceiveMessage.getMessage());
+                clueList = aiClueService.selectClue((bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") +
+                        bbReceiveMessage.getMessage());
             }else {
                 //如果没有被@，查询群聊是否配置自动回复
                 UserConfigValue configValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
@@ -104,7 +105,8 @@ public class BbAiChatHandler {
 
                 if (configValue != null) {
                     //判断用户讨论内容是否触发关键字
-                    clueList = aiClueService.selectClue(bbReceiveMessage.getMessage());
+                    clueList = aiClueService.selectClue((bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") +
+                            bbReceiveMessage.getMessage());
                     //如果触发关键字，且概率大于自动回复概率，则开始自动回复
                     double replyRate = new Random().nextDouble();
                     log.info("回复概率：" + replyRate);
@@ -139,10 +141,12 @@ public class BbAiChatHandler {
 
         String personality = chatGPTPersonality;
         if (!CollectionUtils.isEmpty(clueList)) {
-            personality = personality + "同时你联想到以下事件记忆,请优先基于记忆中的内容进行回复，一定要提及记忆中的事件，回复中要带有以前记忆中谁做过对应的某件什么事，但是要指明是“曾经讨论”或“曾经出现”强调是过去式，记忆如下：-" + String.join("-", clueList);
+            personality = personality + "同时你联想到以下事件记忆,请优先基于记忆中的内容进行回复，回复中要带有以前记忆中谁做过对应的某件什么事，但是要指明是“曾经讨论”或“曾经出现”强调是过去式，记忆如下：-" + String.join("-", clueList);
         }
 
-        String answer = aiChatClient.askChatGPT(personality, bbReceiveMessage.getMessage(), chatHistoryList);
+        String answer = aiChatClient.askChatGPT(personality,
+                (bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") + bbReceiveMessage.getMessage(),
+                chatHistoryList);
 
         //保存机器人回复
         ChatHistory chatHistory = new ChatHistory();
@@ -155,6 +159,30 @@ public class BbAiChatHandler {
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
         bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(answer)));
+        bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
+    public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
+        //todo 暂时没做权限，只判断是自己用的
+        if (!bbReceiveMessage.getUserId().equals("1105048721")) {
+            //发送消息
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("您当前不具备该权限噢"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
+        }
+
+        List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
+        //发送消息
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildTextContent("\n" + JSON.toJSONString(clueDetailList)))
+        );
         bbMessageApi.sendMessage(bbSendMessage);
     }
 

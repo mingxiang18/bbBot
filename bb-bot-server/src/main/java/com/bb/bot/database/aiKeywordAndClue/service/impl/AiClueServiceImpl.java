@@ -55,6 +55,7 @@ public class AiClueServiceImpl extends ServiceImpl<AiClueMapper, AiClue> impleme
             clueDetail.setKeyword(Arrays.stream(clueDetailVo.getKeywords().split(",")).toList());
             clueDetail.setContent(clueDetailVo.getClueContent());
             clueDetail.setWeight(clueDetailVo.getWeight());
+            clueDetail.setCreateTime(clueDetailVo.getCreateTime());
             return clueDetail;
         }).toList();
     }
@@ -97,6 +98,7 @@ public class AiClueServiceImpl extends ServiceImpl<AiClueMapper, AiClue> impleme
             aiClue.setId(IdWorker.getId());
             aiClue.setClueContent(clueDetail.getContent());
             aiClue.setWeight(1d);
+            aiClue.setCreateTime(clueDetail.getCreateTime());
             saveClueList.add(aiClue);
 
             //封装关键字和线索关联

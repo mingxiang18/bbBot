@@ -2,6 +2,8 @@ package com.bb.bot.database.aiKeywordAndClue.vo;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 线索详情
  *
@@ -25,4 +27,9 @@ public class ClueDetailVo {
      * 权重
      */
     private Double weight;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
 }
