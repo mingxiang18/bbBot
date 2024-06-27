@@ -77,5 +77,11 @@
             <artifactId>cos_api</artifactId>
         </dependency>
 
+        <!-- caffeine本地缓存 -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
