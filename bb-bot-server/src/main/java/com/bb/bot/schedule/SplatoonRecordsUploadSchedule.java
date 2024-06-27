@@ -43,9 +43,13 @@ public class SplatoonRecordsUploadSchedule {
 
             log.info("开始上传用户：{}，的斯普拉遁记录", userId);
 
-            //开始上传记录
-            bbSplatoonUserHandler.syncCoopRecords(userId);
-            bbSplatoonUserHandler.syncBattleRecords(userId);
+            try {
+                //开始上传记录
+                bbSplatoonUserHandler.syncCoopRecords(userId);
+                bbSplatoonUserHandler.syncBattleRecords(userId);
+            }catch (Exception e) {
+                log.error("用户：【" + userId + "】的斯普拉遁记录上传失败", e);
+            }
         }
     }
 }
