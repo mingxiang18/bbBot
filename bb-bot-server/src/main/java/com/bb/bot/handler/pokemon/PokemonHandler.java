@@ -34,7 +34,7 @@ public class PokemonHandler {
 
     private Map<String, List<Integer>> userPokemonMap = new HashMap<>();
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?捕捉宝可梦?"}, name = "捕捉宝可梦")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?捕捉宝可梦"}, name = "捕捉宝可梦")
     public void getPokemonHandle(BbReceiveMessage bbReceiveMessage) {
         String pokemonJson = new String(FileUtils.getFile("pokemon/pokemon_data.json"), StandardCharsets.UTF_8);
         List<PokemonData> pokemonDataList = JSON.parseObject(pokemonJson, new TypeReference<List<PokemonData>>() {});
@@ -62,7 +62,7 @@ public class PokemonHandler {
         bbMessageApi.sendMessage(bbSendMessage);
     }
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?杂交宝可梦?"}, name = "杂交宝可梦")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?杂交宝可梦"}, name = "杂交宝可梦")
     @SneakyThrows
     public void combinePokemonHandle(BbReceiveMessage bbReceiveMessage) {
         List<Integer> pokemonList = userPokemonMap.get(bbReceiveMessage.getUserId());
