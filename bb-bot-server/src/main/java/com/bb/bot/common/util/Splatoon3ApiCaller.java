@@ -54,9 +54,9 @@ public class Splatoon3ApiCaller {
         translateRid.put("BankaraBattleHistoriesQuery", "9863ea4744730743268e2940396e21b891104ed40e2286789f05100b45a0b0fd");
         translateRid.put("PrivateBattleHistoriesQuery", "fef94f39b9eeac6b2fac4de43bc0442c16a9f2df95f4d367dd8a79d7c5ed5ce7");
         translateRid.put("XBattleHistoriesQuery", "eb5996a12705c2e94813a62e05c0dc419aad2811b8d49d53e5732290105559cb");
-        translateRid.put("VsHistoryDetailQuery", "f893e1ddcfb8a4fd645fd75ced173f18b2750e5cfba41d2669b9814f6ceaec46");
+        translateRid.put("VsHistoryDetailQuery", "20f88b10d0b1d264fcb2163b0866de26bbf6f2b362f397a0258a75b7fa900943");
         translateRid.put("CoopHistoryQuery", "0f8c33970a425683bb1bdecca50a0ca4fb3c3641c0b2a1237aedfde9c0cb2b8f");
-        translateRid.put("CoopHistoryDetailQuery", "42262d241291d7324649e21413b29da88c0314387d8fdf5f6637a2d9d29954ae");
+        translateRid.put("CoopHistoryDetailQuery", "f2d55873a9281213ae27edc171e2b19131b3021a2ae263757543cdd3bf015cc8");
         translateRid.put("MyOutfitCommonDataEquipmentsQuery", "45a4c343d973864f7bb9e9efac404182be1d48cf2181619505e9b7cd3b56a6e8");
         translateRid.put("FriendsList", "ea1297e9bb8e52404f52d89ac821e1d73b726ceef2fd9cc8d6b38ab253428fb3");
         translateRid.put("HistorySummary", "0a62c0152f27c4218cf6c87523377521c2cff76a4ef0373f2da3300079bf0388");
@@ -307,7 +307,7 @@ public class Splatoon3ApiCaller {
     }
 
     /**
-     * 获取子弹（不知道怎么翻译）token
+     * 获取BulletToken
      */
     public String getBulletToken(String webServiceToken, JSONObject userInfo) {
         HttpHeaders headers = new HttpHeaders();

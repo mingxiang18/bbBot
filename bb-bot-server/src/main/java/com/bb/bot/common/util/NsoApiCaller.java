@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -42,6 +43,9 @@ public class NsoApiCaller {
 
     @Autowired
     private IUserConfigValueService userConfigValueService;
+
+    @Value("${nso.fGenerationApi:https://api.imink.app/f}")
+    private String fGenerationApi;
 
     /**
      * 获取nso的app版本
@@ -177,7 +181,7 @@ public class NsoApiCaller {
             paramMap.put("coral_user_id", coralUserId);
         }
 
-        return restUtils.post("https://api.imink.app/f", headers, paramMap, JSONObject.class);
+        return restUtils.post(fGenerationApi, headers, paramMap, JSONObject.class);
     }
 
     /**
