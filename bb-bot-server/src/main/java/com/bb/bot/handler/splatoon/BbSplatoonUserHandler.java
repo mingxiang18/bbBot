@@ -1,5 +1,6 @@
 package com.bb.bot.handler.splatoon;
 
+import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -403,19 +404,37 @@ public class BbSplatoonUserHandler {
      * 打工记录
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^打工记录", "^/打工记录"}, name = "打工记录")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?打工记录(\\d*)-?(\\d*)"}, name = "打工记录")
     public void getCoopRecords(BbReceiveMessage bbReceiveMessage) {
         // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("打工记录(\\d+)");
+        Pattern pattern = Pattern.compile("^/?打工记录(\\d*)-?(\\d*)");
         Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        Integer pageNum = null;
-        Integer pageStart = null;
+        int recordStart = 1;
+        int recordEnd = 5;
         // 如果找到匹配项
-        if (matcher.find()) {
-            pageNum = Integer.valueOf(matcher.group(1));
+        if (matcher.matches()) {
+            // 提取前后数字并处理默认值
+            recordStart = matcher.group(1).isEmpty() ? recordStart : Integer.parseInt(matcher.group(1));
+            recordEnd = matcher.group(2).isEmpty() ? recordEnd : Integer.parseInt(matcher.group(2));
+        } else {
+            //返回格式不匹配
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("格式不正确，参考格式：【打工记录】、【打工记录2-11】"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
         }
-        if (pageNum != null) {
-            pageStart = (pageNum-1) * 5;
+        if (recordEnd - recordStart + 1 > 20) {
+            //查询记录太多时返回
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("查询记录超过20条了，太多啦"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
         }
 
         //获取token
@@ -423,40 +442,20 @@ public class BbSplatoonUserHandler {
         //获取用户账户信息的id
         String userAccountId = tokenInfo.getUserInfo().getString("id");
 
-        //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
-        //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
-
-        //记录图片绘制时间
-        LocalDateTime startTime = LocalDateTime.now();
-
-        //从临时图片创建默认g2d对象
-        BufferedImage image = ImageIO.read(imageFile);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
         //查询数据库记录
         List<SplatoonCoopRecord> recordList = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
                 .eq(SplatoonCoopRecord::getUserId, userAccountId)
                 .orderByDesc(SplatoonCoopRecord::getPlayedTime)
-                .last("limit " + (pageStart == null ? "" : pageStart + ",") + "5"));
+                .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
+        //查询数据库用户详细记录
+        List<SplatoonCoopUserDetail> userDetailList = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
+                .in(SplatoonCoopUserDetail::getCoopId, recordList.stream().map(splatoonCoopRecord -> splatoonCoopRecord.getId().toString()).collect(Collectors.toList())));
 
-        int startY = 20;
-        for (SplatoonCoopRecord record : recordList) {
-            //查询数据库用户详细记录
-            List<SplatoonCoopUserDetail> userDetailList = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
-                    .eq(SplatoonCoopUserDetail::getCoopId, record.getId().toString()));
 
-            //绘制当前打工记录
-            writeOneCoopRecord(g2d, record, userDetailList, startY);
-
-            startY += 140;
-        }
-
-        //将绘制完成的临时图片写入文件
-        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        //记录图片绘制时间
+        LocalDateTime startTime = LocalDateTime.now();
+        //绘制图片
+        File imageFile = writeFullCoopRecord(recordList, userDetailList);
         //打印耗时日志
         log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -531,19 +530,37 @@ public class BbSplatoonUserHandler {
      * 对战记录
      */
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^对战记录", "^/对战记录"}, name = "对战记录")
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?对战记录(\\d*)-?(\\d*)"}, name = "对战记录")
     public void getBattleRecords(BbReceiveMessage bbReceiveMessage) {
         // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("对战记录(\\d+)");
+        Pattern pattern = Pattern.compile("^/?对战记录(\\d*)-?(\\d*)");
         Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        Integer pageNum = null;
-        Integer pageStart = null;
+        int recordStart = 1;
+        int recordEnd = 5;
         // 如果找到匹配项
-        if (matcher.find()) {
-            pageNum = Integer.valueOf(matcher.group(1));
+        if (matcher.matches()) {
+            // 提取前后数字并处理默认值
+            recordStart = matcher.group(1).isEmpty() ? recordStart : Integer.parseInt(matcher.group(1));
+            recordEnd = matcher.group(2).isEmpty() ? recordEnd : Integer.parseInt(matcher.group(2));
+        } else {
+            //返回格式不匹配
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("格式不正确，参考格式：【对战记录】、【对战记录2-11】"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
         }
-        if (pageNum != null) {
-            pageStart = (pageNum-1) * 5;
+        if (recordEnd - recordStart + 1 > 20) {
+            //查询记录太多时返回
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("查询记录超过20条了，太多啦"))
+            );
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
         }
 
         //获取token
@@ -551,39 +568,19 @@ public class BbSplatoonUserHandler {
         //获取用户账户信息的id
         String userAccountId = tokenInfo.getUserInfo().getString("id");
 
-        //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
-        //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
-        //从临时图片创建默认g2d对象
-        BufferedImage image = ImageIO.read(imageFile);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
         //查询数据库记录
         List<SplatoonBattleRecord> recordList = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
                 .eq(SplatoonBattleRecord::getUserId, userAccountId)
                 .orderByDesc(SplatoonBattleRecord::getPlayedTime)
-                .last("limit " + (pageStart == null ? "" : pageStart + ",") + "5"));
+                .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
+        //查询数据库用户详细记录
+        List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
+                .in(SplatoonBattleUserDetail::getBattleId, recordList.stream().map(splatoonBattleRecord -> splatoonBattleRecord.getId().toString()).collect(Collectors.toList())));
 
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
-
-        int startY = 10;
-        for (SplatoonBattleRecord record : recordList) {
-            //查询数据库用户详细记录
-            List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
-                    .eq(SplatoonBattleUserDetail::getBattleId, record.getId().toString()));
-
-            //绘制当前对战记录
-            writeOneBattleRecord(g2d, record, userDetailList, startY);
-
-            startY += 140;
-        }
-
-        //将绘制完成的临时图片写入文件
-        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        //绘制图片
+        File imageFile = writeFullBattleRecord(recordList, userDetailList);
         //打印耗时日志
         log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -594,6 +591,53 @@ public class BbSplatoonUserHandler {
             BbMessageContent.buildLocalImageMessageContent(imageFile))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * 绘制完整打工记录图片
+     */
+    @SneakyThrows
+    private File writeFullCoopRecord(List<SplatoonCoopRecord> recordList, List<SplatoonCoopUserDetail> userDetailList) {
+        //打工记录按每五条进行分段
+        List<List<SplatoonCoopRecord>> recordListPartition = ListUtil.partition(recordList, 5);
+
+        //数据库用户详细记录按对战id分组
+        Map<String, List<SplatoonCoopUserDetail>> userDetailListMap = userDetailList.stream()
+                .collect(Collectors.groupingBy(SplatoonCoopUserDetail::getCoopId));
+
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
+
+        //生成的图片列表
+        List<BufferedImage> imageList = new ArrayList<>();
+
+        for (List<SplatoonCoopRecord> fiveCoopRecordList : recordListPartition) {
+            //从临时图片创建默认g2d对象
+            BufferedImage image = ImageIO.read(imageFile);
+            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+            int startY = 20;
+            for (SplatoonCoopRecord record : fiveCoopRecordList) {
+                //根据打工记录id获取对应用户打工详细记录
+                List<SplatoonCoopUserDetail> coopUserDetailList = userDetailListMap.get(record.getId().toString());
+
+                //绘制当前打工记录
+                writeOneCoopRecord(g2d, record, coopUserDetailList, startY);
+
+                startY += 140;
+            }
+
+            imageList.add(image);
+        }
+
+        BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
+        //将绘制完成的临时图片写入文件
+        ImageIO.write(mergedImage, "png", imageFile);
+        return imageFile;
     }
 
     /**
@@ -737,6 +781,53 @@ public class BbSplatoonUserHandler {
 
             userX += 150;
         }
+    }
+
+    /**
+     * 绘制完整对战记录图片
+     */
+    @SneakyThrows
+    private File writeFullBattleRecord(List<SplatoonBattleRecord> recordList, List<SplatoonBattleUserDetail> userDetailList) {
+        //对战记录按每五条进行分段
+        List<List<SplatoonBattleRecord>> recordListPartition = ListUtil.partition(recordList, 5);
+
+        //数据库用户详细记录按对战id分组
+        Map<String, List<SplatoonBattleUserDetail>> userDetailListMap = userDetailList.stream()
+                .collect(Collectors.groupingBy(SplatoonBattleUserDetail::getBattleId));
+
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
+
+        //生成的图片列表
+        List<BufferedImage> imageList = new ArrayList<>();
+
+        for (List<SplatoonBattleRecord> fiveBattleRecordList : recordListPartition) {
+            //从临时图片创建默认g2d对象
+            BufferedImage image = ImageIO.read(imageFile);
+            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+            int startY = 15;
+            for (SplatoonBattleRecord record : fiveBattleRecordList) {
+                //根据对战记录id获取对应用户对战详细记录
+                List<SplatoonBattleUserDetail> battleUserDetailList = userDetailListMap.get(record.getId().toString());
+
+                //绘制当前对战记录
+                writeOneBattleRecord(g2d, record, battleUserDetailList, startY);
+
+                startY += 140;
+            }
+
+            imageList.add(image);
+        }
+
+        BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
+        //将绘制完成的临时图片写入文件
+        ImageIO.write(mergedImage, "png", imageFile);
+        return imageFile;
     }
 
     /**

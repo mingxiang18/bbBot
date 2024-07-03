@@ -219,6 +219,38 @@ public class ImageUtils{
     }
 
     /**
+     * 纵向合并一组BufferedImage
+     * @param images 要合并的BufferedImage列表
+     * @return 合并后的BufferedImage
+     */
+    public static BufferedImage mergeImagesVertically(List<BufferedImage> images) {
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("Image list is empty or null");
+        }
+
+        // 计算合并后的图像的宽度和高度
+        int totalWidth = images.get(0).getWidth();
+        int totalHeight = 0;
+        for (BufferedImage img : images) {
+            totalHeight += img.getHeight();
+        }
+
+        // 创建一个新的BufferedImage用于存储合并后的图像
+        BufferedImage mergedImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
+
+        // 使用Graphics2D将每个图像绘制到新的图像中
+        Graphics2D g2d = mergedImage.createGraphics();
+        int currentHeight = 0;
+        for (BufferedImage img : images) {
+            g2d.drawImage(img, 0, currentHeight, null);
+            currentHeight += img.getHeight();
+        }
+        g2d.dispose();
+
+        return mergedImage;
+    }
+
+    /**
      * 横向拼接图片（两张）
      * @param firstSrcImagePath 第一张图片的路径
      * @param secondSrcImagePath	第二张图片的路径

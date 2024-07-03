@@ -28,8 +28,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 喷喷事件处理器
@@ -60,14 +62,14 @@ public class BbSplatoonHandler {
         put("Q29vcEVuZW15LTI0", "nso_splatoon/coop/boss/chenlong.png");
         put("Q29vcEVuZW15LTI1", "nso_splatoon/coop/boss/jue.png");
         put("Q29vcEVuZW15LTIz", "nso_splatoon/coop/boss/henggang.png");
+        put("Q29vcEVuZW15LTMw", "nso_splatoon/coop/boss/toumulianhe.png");
     }};
 
     /**
      * splatoon3对战地图获取
      * @author ren
      */
-    @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?下*图$"}, name = "对战地图获取")
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?(下*图|全图)$"}, name = "对战地图获取")
     public void regularMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
         String content = bbReceiveMessage.getMessage();
@@ -79,6 +81,11 @@ public class BbSplatoonHandler {
             if (c == '下') {
                 timeIndex++;
             }
+            //如果是获取全图，时间序号设置为-1
+            if (c == '全') {
+                timeIndex = -1;
+                break;
+            }
         }
 
         //发起网络请求获取json数据
@@ -87,44 +94,8 @@ public class BbSplatoonHandler {
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
-        //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
-
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 587);
-        //从临时图片创建默认g2d对象
-        BufferedImage image = ImageIO.read(imageFile);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
-        //涂地地图绘制
-        JSONObject scheduleObject = dataObject.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 15, "regular");
-
-        //单排地图绘制
-        scheduleObject = dataObject.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(0);
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 145, "rank");
-
-        //组排地图绘制
-        scheduleObject = dataObject.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(1);
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 275, "league1");
-
-        //x比赛地图绘制
-        scheduleObject = dataObject.getJSONObject("xSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("xMatchSetting");
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 405, "x");
-
-        //绘制对战模式时间
-        JSONObject timeObject = dataObject.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
-        ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 23, Color.WHITE,
-                "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
-                230, 555,
-                500, 500,
-                0);
-
-        //将绘制完成的临时图片写入文件
-        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        File imageFile =  writeRegularMap(dataObject, timeIndex);
 
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -136,11 +107,84 @@ public class BbSplatoonHandler {
     }
 
     /**
+     * splatoon3对战地图绘制
+     */
+    @SneakyThrows
+    private File writeRegularMap(JSONObject scheduleData, int timeIndex) {
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 587);
+
+        //如果timeIndex为-1则绘制全时段地图，否则绘制指定时段地图
+        if (timeIndex != -1) {
+            //绘制单个时段的地图
+            BufferedImage image = writeOneRegularMap(imageFile, scheduleData, timeIndex);
+            //将绘制完成的临时图片写入文件
+            ImageIO.write(image, "png", imageFile);
+        }else {
+            //全部时段地图的数量
+            int nodeSize = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").size();
+            //全部地图绘制的图片列表
+            List<BufferedImage> imageList = new ArrayList<>();
+            //绘制每个时段的地图
+            for (int i = 0; i < nodeSize; i++) {
+                imageList.add(writeOneRegularMap(imageFile, scheduleData, i));
+            }
+            //绘制出的图片合并
+            BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
+            //将绘制完成的临时图片写入文件
+            ImageIO.write(mergedImage, "png", imageFile);
+        }
+
+        return imageFile;
+    }
+
+    /**
+     * splatoon3单个时段的对战地图绘制
+     */
+    @SneakyThrows
+    private BufferedImage writeOneRegularMap(File backgroundImage, JSONObject scheduleData, int timeIndex) {
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(backgroundImage);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+        //涂地地图绘制
+        JSONObject scheduleObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 15, "regular");
+
+        //单排地图绘制
+        scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(0);
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 145, "rank");
+
+        //组排地图绘制
+        scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(1);
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 275, "league1");
+
+        //x比赛地图绘制
+        scheduleObject = scheduleData.getJSONObject("xSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("xMatchSetting");
+        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 405, "x");
+
+        //绘制对战模式时间
+        JSONObject timeObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
+        ImageUtils.writeWordInImage(g2d,
+                "font/sakura.ttf", Font.PLAIN, 23, Color.WHITE,
+                "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
+                230, 555,
+                500, 500,
+                0);
+
+        return image;
+    }
+
+    /**
      * splatoon3打工地图获取
      * @author ren
      */
-    @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?下*工$"}, name = "打工地图获取")
+    @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.REGEX, keyword = {"^/?(下*工|全工)$"}, name = "打工地图获取")
     public void coopMapHandle(BbReceiveMessage bbReceiveMessage) {
         //接收的消息内容
         String content = bbReceiveMessage.getMessage();
@@ -152,6 +196,11 @@ public class BbSplatoonHandler {
             if (c == '下') {
                 timeIndex++;
             }
+            //如果是获取全图，时间序号设置为-1
+            if (c == '全') {
+                timeIndex = -1;
+                break;
+            }
         }
 
         //发起网络请求获取json数据
@@ -160,26 +209,8 @@ public class BbSplatoonHandler {
         httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         JSONObject dataObject = restUtils.get("https://splatoon3.ink/data/schedules.json", httpHeaders, JSONObject.class).getJSONObject("data");
 
-        //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
-
-        //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 754, 674);
-        //从临时图片创建默认g2d对象
-        BufferedImage image = ImageIO.read(imageFile);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
-        //获取打工日程节点
-        JSONArray scheduleArray = dataObject.getJSONObject("coopGroupingSchedule").getJSONObject("regularSchedules").getJSONArray("nodes");
-        //绘制打工地图1
-        coopMapWriteFromSchedules(g2d, scheduleArray.getJSONObject(timeIndex), 40, 50);
-        //绘制打工地图2
-        coopMapWriteFromSchedules(g2d, scheduleArray.getJSONObject(timeIndex+1), 40, 370);
-
-        //将绘制完成的临时图片写入文件
-        ImageUtils.writeG2dToFile(g2d, image, imageFile);
+        //绘制打工地图
+        File imageFile = writeCoopMap(dataObject, timeIndex);
 
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -188,6 +219,66 @@ public class BbSplatoonHandler {
             BbMessageContent.buildLocalImageMessageContent(imageFile))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * splatoon3打工地图绘制
+     */
+    @SneakyThrows
+    private File writeCoopMap(JSONObject scheduleData, int timeIndex) {
+        //获取背景图片
+        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+
+        //生成临时图片文件
+        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        //裁剪部分底边
+        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 754, 337);
+        //获取打工日程节点
+        JSONArray scheduleArray = scheduleData.getJSONObject("coopGroupingSchedule").getJSONObject("regularSchedules").getJSONArray("nodes");
+
+        //如果timeIndex为-1则绘制全时段地图，否则绘制指定时段地图
+        if (timeIndex != -1) {
+            //绘制指定时段的地图
+            BufferedImage image = writeOneCoopMap(imageFile, scheduleArray, timeIndex);
+            //如果没有超出时段，绘制下一个时段的打工地图
+            if (timeIndex + 1 < scheduleArray.size()) {
+                BufferedImage image2 = writeOneCoopMap(imageFile, scheduleArray, timeIndex + 1);
+                //绘制出的两个时段的图片合并
+                image = ImageUtils.mergeImagesVertically(Arrays.asList(image, image2));
+            }
+            //将绘制完成的临时图片写入文件
+            ImageIO.write(image, "png", imageFile);
+        }else {
+            //全部时段地图的数量
+            int nodeSize = scheduleArray.size();
+            //全部地图绘制的图片列表
+            List<BufferedImage> imageList = new ArrayList<>();
+            //绘制每个时段的地图
+            for (int i = 0; i < nodeSize; i++) {
+                imageList.add(writeOneCoopMap(imageFile, scheduleArray, i));
+            }
+            //绘制出的图片合并
+            BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
+            //将绘制完成的临时图片写入文件
+            ImageIO.write(mergedImage, "png", imageFile);
+        }
+        
+        return imageFile;
+    }
+
+    /**
+     * splatoon3单个打工地图绘制
+     */
+    @SneakyThrows
+    private BufferedImage writeOneCoopMap(File backgroundImage, JSONArray scheduleArray, int timeIndex) {
+        //从临时图片创建默认g2d对象
+        BufferedImage image = ImageIO.read(backgroundImage);
+        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+        //绘制打工地图1
+        coopMapWriteFromSchedules(g2d, scheduleArray.getJSONObject(timeIndex), 40, 50);
+
+        return image;
     }
 
     /**
