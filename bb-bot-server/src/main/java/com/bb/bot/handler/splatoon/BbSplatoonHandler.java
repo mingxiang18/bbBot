@@ -132,7 +132,10 @@ public class BbSplatoonHandler {
             List<BufferedImage> imageList = new ArrayList<>();
             //绘制每个时段的地图
             for (int i = 0; i < nodeSize; i++) {
-                imageList.add(writeOneRegularMap(imageFile, scheduleData, i));
+                BufferedImage bufferedImage = writeOneRegularMap(imageFile, scheduleData, i);
+                if (bufferedImage != null) {
+                    imageList.add(bufferedImage);
+                }
             }
             //绘制出的图片合并
             BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
@@ -151,6 +154,11 @@ public class BbSplatoonHandler {
         //从临时图片创建默认g2d对象
         BufferedImage image = ImageIO.read(backgroundImage);
         Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+
+        //todo 祭典还没弄
+        if (scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("festMatchSettings") != null) {
+            return null;
+        }
 
         //涂地地图绘制
         JSONObject scheduleObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
