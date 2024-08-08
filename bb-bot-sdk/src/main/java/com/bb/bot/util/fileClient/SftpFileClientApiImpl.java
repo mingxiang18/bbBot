@@ -1,7 +1,6 @@
-package com.bb.bot.util.imageUpload;
+package com.bb.bot.util.fileClient;
 
 import com.bb.bot.config.FilePathConfig;
-import com.bb.bot.config.ServerConfig;
 import com.bb.bot.util.FileUtils;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -28,22 +27,24 @@ import java.util.Vector;
 @ConditionalOnProperty(prefix="fileClient",name = "type", havingValue = "sftp", matchIfMissing = false)
 public class SftpFileClientApiImpl implements FileClientApi {
 
-    @Value("${sftp.host}")
+    @Value("${fileClient.sftp.host}")
     private String host;
-    @Value("${sftp.port}")
+    @Value("${fileClient.sftp.port}")
     private int port;
-    @Value("${sftp.username}")
+    @Value("${fileClient.sftp.username}")
     private String username;
-    @Value("${sftp.password}")
+    @Value("${fileClient.sftp.password}")
     private String password;
-    @Value("${sftp.remoteDir}")
+    @Value("${fileClient.sftp.remoteDir}")
     private String remoteDir;
+    /**
+     * 需要提供一个可以公网访问到指定文件目录的地址，通过nginx代理也好自己web服务器代理也好，否则uploadFile返回的地址无法访问
+     */
+    @Value("${fileClient.sftp.remoteReadAddress:http://127.0.0.1:80}")
+    private String remoteReadAddress;
 
     @Autowired
     private FilePathConfig filePathConfig;
-
-    @Value("${server.nginx.address:http://127.0.0.1:80}")
-    private String serverNginxAddress;
 
     private ChannelSftp sftpChannel;
 
@@ -105,7 +106,7 @@ public class SftpFileClientApiImpl implements FileClientApi {
         sftpChannel.put(inputStream, remoteDir + remotePath);
 
         //返回远程服务器可访问的nginx地址
-        return serverNginxAddress + remotePath;
+        return remoteReadAddress + remotePath;
     }
 
     @Override

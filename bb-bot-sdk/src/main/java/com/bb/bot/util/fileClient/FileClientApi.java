@@ -1,4 +1,4 @@
-package com.bb.bot.util.imageUpload;
+package com.bb.bot.util.fileClient;
 
 import java.io.InputStream;
 

@@ -1,4 +1,4 @@
-package com.bb.bot.util.imageUpload;
+package com.bb.bot.util.fileClient;
 
 import com.bb.bot.util.RestUtils;
 import com.qcloud.cos.COSClient;
