@@ -1,5 +1,6 @@
 package com.bb.bot.util.fileClient;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**
@@ -19,7 +20,7 @@ public interface FileClientApi {
     /**
      * 下载文件
      */
-    InputStream downloadFile(String remotePath);
+    InputStream downloadFile(String remotePath) throws FileNotFoundException;
 
     /**
      * 删除文件

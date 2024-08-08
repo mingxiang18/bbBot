@@ -1,4 +1,4 @@
-package com.bb.bot.common.util;
+package com.bb.bot.common.util.nso;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;

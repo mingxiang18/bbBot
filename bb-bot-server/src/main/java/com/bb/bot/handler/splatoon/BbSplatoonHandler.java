@@ -9,6 +9,7 @@ import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
@@ -25,8 +26,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +44,9 @@ public class BbSplatoonHandler {
 
     @Autowired
     private RestUtils restUtils;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
     private HashMap<String, String> ruleModeMap = new HashMap<String, String>() {{
         put("Turf War", "涂地");
@@ -607,21 +609,7 @@ public class BbSplatoonHandler {
             fileName = url.substring(url.lastIndexOf("/"));
         }
 
-        File file = new File(FileUtils.getAbsolutePath("splatoon/" + type + "/" + fileName));
-        if (file.exists()) {
-            return file;
-        }else {
-            byte[] data = FileUtils.getFile(url);
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            try (OutputStream outStream = new FileOutputStream(file);){
-                outStream.write(data);
-            }catch (Exception e) {
-                log.error("获取斯普拉遁图片出现异常", e);
-            }
-        }
-
-        return file;
+        String fileSubPath = "splatoon/" + type + "/" + fileName;
+        return resourcesUtils.getOrAddStaticResourceFromNet(fileSubPath, url);
     }
 }

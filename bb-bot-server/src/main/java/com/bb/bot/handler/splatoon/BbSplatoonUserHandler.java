@@ -11,7 +11,7 @@ import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.common.util.Splatoon3ApiCaller;
+import com.bb.bot.common.util.nso.Splatoon3ApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;

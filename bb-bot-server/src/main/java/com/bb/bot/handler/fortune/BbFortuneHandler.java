@@ -10,11 +10,13 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.util.FileUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,16 +38,20 @@ public class BbFortuneHandler {
     @Autowired
     private BbMessageApi bbMessageApi;
 
+    @Autowired
+    private ResourcesUtils resourcesUtils;
+
+    @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/抽签", "抽签"}, name = "抽签")
     public void fortuneHandle(BbReceiveMessage bbReceiveMessage) {
         //随机抽取运气内容
-        String luckContentJson = new String(FileUtils.getFile("fortune/copywriting.json"), StandardCharsets.UTF_8);
+        String luckContentJson = new String(resourcesUtils.getStaticResourceToByte("fortune/copywriting.json"), StandardCharsets.UTF_8);
         List luckContentArray = JSON.parseObject(luckContentJson).getJSONArray("copywriting").stream().collect(Collectors.toList());
         JSONObject luckContentObject = (JSONObject) RandomUtil.randomEle(luckContentArray);
         String luckContent = luckContentObject.getString("content");
 
         //获取运气内容中的运气号码对应的名称
-        String luckJson = new String(FileUtils.getFile("fortune/goodLuck.json"), StandardCharsets.UTF_8);
+        String luckJson = new String(resourcesUtils.getStaticResourceToByte("fortune/goodLuck.json"), StandardCharsets.UTF_8);
         JSONArray luckArray = JSON.parseObject(luckJson).getJSONArray("types_of");
         String luckName = luckArray.stream().filter(goodLuck -> {
             return luckContentObject.getInteger("good-luck") == ((JSONObject) goodLuck).getInteger("good-luck");

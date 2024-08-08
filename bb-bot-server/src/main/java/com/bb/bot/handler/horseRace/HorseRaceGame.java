@@ -2,9 +2,11 @@ package com.bb.bot.handler.horseRace;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.handler.horseRace.entity.Horse;
 import com.bb.bot.handler.horseRace.entity.HorseRaceEvent;
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.util.SpringUtils;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -153,13 +155,14 @@ public class HorseRaceGame {
     /**
      * 马的移动事件
      */
+    @SneakyThrows
     public String moveHorses() {
         raceState = new AtomicInteger(1);
 
         Random rand = new Random();
         StringBuilder eventContent = new StringBuilder();
 
-        String horseRaceEventJson = new String(FileUtils.getFile("horseRace/horseRaceEvent.json"), StandardCharsets.UTF_8);
+        String horseRaceEventJson = new String(SpringUtils.getBean(ResourcesUtils.class).getStaticResourceToByte("horseRace/horseRaceEvent.json"), StandardCharsets.UTF_8);
         List<HorseRaceEvent> horseRaceEventList = JSON.parseObject(horseRaceEventJson, new TypeReference<List<HorseRaceEvent>>() {});
 
         //马的独立事件

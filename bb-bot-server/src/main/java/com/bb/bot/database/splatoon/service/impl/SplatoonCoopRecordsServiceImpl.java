@@ -3,19 +3,18 @@ package com.bb.bot.database.splatoon.service.impl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.common.util.DateUtils;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
 import com.bb.bot.database.splatoon.mapper.SplatoonCoopRecordsMapper;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopEnemyDetailService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopWaveDetailService;
-import com.bb.bot.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 /**
@@ -37,6 +36,9 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
 
     @Autowired
     private ISplatoonCoopEnemyDetailService coopEnemyDetailService;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -66,8 +68,8 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
         //设置地图数据
         splatoonCoopRecord.setCoopStageId(coopDetail.getJSONObject("coopStage").getString("id"));
         splatoonCoopRecord.setCoopStageName(coopDetail.getJSONObject("coopStage").getString("name"));
-        FileUtils.writeSourceFileToDestFile(coopDetail.getJSONObject("coopStage").getJSONObject("image").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/coop/stage/") + splatoonCoopRecord.getCoopStageName() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/stage/" + splatoonCoopRecord.getCoopStageName() + ".png",
+                coopDetail.getJSONObject("coopStage").getJSONObject("image").getString("url"));
 
         splatoonCoopRecord.setDangerRate(String.valueOf(coopDetail.getBigDecimal("dangerRate").multiply(new BigDecimal(100)).intValue()));
         if(coopDetail.getJSONObject("afterGrade") != null) {
@@ -117,23 +119,23 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
         JSONArray weaponsArray = coopRecord.getJSONArray("weapons");
         if (weaponsArray.size() > 0) {
             splatoonCoopRecord.setWeapon1(weaponsArray.getJSONObject(0).getString("name"));
-            FileUtils.writeSourceFileToDestFile(weaponsArray.getJSONObject(0).getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/") + splatoonCoopRecord.getWeapon1() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon1() + ".png",
+                    weaponsArray.getJSONObject(0).getJSONObject("image").getString("url"));
         }
         if (weaponsArray.size() > 1) {
             splatoonCoopRecord.setWeapon2(weaponsArray.getJSONObject(1).getString("name"));
-            FileUtils.writeSourceFileToDestFile(weaponsArray.getJSONObject(1).getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/") + splatoonCoopRecord.getWeapon2() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon2() + ".png",
+                    weaponsArray.getJSONObject(1).getJSONObject("image").getString("url"));
         }
         if (weaponsArray.size() > 2) {
             splatoonCoopRecord.setWeapon3(weaponsArray.getJSONObject(2).getString("name"));
-            FileUtils.writeSourceFileToDestFile(weaponsArray.getJSONObject(2).getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/") + splatoonCoopRecord.getWeapon3() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon3() + ".png",
+                    weaponsArray.getJSONObject(2).getJSONObject("image").getString("url"));
         }
         if (weaponsArray.size() > 3) {
             splatoonCoopRecord.setWeapon4(weaponsArray.getJSONObject(3).getString("name"));
-            FileUtils.writeSourceFileToDestFile(weaponsArray.getJSONObject(3).getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/") + splatoonCoopRecord.getWeapon4() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon4() + ".png",
+                    weaponsArray.getJSONObject(3).getJSONObject("image").getString("url"));
         }
 
         splatoonCoopRecordsMapper.insert(splatoonCoopRecord);

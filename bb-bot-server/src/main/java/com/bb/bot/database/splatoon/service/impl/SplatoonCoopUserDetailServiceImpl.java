@@ -1,10 +1,10 @@
 package com.bb.bot.database.splatoon.service.impl;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
 import com.bb.bot.database.splatoon.mapper.SplatoonCoopUserDetailMapper;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
-import com.bb.bot.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 public class SplatoonCoopUserDetailServiceImpl extends ServiceImpl<SplatoonCoopUserDetailMapper, SplatoonCoopUserDetail> implements ISplatoonCoopUserDetailService {
     @Autowired
     private SplatoonCoopUserDetailMapper splatoonCoopUserDetailMapper;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
 
     @Override
@@ -63,16 +66,16 @@ public class SplatoonCoopUserDetailServiceImpl extends ServiceImpl<SplatoonCoopU
         splatoonCoopUserDetail.setWeapons(coopUserDetail.getJSONArray("weapons")
                 .stream()
                 .map(weapon -> {
-                    FileUtils.writeSourceFileToDestFile(((JSONObject) weapon).getJSONObject("image").getString("url"),
-                            FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/") + ((JSONObject) weapon).getString("name") + ".png");
+                    resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + ((JSONObject) weapon).getString("name") + ".png",
+                            ((JSONObject) weapon).getJSONObject("image").getString("url"));
                     return  ((JSONObject) weapon).getString("name");
                 })
                 .collect(Collectors.joining(",")));
         if (coopUserDetail.getJSONObject("specialWeapon") != null) {
             splatoonCoopUserDetail.setSpecialWeaponId(coopUserDetail.getJSONObject("specialWeapon").getString("weaponId"));
             splatoonCoopUserDetail.setSpecialWeaponName(coopUserDetail.getJSONObject("specialWeapon").getString("name"));
-            FileUtils.writeSourceFileToDestFile(coopUserDetail.getJSONObject("specialWeapon").getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/coop/specialWeapon/") + splatoonCoopUserDetail.getSpecialWeaponName() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/specialWeapon/" + splatoonCoopUserDetail.getSpecialWeaponName() + ".png",
+                    coopUserDetail.getJSONObject("specialWeapon").getJSONObject("image").getString("url"));
         }
         splatoonCoopUserDetail.setDefeatEnemyCount(coopUserDetail.getInteger("defeatEnemyCount"));
         splatoonCoopUserDetail.setDeliverRedCount(coopUserDetail.getInteger("deliverCount"));

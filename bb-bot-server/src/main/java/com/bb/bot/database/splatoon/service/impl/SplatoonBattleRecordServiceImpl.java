@@ -3,9 +3,9 @@ package com.bb.bot.database.splatoon.service.impl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.common.util.DateUtils;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleUserDetailService;
-import com.bb.bot.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bb.bot.database.splatoon.mapper.SplatoonBattleRecordMapper;
@@ -32,6 +32,9 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
 
     @Autowired
     private ISplatoonBattleUserDetailService splatoonBattleUserDetailService;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
 
     @Override
@@ -66,8 +69,8 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         JSONObject vsStage = battleRecord.getJSONObject("vsStage");
         splatoonBattleRecord.setVsStageId(vsStage.getString("id"));
         splatoonBattleRecord.setVsStageName(vsStage.getString("name"));
-        FileUtils.writeSourceFileToDestFile(battleRecord.getJSONObject("vsStage").getJSONObject("image").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/battle/stage/") + splatoonBattleRecord.getVsStageId() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/battle/stage/" + splatoonBattleRecord.getVsStageId() + ".png",
+                battleRecord.getJSONObject("vsStage").getJSONObject("image").getString("url"));
 
         //设置对战结果
         splatoonBattleRecord.setJudgement(battleRecord.getString("judgement"));
@@ -172,8 +175,8 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
                 .map(badge -> {
                     String id = ((JSONObject) badge).getString("id");
                     //保存图片
-                    FileUtils.writeSourceFileToDestFile(((JSONObject) badge).getJSONObject("image").getString("url"),
-                            FileUtils.getAbsolutePath("nso_splatoon/user/badge/") + id + ".png");
+                    resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/badge/" + id + ".png",
+                            ((JSONObject) badge).getJSONObject("image").getString("url"));
                     return id;
                 }).collect(Collectors.joining(","));
         splatoonBattleUserDetail.setPlayerBadges(badgesStr);
@@ -181,45 +184,45 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         JSONObject background = nameplate.getJSONObject("background");
         splatoonBattleUserDetail.setPlayerBackground(background.getString("id"));
         //保存图片
-        FileUtils.writeSourceFileToDestFile(background.getJSONObject("image").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/user/background/") + splatoonBattleUserDetail.getPlayerBackground() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/background/" + splatoonBattleUserDetail.getPlayerBackground() + ".png",
+                background.getJSONObject("image").getString("url"));
 
         //用户头部装备
         JSONObject headGear = playerDetail.getJSONObject("headGear");
         splatoonBattleUserDetail.setPlayerHeadGear(headGear.getString("name"));
         //保存图片
-        FileUtils.writeSourceFileToDestFile(headGear.getJSONObject("originalImage").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/user/gear/") + splatoonBattleUserDetail.getPlayerHeadGear() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerHeadGear() + ".png",
+                headGear.getJSONObject("originalImage").getString("url"));
 
         //用户衣服装备
         JSONObject clothingGear = playerDetail.getJSONObject("clothingGear");
         splatoonBattleUserDetail.setPlayerClothesGear(clothingGear.getString("name"));
         //保存图片
-        FileUtils.writeSourceFileToDestFile(clothingGear.getJSONObject("originalImage").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/user/gear/") + splatoonBattleUserDetail.getPlayerClothesGear() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerClothesGear() + ".png",
+                clothingGear.getJSONObject("originalImage").getString("url"));
 
         //用户鞋子装备
         JSONObject shoesGear = playerDetail.getJSONObject("shoesGear");
         splatoonBattleUserDetail.setPlayerShoesGear(shoesGear.getString("name"));
         //保存图片
-        FileUtils.writeSourceFileToDestFile(shoesGear.getJSONObject("originalImage").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/user/gear/") + splatoonBattleUserDetail.getPlayerShoesGear() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerShoesGear() + ".png",
+                shoesGear.getJSONObject("originalImage").getString("url"));
 
         //设置武器信息
         JSONObject weapon = playerDetail.getJSONObject("weapon");
         splatoonBattleUserDetail.setWeaponId(weapon.getString("id"));
         splatoonBattleUserDetail.setWeaponName(weapon.getString("name"));
         //保存图片
-        FileUtils.writeSourceFileToDestFile(weapon.getJSONObject("image").getString("url"),
-                FileUtils.getAbsolutePath("nso_splatoon/weapon/") + splatoonBattleUserDetail.getWeaponId() + ".png");
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png",
+                weapon.getJSONObject("image").getString("url"));
         //设置副武器信息
         if (weapon.containsKey("subWeapon")) {
             JSONObject subWeapon = weapon.getJSONObject("subWeapon");
             splatoonBattleUserDetail.setWeaponSubWeaponId(subWeapon.getString("id"));
             splatoonBattleUserDetail.setWeaponSubWeaponName(subWeapon.getString("name"));
             //保存图片
-            FileUtils.writeSourceFileToDestFile(subWeapon.getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/subWeapon/") + splatoonBattleUserDetail.getWeaponSubWeaponId() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/subWeapon/" + splatoonBattleUserDetail.getWeaponSubWeaponId() + ".png",
+                    subWeapon.getJSONObject("image").getString("url"));
         }
         //设置特殊武器信息
         if (weapon.containsKey("specialWeapon")) {
@@ -227,8 +230,8 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
             splatoonBattleUserDetail.setWeaponSpecialId(specialWeapon.getString("id"));
             splatoonBattleUserDetail.setWeaponSpecialName(specialWeapon.getString("name"));
             //保存图片
-            FileUtils.writeSourceFileToDestFile(specialWeapon.getJSONObject("image").getString("url"),
-                    FileUtils.getAbsolutePath("nso_splatoon/specialWeapon/") + splatoonBattleUserDetail.getWeaponSpecialId() + ".png");
+            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/specialWeapon/" + splatoonBattleUserDetail.getWeaponSpecialId() + ".png",
+                    specialWeapon.getJSONObject("image").getString("url"));
         }
 
         //设置涂地数

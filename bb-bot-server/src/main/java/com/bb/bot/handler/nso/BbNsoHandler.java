@@ -9,7 +9,7 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.common.util.NsoApiCaller;
+import com.bb.bot.common.util.nso.NsoApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;

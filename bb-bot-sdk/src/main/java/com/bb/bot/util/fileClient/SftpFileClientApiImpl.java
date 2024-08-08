@@ -2,10 +2,7 @@ package com.bb.bot.util.fileClient;
 
 import com.bb.bot.config.FilePathConfig;
 import com.bb.bot.util.FileUtils;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.SneakyThrows;
@@ -110,12 +107,21 @@ public class SftpFileClientApiImpl implements FileClientApi {
     }
 
     @Override
-    @SneakyThrows
-    public InputStream downloadFile(String remotePath) {
+    public InputStream downloadFile(String remotePath) throws FileNotFoundException {
         judgeConnectStatus();
 
         //从远程服务器获取文件流
-        return sftpChannel.get(remoteDir + remotePath);
+        try {
+            return sftpChannel.get(remoteDir + remotePath);
+        }catch (SftpException e) {
+            //文件不存在时特殊处理
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                throw new FileNotFoundException();
+            }
+            throw new RuntimeException(e);
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
