@@ -9,7 +9,6 @@ import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
@@ -46,9 +45,6 @@ public class BbSplatoonHandler {
 
     @Autowired
     private RestUtils restUtils;
-
-    @Autowired
-    private ImageUploadApi imageUploadApi;
 
     private HashMap<String, String> ruleModeMap = new HashMap<String, String>() {{
         put("Turf War", "涂地");

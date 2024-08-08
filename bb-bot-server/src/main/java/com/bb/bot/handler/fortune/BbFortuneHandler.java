@@ -10,7 +10,6 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
@@ -36,9 +35,6 @@ public class BbFortuneHandler {
 
     @Autowired
     private BbMessageApi bbMessageApi;
-
-    @Autowired
-    private ImageUploadApi imageUploadApi;
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"/抽签", "抽签"}, name = "抽签")
     public void fortuneHandle(BbReceiveMessage bbReceiveMessage) {

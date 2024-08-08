@@ -8,12 +8,14 @@ import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.connection.qq.QqApiCaller;
-import com.bb.bot.util.imageUpload.ImageUploadApi;
+import com.bb.bot.util.imageUpload.FileClientApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @Component
 public class QqToBbMessageApi {
@@ -22,7 +24,7 @@ public class QqToBbMessageApi {
     private QqApiCaller qqApiCaller;
 
     @Autowired
-    private ImageUploadApi imageUploadApi;
+    private FileClientApi fileClientApi;
 
     public void sendMessage(BbSendMessage bbSendMessage) {
         if (CollectionUtils.isEmpty(bbSendMessage.getMessageList())) {
@@ -49,8 +51,12 @@ public class QqToBbMessageApi {
                     //封装文本消息
                     messageContent.append(bbMessageContent.getData().toString());
                 }else if (bbMessageContent.getType().equals(BbSendMessageType.LOCAL_IMAGE)) {
-                    //本地图片上传后获取网络地址并设置
-                    channelMessage.setImage(imageUploadApi.uploadImage((File) bbMessageContent.getData()));
+                    try (FileInputStream inputStream = new FileInputStream((File) bbMessageContent.getData())) {
+                        //本地图片上传后获取临时网络地址
+                        channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
+                    }catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }else if (bbMessageContent.getType().equals(BbSendMessageType.NET_IMAGE)) {
                     //封装网络图片地址
                     channelMessage.setImage(bbMessageContent.getData().toString());

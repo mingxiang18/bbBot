@@ -1,5 +1,6 @@
 package com.bb.bot.util.imageUpload;
 
+import com.bb.bot.util.RestUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
@@ -16,18 +17,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
 /**
  * 腾讯对象存储的图片上传工具
+ * 未实现删除
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix="imageUpload",name = "type", havingValue = "tencentCos", matchIfMissing = false)
-public class TencentCosImageUploadApiImpl implements ImageUploadApi{
+@ConditionalOnProperty(prefix="fileClient",name = "type", havingValue = "tencentCos", matchIfMissing = false)
+public class TencentCosFileClientApiImpl implements FileClientApi {
 
     @Autowired
     private TransferManager transferManager;
@@ -41,13 +44,23 @@ public class TencentCosImageUploadApiImpl implements ImageUploadApi{
     @Value("${tencent.cos.bucketName:misutmp-1312130478}")
     private String bucketName;
 
+    @Autowired
+    private RestUtils restUtils;
+
+    @Override
+    public String uploadTmpFile(InputStream inputStream) {
+        return uploadFile(inputStream, "tmp/" + System.currentTimeMillis() + ".png");
+    }
+
     @Override
     @SneakyThrows
-    public String uploadImage(File localFile) {
+    public String uploadFile(InputStream inputStream, String remotePath) {
         // 对象键(Key)是对象在存储桶中的唯一标识。
-        String key = localFile.getAbsolutePath();
+        String key = remotePath;
 
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, localFile);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(getSize(inputStream));
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, inputStream, metadata);
 
         // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
         // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
@@ -85,12 +98,30 @@ public class TencentCosImageUploadApiImpl implements ImageUploadApi{
         return "";
     }
 
-    /**
-     * 删除所有上传的图片
-     * 图片仅是临时保存，用于中转给qq接收，定时清理图片，防止占用满了
-     */
     @Override
-    public void deleteAllImage() {
+    public InputStream downloadFile(String remotePath) {
+        return restUtils.getFileInputStream(remotePath);
+    }
 
+    @Override
+    public void deleteFile(String remotePath) {
+
+    }
+
+    @Override
+    public void deleteTmpFile() {
+
+    }
+
+    static long getSize(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        long size = 0;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            size += bytesRead;
+        }
+
+        return size;
     }
 }
