@@ -168,6 +168,7 @@
                 <excludes>
                     <!-- 相对路径 -->
                     <exclude>static/**</exclude>
+                    <exclude>application-*.yml</exclude>
                 </excludes>
             </resource>
         </resources>
