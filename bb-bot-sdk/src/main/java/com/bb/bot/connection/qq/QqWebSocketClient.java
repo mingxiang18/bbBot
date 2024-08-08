@@ -194,8 +194,8 @@ public class QqWebSocketClient extends WebSocketClient {
      */
     private void startConnectThread() {
         connectThread = new Thread(() -> {
-            try {
-                while (true) {
+            while (true) {
+                try {
                     if (this.getSocket() == null || !this.getSocket().isConnected()) {
                         //如果没有连接则重连
                         reconnect();
@@ -211,10 +211,15 @@ public class QqWebSocketClient extends WebSocketClient {
                         log.debug("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
                         send(sendMessage);
                     }
-                    Thread.sleep(CONNECT_INTERVAL);
+
+                } catch (Exception e) {
+                    log.error("【" + name + "】WebSocket客户端重连未知异常", e);
                 }
-            } catch (Exception e) {
-                log.error("【" + name + "】WebSocket客户端重连未知异常", e);
+                try {
+                    Thread.sleep(CONNECT_INTERVAL);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         connectThread.start();
