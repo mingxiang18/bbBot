@@ -2,6 +2,7 @@ package com.bb.bot.entity.bb;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.java_websocket.WebSocket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class BbSendMessage {
+    /**
+     * 机器人类型
+     */
+    private String botType;
+    /**
+     * webSocket连接
+     */
+    private WebSocket webSocket;
     /**
      * 消息类型
      * private-私人，group-群组
@@ -36,6 +45,8 @@ public class BbSendMessage {
     private List<BbMessageContent> messageList = new ArrayList<>();
 
     public BbSendMessage(BbReceiveMessage bbReceiveMessage) {
+        this.botType = bbReceiveMessage.getBotType();
+        this.webSocket = bbReceiveMessage.getWebSocket();
         this.messageType = bbReceiveMessage.getMessageType();
         this.userId = bbReceiveMessage.getUserId();
         this.groupId = bbReceiveMessage.getGroupId();

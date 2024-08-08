@@ -1,22 +1,41 @@
 #----------------------必须配置--------------------------------------------------------
 bot:
   #类型：onebot（oneBot规范机器人），qqnt，qq（QQ官方机器人）
-  type: qq
-  #机器人的qq号
-  qq: 3889004605
+  onebot:
+    #自定义机器人名称
+    bot1:
+      #是否启用
+      enable: false
+      #机器人的qq号
+      qq: 111111111
+      #机器人的webSocket配置
+      webSocket:
+        #作为服务端提供ws服务可配置
+        server:
+          # 服务端的端口号
+          port: 8888
 
-webSocket:
-  server:
-    # 机器人服务端的端口号
-    port: 8888
-  socket:
-    # 机器人实现端的ws地址
-    url: ws://localhost:8282
+    bot2:
+      #是否启用
+      enable: false
+      #机器人的qq号
+      qq: 222222222
+      #机器人的webSocket配置
+      webSocket:
+        #作为客户端接入ws服务
+        client:
+          # 需要连接的ws地址
+          serverUrl: ws://localhost:3001
 
-#环境变量bot.type为qq时，qq官方机器人必须配置
-qq:
-  appId:
-  clientSecret:
+  #类型：qq（QQ官方机器人）
+  qq:
+    #自定义机器人名称
+    bot3:
+      #是否启用
+      enable: false
+      #qq官方机器人必须配置
+      appId:
+      clientSecret:
 
 # 数据库配置
 mysql:

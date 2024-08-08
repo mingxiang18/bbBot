@@ -2,8 +2,11 @@ package com.bb.bot.config;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 机器人相关配置
@@ -11,8 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Data
 @Configuration
+@ConfigurationProperties(prefix = "bot")
 public class BotConfig {
 
-    @Value("${bot.qq}")
-    private String qq;
+    private Map<String, OnebotConfig> onebot = new HashMap<>();
+
+    private Map<String, QqConfig> qq = new HashMap<>();
 }
