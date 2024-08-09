@@ -129,8 +129,6 @@ public class SftpFileClientApiImpl implements FileClientApi {
     public void deleteFile(String remotePath) {
         judgeConnectStatus();
 
-        //删除本地目录下文件
-        FileUtils.deleteFile(filePathConfig.getFilePath() + remotePath);
         //删除远程目录下文件
         sftpChannel.rm(remoteDir + remotePath);
     }
