@@ -44,7 +44,7 @@ mysql:
   password: root
 
 file:
-  #文件保存目录
+  #静态文件保存目录
   path: /bot/static/
 
 #----------------------可选配置--------------------------------------------------------
@@ -110,3 +110,20 @@ tencent:
   cos:
     secretId:
     secretKey:
+
+#文件服务器相关配置
+fileClient:
+  # local (默认本地存储，没有文件服务器)，sftp (sftp作为文件服务), tencentCos(腾讯云对象存储，但是qq官方机器人访问自己家腾讯云对象存储的外链会说ip被ban就离谱)
+  type: local
+
+#  #sftp相关配置
+#  type: sftp
+#  sftp:
+#    host: 127.0.0.1
+#    port: 22
+#    username: root
+#    password: xxxxx
+#    #远程可访问的目录
+#    remoteDir: /root/bbBot/static/
+#    #可被公网访问的地址
+#    remoteReadAddress: http://127.0.0.1:30080/bbBotStatic/
