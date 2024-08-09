@@ -530,7 +530,7 @@ public class ImageUtils{
         try{
             File tmpImage = additionImage;
             if (1d != ratio) {
-                tmpImage = new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+                tmpImage = FileUtils.buildTmpFile();
                 enlargementImageEqualProportion(additionImage.getAbsolutePath(), tmpImage.getAbsolutePath(), ratio);
             }
 
@@ -608,7 +608,7 @@ public class ImageUtils{
     /**
      * 在源图片上设置水印文字
      * @param imageFile	源图片文件
-     * @param fontPath	字体（例如：宋体）
+     * @param fontFile	字体文件（例如：宋体）
      * @param fontStyle		字体格式(例如：普通样式--Font.PLAIN、粗体--Font.BOLD )
      * @param fontSize	字体大小
      * @param color	字体颜色(例如：黑色--Color.BLACK)
@@ -623,7 +623,7 @@ public class ImageUtils{
      */
     @SneakyThrows
     public static void writeWordInImage(File imageFile,
-                                        String fontPath, int fontStyle, int fontSize,
+                                        File fontFile, int fontStyle, int fontSize,
                                         Color color,
                                         String inputWords,
                                         int x, int y,
@@ -642,7 +642,7 @@ public class ImageUtils{
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             g2d.getDeviceConfiguration().createCompatibleImage(xWidth, yHeight, Transparency.TRANSLUCENT);
             //设置文字字体名称、样式、大小
-            Font fontF = getFont(fontPath, fontStyle, fontSize);
+            Font fontF = getFont(fontFile, fontStyle, fontSize);
             g2d.setFont(fontF);
             //设置字体颜色
             g2d.setColor(color);
@@ -701,7 +701,7 @@ public class ImageUtils{
 
     /**
      * 在源图片上设置水印文字
-     * @param fontPath	字体（例如：宋体）
+     * @param fontFile	字体文件（例如：宋体）
      * @param fontStyle		字体格式(例如：普通样式--Font.PLAIN、粗体--Font.BOLD )
      * @param fontSize	字体大小
      * @param color	字体颜色(例如：黑色--Color.BLACK)
@@ -713,14 +713,14 @@ public class ImageUtils{
      * @param way   文字方向，0-横向， 1-纵向
      */
     public static void writeWordInImage(Graphics2D g2d,
-                                        String fontPath, int fontStyle, int fontSize,
+                                        File fontFile, int fontStyle, int fontSize,
                                         Color color,
                                         String inputWords,
                                         int x, int y,
                                         int xWidth, int yHeight,
                                         int way) {
         //设置文字字体名称、样式、大小
-        Font fontF = getFont(fontPath, fontStyle, fontSize);
+        Font fontF = getFont(fontFile, fontStyle, fontSize);
         g2d.setFont(fontF);
         //设置字体颜色
         g2d.setColor(color);
@@ -801,8 +801,7 @@ public class ImageUtils{
      * 获取字体文件
      * @Author rym
      **/
-    private static Font getFont(String fileName, int fontStyle, int fontSize) {
-        File file = new File(FileUtils.getAbsolutePath(fileName));
+    private static Font getFont(File file, int fontStyle, int fontSize) {
         InputStream fi = null;
         BufferedInputStream fb = null;
         Font nf = null;

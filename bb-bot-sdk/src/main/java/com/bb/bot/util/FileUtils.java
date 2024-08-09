@@ -17,6 +17,14 @@ public class FileUtils {
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
     /**
+     * 生成临时文件
+     * @return File 文件
+     */
+    public static File buildTmpFile() {
+        return new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+    }
+
+    /**
      * 获取文件资源目录的绝对路径
      *
      * @param subPath 相对路径
@@ -138,18 +146,13 @@ public class FileUtils {
         InputStream fileInputStream = null;
         byte[] data = null;
         try {
-            //如果是网络请求，读取网络文件
-            if (filePath.contains("http")) {
-                fileInputStream = SpringUtils.getBean(RestUtils.class).getFileInputStream(filePath);
+            if (!filePath.substring(0, 1).equals("/")) {
+                //如果第一个路径不是/号，则从相对路径取文件
+                String absolutePath = getAbsolutePath(filePath);
+                fileInputStream = new FileInputStream(absolutePath);
             }else {
-                if (!filePath.substring(0, 1).equals("/")) {
-                    //如果第一个路径不是/号，则从相对路径取文件
-                    String absolutePath = getAbsolutePath(filePath);
-                    fileInputStream = new FileInputStream(absolutePath);
-                }else {
-                    //否则从绝对路径读取文件
-                    fileInputStream = new FileInputStream(filePath);
-                }
+                //否则从绝对路径读取文件
+                fileInputStream = new FileInputStream(filePath);
             }
 
             if (fileInputStream != null) {

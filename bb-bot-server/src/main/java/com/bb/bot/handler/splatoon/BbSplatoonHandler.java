@@ -110,10 +110,10 @@ public class BbSplatoonHandler {
     @SneakyThrows
     private File writeRegularMap(JSONObject scheduleData, int timeIndex) {
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
 
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 587);
 
@@ -177,7 +177,7 @@ public class BbSplatoonHandler {
         //绘制对战模式时间
         JSONObject timeObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 23, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 23, Color.WHITE,
                 "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
                 230, 555,
                 500, 500,
@@ -233,10 +233,10 @@ public class BbSplatoonHandler {
     @SneakyThrows
     private File writeCoopMap(JSONObject scheduleData, int timeIndex) {
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
 
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 754, 337);
         //获取打工日程节点
@@ -315,10 +315,10 @@ public class BbSplatoonHandler {
         JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
 
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分背景
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 450);
         //从临时图片创建默认g2d对象
@@ -332,7 +332,7 @@ public class BbSplatoonHandler {
         //绘制祭典标题
         String festivalName = transferObject.getJSONObject("festivals").getJSONObject(id).getString("title");
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 33, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 33, Color.WHITE,
                 "祭典主题：" + festivalName,
                 40, 75,
                 600, 600,
@@ -346,21 +346,21 @@ public class BbSplatoonHandler {
         JSONArray festivalTeams = transferObject.getJSONObject("festivals").getJSONObject(id).getJSONArray("teams");
         //莎莎队
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(0).getString("teamName"),
                 70, 360,
                 600, 600,
                 0);
         //曼曼队
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(1).getString("teamName"),
                 250, 360,
                 600, 600,
                 0);
         //鬼蝠队
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 35, Color.WHITE,
                 festivalTeams.getJSONObject(2).getString("teamName"),
                 430, 360,
                 600, 600,
@@ -368,7 +368,7 @@ public class BbSplatoonHandler {
 
         //绘制祭典时间
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 20, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 20, Color.YELLOW,
                 "祭典时间：" + DateUtils.convertUTCTimeToALLShowString(festivalObject.getString("startTime"), festivalObject.getString("endTime")),
                 100, 410,
                 600, 600,
@@ -402,10 +402,10 @@ public class BbSplatoonHandler {
         JSONObject transferObject = restUtils.get("https://splatoon3.ink/data/locale/zh-CN.json", httpHeaders, JSONObject.class);
 
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
 
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分背景
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 600, 674);
         //从临时图片创建默认g2d对象
@@ -435,6 +435,7 @@ public class BbSplatoonHandler {
     /**
      * 对战地图绘制
      */
+    @SneakyThrows
     private void regularMapWriteFromSchedules(Graphics2D g2d, JSONObject scheduleObject, int x, int y, String modeName) {
         //对战模式获取
         String ruleMode = scheduleObject.getJSONObject("vsRule").getString("name");
@@ -451,7 +452,7 @@ public class BbSplatoonHandler {
 
         //绘制对战模式名称
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 42, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 42, Color.WHITE,
                 ruleModeMap.get(ruleMode),
                 x+10, y+40,
                 30, 30,
@@ -464,7 +465,7 @@ public class BbSplatoonHandler {
         ImageUtils.mergeImageToOtherImage(g2d, imageFile2, x+325, y, 0.6);
 
         //绘制对战图标
-        File iconImage = new File(FileUtils.getAbsolutePath("splatoon/mode/" + modeName + ".png"));
+        File iconImage = resourcesUtils.getStaticResource("splatoon/mode/" + modeName + ".png");
         ImageUtils.mergeImageToOtherImage(g2d, iconImage, x+290, y+25, 0.5);
     }
 
@@ -472,20 +473,21 @@ public class BbSplatoonHandler {
     /**
      * 绘制打工地图
      */
+    @SneakyThrows
     private void coopMapWriteFromSchedules(Graphics2D g2d, JSONObject scheduleObject, int x, int y) {
         //绘制boss图标
         JSONObject bassInfo = scheduleObject.getJSONObject("setting").getJSONObject("boss");
         if (bassInfo != null) {
             String imgPath = bossImgMap.get(bassInfo.getString("id"));
             if (imgPath != null) {
-                File bossImg = new File(FileUtils.getAbsolutePath(imgPath));
+                File bossImg = resourcesUtils.getStaticResource(imgPath);
                 ImageUtils.mergeImageToOtherImage(g2d, bossImg, x, y-25, 40, 40);
             }
         }
 
         //绘制打工时间
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 25, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 25, Color.WHITE,
                 "所处时段：" + DateUtils.convertUTCTimeToALLShowString(scheduleObject.getString("startTime"), scheduleObject.getString("endTime")),
                 x + 50, y,
                 600, 600,
@@ -514,20 +516,21 @@ public class BbSplatoonHandler {
     /**
      * 活动地图绘制
      */
+    @SneakyThrows
     private void eventMapWriteFromSchedules(Graphics2D g2d, JSONObject eventObject, JSONObject transferObject, int x, int y) {
         //获取活动详情
         JSONObject scheduleObject = eventObject.getJSONObject("leagueMatchSetting");
         String id = scheduleObject.getJSONObject("leagueMatchEvent").getString("id");
 
         //获取活动图标
-        File iconImage = new File(FileUtils.getAbsolutePath("splatoon/mode/event.png"));
+        File iconImage = resourcesUtils.getStaticResource("splatoon/mode/event.png");
         ImageUtils.mergeImageToOtherImage(g2d, iconImage, x+15, y, 1.2);
 
         //获取活动名称
         String eventName = transferObject.getJSONObject("events").getJSONObject(id).getString("name");
         //绘制活动名称
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 35, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 35, Color.WHITE,
                 eventName,
                 x+95, y+50,
                 600, 600,
@@ -537,7 +540,7 @@ public class BbSplatoonHandler {
         String eventDesc = transferObject.getJSONObject("events").getJSONObject(id).getString("desc");
         //绘制活动描述
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 20, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 20, Color.WHITE,
                 eventDesc,
                 x+95, y+90,
                 600, 600,
@@ -547,7 +550,7 @@ public class BbSplatoonHandler {
         String ruleMode = scheduleObject.getJSONObject("vsRule").getString("name");
         //绘制对战模式名称
         ImageUtils.writeWordInImage(g2d,
-                "font/sakura.ttf", Font.PLAIN, 42, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 42, Color.WHITE,
                 ruleModeMap.get(ruleMode),
                 x+30, y+160,
                 30, 30,
@@ -575,7 +578,7 @@ public class BbSplatoonHandler {
             JSONObject timePeriod = timePeriods.getJSONObject(i);
             //活动时间绘制
             ImageUtils.writeWordInImage(g2d,
-                    "font/sakura.ttf", Font.PLAIN, 16, Color.YELLOW,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 16, Color.YELLOW,
                     "活动时间" + (i + 1) + "：" + DateUtils.convertUTCTimeToShowString(timePeriod.getString("startTime"), timePeriod.getString("endTime")),
                     x + 195, y + offsetY,
                     600, 600,

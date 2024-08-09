@@ -11,6 +11,7 @@ import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.ImageUtils;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.common.util.nso.Splatoon3ApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
@@ -78,6 +79,9 @@ public class BbSplatoonUserHandler {
 
     @Autowired
     private BbNsoHandler bbNsoHandler;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
     public static Map<String, String> pointDiffMap = new HashMap<String, String>() {{
         put("UP", "↑");
@@ -222,9 +226,9 @@ public class BbSplatoonUserHandler {
         JSONObject userCoopData = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
 
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good2.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good2.jpg");
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 360, 460);
         //从临时图片创建默认g2d对象
@@ -237,7 +241,7 @@ public class BbSplatoonUserHandler {
 
         //绘制标题
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 28, new Color(255, 48, 20),
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 28, new Color(255, 48, 20),
                 "熊先生点数卡",
                 30, 40,
                 200, 30,
@@ -250,7 +254,7 @@ public class BbSplatoonUserHandler {
         //绘制半透明底色
         ImageUtils.createRoundRectOnImage(g2d, new Color(255, 218, 0), 28, 70, 300, 28, 0.3f);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 "累计点数: " + pointCard.getInteger("totalPoint"),
                 30, 90,
                 200, 30,
@@ -259,72 +263,72 @@ public class BbSplatoonUserHandler {
         ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 28, 102, 340, 160, 0.1f);
         Color wordColor = new Color(223, 223, 223, 255);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
                 "打工次数: " + pointCard.getInteger("playCount"),
                 30, 120,
                 400, 30,
                 0);
 
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
                 "已收集的金鲑鱼卵: " + pointCard.getInteger("goldenDeliverCount"),
                 30, 150,
                 400, 30,
                 0);
 
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
                 "已收集的鲑鱼卵: " + pointCard.getInteger("deliverCount"),
                 30, 180,
                 400, 30,
                 0);
 
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
                 "已击倒的头目鲑鱼: " + pointCard.getInteger("defeatBossCount"),
                 30, 210,
                 400, 30,
                 0);
 
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
                 "救援次数: " + pointCard.getInteger("rescueCount"),
                 30, 240,
                 400, 30,
                 0);
 
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 26, Color.GREEN,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 26, Color.GREEN,
                 "鳞片",
                 30, 290,
                 400, 30,
                 0);
 
         //铜鳞片绘制
-        File bronzeScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/bronze_scale.png"));
+        File bronzeScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/bronze_scale.png");
         ImageUtils.mergeImageToOtherImage(g2d, bronzeScale, 50, 310, 60, 60);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 "x" + scaleData.getInteger("bronze"),
                 60, 390,
                 200, 30,
                 0);
 
         //银鳞片绘制
-        File sliverScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/sliver_scale.png"));
+        File sliverScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/sliver_scale.png");
         ImageUtils.mergeImageToOtherImage(g2d, sliverScale, 146, 310, 60, 60);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 "x" + scaleData.getInteger("silver"),
                 156, 390,
                 200, 30,
                 0);
 
         //金鳞片绘制
-        File goldScale = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold_scale.png"));
+        File goldScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold_scale.png");
         ImageUtils.mergeImageToOtherImage(g2d, goldScale, 240, 310, 60, 60);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 "x" + scaleData.getInteger("gold"),
                 250, 390,
                 200, 30,
@@ -606,9 +610,9 @@ public class BbSplatoonUserHandler {
                 .collect(Collectors.groupingBy(SplatoonCoopUserDetail::getCoopId));
 
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
 
@@ -643,13 +647,14 @@ public class BbSplatoonUserHandler {
     /**
      * 绘制一条打工记录
      */
+    @SneakyThrows
     private void writeOneCoopRecord(Graphics2D g2d, SplatoonCoopRecord record, List<SplatoonCoopUserDetail> userDetailList, int startY) {
         //绘制半透明底色
         ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 15, startY, 690, 130, 0.3f);
 
         //绘制记录序号
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
                 "序号：" + record.getId().toString(),
                 20, startY + 20,
                 200, 30,
@@ -657,7 +662,7 @@ public class BbSplatoonUserHandler {
 
         //绘制打工时间
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
                 record.getPlayedTime().format(DateUtils.normalTimePattern),
                 20, startY + 40,
                 200, 30,
@@ -665,23 +670,23 @@ public class BbSplatoonUserHandler {
 
         //绘制地图名称
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 record.getCoopStageName(),
                 120, startY + 30,
                 200, 30,
                 0);
 
         //武器1绘制
-        File weapon1 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png"));
+        File weapon1 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png");
         ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 35, 35);
         //武器2绘制
-        File weapon2 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png"));
+        File weapon2 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png");
         ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 35, 35);
         //武器3绘制
-        File weapon3 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png"));
+        File weapon3 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png");
         ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 35, 35);
         //武器4绘制
-        File weapon4 = new File(FileUtils.getAbsolutePath("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png"));
+        File weapon4 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png");
         ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
 
         //绘制危险度底色
@@ -689,7 +694,7 @@ public class BbSplatoonUserHandler {
 
         //绘制危险度
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.YELLOW,
                 "危险度：" + record.getDangerRate() + "%",
                 560, startY + 25,
                 200, 30,
@@ -699,18 +704,18 @@ public class BbSplatoonUserHandler {
         ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 3, 60, 38, 0.3f);
 
         //绘制金蛋数
-        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold.png")), 640, startY + 2, 18, 18);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"), 640, startY + 2, 18, 18);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
                 String.valueOf(record.getTeamGlodenCount()),
                 660, startY + 15,
                 200, 30,
                 0);
 
         //绘制红蛋数
-        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/red.png")), 640, startY + 22, 18, 18);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"), 640, startY + 22, 18, 18);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
                 String.valueOf(record.getTeamRedCount()),
                 660, startY + 35,
                 200, 30,
@@ -720,7 +725,7 @@ public class BbSplatoonUserHandler {
             String pointDiff = pointDiffMap.get(record.getGradePointDiff());
             //绘制分数
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
                     record.getAfterGradeName() + " " + record. getAfterGradePoint() + " " + pointDiff,
                     20, startY + 90,
                     200, 30,
@@ -729,7 +734,7 @@ public class BbSplatoonUserHandler {
             String ruleName = ruleMap.get(record.getRule());
             //如果没有分数，绘制模式名称
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
                     "模式：" + ruleName,
                     20, startY + 90,
                     200, 30,
@@ -744,36 +749,36 @@ public class BbSplatoonUserHandler {
 
             //绘制名称
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, color,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
                     "名称：" + splatoonCoopUserDetail.getPlayerName(),
                     userX, startY + 60,
                     200, 30,
                     0);
             //绘制击倒数
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, color,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
                     "击倒数：" + splatoonCoopUserDetail.getDefeatEnemyCount(),
                     userX, startY + 80,
                     200, 30,
                     0);
             //绘制运蛋数
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/gold.png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"),
                     userX, startY + 86, 18, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/red.png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"),
                     userX + 60, startY + 86, 18, 18);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
                     splatoonCoopUserDetail.getDeliverGlodenCount() + "             " + splatoonCoopUserDetail.getDeliverRedCount(),
                     userX + 20, startY + 100,
                     200, 30,
                     0);
             //绘制救援数
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/rescue.png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescue.png"),
                     userX, startY + 106, 36, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/coop/icon/rescued.png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescued.png"),
                     userX + 60, startY + 106, 36, 18);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
                     splatoonCoopUserDetail.getRescueCount() + "             " + splatoonCoopUserDetail.getRescuedCount(),
                     userX + 40, startY + 120,
                     200, 30,
@@ -796,9 +801,9 @@ public class BbSplatoonUserHandler {
                 .collect(Collectors.groupingBy(SplatoonBattleUserDetail::getBattleId));
 
         //获取背景图片
-        File backgroundImage = new File(FileUtils.getAbsolutePath("splatoon/background/bg_good.jpg"));
+        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //裁剪部分底边
         ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
 
@@ -833,6 +838,7 @@ public class BbSplatoonUserHandler {
     /**
      * 绘制一条对战记录
      */
+    @SneakyThrows
     private void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
         ModeStyle modeStyle = BbSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
         //绘制半透明底色
@@ -840,7 +846,7 @@ public class BbSplatoonUserHandler {
 
         //绘制记录序号
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
                 "序号：" + record.getId().toString(),
                 20, startY + 20,
                 200, 30,
@@ -848,28 +854,28 @@ public class BbSplatoonUserHandler {
 
         //绘制对战时间
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
                 record.getPlayedTime().format(DateUtils.normalTimePattern),
                 20, startY + 40,
                 200, 30,
                 0);
 
         //绘制模式标志
-        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(modeStyle.getModeImgPath())),
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(modeStyle.getModeImgPath()),
                 120, startY + 8, 30, 30);
 
         //绘制规则标志,涂地模式没有标志，是不绘制的
         String ruleImgPath = BbSplatoonUserHandler.battleRuleMap.get(record.getVsRuleId());
         if (StringUtils.isNoneBlank(ruleImgPath)) {
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(ruleImgPath)),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(ruleImgPath),
                     150, startY + 8, 30, 30);
         }
 
         //绘制地图
-        ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/battle/stage/" + record.getVsStageId() + ".png")),
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/battle/stage/" + record.getVsStageId() + ".png"),
                 190, startY + 8, 0.2, 1f);
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
                 record.getVsStageName(),
                 360, startY + 30,
                 200, 30,
@@ -885,7 +891,7 @@ public class BbSplatoonUserHandler {
             judgeColor = Color.WHITE;
         }
         ImageUtils.writeWordInImage(g2d,
-                FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 20, judgeColor,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 20, judgeColor,
                 record.getJudgement(),
                 40, startY + 90,
                 200, 30,
@@ -894,7 +900,7 @@ public class BbSplatoonUserHandler {
         //绘制分数变化
         if (record.getPointChange() != null) {
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
                     (record.getPointChange() > 0 ? "+" + record.getPointChange() : record.getPointChange()) + "p",
                     560, startY + 25,
                     200, 30,
@@ -905,7 +911,7 @@ public class BbSplatoonUserHandler {
         if (record.getPower() != null) {
             ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 7, 60, 30 , 0.3f);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
                     "xp" + record.getPower(),
                     650, startY + 25,
                     200, 30,
@@ -954,39 +960,39 @@ public class BbSplatoonUserHandler {
             ImageUtils.createRoundRectOnImage(g2d, teamStyle.getTeamColor(), userX - 2, startY + 48, 5, 5, 1f);
 
             //绘制武器图片
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png"),
                     userX - 2, startY + 50, 27, 27);
             //绘制用户名称
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, isWin ? Color.YELLOW : Color.GRAY,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, isWin ? Color.YELLOW : Color.GRAY,
                     splatoonBattleUserDetail.getPlayerName(),
                     userX + 26, startY + 60,
                     200, 30,
                     0);
             //绘制击倒数
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(teamStyle.getTeamKillImg())),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(teamStyle.getTeamKillImg()),
                     userX + 21, startY + 65, 30, 15);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
                     splatoonBattleUserDetail.getKillCount() == null ? "null" : splatoonBattleUserDetail.getKillCount() + "(" + splatoonBattleUserDetail.getAssistCount() + ")",
                     userX + 50, startY + 76,
                     200, 30,
                     0);
 
             //绘制死亡数
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath(teamStyle.getTeamDeathImg())),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(teamStyle.getTeamDeathImg()),
                     userX + 73, startY + 65, 30, 15);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
                     splatoonBattleUserDetail.getDeathCount() == null ? "null" : splatoonBattleUserDetail.getDeathCount().toString(),
                     userX + 100, startY + 76,
                     200, 30,
                     0);
             //绘制大招数
-            ImageUtils.mergeImageToOtherImage(g2d, new File(FileUtils.getAbsolutePath("nso_splatoon/specialWeapon/" + splatoonBattleUserDetail.getWeaponSpecialId() + ".png")),
+            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/specialWeapon/" + splatoonBattleUserDetail.getWeaponSpecialId() + ".png"),
                     userX + 113, startY + 65, 15, 15);
             ImageUtils.writeWordInImage(g2d,
-                    FileUtils.getAbsolutePath("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
                     splatoonBattleUserDetail.getSpecialCount() == null ? "null" : splatoonBattleUserDetail.getSpecialCount().toString(),
                     userX + 128, startY + 76,
                     200, 30,

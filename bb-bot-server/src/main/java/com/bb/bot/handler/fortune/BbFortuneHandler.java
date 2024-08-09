@@ -62,10 +62,10 @@ public class BbFortuneHandler {
         File backgroundImage = FileUtils.getRandomFileFromFolder("fortune/img");
 
         //生成临时图片文件
-        File imageFile =  new File(FileUtils.getAbsolutePath("tmp/" + System.currentTimeMillis() + ".png"));
+        File imageFile = FileUtils.buildTmpFile();
         //绘制签的运气文字
         ImageUtils.writeWordInImage(backgroundImage,
-                "font/sakura.ttf", Font.BOLD, 35, Color.WHITE,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.BOLD, 35, Color.WHITE,
                 luckName,
                 100, 110,
                 200, 50,
@@ -73,7 +73,7 @@ public class BbFortuneHandler {
                 imageFile.getAbsolutePath());
         //绘制签的内容文字
         ImageUtils.writeWordInImage(imageFile,
-                "font/sakura.ttf", Font.PLAIN, 21, Color.BLACK,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 21, Color.BLACK,
                 luckContent,
                 120, 190,
                 50, 450,
