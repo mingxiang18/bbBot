@@ -26,6 +26,38 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <!-- 打包时手动排除下列文件 -->
+                        <filtering>false</filtering>
+                        <excludes>
+                            <exclude>static/**</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profile.active>prod</profile.active>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>false</filtering>
+                        <excludes>
+                            <!-- 打包时手动排除下列文件，实际环境中打包还要排除多余配置文件 -->
+                            <exclude>static/**</exclude>
+                            <exclude>application-*.yml</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
+            </build>
         </profile>
     </profiles>
 
@@ -160,18 +192,17 @@
 
             </plugin>
         </plugins>
-        <resources>
-            <!-- 打包时手动排除下列文件 -->
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <!-- 相对路径 -->
-                    <exclude>static/**</exclude>
-<!--                    <exclude>application-*.yml</exclude>-->
-                </excludes>
-            </resource>
-        </resources>
+<!--        <resources>-->
+<!--            &lt;!&ndash; 打包时手动排除下列文件 &ndash;&gt;-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>false</filtering>-->
+<!--                <excludes>-->
+<!--                    &lt;!&ndash; 相对路径 &ndash;&gt;-->
+<!--                    <exclude>static/**</exclude>-->
+<!--                </excludes>-->
+<!--            </resource>-->
+<!--        </resources>-->
         <finalName>${project.artifactId}</finalName>
     </build>
 </project>
