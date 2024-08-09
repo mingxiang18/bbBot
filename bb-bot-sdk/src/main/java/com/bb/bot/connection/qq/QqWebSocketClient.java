@@ -196,7 +196,7 @@ public class QqWebSocketClient extends WebSocketClient {
         connectThread = new Thread(() -> {
             while (true) {
                 try {
-                    if (this.getSocket() == null || !this.getSocket().isConnected()) {
+                    if (this.getSocket() == null || this.getSocket().isClosed()) {
                         //如果没有连接则重连
                         reconnect();
                     }else {

@@ -167,15 +167,19 @@ public class OnebotWebSocketClient extends WebSocketClient {
      */
     private void startConnectThread() {
         connectThread = new Thread(() -> {
-            try {
-                while (true) {
-                    if (this.getSocket() == null || !this.getSocket().isConnected()) {
+            while (true) {
+                try {
+                    if (this.getSocket() == null || this.getSocket().isClosed()) {
                         reconnect();
                     }
-                    Thread.sleep(CONNECT_INTERVAL);
+                } catch (Exception e) {
+                    log.error("【" + name + "】WebSocket客户端重连未知异常", e);
                 }
-            } catch (Exception e) {
-                log.error("【" + name + "】WebSocket客户端重连未知异常", e);
+                try {
+                    Thread.sleep(CONNECT_INTERVAL);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         connectThread.start();
