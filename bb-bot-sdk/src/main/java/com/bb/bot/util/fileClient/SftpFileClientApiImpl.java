@@ -49,7 +49,9 @@ public class SftpFileClientApiImpl implements FileClientApi {
      * 初始化连接
      */
     @PostConstruct
-    public void connect() throws JSchException {
+    public void reconnect() throws JSchException {
+        disconnect();
+
         JSch jsch = new JSch();
         Session session = jsch.getSession(username, host, port);
         session.setPassword(password);
@@ -68,11 +70,13 @@ public class SftpFileClientApiImpl implements FileClientApi {
      */
     @PreDestroy
     public void disconnect() throws JSchException {
-        if (sftpChannel != null && sftpChannel.isConnected()) {
-            sftpChannel.disconnect();
-        }
-        if (sftpChannel.getSession() != null && sftpChannel.getSession().isConnected()) {
-            sftpChannel.getSession().disconnect();
+        if (sftpChannel != null) {
+            if (sftpChannel.getSession() != null && sftpChannel.getSession().isConnected()) {
+                sftpChannel.getSession().disconnect();
+            }
+            if (sftpChannel.isConnected()) {
+                sftpChannel.disconnect();
+            }
         }
     }
 
@@ -82,10 +86,10 @@ public class SftpFileClientApiImpl implements FileClientApi {
     @SneakyThrows
     private void judgeConnectStatus() {
         if (!sftpChannel.getSession().isConnected()) {
-            sftpChannel.getSession().connect();
+            reconnect();
         }
         if (!sftpChannel.isConnected()) {
-            sftpChannel.connect();
+            reconnect();
         }
     }
 
