@@ -83,6 +83,8 @@ public class ResourcesUtils {
                 while ((bytesRead = inputStream.read(buf)) > 0) {
                     outputStream.write(buf, 0, bytesRead);
                 }
+            }catch (FileNotFoundException e) {
+                throw e;
             }catch (Exception e) {
                 log.error("失败", e);
                 throw new RuntimeException(e);

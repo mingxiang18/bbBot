@@ -85,12 +85,13 @@ public class SftpFileClientApiImpl implements FileClientApi {
      */
     @SneakyThrows
     private void judgeConnectStatus() {
-        if (!sftpChannel.getSession().isConnected()) {
-            reconnect();
-        }
-        if (!sftpChannel.isConnected()) {
-            reconnect();
-        }
+        reconnect();
+//        if (!sftpChannel.getSession().isConnected()) {
+//            reconnect();
+//        }
+//        if (!sftpChannel.isConnected()) {
+//            reconnect();
+//        }
     }
 
     @Override
