@@ -167,10 +167,10 @@ public class BbSplatoonHandler {
                 return null;
             }
             //祭典开放模式地图绘制
-            regularMapWriteFromSchedules(g2d, (JSONObject) openModeSchedule.get(), 20, 15, "rank");
+            regularMapWriteFromSchedules(g2d, (JSONObject) openModeSchedule.get(), 20, 15, "regular");
 
             //祭典挑战模式地图绘制
-            regularMapWriteFromSchedules(g2d, (JSONObject) challengeModeSchedule.get(), 20, 145, "league1");
+            regularMapWriteFromSchedules(g2d, (JSONObject) challengeModeSchedule.get(), 20, 145, "rank");
 
             //绘制模式时间
             JSONObject timeObject = scheduleData.getJSONObject("festSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
