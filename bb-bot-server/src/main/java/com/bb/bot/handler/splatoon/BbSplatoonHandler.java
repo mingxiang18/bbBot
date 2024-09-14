@@ -26,9 +26,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -151,39 +149,68 @@ public class BbSplatoonHandler {
     private BufferedImage writeOneRegularMap(File backgroundImage, JSONObject scheduleData, int timeIndex) {
         //从临时图片创建默认g2d对象
         BufferedImage image = ImageIO.read(backgroundImage);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
 
-        //todo 祭典还没弄
         if (scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("festMatchSettings") != null) {
-            return null;
+            //如果当前是祭典时间，绘制祭典地图
+            //将背景再裁切一半
+            BufferedImage subImage = image.getSubimage(0, 0, 600, 293);
+            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(subImage);
+            //获取祭典日程
+            JSONArray festMatchSettings = scheduleData.getJSONObject("festSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("festMatchSettings");
+            //开放模式日程
+            Optional<Object> openModeSchedule = festMatchSettings.stream()
+                    .filter(festMatchSetting -> "REGULAR".equals(((JSONObject) festMatchSetting).getString("festMode"))).findFirst();
+            //挑战模式日程
+            Optional<Object> challengeModeSchedule = festMatchSettings.stream()
+                    .filter(festMatchSetting -> "CHALLENGE".equals(((JSONObject) festMatchSetting).getString("festMode"))).findFirst();
+            if (openModeSchedule.isEmpty() || challengeModeSchedule.isEmpty()) {
+                return null;
+            }
+            //祭典开放模式地图绘制
+            regularMapWriteFromSchedules(g2d, (JSONObject) openModeSchedule.get(), 20, 15, "rank");
+
+            //祭典挑战模式地图绘制
+            regularMapWriteFromSchedules(g2d, (JSONObject) challengeModeSchedule.get(), 20, 145, "league1");
+
+            //绘制模式时间
+            JSONObject timeObject = scheduleData.getJSONObject("festSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
+            ImageUtils.writeWordInImage(g2d,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 23, Color.WHITE,
+                    "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
+                    230, 285,
+                    500, 500,
+                    0);
+
+            return subImage;
+        }else {
+            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
+            //涂地地图绘制
+            JSONObject scheduleObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
+            regularMapWriteFromSchedules(g2d, scheduleObject, 20, 15, "regular");
+
+            //单排地图绘制
+            scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(0);
+            regularMapWriteFromSchedules(g2d, scheduleObject, 20, 145, "rank");
+
+            //组排地图绘制
+            scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(1);
+            regularMapWriteFromSchedules(g2d, scheduleObject, 20, 275, "league1");
+
+            //x比赛地图绘制
+            scheduleObject = scheduleData.getJSONObject("xSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("xMatchSetting");
+            regularMapWriteFromSchedules(g2d, scheduleObject, 20, 405, "x");
+
+            //绘制对战模式时间
+            JSONObject timeObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
+            ImageUtils.writeWordInImage(g2d,
+                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 23, Color.WHITE,
+                    "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
+                    230, 555,
+                    500, 500,
+                    0);
+
+            return image;
         }
-
-        //涂地地图绘制
-        JSONObject scheduleObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("regularMatchSetting");
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 15, "regular");
-
-        //单排地图绘制
-        scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(0);
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 145, "rank");
-
-        //组排地图绘制
-        scheduleObject = scheduleData.getJSONObject("bankaraSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONArray("bankaraMatchSettings").getJSONObject(1);
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 275, "league1");
-
-        //x比赛地图绘制
-        scheduleObject = scheduleData.getJSONObject("xSchedules").getJSONArray("nodes").getJSONObject(timeIndex).getJSONObject("xMatchSetting");
-        regularMapWriteFromSchedules(g2d, scheduleObject, 20, 405, "x");
-
-        //绘制对战模式时间
-        JSONObject timeObject = scheduleData.getJSONObject("regularSchedules").getJSONArray("nodes").getJSONObject(timeIndex);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 23, Color.WHITE,
-                "所处时段：" + DateUtils.convertUTCTimeToShowString(timeObject.getString("startTime"), timeObject.getString("endTime")),
-                230, 555,
-                500, 500,
-                0);
-
-        return image;
     }
 
     /**
