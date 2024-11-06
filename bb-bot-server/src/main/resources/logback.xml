@@ -50,7 +50,7 @@
     </appender>
 
     <!-- 系统模块日志级别控制  -->
-    <logger name="com.lancoo" level="info"/>
+    <logger name="com.bb" level="info"/>
     <!-- Spring日志级别控制  -->
     <logger name="org.springframework" level="warn"/>
 
