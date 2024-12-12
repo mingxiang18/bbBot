@@ -1,4 +1,4 @@
-package com.bb.bot.util;
+package com.bb.bot.common.util;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

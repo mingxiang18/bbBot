@@ -1,4 +1,4 @@
-package com.bb.bot.util;
+package com.bb.bot.common.util;
 
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;

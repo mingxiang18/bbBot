@@ -1,8 +1,8 @@
 package com.bb.bot.common.util.nso;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.bot.util.LocalCacheUtils;
-import com.bb.bot.util.RestUtils;
+import com.bb.bot.common.util.LocalCacheUtils;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;

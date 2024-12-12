@@ -1,4 +1,4 @@
-package com.bb.bot.util;
+package com.bb.bot.common.util;
 
 import com.bb.bot.config.FilePathConfig;
 import lombok.SneakyThrows;

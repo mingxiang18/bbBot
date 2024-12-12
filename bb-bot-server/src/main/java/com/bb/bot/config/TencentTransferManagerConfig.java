@@ -1,4 +1,4 @@
-package com.bb.bot.common.config;
+package com.bb.bot.config;
 
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.transfer.TransferManager;

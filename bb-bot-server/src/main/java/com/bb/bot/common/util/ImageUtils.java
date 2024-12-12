@@ -13,7 +13,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import com.bb.bot.util.FileUtils;
 import lombok.SneakyThrows;
 
 /*

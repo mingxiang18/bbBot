@@ -1,4 +1,4 @@
-package com.bb.bot.util;
+package com.bb.bot.common.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;

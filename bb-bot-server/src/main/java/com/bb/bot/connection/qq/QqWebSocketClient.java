@@ -9,7 +9,7 @@ import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.MessageUser;
 import com.bb.bot.entity.qq.QqMessage;
 import com.bb.bot.entity.qq.SocketMessageEntity;
-import com.bb.bot.util.LocalCacheUtils;
+import com.bb.bot.common.util.LocalCacheUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;

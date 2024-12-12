@@ -1,6 +1,6 @@
 package com.bb.bot.controller;
 
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;

@@ -12,7 +12,7 @@ import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.MessageUser;
-import com.bb.bot.util.SpringUtils;
+import com.bb.bot.common.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;

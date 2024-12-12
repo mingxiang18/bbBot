@@ -2,7 +2,7 @@ package com.bb.bot.common.util.aiChat;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
-import com.bb.bot.util.RestUtils;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

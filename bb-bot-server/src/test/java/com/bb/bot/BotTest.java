@@ -1,17 +1,13 @@
 package com.bb.bot;
 
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.util.*;
 import com.bb.bot.common.util.imageUpload.ImageUploadApi;
 import com.bb.bot.database.japaneseLearn.entity.JapaneseFifty;
 import com.bb.bot.database.japaneseLearn.mapper.JapaneseFiftyMapper;
-import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
-import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
-import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
-import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleRecordService;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleUserDetailService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
@@ -35,12 +31,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Slf4j

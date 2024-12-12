@@ -15,7 +15,7 @@ import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

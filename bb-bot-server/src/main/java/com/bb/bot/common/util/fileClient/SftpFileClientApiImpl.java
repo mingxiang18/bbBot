@@ -1,7 +1,6 @@
-package com.bb.bot.util.fileClient;
+package com.bb.bot.common.util.fileClient;
 
 import com.bb.bot.config.FilePathConfig;
-import com.bb.bot.util.FileUtils;
 import com.jcraft.jsch.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

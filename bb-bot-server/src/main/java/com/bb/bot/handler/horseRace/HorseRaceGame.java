@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.TypeReference;
 import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.handler.horseRace.entity.Horse;
 import com.bb.bot.handler.horseRace.entity.HorseRaceEvent;
-import com.bb.bot.util.SpringUtils;
+import com.bb.bot.common.util.SpringUtils;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 

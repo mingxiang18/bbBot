@@ -1,6 +1,6 @@
-package com.bb.bot.util.fileClient;
+package com.bb.bot.common.util.fileClient;
 
-import com.bb.bot.util.RestUtils;
+import com.bb.bot.common.util.RestUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;

@@ -28,7 +28,7 @@ import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.handler.nso.BbNsoHandler;
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;

@@ -16,7 +16,7 @@ import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.util.LocalCacheUtils;
+import com.bb.bot.common.util.LocalCacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 

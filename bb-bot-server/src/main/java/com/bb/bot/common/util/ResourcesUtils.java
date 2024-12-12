@@ -1,9 +1,8 @@
 package com.bb.bot.common.util;
 
 import com.bb.bot.config.FilePathConfig;
-import com.bb.bot.util.RestUtils;
-import com.bb.bot.util.fileClient.FileClientApi;
-import com.bb.bot.util.fileClient.LocalFileClientApiImpl;
+import com.bb.bot.common.util.fileClient.FileClientApi;
+import com.bb.bot.common.util.fileClient.LocalFileClientApiImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

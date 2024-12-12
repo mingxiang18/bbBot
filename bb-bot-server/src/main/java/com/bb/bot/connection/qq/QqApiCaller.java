@@ -2,8 +2,8 @@ package com.bb.bot.connection.qq;
 
 import com.bb.bot.config.QqConfig;
 import com.bb.bot.entity.qq.ChannelMessage;
-import com.bb.bot.util.LocalCacheUtils;
-import com.bb.bot.util.RestUtils;
+import com.bb.bot.common.util.LocalCacheUtils;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

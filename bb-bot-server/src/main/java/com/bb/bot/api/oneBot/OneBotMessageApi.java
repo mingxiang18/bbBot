@@ -8,7 +8,7 @@ import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.entity.oneBot.Action;
 import com.bb.bot.entity.oneBot.Message;
 import com.bb.bot.entity.oneBot.MessageContent;
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

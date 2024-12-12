@@ -1,6 +1,6 @@
 package com.bb.bot.schedule;
 
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;

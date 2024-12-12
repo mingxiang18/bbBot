@@ -2,7 +2,7 @@
 //
 //import com.alibaba.fastjson2.JSONArray;
 //import com.alibaba.fastjson2.JSONObject;
-//import com.bb.bot.util.RestUtils;
+//import com.bb.bot.common.util.RestUtils;
 //import lombok.SneakyThrows;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Autowired;

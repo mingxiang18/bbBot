@@ -1,8 +1,8 @@
-package com.bb.bot.util.fileClient;
+package com.bb.bot.common.util.fileClient;
 
 import com.bb.bot.config.FilePathConfig;
 import com.bb.bot.config.ServerConfig;
-import com.bb.bot.util.FileUtils;
+import com.bb.bot.common.util.FileUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

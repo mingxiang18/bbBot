@@ -1,4 +1,4 @@
-package com.bb.bot.util.fileClient;
+package com.bb.bot.common.util.fileClient;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

@@ -9,7 +9,7 @@ import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.util.SpringUtils;
+import com.bb.bot.common.util.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;

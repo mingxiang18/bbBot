@@ -8,7 +8,7 @@ import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.connection.qq.QqApiCaller;
-import com.bb.bot.util.fileClient.FileClientApi;
+import com.bb.bot.common.util.fileClient.FileClientApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
