@@ -8,9 +8,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * @Description 定时清理文件服务器的临时文件
- * @Author ren
- * @Date 2023/10/27 10:01
+ *  定时清理文件服务器的临时文件
+ * @author ren
+ * @since 2023-10-27 10:01
  */
 @EnableScheduling
 @Component

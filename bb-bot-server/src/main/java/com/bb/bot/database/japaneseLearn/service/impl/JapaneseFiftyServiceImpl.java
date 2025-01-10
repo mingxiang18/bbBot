@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 日语五十音Service业务层处理
  *
  * @author rym
- * @date 2023-10-31
+ * @since 2023-10-31
  */
 @Service
 public class JapaneseFiftyServiceImpl extends ServiceImpl<JapaneseFiftyMapper, JapaneseFifty> implements IJapaneseFiftyService {

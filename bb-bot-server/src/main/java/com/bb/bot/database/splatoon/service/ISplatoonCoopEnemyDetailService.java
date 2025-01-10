@@ -8,7 +8,7 @@ import com.bb.bot.database.splatoon.entity.SplatoonCoopEnemyDetail;
  * 斯普拉遁3打工敌人详情Service接口
  * 
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 public interface ISplatoonCoopEnemyDetailService extends IService<SplatoonCoopEnemyDetail> {
 

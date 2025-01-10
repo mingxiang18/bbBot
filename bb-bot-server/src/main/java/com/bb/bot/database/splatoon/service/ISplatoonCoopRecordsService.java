@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 斯普拉遁3打工记录Service接口
  * 
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 public interface ISplatoonCoopRecordsService extends IService<SplatoonCoopRecord> {
 

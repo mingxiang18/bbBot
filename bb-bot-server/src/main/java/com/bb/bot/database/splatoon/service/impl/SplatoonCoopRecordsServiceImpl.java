@@ -21,7 +21,7 @@ import java.math.BigDecimal;
  * 斯普拉遁3打工记录Service业务层处理
  *
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 @Service
 public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopRecordsMapper, SplatoonCoopRecord> implements ISplatoonCoopRecordsService {

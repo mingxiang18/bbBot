@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * 斯普拉遁3用户对战详情Service业务层处理
  *
  * @author rym
- * @date 2024-04-02
+ * @since 2024-04-02
  */
 @Service
 public class SplatoonBattleUserDetailServiceImpl extends ServiceImpl<SplatoonBattleUserDetailMapper,SplatoonBattleUserDetail> implements ISplatoonBattleUserDetailService {

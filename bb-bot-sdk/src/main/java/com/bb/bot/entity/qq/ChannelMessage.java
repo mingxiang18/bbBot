@@ -25,7 +25,10 @@ public class ChannelMessage {
     private File file;
 
     /**
-     * 生成@某人的消息
+     * 生成at某人的消息
+     *
+     * @param userId at某人的用户id
+     * @return 封装后的消息实体
      */
     public static String buildAtMessage(String userId) {
         return "<@" + userId + ">";

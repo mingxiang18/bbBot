@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 
 /**
- * @Description 定时清理临时文件
- * @Author ren
- * @Date 2023/10/27 10:01
+ *  定时清理临时文件
+ * @author ren
+ * @since 2023-10-27 10:01
  */
 @EnableScheduling
 @Component

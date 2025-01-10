@@ -8,7 +8,7 @@ import com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail;
  * 斯普拉遁3打工波数详情Service接口
  * 
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 public interface ISplatoonCoopWaveDetailService extends IService<SplatoonCoopWaveDetail> {
 

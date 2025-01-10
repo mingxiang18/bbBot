@@ -8,7 +8,7 @@ import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
  * 斯普拉遁3对战记录Service接口
  * 
  * @author rym
- * @date 2024-04-02
+ * @since 2024-04-02
  */
 public interface ISplatoonBattleRecordService extends IService<SplatoonBattleRecord> {
 

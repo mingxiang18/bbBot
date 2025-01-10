@@ -14,7 +14,7 @@ import lombok.Data;
  * 斯普拉遁3打工记录对象 splatoon_coop_records
  *
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 @Data
 @ApiModel("斯普拉遁3打工记录")

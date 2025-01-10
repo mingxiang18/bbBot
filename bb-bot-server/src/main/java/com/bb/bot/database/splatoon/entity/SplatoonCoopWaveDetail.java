@@ -11,7 +11,7 @@ import lombok.Data;
  * 斯普拉遁3打工波数详情对象 splatoon_coop_wave_detail
  *
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 @Data
 @ApiModel("斯普拉遁3打工波数详情")

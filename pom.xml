@@ -4,10 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.bb</groupId>
-    <artifactId>bot</artifactId>
+    <groupId>io.github.mingxiang18</groupId>
+    <artifactId>bbBot</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <description>bb-bot project</description>
+    <url>https://github.com/mingxiang18/bbBot.git</url>
     <modules>
         <module>bb-bot-sdk</module>
         <module>bb-bot-server</module>
@@ -36,6 +38,7 @@
         <jsoup.version>1.10.2</jsoup.version>
         <qcloud-cos-api.version>5.6.155</qcloud-cos-api.version>
         <jsch.version>0.2.19</jsch.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -174,6 +177,13 @@
                 <groupId>com.github.mwiede</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${jsch.version}</version>
+            </dependency>
+
+            <!--常用工具类 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
 
         </dependencies>

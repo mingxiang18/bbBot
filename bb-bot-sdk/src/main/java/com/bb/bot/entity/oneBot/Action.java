@@ -22,6 +22,9 @@ public class Action {
 
     /**
      * 构建发送私聊消息动作
+     *
+     * @param message 发送的消息
+     * @return 封装后的发送action
      */
     public static Action buildPrivateMessageSendAction(Message message) {
         return Action.builder()
@@ -32,6 +35,9 @@ public class Action {
 
     /**
      * 构建发送群聊消息动作
+     *
+     * @param message 发送的消息
+     * @return 封装后的发送action
      */
     public static Action buildGroupMessageSendAction(Message message) {
         return Action.builder()

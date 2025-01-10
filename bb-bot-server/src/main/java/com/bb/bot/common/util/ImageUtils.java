@@ -734,8 +734,8 @@ public class ImageUtils{
     }
 
     /**
-     * @Author rym
-     * @Description 横向写字换行算法
+     * @author rym
+     *  横向写字换行算法
      * @Param []
      **/
     private static void drawLineWord(Graphics2D g2d, Font font, String words, int wordsX, int wordsY, int wordsWidth) {
@@ -771,8 +771,8 @@ public class ImageUtils{
     }
 
     /**
-     * @Author rym
-     * @Description 竖向写字换行方法
+     * @author rym
+     *  竖向写字换行方法
      * @Param []
      **/
     private static void drawVerticalWord(Graphics2D g2d, Font font, String words, int wordsX, int wordsY, int wordsHeight) {
@@ -798,7 +798,7 @@ public class ImageUtils{
 
     /**
      * 获取字体文件
-     * @Author rym
+     * @author rym
      **/
     private static Font getFont(File file, int fontStyle, int fontSize) {
         InputStream fi = null;

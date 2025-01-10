@@ -9,7 +9,7 @@ import java.util.List;
  * qq消息对象
  * 
  * @author renyuming
- * @date 2024-01-22
+ * @since 2024-01-22
  */
 @Data
 public class QqMessage {
@@ -72,7 +72,7 @@ public class QqMessage {
      * 用户信息
      *
      * @author renyuming
-     * @date 2024-01-22
+     * @since 2024-01-22
      */
     @Data
     public static class QqUser {

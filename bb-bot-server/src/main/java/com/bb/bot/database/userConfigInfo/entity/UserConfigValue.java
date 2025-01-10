@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 用户相关数据对象 user_config_value
  *
  * @author rym
- * @date 2024-01-29
+ * @since 2024-01-29
  */
 @Data
 @ApiModel("用户相关数据")

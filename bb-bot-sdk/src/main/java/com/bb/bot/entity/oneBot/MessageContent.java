@@ -24,6 +24,9 @@ public class MessageContent {
 
     /**
      * 构建文本消息
+     *
+     * @param text 消息文本内容
+     * @return 封装后的消息实体
      */
     public static MessageContent buildTextContent(String text) {
         return MessageContent.builder()
@@ -34,6 +37,9 @@ public class MessageContent {
 
     /**
      * 构建表情消息
+     *
+     * @param id 表情id
+     * @return 封装后的消息实体
      */
     public static MessageContent buildFaceMessageContent(String id) {
         return MessageContent.builder()
@@ -44,6 +50,9 @@ public class MessageContent {
 
     /**
      * 从文件路径构建图片消息
+     *
+     * @param path 文件路径
+     * @return 封装后的消息实体
      */
     public static MessageContent buildImageMessageContentFromPath(String path) {
         return MessageContent.builder()
@@ -54,6 +63,9 @@ public class MessageContent {
 
     /**
      * 从Base64字符串构建图片消息
+     *
+     * @param base64Image Base64字符串
+     * @return 封装后的消息实体
      */
     public static MessageContent buildImageMessageContentFromBase64(String base64Image) {
         return MessageContent.builder()
@@ -63,7 +75,10 @@ public class MessageContent {
     }
 
     /**
-     * 构建@某人消息
+     * 构建at某人消息
+     *
+     * @param qq at某人的qq号码
+     * @return 封装后的消息实体
      */
     public static MessageContent buildAtMessageContent(String qq) {
         return MessageContent.builder()
@@ -74,6 +89,9 @@ public class MessageContent {
 
     /**
      * 构建戳一戳消息
+     *
+     * @param qq 某人的qq号码
+     * @return 封装后的消息实体
      */
     public static MessageContent buildPokeMessageContent(String qq) {
         return MessageContent.builder()
@@ -84,6 +102,8 @@ public class MessageContent {
 
     /**
      * 构建抖一抖，戳一戳消息(无法使用)
+     *
+     * @return 封装后的消息实体
      */
     public static MessageContent buildShakeMessageContent() {
         return MessageContent.builder()
@@ -93,6 +113,8 @@ public class MessageContent {
 
     /**
      * 构建猜拳魔法表情
+     *
+     * @return 封装后的消息实体
      */
     public static MessageContent buildRpsContent() {
         return MessageContent.builder()
@@ -102,6 +124,8 @@ public class MessageContent {
 
     /**
      * 构建掷骰子魔法表情(无法使用)
+     *
+     * @return 封装后的消息实体
      */
     public static MessageContent buildDiceContent() {
         return MessageContent.builder()

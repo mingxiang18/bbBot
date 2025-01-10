@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 聊天消息历史记录Service业务层处理
  *
  * @author rym
- * @date 2023-10-26
+ * @since 2023-10-26
  */
 @Service
 public class ChatHistoryServiceImpl extends ServiceImpl<ChatHistoryMapper, ChatHistory> implements IChatHistoryService {

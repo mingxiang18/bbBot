@@ -16,7 +16,7 @@ import org.springframework.web.client.RestClient;
 /**
  *@author Ren yuming
  *@description
- *@date 2023/7/13 10:37
+ *@since 2023-7-13 10:37
  */
 @Configuration
 public class RestClientConfig {

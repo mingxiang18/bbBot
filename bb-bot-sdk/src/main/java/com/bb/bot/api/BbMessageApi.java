@@ -10,6 +10,8 @@ public interface BbMessageApi {
 
     /**
      * 发送消息
+     *
+     * @param bbSendMessage 发送的消息内容
      */
     public void sendMessage(BbSendMessage bbSendMessage);
 }

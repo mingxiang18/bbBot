@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * 聊天消息历史记录对象 chat_history
  *
  * @author rym
- * @date 2023-10-26
+ * @since 2023-10-26
  */
 @Data
 @ApiModel("聊天消息历史记录")

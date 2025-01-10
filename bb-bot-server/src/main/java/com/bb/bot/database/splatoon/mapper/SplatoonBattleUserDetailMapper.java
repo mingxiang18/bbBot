@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * 斯普拉遁3用户对战详情Mapper接口
  * 
  * @author rym
- * @date 2024-04-02
+ * @since 2024-04-02
  */
 public interface SplatoonBattleUserDetailMapper extends BaseMapper<SplatoonBattleUserDetail> {
 

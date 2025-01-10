@@ -8,7 +8,7 @@ import com.bb.bot.database.splatoon.entity.SplatoonCoopUserDetail;
  * 斯普拉遁3玩家打工详情Service接口
  * 
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 public interface ISplatoonCoopUserDetailService extends IService<SplatoonCoopUserDetail> {
 

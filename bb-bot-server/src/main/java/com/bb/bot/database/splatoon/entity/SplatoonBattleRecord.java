@@ -12,7 +12,7 @@ import lombok.Data;
  * 斯普拉遁3对战记录对象 splatoon_battle_record
  *
  * @author rym
- * @date 2024-04-02
+ * @since 2024-04-02
  */
 @Data
 @ApiModel("斯普拉遁3对战记录")

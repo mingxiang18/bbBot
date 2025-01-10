@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 用户相关数据Service接口
  * 
  * @author rym
- * @date 2024-01-29
+ * @since 2024-01-29
  */
 public interface IUserConfigValueService extends IService<UserConfigValue> {
 

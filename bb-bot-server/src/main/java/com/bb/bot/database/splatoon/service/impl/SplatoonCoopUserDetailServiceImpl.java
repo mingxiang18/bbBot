@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * 斯普拉遁3玩家打工详情Service业务层处理
  *
  * @author rym
- * @date 2024-02-01
+ * @since 2024-02-01
  */
 @Service
 public class SplatoonCoopUserDetailServiceImpl extends ServiceImpl<SplatoonCoopUserDetailMapper, SplatoonCoopUserDetail> implements ISplatoonCoopUserDetailService {

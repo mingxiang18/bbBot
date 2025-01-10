@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * 用户相关数据Service业务层处理
  *
  * @author rym
- * @date 2024-01-29
+ * @since 2024-01-29
  */
 @Service
 public class UserConfigValueServiceImpl extends ServiceImpl<UserConfigValueMapper,UserConfigValue> implements IUserConfigValueService {

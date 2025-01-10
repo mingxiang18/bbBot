@@ -11,7 +11,7 @@ import lombok.Data;
  * 日语五十音表对象 japanese_fifty
  *
  * @author rym
- * @date 2023-10-31
+ * @since 2023-10-31
  */
 @Data
 @ApiModel("日语五十音表")
