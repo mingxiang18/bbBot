@@ -1,5 +1,5 @@
 # 设置本镜像需要使用的基础镜像
-FROM openjdk:17-jdk-alpine
+FROM amazoncorretto:17-alpine3.20-jdk
 
 # 设定工作目录
 WORKDIR /bot/
