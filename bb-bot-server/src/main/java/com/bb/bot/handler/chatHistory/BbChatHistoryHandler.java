@@ -1,6 +1,5 @@
 package com.bb.bot.handler.chatHistory;
 
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.bb.bot.api.BbMessageApi;
@@ -12,8 +11,6 @@ import com.bb.bot.common.constant.SyncType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
-import com.bb.bot.database.aiKeywordAndClue.service.IAiClueService;
-import com.bb.bot.database.aiKeywordAndClue.vo.ClueDetail;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.bb.BbMessageContent;

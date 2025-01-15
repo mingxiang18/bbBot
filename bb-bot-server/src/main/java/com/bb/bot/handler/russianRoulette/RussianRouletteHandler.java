@@ -10,7 +10,6 @@ import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.handler.horseRace.HorseRaceGame;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;

@@ -20,4 +20,6 @@ public class BotConfig {
     private Map<String, OnebotConfig> onebot = new HashMap<>();
 
     private Map<String, QqConfig> qq = new HashMap<>();
+
+    private Map<String, BbConfig> bb = new HashMap<>();
 }

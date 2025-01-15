@@ -1,5 +1,6 @@
 package com.bb.bot.api;
 
+import com.bb.bot.api.bb.BbToBbMessageApi;
 import com.bb.bot.api.oneBot.OneBotMessageApi;
 import com.bb.bot.api.qq.QqToBbMessageApi;
 import com.bb.bot.constant.BotType;
@@ -20,6 +21,9 @@ public class BbMessageApiImpl implements BbMessageApi{
     @Autowired
     private QqToBbMessageApi qqToBbMessageApi;
 
+    @Autowired
+    private BbToBbMessageApi bbToBbMessageApi;
+
     /**
      * 发送消息
      */
@@ -29,6 +33,8 @@ public class BbMessageApiImpl implements BbMessageApi{
             qqToBbMessageApi.sendMessage(bbSendMessage);
         }else if (BotType.ONEBOT.equals(bbSendMessage.getBotType())) {
             oneBotMessageApi.sendMessage(bbSendMessage);
+        }else if (BotType.BB.equals(bbSendMessage.getBotType())) {
+            bbToBbMessageApi.sendMessage(bbSendMessage);
         }
     };
 }
