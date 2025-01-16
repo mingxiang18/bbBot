@@ -99,6 +99,7 @@ public class BbWebSocketServer extends WebSocketServer {
      */@Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         log.info("【" + name + "】WebSocket与客户端"  + webSocket.getRemoteSocketAddress() + "连接关闭:" + s);
+        authenticatedClients.remove(webSocket);
     }
 
     /**
