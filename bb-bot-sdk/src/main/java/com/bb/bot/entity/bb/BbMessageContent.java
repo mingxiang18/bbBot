@@ -1,5 +1,6 @@
 package com.bb.bot.entity.bb;
 
+import com.bb.bot.constant.BbSendMessageType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -31,7 +32,7 @@ public class BbMessageContent {
      */
     public static BbMessageContent buildTextContent(String text) {
         return BbMessageContent.builder()
-                .type("text")
+                .type(BbSendMessageType.TEXT)
                 .data(text)
                 .build();
     }
@@ -44,7 +45,7 @@ public class BbMessageContent {
      */
     public static BbMessageContent buildLocalImageMessageContent(File file) {
         return BbMessageContent.builder()
-                .type("localImage")
+                .type(BbSendMessageType.LOCAL_IMAGE)
                 .data(file)
                 .build();
     }
@@ -57,7 +58,7 @@ public class BbMessageContent {
      */
     public static BbMessageContent buildNetImageMessageContent(String url) {
         return BbMessageContent.builder()
-                .type("netImage")
+                .type(BbSendMessageType.NET_IMAGE)
                 .data(url)
                 .build();
     }
@@ -70,8 +71,21 @@ public class BbMessageContent {
      */
     public static BbMessageContent buildAtMessageContent(String userId) {
         return BbMessageContent.builder()
-                .type("at")
+                .type(BbSendMessageType.AT)
                 .data(userId)
+                .build();
+    }
+
+    /**
+     * 构建回复消息
+     *
+     * @param messageId 回复的消息id
+     * @return bbSendMessage 封装后的消息实体
+     */
+    public static BbMessageContent buildReplyMessageContent(String messageId) {
+        return BbMessageContent.builder()
+                .type(BbSendMessageType.REPLY)
+                .data(messageId)
                 .build();
     }
 }

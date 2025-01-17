@@ -1,7 +1,7 @@
 package com.bb.bot.common.util.aiChat;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.bot.database.chatHistory.entity.ChatHistory;
+import com.bb.bot.common.util.FileUtils;
 import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ai聊天工具类
@@ -64,7 +64,7 @@ public class AiChatClient {
      * @Param chatHistoryList 聊天历史
      * @author ren
      */
-    public String askChatGPT(String personality, String question, List<ChatHistory> chatHistoryList) {
+    public String askChatGPT(List<ChatGPTContent> chatContentList) {
         //如果apiKey为空，不执行
         if (StringUtils.isBlank(chatGPTApiKey)) {
             return null;
@@ -74,38 +74,35 @@ public class AiChatClient {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("Authorization", "Bearer " + chatGPTApiKey);
 
-        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
-
-        //构建机器人性格消息体
-        if (StringUtils.isNoneBlank(personality)) {
-            chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
-        }
-
-        //如果聊天历史记录不为空，将历史记录构建成消息体
-        if (!CollectionUtils.isEmpty(chatHistoryList)) {
-            //过滤掉重复消息
-            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !question.contains(chatHistory.getText())).toList();
-            for (ChatHistory chatHistory : chatHistoryList) {
-                //如果是机器人的qq号发送的消息，构建机器人消息体
-                if ("bot".equals(chatHistory.getUserQq())) {
-                    chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.ASSISTANT_ROLE, chatHistory.getText()));
-                }else {
-                    //如果是用户的qq号发送的消息，构建用户消息体
-                    chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE,
-                            (StringUtils.isBlank(chatHistory.getUserName()) ? chatHistory.getUserQq() : chatHistory.getUserName()) + "：" + chatHistory.getText()
-                    ));
+        //如果是moonshot模型，把网络图片下载后转成base64发送
+        if (model.contains("moonshot")) {
+            for (ChatGPTContent chatGPTContent : chatContentList) {
+                if (chatGPTContent.getContent() instanceof List<?> contentList) {
+                    for (Object content : contentList) {
+                        if (content instanceof Map imageMap) {
+                            if (imageMap.get("type").equals("image_url")) {
+                                Map imageUrlMap = (Map) imageMap.get("image_url");
+                                String imageUrl = (String) imageUrlMap.get("url");
+                                if (StringUtils.isNotBlank(imageUrl)) {
+                                    try (InputStream inputStream = restUtils.getFileInputStream(imageUrl);) {
+                                        //替换原来的url
+                                        imageUrlMap.put("url", "data:image/png;base64," + FileUtils.InputStreamToBase64(inputStream));
+                                    } catch (Exception e) {
+                                        log.error("下载图片失败", e);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-
-        //构建提问消息
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, question));
 
         int nowRetryNum = retryNum;
         while (nowRetryNum > 0) {
             try {
                 //发送请求
-                JSONObject chatGPTResponse = restUtils.post(chatGPTUrl, httpHeaders, new ChatGPTRequest(model, chatGPTContentList), JSONObject.class);
+                JSONObject chatGPTResponse = restUtils.post(chatGPTUrl, httpHeaders, new ChatGPTRequest(model, chatContentList), JSONObject.class);
                 //返回chatGPT回复
                 return chatGPTResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
             } catch (Exception e) {

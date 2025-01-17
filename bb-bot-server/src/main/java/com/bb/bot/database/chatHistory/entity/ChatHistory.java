@@ -28,14 +28,17 @@ public class ChatHistory {
     @ApiModelProperty("消息Id")
     private String messageId;
 
+    @ApiModelProperty("群组id")
+    private String groupId;
+
+    @ApiModelProperty("私人用户id")
+    private String privateUserId;
+
     @ApiModelProperty("用户qq号")
     private String userQq;
 
     @ApiModelProperty("用户名")
     private String userName;
-
-    @ApiModelProperty("群号")
-    private String groupId;
 
     @ApiModelProperty("消息")
     private String text;

@@ -47,6 +47,10 @@ public class BbReceiveMessage {
      */
     private String message;
     /**
+     * 消息列表
+     */
+    private List<BbMessageContent> messageContentList = new ArrayList<>();
+    /**
      * 消息@对象
      */
     private List<MessageUser> atUserList = new ArrayList<>();
