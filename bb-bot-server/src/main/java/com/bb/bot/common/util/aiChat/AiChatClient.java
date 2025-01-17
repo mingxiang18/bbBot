@@ -45,6 +45,12 @@ public class AiChatClient {
     private String model;
 
     /**
+     * ai模型视觉开关，如果模型支持图像输入可开启
+     */
+    @Value("${chatGPT.visionEnable:false}")
+    private Boolean visionEnable;
+
+    /**
      * 出现错误时重试次数
      */
     @Value("${chatGPT.retryNum:10}")
@@ -96,6 +102,15 @@ public class AiChatClient {
                     }
                 }
             }
+        }
+
+        if (!visionEnable) {
+            //如果模型不支持图像输入，要把图像输入去掉，仅保留文本
+            chatContentList.forEach(chatGPTContent -> {
+                if (chatGPTContent.getContent() instanceof List<?> contentList) {
+                    contentList.removeIf(content -> content instanceof Map imageMap && imageMap.get("type").equals("image_url"));
+                }
+            });
         }
 
         int nowRetryNum = retryNum;
