@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,22 +81,29 @@ public class AiChatClient {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("Authorization", "Bearer " + chatGPTApiKey);
 
-        //如果是moonshot模型，把网络图片下载后转成base64发送
-        if (model.contains("moonshot")) {
-            for (ChatGPTContent chatGPTContent : chatContentList) {
-                if (chatGPTContent.getContent() instanceof List<?> contentList) {
-                    for (Object content : contentList) {
-                        if (content instanceof Map imageMap) {
-                            if (imageMap.get("type").equals("image_url")) {
-                                Map imageUrlMap = (Map) imageMap.get("image_url");
-                                String imageUrl = (String) imageUrlMap.get("url");
-                                if (StringUtils.isNotBlank(imageUrl)) {
+        //图片url二次处理
+        Iterator<ChatGPTContent> iterator = chatContentList.iterator(); // 实例化迭代器
+        while (iterator.hasNext()) {
+            ChatGPTContent chatGPTContent = iterator.next(); // 读取当前集合数据元素
+            if (chatGPTContent.getContent() instanceof List<?> contentList) {
+                for (Object content : contentList) {
+                    if (content instanceof Map imageMap) {
+                        if (imageMap.get("type").equals("image_url")) {
+                            Map imageUrlMap = (Map) imageMap.get("image_url");
+                            String imageUrl = (String) imageUrlMap.get("url");
+                            if (StringUtils.isNotBlank(imageUrl)) {
+                                boolean isBase64 = imageUrl.startsWith("data:image/");
+                                //如果是moonshot模型，且图片不是base64，把网络图片下载后转成base64发送
+                                if (model.contains("moonshot") && !isBase64) {
                                     try (InputStream inputStream = restUtils.getFileInputStream(imageUrl);) {
                                         //替换原来的url
                                         imageUrlMap.put("url", "data:image/png;base64," + FileUtils.InputStreamToBase64(inputStream));
                                     } catch (Exception e) {
                                         log.error("下载图片失败", e);
                                     }
+                                }else if (!model.contains("moonshot") && isBase64){
+                                    //如果不是moonshot模型，去掉所有base64格式的图像
+                                    iterator.remove();
                                 }
                             }
                         }

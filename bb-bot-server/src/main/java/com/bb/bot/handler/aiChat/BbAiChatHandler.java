@@ -329,7 +329,7 @@ public class BbAiChatHandler {
             for (BbMessageContent bbMessageContent : replyContentList) {
                 //如果回复的消息包含图片，则构建图片消息体
                 if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
-                    askContent.add(ChatGPTContent.buildImageContent(bbMessageContent.getData().toString()));
+                    askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
                 }
             }
         }
@@ -342,7 +342,10 @@ public class BbAiChatHandler {
             }
             //如果消息包含图片，则构建图片消息体
             if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
-                askContent.add(ChatGPTContent.buildImageContent(bbMessageContent.getData().toString()));
+                askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
+            }
+            if (BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())) {
+                askContent.add(ChatGPTContent.buildBase64ImageContent(bbMessageContent.getData().toString()));
             }
         }
         askContent.add(ChatGPTContent.buildTextContent(askText.toString()));

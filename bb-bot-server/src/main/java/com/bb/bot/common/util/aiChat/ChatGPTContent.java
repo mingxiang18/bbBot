@@ -1,9 +1,7 @@
 package com.bb.bot.common.util.aiChat;
 
-import com.bb.bot.common.util.FileUtils;
 import lombok.Data;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +48,7 @@ public class ChatGPTContent {
         return textContent;
     }
 
-    public static Map<String, Object> buildImageContent(String imageUrl) {
+    public static Map<String, Object> buildNetImageContent(String imageUrl) {
         Map<String, Object> urlContent = new HashMap<>();
         urlContent.put("url", imageUrl);
 
@@ -60,9 +58,9 @@ public class ChatGPTContent {
         return imageContent;
     }
 
-    public static Map<String, Object> buildImageContent(File image) {
+    public static Map<String, Object> buildBase64ImageContent(String imageBase64) {
         Map<String, Object> urlContent = new HashMap<>();
-        urlContent.put("url", "data:image/png;base64," + FileUtils.fileToBase64(image));
+        urlContent.put("url", "data:image/png;base64," + imageBase64);
 
         Map<String, Object> imageContent = new HashMap<>();
         imageContent.put("type", "image_url");

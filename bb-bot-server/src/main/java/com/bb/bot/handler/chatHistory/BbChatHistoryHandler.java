@@ -86,7 +86,10 @@ public class BbChatHistoryHandler {
         chatHistory.setUserName(bbReceiveMessage.getSender() == null ? null : bbReceiveMessage.getSender().getNickname());
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
         chatHistory.setPrivateUserId(bbReceiveMessage.getUserId());
-        chatHistory.setText(JSON.toJSONString(bbReceiveMessage.getMessageContentList()));
+        chatHistory.setText(JSON.toJSONString(bbReceiveMessage.getMessageContentList()
+                .stream()
+                .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType()))
+                .collect(Collectors.toList())));
         chatHistoryMapper.insert(chatHistory);
     }
 
