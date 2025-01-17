@@ -1,6 +1,7 @@
 package com.bb.bot.handler.JapaneseLearn;
 
 import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
@@ -78,7 +79,7 @@ public class JapaneseLearnHandler {
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setUserQq("bot");
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(content);
+        chatHistory.setText(JSON.toJSONString(Collections.singletonList(BbMessageContent.buildTextContent(content))));
         chatHistory.setType("jp_fifty");
         chatHistoryMapper.insert(chatHistory);
 

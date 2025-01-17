@@ -25,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -145,7 +142,7 @@ public class BbChatHistoryHandler {
         chatHistory.setMessageId(IdWorker.getIdStr());
         chatHistory.setUserQq("bot");
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(answer);
+        chatHistory.setText(JSON.toJSONString(Collections.singletonList(BbMessageContent.buildTextContent(answer))));
         chatHistoryMapper.insert(chatHistory);
 
         //发送消息
@@ -208,7 +205,7 @@ public class BbChatHistoryHandler {
         chatHistory.setMessageId(IdWorker.getIdStr());
         chatHistory.setUserQq("bot");
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(answer);
+        chatHistory.setText(JSON.toJSONString(Collections.singletonList(BbMessageContent.buildTextContent(answer))));
         chatHistoryMapper.insert(chatHistory);
 
         //发送消息
