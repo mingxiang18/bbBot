@@ -100,7 +100,7 @@ public class AiChatClient {
                                         imageUrlMap.put("url", "data:image/png;base64," + FileUtils.InputStreamToBase64(inputStream));
                                     } catch (Exception e) {
                                         log.error("下载图片失败", e);
-                                        iterator.remove();
+                                        return "图片过期啦，可以重新发一下图片再试试噢！";
                                     }
                                 }else if (!model.contains("moonshot") && isBase64){
                                     //如果不是moonshot模型，去掉所有base64格式的图像
