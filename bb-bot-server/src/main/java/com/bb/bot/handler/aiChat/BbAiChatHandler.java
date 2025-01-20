@@ -185,6 +185,11 @@ public class BbAiChatHandler {
         //请求ai模型获取回复
         String answer = aiChatClient.askChatGPT(chatContentList);
 
+        //如果回复为空，说明是接口异常，直接结束
+        if(StringUtils.isBlank(answer)) {
+            return;
+        }
+
         //构建回复消息
         List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
 

@@ -80,16 +80,23 @@ public class BbChatHistoryHandler {
 
     @Rule(eventType = EventType.MESSAGE, name = "聊天历史记录, 用于记录所有聊天消息", syncType = SyncType.SYNC)
     public void chatHistoryHandle(BbReceiveMessage bbReceiveMessage) {
+        //过滤掉本地图片，因为数据太大
+        List<BbMessageContent> bbMessageContentList = bbReceiveMessage.getMessageContentList()
+                .stream()
+                .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType()))
+                .toList();
+        //如果为空则不记录聊天消息
+        if (CollectionUtils.isEmpty(bbMessageContentList)) {
+            return;
+        }
+
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setMessageId(bbReceiveMessage.getMessageId());
         chatHistory.setUserQq(bbReceiveMessage.getUserId());
         chatHistory.setUserName(bbReceiveMessage.getSender() == null ? null : bbReceiveMessage.getSender().getNickname());
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
         chatHistory.setPrivateUserId(bbReceiveMessage.getUserId());
-        chatHistory.setText(JSON.toJSONString(bbReceiveMessage.getMessageContentList()
-                .stream()
-                .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType()))
-                .collect(Collectors.toList())));
+        chatHistory.setText(JSON.toJSONString(bbMessageContentList));
         chatHistoryMapper.insert(chatHistory);
     }
 
