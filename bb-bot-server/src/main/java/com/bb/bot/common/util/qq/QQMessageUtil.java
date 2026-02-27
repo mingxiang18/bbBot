@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.bb.bot.config.QqConfig;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
+import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.MessageUser;
 import com.bb.bot.entity.qq.QqChannelMessage;
@@ -38,6 +39,7 @@ public class QQMessageUtil {
         bbReceiveMessage.setGroupId(qqGroupMessage.getGroupOpenId());
         bbReceiveMessage.setMessageId(qqGroupMessage.getId());
         bbReceiveMessage.setMessage(qqGroupMessage.getContent());
+        bbReceiveMessage.setMessageContentList(Collections.singletonList(BbMessageContent.buildTextContent(qqGroupMessage.getContent())));
         bbReceiveMessage.setConfig(qqConfig);
 
         MessageUser messageUser = new MessageUser();
@@ -66,6 +68,8 @@ public class QQMessageUtil {
 
         //设置消息内容，去掉@的cq码
         bbReceiveMessage.setMessage(qqChannelMessage.getContent().replaceAll(AT_COMPILE_REG, ""));
+        bbReceiveMessage.setMessageContentList(Collections.singletonList(BbMessageContent.buildTextContent(qqChannelMessage.getContent())));
+
         if (qqChannelMessage.getMentions() != null && !qqChannelMessage.getMentions().isEmpty()) {
             //封装at用户对象列表
             bbReceiveMessage.setAtUserList(qqChannelMessage.getMentions().stream().map(qqUser -> {
