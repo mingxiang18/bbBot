@@ -7,6 +7,7 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
+import com.bb.bot.common.util.aiChat.ChatGPTContent;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
@@ -18,7 +19,9 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 海龟汤事件处理器
@@ -141,7 +144,12 @@ public class BbHaiguitangHandler {
         }else {
             //询问chatGPT获取答案
             String fullPersonality = botPersonality.replace("{question}", question).replace("{answer}", answer);
-            String botAnswer = aiChatClient.askChatGPT(fullPersonality, bbReceiveMessage.getMessage(), null);
+            List<ChatGPTContent> chatContentList = new ArrayList<>();
+            //构建ai角色
+            chatContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, fullPersonality));
+            //构建请求
+            chatContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, bbReceiveMessage.getMessage()));
+            String botAnswer = aiChatClient.askChatGPT(chatContentList);
 
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
             bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(botAnswer)));
@@ -172,7 +180,12 @@ public class BbHaiguitangHandler {
                 "11. 避免在问题中出现不必要的信息，确保问题中每个信息都与答案中的情景相关，构成一条完整的故事线。\n" +
                 "12. 故事不必有科幻元素。不要包含价值观导向或者深刻的内涵，只需要是个有趣的故事，就像推理小说一样。";
 
-        String answer = aiChatClient.askChatGPT("你是一个海龟汤出题者，请帮我出一道海龟汤题目。", personality, null);
+        List<ChatGPTContent> chatContentList = new ArrayList<>();
+        //构建ai角色
+        chatContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
+        //构建请求
+        chatContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, "你是一个海龟汤出题者，请帮我出一道海龟汤题目。"));
+        String answer = aiChatClient.askChatGPT(chatContentList);
 
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
         bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(answer)));

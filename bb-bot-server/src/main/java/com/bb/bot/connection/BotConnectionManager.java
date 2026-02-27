@@ -1,9 +1,7 @@
 package com.bb.bot.connection;
 
-import com.bb.bot.config.BotConfig;
-import com.bb.bot.config.OnebotConfig;
-import com.bb.bot.config.QqConfig;
-import com.bb.bot.config.WebSocketConfig;
+import com.bb.bot.config.*;
+import com.bb.bot.connection.bb.BbWebSocketServer;
 import com.bb.bot.connection.onebot.OnebotWebSocketClient;
 import com.bb.bot.connection.onebot.OnebotWebSocketServer;
 import com.bb.bot.connection.qq.QqApiCaller;
@@ -54,6 +52,19 @@ public class BotConnectionManager {
         //注册onebot机器人连接
         for (Map.Entry<String, OnebotConfig> onebotConfigEntry : botConfig.getOnebot().entrySet()) {
             initOnebotConnection(onebotConfigEntry.getKey(), onebotConfigEntry.getValue());
+        }
+        //注册bb机器人连接
+        for (Map.Entry<String, BbConfig> bbConfigEntry : botConfig.getBb().entrySet()) {
+            initBbConnection(bbConfigEntry.getKey(), bbConfigEntry.getValue());
+        }
+    }
+
+    /**
+     * 初始化bb机器人连接
+     */
+    private void initBbConnection(String botName, BbConfig bbConfig) {
+        if (bbConfig.isEnable()) {
+            webSocketServerList.add(new BbWebSocketServer(botName, bbConfig, publisher));
         }
     }
 

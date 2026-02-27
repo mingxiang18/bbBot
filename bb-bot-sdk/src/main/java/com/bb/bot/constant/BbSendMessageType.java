@@ -23,4 +23,8 @@ public class BbSendMessageType {
      * 网络图片
      */
     public static final String NET_IMAGE = "netImage";
+    /**
+     * 回复消息
+     */
+    public static final String REPLY = "reply";
 }

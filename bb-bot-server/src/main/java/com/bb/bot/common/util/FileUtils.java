@@ -136,6 +136,23 @@ public class FileUtils {
     }
 
     /**
+     * 将输入转base64字符串
+     * @param in  输入流
+     * @return String 文件Base64字符串
+     */
+    public static String InputStreamToBase64(InputStream in) {
+        String base64 = null;
+        try {
+            byte[] bytes = new byte[in.available()];
+            in.read(bytes);
+            base64 = new String(Base64.getEncoder().encode(bytes),"UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return base64;
+    }
+
+    /**
      * 获取指定路径的文件数据
      *
      * @param filePath 文件路径

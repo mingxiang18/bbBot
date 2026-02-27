@@ -2,6 +2,10 @@ package com.bb.bot.common.util.aiChat;
 
 import lombok.Data;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * chatGPT消息体
  * @author ren
@@ -23,12 +27,44 @@ public class ChatGPTContent {
     /**
      * 具体消息内容
      */
-    private String content;
+    private Object content;
 
     public ChatGPTContent() {}
 
-    public ChatGPTContent(String role, String content) {
+    public ChatGPTContent(String role, String text) {
+        this.role = role;
+        this.content = text;
+    }
+
+    public ChatGPTContent(String role, List<?> content) {
         this.role = role;
         this.content = content;
+    }
+
+    public static Map<String, Object> buildTextContent(String text) {
+        Map<String, Object> textContent = new HashMap<>();
+        textContent.put("type", "text");
+        textContent.put("text", text);
+        return textContent;
+    }
+
+    public static Map<String, Object> buildNetImageContent(String imageUrl) {
+        Map<String, Object> urlContent = new HashMap<>();
+        urlContent.put("url", imageUrl);
+
+        Map<String, Object> imageContent = new HashMap<>();
+        imageContent.put("type", "image_url");
+        imageContent.put("image_url", urlContent);
+        return imageContent;
+    }
+
+    public static Map<String, Object> buildBase64ImageContent(String imageBase64) {
+        Map<String, Object> urlContent = new HashMap<>();
+        urlContent.put("url", "data:image/png;base64," + imageBase64);
+
+        Map<String, Object> imageContent = new HashMap<>();
+        imageContent.put("type", "image_url");
+        imageContent.put("image_url", urlContent);
+        return imageContent;
     }
 }

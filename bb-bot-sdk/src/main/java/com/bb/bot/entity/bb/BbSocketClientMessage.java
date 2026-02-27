@@ -1,22 +1,17 @@
 package com.bb.bot.entity.bb;
 
 import lombok.Data;
-import org.java_websocket.WebSocket;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * bb公共接收消息对象
+ * bb客户端发送消息对象
  * @author ren
  */
 @Data
-public class BbReceiveMessage {
-    /**
-     * 机器人类型
-     */
-    private String botType;
+public class BbSocketClientMessage {
     /**
      * 消息类型
      * private-私人，group-群组
@@ -43,6 +38,10 @@ public class BbReceiveMessage {
      */
     private String message;
     /**
+     * 消息列表
+     */
+    private List<BbMessageContent> messageContentList = new ArrayList<>();
+    /**
      * 消息@对象
      */
     private List<MessageUser> atUserList = new ArrayList<>();
@@ -50,14 +49,4 @@ public class BbReceiveMessage {
      * 消息发送时间
      */
     private LocalDateTime sendTime = LocalDateTime.now();
-
-
-    /**
-     * webSocket连接
-     */
-    private WebSocket webSocket;
-    /**
-     * 配置数据
-     */
-    private Object config;
 }

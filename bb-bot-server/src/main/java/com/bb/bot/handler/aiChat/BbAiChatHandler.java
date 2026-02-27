@@ -10,6 +10,8 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
+import com.bb.bot.common.util.aiChat.ChatGPTContent;
+import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
 import com.bb.bot.database.aiKeywordAndClue.service.IAiClueService;
@@ -22,6 +24,7 @@ import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.database.aiKeywordAndClue.vo.ClueDetail;
 import com.bb.bot.entity.bb.MessageUser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.Asserts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +127,10 @@ public class BbAiChatHandler {
             return;
         }
 
-        //查询历史记录
+        //回复的历史消息
+        ChatHistory replyHistory = null;
+
+        //查询历史记录和对应的回复消息
         List<ChatHistory> chatHistoryList = new ArrayList<>();
         if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
             //群组
@@ -133,12 +139,38 @@ public class BbAiChatHandler {
                             .orderByDesc(ChatHistory::getCreateTime)
                             .last("limit " + chatHistoryNum))
                     .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
+
+            //如果有回复消息，查询回复的消息
+            for (BbMessageContent bbMessageContent : bbReceiveMessage.getMessageContentList()) {
+                if (BbSendMessageType.REPLY.equals(bbMessageContent.getType())) {
+                    replyHistory = chatHistoryService.getOne(new LambdaQueryWrapper<ChatHistory>()
+                            .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())
+                            .eq(ChatHistory::getMessageId, bbMessageContent.getData().toString())
+                            .orderByDesc(ChatHistory::getCreateTime)
+                            .last("limit 1"));
+                    break;
+                }
+            }
         }else if (MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType())) {
             chatHistoryList = chatHistoryService.list(new LambdaQueryWrapper<ChatHistory>()
                             .isNull(ChatHistory::getGroupId)
+                            .eq(ChatHistory::getPrivateUserId, bbReceiveMessage.getUserId())
                             .orderByDesc(ChatHistory::getCreateTime)
                             .last("limit " + chatHistoryNum))
                     .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
+
+            //如果有回复消息，查询回复的消息
+            for (BbMessageContent bbMessageContent : bbReceiveMessage.getMessageContentList()) {
+                if (BbSendMessageType.REPLY.equals(bbMessageContent.getType())) {
+                    replyHistory = chatHistoryService.getOne(new LambdaQueryWrapper<ChatHistory>()
+                            .isNull(ChatHistory::getGroupId)
+                            .eq(ChatHistory::getPrivateUserId, bbReceiveMessage.getUserId())
+                            .eq(ChatHistory::getMessageId, bbMessageContent.getData().toString())
+                            .orderByDesc(ChatHistory::getCreateTime)
+                            .last("limit 1"));
+                    break;
+                }
+            }
         }
 
         String personality = chatGPTPersonality;
@@ -148,21 +180,31 @@ public class BbAiChatHandler {
                     "记忆如下：" + String.join("-", clueList);
         }
 
-        String answer = aiChatClient.askChatGPT(personality,
-                (bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") + bbReceiveMessage.getMessage(),
-                chatHistoryList);
+        //构建ai模型请求信息体
+        List<ChatGPTContent> chatContentList = buildChatContentList(personality, bbReceiveMessage.getMessageContentList(), chatHistoryList, replyHistory);
+        //请求ai模型获取回复
+        String answer = aiChatClient.askChatGPT(chatContentList);
+
+        //如果回复为空，说明是接口异常，直接结束
+        if(StringUtils.isBlank(answer)) {
+            return;
+        }
+
+        //构建回复消息
+        List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
 
         //保存机器人回复
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setMessageId(IdWorker.getIdStr());
         chatHistory.setUserQq("bot");
+        chatHistory.setPrivateUserId(bbReceiveMessage.getUserId());
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(answer);
+        chatHistory.setText(JSON.toJSONString(answerMessage));
         chatHistoryService.save(chatHistory);
 
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(answer)));
+        bbSendMessage.setMessageList(answerMessage);
         bbMessageApi.sendMessage(bbSendMessage);
     }
 
@@ -260,5 +302,103 @@ public class BbAiChatHandler {
                 BbMessageContent.buildTextContent("删除成功"))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * 获取ai模型请求信息体
+     */
+    private static List<ChatGPTContent> buildChatContentList(String personality,
+                                                             List<BbMessageContent> messageContentList, List<ChatHistory> chatHistoryList,
+                                                             ChatHistory replyHistory) {
+        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
+
+        //构建机器人性格消息体
+        if (StringUtils.isNoneBlank(personality)) {
+            chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
+        }
+
+        //如果聊天历史记录不为空，将历史记录构建成消息体
+        if (!CollectionUtils.isEmpty(chatHistoryList)) {
+            //过滤掉重复消息
+            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !JSON.toJSONString(messageContentList).contains(chatHistory.getText())).toList();
+            //构建历史消息体
+            List<ChatGPTContent> historyChatContentList = buildChatContentListFromHistory(chatHistoryList);
+            chatGPTContentList.addAll(historyChatContentList);
+        }
+
+        //提问内容
+        List<Map<String, Object>> askContent = new ArrayList<>();
+        //如果回复消息不为空，获取回复消息中的图片添加到提问内容中
+        if (replyHistory != null) {
+            List<BbMessageContent> replyContentList = JSON.parseObject(replyHistory.getText(), new TypeReference<List<BbMessageContent>>() {});
+            for (BbMessageContent bbMessageContent : replyContentList) {
+                //如果回复的消息包含图片，则构建图片消息体
+                if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
+                    askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
+                }
+            }
+        }
+        //添加提问文字内容
+        StringBuilder askText = new StringBuilder();
+        for (BbMessageContent bbMessageContent : messageContentList) {
+            //构建文本
+            if (BbSendMessageType.TEXT.equals(bbMessageContent.getType())) {
+                askText.append(bbMessageContent.getData().toString());
+            }
+            //如果消息包含图片，则构建图片消息体
+            if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
+                askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
+            }
+            if (BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())) {
+                askContent.add(ChatGPTContent.buildBase64ImageContent(bbMessageContent.getData().toString()));
+            }
+        }
+        askContent.add(ChatGPTContent.buildTextContent(askText.toString()));
+        //添加提问消息到ai模型请求体
+        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, askContent));
+        return chatGPTContentList;
+    }
+
+    /**
+     * 从历史消息中构建ai模型请求信息体
+     */
+    private static List<ChatGPTContent> buildChatContentListFromHistory(List<ChatHistory> chatHistoryList) {
+        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
+        for (ChatHistory chatHistory : chatHistoryList) {
+            //历史消息的文本内容
+            String textContent = chatHistory.getText();
+            try {
+                //如果能格式化为json说明是新版，格式化后获取指定文字内容
+                List<BbMessageContent> contentList = JSON.parseObject(chatHistory.getText(), new TypeReference<List<BbMessageContent>>() {});
+                textContent = contentList.stream()
+                        //本地图片或者回复消息跳过
+                        .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())
+                                && !BbSendMessageType.REPLY.equals(bbMessageContent.getType())
+                                && !BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType()))
+                        //将内容转字符串后拼接
+                        .map(bbMessageContent -> {
+                            if (BbSendMessageType.AT.equals(bbMessageContent.getType())) {
+                                return "@" + bbMessageContent.getData().toString();
+                            }else {
+                                return bbMessageContent.getData().toString();
+                            }
+                        })
+                        .collect(Collectors.joining(" "));
+            }catch (Exception ignored) {
+
+            }
+
+            //如果是机器人的qq号发送的消息，构建机器人消息体
+            if ("bot".equals(chatHistory.getUserQq())) {
+                chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.ASSISTANT_ROLE, textContent));
+            }else {
+                //如果是用户的qq号发送的消息，构建用户消息体
+                chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE,
+                        (StringUtils.isBlank(chatHistory.getUserName()) ? chatHistory.getUserQq() : chatHistory.getUserName()) + "：" + textContent
+                ));
+            }
+        }
+
+        return chatGPTContentList;
     }
 }
