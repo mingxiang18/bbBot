@@ -104,6 +104,7 @@ public class BbEventDispatcher {
         //查询当前群组是否存在占用的方法
         UserConfigValue useMethod = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(MessageType.GROUP.equals(bbReceiveMessage.getMessageType()), UserConfigValue::getGroupId, bbReceiveMessage.getGroupId())
+                .eq(MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType()), UserConfigValue::getGroupId, bbReceiveMessage.getGroupId())
                 .eq(MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType()), UserConfigValue::getUserId, bbReceiveMessage.getUserId())
                 .eq(UserConfigValue::getType, RuleType.OCCUPATION));
         //如果有，所有消息都由该方法接管
@@ -183,7 +184,8 @@ public class BbEventDispatcher {
     private boolean messageRuleMatch(BbReceiveMessage bbReceiveMessage, Rule rule) {
         //判断规则类型
         //如果是群组消息，且规则配置需要@自己，判断消息体中是否有@机器人的参数
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) && rule.needAtMe()) {
+        if ((MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType()))
+                && rule.needAtMe()) {
             Optional<MessageUser> atMeFlag = bbReceiveMessage.getAtUserList().stream().filter(MessageUser::getBotFlag).findFirst();
             if (atMeFlag.isEmpty()) {
                 return false;

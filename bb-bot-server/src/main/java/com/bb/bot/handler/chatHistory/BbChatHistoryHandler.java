@@ -112,7 +112,7 @@ public class BbChatHistoryHandler {
 
         //查询历史记录
         List<ChatHistory> chatHistoryList = new ArrayList<>();
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType())) {
+        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
             //群组
             chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
                             .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())
@@ -176,7 +176,7 @@ public class BbChatHistoryHandler {
 
         //查询历史记录
         List<ChatHistory> chatHistoryList = new ArrayList<>();
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType())) {
+        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
             //群组
             chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
                             .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())

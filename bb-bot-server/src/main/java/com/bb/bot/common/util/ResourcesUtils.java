@@ -66,7 +66,7 @@ public class ResourcesUtils {
         if (!resourceFile.exists()) {
             //如果文件服务器是本地，则直接跳过
             if (isLocalFileClient()) {
-                throw new FileNotFoundException();
+                throw new FileNotFoundException(resourceFile.getAbsolutePath());
             }
 
             if (!resourceFile.getParentFile().exists()) {

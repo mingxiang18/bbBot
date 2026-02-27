@@ -7,7 +7,7 @@ import lombok.Data;
  * @author ren
  */
 @Data
-public class SocketMessageEntity {
+public class QqCommonPayloadEntity {
     /**
      * op 指的是 opcode，参考连接维护
      * opcode 列表

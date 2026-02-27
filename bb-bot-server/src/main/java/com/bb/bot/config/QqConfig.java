@@ -12,6 +12,10 @@ public class QqConfig {
      */
     private boolean enable = false;
     /**
+     * 类型：webhook或websocket传输数据
+     */
+    private String type;
+    /**
      * qq官方所需参数
      */
     private String appId;

@@ -7,13 +7,13 @@ import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
-import com.bb.bot.connection.qq.QqWebSocketClient;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
+import com.bb.bot.common.util.qq.QQMessageUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -184,7 +184,7 @@ public class BbHaiguitangHandler {
     public void setHaiguitangHandle(BbReceiveMessage bbReceiveMessage) {
         //去除掉无用信息
         String haiguitangContent = bbReceiveMessage.getMessage()
-                .replaceAll(QqWebSocketClient.AT_COMPILE_REG, "")
+                .replaceAll(QQMessageUtil.AT_COMPILE_REG, "")
                 .replace("设置海龟汤", "")
                 .replace("/设置海龟汤", "");
 

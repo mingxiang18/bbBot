@@ -6,13 +6,13 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * qq消息对象
+ * qq频道消息对象
  * 
  * @author renyuming
  * @since 2024-01-22
  */
 @Data
-public class QqMessage {
+public class QqChannelMessage {
     private static final long serialVersionUID = 1L;
 
     //消息 id

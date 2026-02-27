@@ -15,4 +15,9 @@ public class MessageType {
      * 群组消息
      */
     public static final String GROUP = "group";
+
+    /**
+     * 频道消息
+     */
+    public static final String CHANNEL = "channel";
 }

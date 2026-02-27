@@ -96,6 +96,7 @@ public class HorseRaceHandler {
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.MATCH, keyword = {"开始赛马", "/开始赛马"}, name = "开始赛马")
     public void startGameHandle(BbReceiveMessage bbReceiveMessage) {
+        int msgSeq = 1;
         try {
             //获取游戏
             HorseRaceGame horseRaceGame = getGame(bbReceiveMessage.getGroupId());
@@ -103,6 +104,7 @@ public class HorseRaceHandler {
             //发送开始消息
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
             bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("赛马比赛开始！\n" + horseRaceGame.printHorses())));
+            bbSendMessage.setMessageSeq(msgSeq++);
             bbMessageApi.sendMessage(bbSendMessage);
             //休眠2秒
             Thread.sleep(2000);
@@ -116,16 +118,19 @@ public class HorseRaceHandler {
 
                 //发送比赛实况消息
                 bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(horseEvent + horsePosition)));
+                bbSendMessage.setMessageSeq(msgSeq++);
                 bbMessageApi.sendMessage(bbSendMessage);
                 Thread.sleep(4000); //休眠2秒
             }
 
             //发送胜利消息
             bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(horseRaceGame.getWinHorseContent())));
+            bbSendMessage.setMessageSeq(msgSeq++);
             bbMessageApi.sendMessage(bbSendMessage);
         }catch (Exception e) {
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
             bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(e.getMessage())));
+            bbSendMessage.setMessageSeq(msgSeq++);
             bbMessageApi.sendMessage(bbSendMessage);
         }finally {
             //移除游戏

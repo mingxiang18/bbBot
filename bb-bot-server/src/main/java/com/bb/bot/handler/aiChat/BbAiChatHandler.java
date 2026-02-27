@@ -87,7 +87,7 @@ public class BbAiChatHandler {
         //如果是私人消息必然触发
         if (MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType())) {
             isReply = true;
-        }else if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType())) {
+        }else if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
             //如果是群聊消息判断是否被@
             Optional<MessageUser> atMeFlag = bbReceiveMessage.getAtUserList().stream().filter(MessageUser::getBotFlag).findFirst();
             if (atMeFlag.isPresent()) {
@@ -126,7 +126,7 @@ public class BbAiChatHandler {
 
         //查询历史记录
         List<ChatHistory> chatHistoryList = new ArrayList<>();
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType())) {
+        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
             //群组
             chatHistoryList = chatHistoryService.list(new LambdaQueryWrapper<ChatHistory>()
                             .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())

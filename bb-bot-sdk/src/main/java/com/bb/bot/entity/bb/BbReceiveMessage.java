@@ -18,10 +18,6 @@ public class BbReceiveMessage {
      */
     private String botType;
     /**
-     * webSocket连接
-     */
-    private WebSocket webSocket;
-    /**
      * 消息类型
      * private-私人，group-群组
      */
@@ -54,4 +50,14 @@ public class BbReceiveMessage {
      * 消息发送时间
      */
     private LocalDateTime sendTime = LocalDateTime.now();
+
+
+    /**
+     * webSocket连接
+     */
+    private WebSocket webSocket;
+    /**
+     * 配置数据
+     */
+    private Object config;
 }

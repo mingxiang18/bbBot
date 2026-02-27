@@ -4,6 +4,9 @@ import com.bb.bot.config.QqConfig;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.common.util.LocalCacheUtils;
 import com.bb.bot.common.util.RestUtils;
+import com.bb.bot.entity.qq.GroupMessage;
+import com.bb.bot.entity.qq.UploadMediaRequest;
+import com.bb.bot.entity.qq.UploadMediaResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +39,14 @@ public class QqApiCaller {
     @Value("${qq.gatewayUrl:/gateway}")
     private String gatewayUrl;
 
+    @Value("${qq.sendGroupMessageUrl:/v2/groups/{group_openid}/messages}")
+    private String sendGroupMessageUrl;
+
     @Value("${qq.sendChannelMessageUrl:/channels/{channel_id}/messages}")
     private String sendChannelMessageUrl;
+
+    @Value("${qq.uploadGroupMediaUrl:/v2/groups/{group_openid}/files}")
+    private String uploadGroupMediaUrl;
 
     /**
      * 获取token
@@ -71,11 +80,27 @@ public class QqApiCaller {
     }
 
     /**
+     * 发送群组消息
+     */
+    public void sendGroupMessage(QqConfig qqConfig, String groupOpenId, GroupMessage groupMessage) {
+        postForQQ(qqConfig, baseUrl + sendGroupMessageUrl.replace("{group_openid}", groupOpenId),
+                groupMessage, String.class);
+    }
+
+    /**
      * 发送频道消息
      */
     public void sendChannelMessage(QqConfig qqConfig, String channelId, ChannelMessage channelMessage) {
         postForQQ(qqConfig, baseUrl + sendChannelMessageUrl.replace("{channel_id}", channelId),
                 channelMessage, String.class);
+    }
+
+    /**
+     * 上传群组富媒体消息
+     */
+    public UploadMediaResponse uploadGroupMedia(QqConfig qqConfig, String groupOpenId, UploadMediaRequest uploadMediaRequest) {
+        return postForQQ(qqConfig, baseUrl + uploadGroupMediaUrl.replace("{group_openid}", groupOpenId),
+                uploadMediaRequest, UploadMediaResponse.class);
     }
 
     /**

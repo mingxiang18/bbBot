@@ -19,10 +19,6 @@ public class BbSendMessage {
      */
     private String botType;
     /**
-     * webSocket连接
-     */
-    private WebSocket webSocket;
-    /**
      * 消息类型
      * private-私人，group-群组
      */
@@ -39,6 +35,22 @@ public class BbSendMessage {
      * 要回复的消息唯一id
      */
     private String receiveMessageId;
+
+    /**
+     * 回复序号，如果同一条消息回复多次要填
+     */
+    private int messageSeq = 1;
+
+
+    /**
+     * webSocket连接
+     */
+    private WebSocket webSocket;
+    /**
+     * 配置数据
+     */
+    private Object config;
+
     /**
      * 消息内容
      */
@@ -51,5 +63,6 @@ public class BbSendMessage {
         this.userId = bbReceiveMessage.getUserId();
         this.groupId = bbReceiveMessage.getGroupId();
         this.receiveMessageId = bbReceiveMessage.getMessageId();
+        this.config = bbReceiveMessage.getConfig();
     }
 }

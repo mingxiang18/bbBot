@@ -61,7 +61,7 @@ public class BotConnectionManager {
      * 初始化qq机器人连接
      */
     private void initQqBotConnection(String botName, QqConfig qqConfig) {
-        if (qqConfig.isEnable()) {
+        if (qqConfig.isEnable() && "websocket".equals(qqConfig.getType())) {
             // 初始化连接
             webSocketClientList.add(new QqWebSocketClient(botName, qqConfig, publisher, qqApiCaller, URI.create(qqApiCaller.getWebSocketUrl(qqConfig))));
         }
