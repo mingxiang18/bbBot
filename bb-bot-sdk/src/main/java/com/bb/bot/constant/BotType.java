@@ -23,4 +23,9 @@ public class BotType {
      * qq
      */
     public static final String QQ = "qq";
+
+    /**
+     * telegram
+     */
+    public static final String TELEGRAM = "telegram";
 }

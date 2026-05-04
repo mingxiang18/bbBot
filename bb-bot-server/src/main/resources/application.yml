@@ -37,6 +37,21 @@ bot:
       appId:
       clientSecret:
 
+  #类型：telegram（Telegram Bot API webhook）
+  telegram:
+    #自定义机器人名称，webhook地址为 /telegram/{botName}/webhook
+    bot4:
+      #是否启用
+      enable: false
+      #BotFather生成的token
+      token:
+      #bot用户名，不带@
+      botUsername:
+      #Telegram Bot API地址，默认 https://api.telegram.org
+      baseUrl: https://api.telegram.org
+      #setWebhook时传入的secret_token，用于校验回调请求头
+      secretToken:
+
 # 数据库配置
 mysql:
   address: localhost:3306/bb_bot

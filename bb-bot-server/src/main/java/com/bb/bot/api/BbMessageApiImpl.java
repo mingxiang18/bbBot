@@ -3,6 +3,7 @@ package com.bb.bot.api;
 import com.bb.bot.api.bb.BbToBbMessageApi;
 import com.bb.bot.api.oneBot.OneBotMessageApi;
 import com.bb.bot.api.qq.QqToBbMessageApi;
+import com.bb.bot.api.telegram.TelegramMessageApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbSendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class BbMessageApiImpl implements BbMessageApi{
     @Autowired
     private BbToBbMessageApi bbToBbMessageApi;
 
+    @Autowired
+    private TelegramMessageApi telegramMessageApi;
+
     /**
      * 发送消息
      */
@@ -35,6 +39,8 @@ public class BbMessageApiImpl implements BbMessageApi{
             oneBotMessageApi.sendMessage(bbSendMessage);
         }else if (BotType.BB.equals(bbSendMessage.getBotType())) {
             bbToBbMessageApi.sendMessage(bbSendMessage);
+        }else if (BotType.TELEGRAM.equals(bbSendMessage.getBotType())) {
+            telegramMessageApi.sendMessage(bbSendMessage);
         }
     };
 }
