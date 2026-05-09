@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Node project
+        id: node
+        shell: bash
+        run: |
+          if [ -f package.json ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.node.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Node dependencies
+        if: steps.node.outputs.exists == 'true'
+        run: npm ci
+
+      - name: Node checks
+        if: steps.node.outputs.exists == 'true'
+        run: |
+          npm run lint --if-present
+          npm run typecheck --if-present
+          npm run test --if-present
+          npm run build --if-present
+
+      - name: Detect Maven project
+        id: maven
+        shell: bash
+        run: |
+          if [ -f pom.xml ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Java
+        if: steps.maven.outputs.exists == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Maven checks
+        if: steps.maven.outputs.exists == 'true'
+        run: mvn clean verify
