@@ -1,7 +1,7 @@
 # bbBot
 
 - 使用Java语言开发的个人自用misu-bb机器人(开发中)
-- 目前支持（OneBot11协议、QQNT、QQ官方机器人、Telegram），初步开发中
+- 目前支持（OneBot11协议、QQNT、QQ官方机器人、Telegram、Discord），初步开发中
 - docker镜像地址：https://hub.docker.com/r/misuaa/bb-bot
 
 ### 模块划分
