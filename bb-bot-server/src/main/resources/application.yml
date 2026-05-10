@@ -52,6 +52,19 @@ bot:
       #setWebhook时传入的secret_token，用于校验回调请求头
       secretToken:
 
+  #类型：discord（Discord Bot Gateway）
+  discord:
+    #自定义机器人名称
+    bot5:
+      #是否启用
+      enable: false
+      #Discord Developer Portal生成的bot token
+      token:
+      #bot用户id，可选；不填时使用登录后的self user id
+      botUserId:
+      #是否处理私聊消息
+      enableDirectMessage: true
+
 # 数据库配置
 mysql:
   address: localhost:3306/bb_bot

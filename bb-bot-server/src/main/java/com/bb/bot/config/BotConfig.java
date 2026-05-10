@@ -24,4 +24,6 @@ public class BotConfig {
     private Map<String, BbConfig> bb = new HashMap<>();
 
     private Map<String, TelegramConfig> telegram = new HashMap<>();
+
+    private Map<String, DiscordConfig> discord = new HashMap<>();
 }

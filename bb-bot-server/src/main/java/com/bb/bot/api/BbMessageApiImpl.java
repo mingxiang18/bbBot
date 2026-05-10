@@ -1,6 +1,7 @@
 package com.bb.bot.api;
 
 import com.bb.bot.api.bb.BbToBbMessageApi;
+import com.bb.bot.api.discord.DiscordMessageApi;
 import com.bb.bot.api.oneBot.OneBotMessageApi;
 import com.bb.bot.api.qq.QqToBbMessageApi;
 import com.bb.bot.api.telegram.TelegramMessageApi;
@@ -28,6 +29,9 @@ public class BbMessageApiImpl implements BbMessageApi{
     @Autowired
     private TelegramMessageApi telegramMessageApi;
 
+    @Autowired
+    private DiscordMessageApi discordMessageApi;
+
     /**
      * 发送消息
      */
@@ -41,6 +45,8 @@ public class BbMessageApiImpl implements BbMessageApi{
             bbToBbMessageApi.sendMessage(bbSendMessage);
         }else if (BotType.TELEGRAM.equals(bbSendMessage.getBotType())) {
             telegramMessageApi.sendMessage(bbSendMessage);
+        }else if (BotType.DISCORD.equals(bbSendMessage.getBotType())) {
+            discordMessageApi.sendMessage(bbSendMessage);
         }
     };
 }

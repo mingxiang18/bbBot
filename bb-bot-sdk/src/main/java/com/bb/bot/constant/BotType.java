@@ -28,4 +28,9 @@ public class BotType {
      * telegram
      */
     public static final String TELEGRAM = "telegram";
+
+    /**
+     * discord
+     */
+    public static final String DISCORD = "discord";
 }

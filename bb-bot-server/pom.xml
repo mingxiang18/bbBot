@@ -120,6 +120,13 @@
             <artifactId>Java-WebSocket</artifactId>
         </dependency>
 
+        <!-- Discord Bot API SDK -->
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>6.4.1</version>
+        </dependency>
+
         <!-- 阿里数据库连接池 -->
         <dependency>
             <groupId>com.alibaba</groupId>
