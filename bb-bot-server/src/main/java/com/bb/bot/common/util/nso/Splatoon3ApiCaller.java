@@ -35,6 +35,8 @@ public class Splatoon3ApiCaller {
     public static final UUID S3S_NAMESPACE = UUID.fromString("b3a2dbf5-2c09-4792-b78c-00b548b70aeb");
     //web版本号获取正则
     private static final Pattern WEB_VERSION_PATTERN = Pattern.compile("\\b(?<revision>[0-9a-f]{40})\\b[\\S]*?void 0[\\S]*?\"revision_info_not_set\"\\}`,.*?=`(?<version>\\d+\\.\\d+\\.\\d+)-");
+    //SplatNet3 web view 版本兜底；当 JS 文件结构变化导致正则匹配失败时使用
+    private static final String WEB_VIEW_VER_FALLBACK = "10.0.0-88706e32";
 
     private static final String[] SUPPORTED_KEYS = {
             "ignore_private",
@@ -341,7 +343,7 @@ public class Splatoon3ApiCaller {
         //这个Content-Length手动设置会导致请求失败，应该是长度没对上，反正先去掉
 //        headers.set("Content-Length", "391");
         headers.set("Accept-Encoding", "gzip");
-        headers.set("User-Agent", "com.nintendo.znca/" + nsoApiCaller.getNsoAppVersion() + " (Android/7.1.2)");
+        headers.set("User-Agent", "com.nintendo.znca/" + nsoApiCaller.getNsoAppVersion() + "(Android/14)");
 
         Map<String, Object> subParamMap = new HashMap<>();
         subParamMap.put("id", "4834290508791808");
@@ -366,57 +368,59 @@ public class Splatoon3ApiCaller {
         String webViewVersion = LocalCacheUtils.getCacheObject("nso_web_view_version");
 
         if (StringUtils.isBlank(webViewVersion)) {
-            //----------------------调用html页面，获取javascript文件获取地址-----------------------
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Upgrade-Insecure-Requests", "1");
-            headers.set("Accept", "*/*");
-            headers.set("DNT", "1");
-            headers.set("X-AppColorScheme", "DARK");
-            headers.set("X-Requested-With", "com.nintendo.znca");
-            headers.set("Sec-Fetch-Site", "none");
-            headers.set("Sec-Fetch-Mode", "navigate");
-            headers.set("Sec-Fetch-User", "?1");
-            headers.set("Sec-Fetch-Dest", "document");
-            headers.set("Cookie", "_dnt=1");
-            String webHtml = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net", headers, String.class);
-            Document document = Jsoup.parse(webHtml);
-            // 使用选择器查找包含'static'字符串的script元素
-            Elements mainJs = document.select("script[src*=static]");
+            try {
+                //----------------------调用html页面，获取javascript文件获取地址-----------------------
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Upgrade-Insecure-Requests", "1");
+                headers.set("Accept", "*/*");
+                headers.set("DNT", "1");
+                headers.set("X-AppColorScheme", "DARK");
+                headers.set("X-Requested-With", "com.nintendo.znca");
+                headers.set("Sec-Fetch-Site", "none");
+                headers.set("Sec-Fetch-Mode", "navigate");
+                headers.set("Sec-Fetch-User", "?1");
+                headers.set("Sec-Fetch-Dest", "document");
+                headers.set("Cookie", "_dnt=1");
+                String webHtml = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net", headers, String.class);
+                Document document = Jsoup.parse(webHtml);
+                // 使用选择器查找包含'static'字符串的script元素
+                Elements mainJs = document.select("script[src*=static]");
 
-            if (mainJs == null) {
-                throw new RuntimeException("无法找到script元素的src地址");
+                if (mainJs == null || mainJs.isEmpty()) {
+                    throw new RuntimeException("无法找到script元素的src地址");
+                }
+
+                // 如果找到了script元素，输出它的src属性值
+                String mainJsUrl = mainJs.attr("src");
+
+
+                //----------------------调用javascript文件获取地址，获取web端版本号-----------------------
+                headers = new HttpHeaders();
+                headers.set("Accept", "*/*");
+                headers.set("X-Requested-With", "com.nintendo.znca");
+                headers.set("Sec-Fetch-Site", "same-origin");
+                headers.set("Sec-Fetch-Mode", "no-cors");
+                headers.set("Sec-Fetch-Dest", "script");
+                headers.set("Referer", "https://api.lp1.av5ja.srv.nintendo.net");
+                headers.set("Cookie", "_dnt=1");
+                String mainJsBodyText = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net" + mainJsUrl, headers, String.class);
+
+                // 在 main_js_body_text 中搜索版本号正则匹配项
+                Matcher matcher = WEB_VERSION_PATTERN.matcher(mainJsBodyText);
+                // 如果找到匹配项
+                if (matcher.find()) {
+                    String revision = matcher.group("revision");
+                    String version = matcher.group("version");
+                    webViewVersion = version + "-" + revision.substring(0, 8);
+                } else {
+                    // 如果没有找到匹配项
+                    throw new RuntimeException("无法找到指定web版本匹配项");
+                }
+            } catch (Exception e) {
+                //SplatNet3 JS 结构变化或网络异常时使用兜底版本，避免 GraphQL 查询全部失败
+                log.warn("从 SplatNet3 抓取 web view 版本失败，使用兜底版本 {}", WEB_VIEW_VER_FALLBACK, e);
+                webViewVersion = WEB_VIEW_VER_FALLBACK;
             }
-
-            // 如果找到了script元素，输出它的src属性值
-            String mainJsUrl = mainJs.attr("src");
-
-
-            //----------------------调用javascript文件获取地址，获取web端版本号-----------------------
-            headers = new HttpHeaders();
-            headers.set("Accept", "*/*");
-            headers.set("X-Requested-With", "com.nintendo.znca");
-            headers.set("Sec-Fetch-Site", "same-origin");
-            headers.set("Sec-Fetch-Mode", "no-cors");
-            headers.set("Sec-Fetch-Dest", "script");
-            headers.set("Referer", "https://api.lp1.av5ja.srv.nintendo.net");
-            headers.set("Cookie", "_dnt=1");
-            String mainJsBodyText = restUtils.get("https://api.lp1.av5ja.srv.nintendo.net" + mainJsUrl, headers, String.class);
-
-            // 在 main_js_body_text 中搜索版本号正则匹配项
-            Matcher matcher = WEB_VERSION_PATTERN.matcher(mainJsBodyText);
-            String revision = null;
-            String version = null;
-            // 如果找到匹配项
-            if (matcher.find()) {
-                revision = matcher.group("revision");
-                version = matcher.group("version");
-            } else {
-                // 如果没有找到匹配项
-                throw new RuntimeException("无法找到指定web版本匹配项");
-            }
-
-            // 根据需要进行输出或其他处理
-            webViewVersion = version + "-" + revision.substring(0, 8);
 
             //设置为缓存
             LocalCacheUtils.setCacheObject("nso_web_view_version", webViewVersion, 1, ChronoUnit.DAYS);
