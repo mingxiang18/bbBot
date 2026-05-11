@@ -1,0 +1,104 @@
+---
+# Redroid Android 13 模拟器
+# 用 hostPath 保存 /data 以便重启后保留 NSO app + 登录状态
+# privileged 必需:redroid 需要访问宿主 /dev/binderfs 与挂载 cgroupfs
+# nodeSelector 钉到 misu-maco 是因为 binder 模块加载状态/数据目录均在该节点
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redroid
+  namespace: nso-tokens
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: redroid
+  template:
+    metadata:
+      labels:
+        app: redroid
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: misu-maco
+      hostname: redroid
+      # redroid 启动慢,放宽 grace period
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: redroid
+          image: redroid/redroid:11.0.0-fixed
+          imagePullPolicy: Never
+          securityContext:
+            privileged: true
+          ports:
+            - name: adb
+              containerPort: 5555
+              protocol: TCP
+          # 默认 args 即可,如需指定屏幕/dpi/GPU 等可在 args 加
+          # 例如: ["androidboot.redroid_width=720", "androidboot.redroid_height=1280", "androidboot.redroid_dpi=320"]
+          args:
+            - "androidboot.redroid_width=720"
+            - "androidboot.redroid_height=1280"
+            - "androidboot.redroid_dpi=320"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: binderfs
+              mountPath: /dev/binderfs
+              mountPropagation: HostToContainer
+          resources:
+            requests:
+              cpu: "2"
+              memory: "2Gi"
+            limits:
+              cpu: "6"
+              memory: "6Gi"
+          # readiness:ADB 端口可达即认为就绪(Android 用户空间起来还要 30~90s)
+          readinessProbe:
+            tcpSocket:
+              port: 5555
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 12
+      volumes:
+        - name: data
+          hostPath:
+            path: /data/redroid
+            type: DirectoryOrCreate
+        - name: binderfs
+          hostPath:
+            path: /dev/binderfs
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redroid
+  namespace: nso-tokens
+spec:
+  selector:
+    app: redroid
+  ports:
+    - name: adb
+      port: 5555
+      targetPort: 5555
+      protocol: TCP
+  type: ClusterIP
+---
+# 把 ADB 端口同时暴露成 NodePort,方便宿主机或 Mac 用 adb 直连(装 NSO/scrcpy 用)
+apiVersion: v1
+kind: Service
+metadata:
+  name: redroid-adb-nodeport
+  namespace: nso-tokens
+spec:
+  selector:
+    app: redroid
+  ports:
+    - name: adb
+      port: 5555
+      targetPort: 5555
+      nodePort: 30555
+      protocol: TCP
+  type: NodePort

@@ -1,0 +1,147 @@
+---
+# nxapi-znca-api 服务:从 npm 安装 nxapi-znca-api,通过 ADB 连 redroid 上的 NSO app
+# 启动时 apt install adb + npm install -g nxapi-znca-api,首次冷启动较慢(~2分钟)
+# 后续 image 缓存在 worker 上,重启快
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nxapi-znca-api-entrypoint
+  namespace: nso-tokens
+data:
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "[$(date)] Installing adb + nxapi-znca-api..."
+    if ! command -v adb >/dev/null 2>&1; then
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -qq
+      apt-get install -y --no-install-recommends adb >/dev/null
+    fi
+    if ! command -v nxapi-znca-api >/dev/null 2>&1; then
+      npm install --silent --no-fund --no-audit -g nxapi-znca-api@latest
+    fi
+
+    echo "[$(date)] Waiting for redroid ADB to be reachable..."
+    for i in $(seq 1 120); do
+      if adb connect redroid:5555 2>&1 | grep -q "connected\|already"; then
+        echo "[$(date)] ADB connected to redroid:5555"
+        break
+      fi
+      sleep 2
+    done
+
+    adb devices
+
+    echo "[$(date)] Starting nxapi-znca-api retry loop..."
+    # nxapi 在 frida-server 未启 / NSO 未装时 attach 失败会立刻 exit,
+    # 这里包一层 retry,避免 K8s 把 Pod 拉进 CrashLoopBackOff。
+    while true; do
+      # 每次循环重新 adb connect,redroid 重启后 ADB 句柄会失效
+      adb connect redroid:5555 >/dev/null 2>&1 || true
+      echo "[$(date)] launching nxapi-znca-api android-frida-server..."
+      nxapi-znca-api android-frida-server redroid:5555 \
+        --listen "0.0.0.0:12345" \
+        --start-method service \
+        --validate-tokens false 2>&1 || true
+      echo "[$(date)] nxapi exited; retry in 20s"
+      sleep 20
+    done
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nxapi-znca-api
+  namespace: nso-tokens
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nxapi-znca-api
+  template:
+    metadata:
+      labels:
+        app: nxapi-znca-api
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: misu-maco
+      restartPolicy: Always
+      containers:
+        - name: nxapi
+          image: node:20-bookworm
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "/etc/entrypoint/entrypoint.sh"]
+          # worker 已经通过 systemd drop-in 给 containerd 配了 clash 代理用于拉镜像,
+          # 但容器内的 npm/apt 还得自己配代理(redroid:5555 等内网走 NO_PROXY 直连)。
+          env:
+            - name: HTTP_PROXY
+              value: "http://10.8.0.26:7890"
+            - name: HTTPS_PROXY
+              value: "http://10.8.0.26:7890"
+            - name: NO_PROXY
+              value: "localhost,127.0.0.1,redroid,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,10.8.0.0/24,.svc,.svc.cluster.local"
+          ports:
+            - name: http
+              containerPort: 12345
+              protocol: TCP
+          volumeMounts:
+            - name: entrypoint
+              mountPath: /etc/entrypoint
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "2"
+              memory: "1Gi"
+          # readiness 等 HTTP /api/znca/health 200。在 NSO + frida-server 装好前
+          # 这个端点不会通,Pod 维持 NotReady(但容器不会被 kill,因为没有 liveness)
+          # 一旦最终上线,Service endpoint 会自动 attach
+          readinessProbe:
+            httpGet:
+              path: /api/znca/health
+              port: 12345
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 1000
+            timeoutSeconds: 5
+      volumes:
+        - name: entrypoint
+          configMap:
+            name: nxapi-znca-api-entrypoint
+            defaultMode: 0755
+---
+# Cluster-internal access for in-cluster callers
+apiVersion: v1
+kind: Service
+metadata:
+  name: nxapi-znca-api
+  namespace: nso-tokens
+spec:
+  selector:
+    app: nxapi-znca-api
+  ports:
+    - name: http
+      port: 12345
+      targetPort: 12345
+      protocol: TCP
+  type: ClusterIP
+---
+# NodePort exposure for bbBot running outside the cluster (e.g. Mac on LAN).
+# 30445 选未被占用的;若冲突在 README 里给替换办法
+apiVersion: v1
+kind: Service
+metadata:
+  name: nxapi-znca-api-nodeport
+  namespace: nso-tokens
+spec:
+  selector:
+    app: nxapi-znca-api
+  ports:
+    - name: http
+      port: 12345
+      targetPort: 12345
+      nodePort: 30445
+      protocol: TCP
+  type: NodePort
