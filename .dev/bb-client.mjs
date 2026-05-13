@@ -226,6 +226,39 @@ const scenarios = {
     },
   },
 
+  A6: {
+    title: 'A6 通用原语 (file_read 读 /tmp 下的文件)',
+    async run() {
+      // 准备一个 demo 文件
+      const fs = await import('node:fs/promises');
+      await fs.writeFile('/tmp/bb-demo.txt', 'hello from agent test\n');
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 读一下 /tmp/bb-demo.txt 文件');
+      const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /(hello from agent test|文件内容)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 160) };
+    },
+  },
+
+  A7: {
+    title: 'A7 通用原语 (list_dir 列目录)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 列一下 /tmp 目录下有什么');
+      const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /(bb-demo\.txt|目录内容|count)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 160) };
+    },
+  },
+
   A9: {
     title: 'A9 回归 (无 agent 前缀 → 走聊天人格)',
     async run() {

@@ -80,10 +80,12 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_enabled (enabled)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 定时任务'",
 
-            // 种子：内置工具的默认 user 策略（http_fetch / server_time 对普通用户开放）
+            // 种子：内置工具的默认 user 策略（无副作用的原语都对普通用户开放）
             "INSERT IGNORE INTO ai_tool_policy (tool_name, role, allowed) VALUES " +
                     "('server_time','user',1)," +
-                    "('http_fetch','user',1)"
+                    "('http_fetch','user',1)," +
+                    "('file_read','user',1)," +
+                    "('list_dir','user',1)"
     };
 
     @EventListener

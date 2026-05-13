@@ -86,10 +86,19 @@ function hasToolMessage(messages) {
 function pickIntent(text) {
   const t = (text || '').toLowerCase();
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
+  // shell 优先级要高于 list_dir / file_read，避免 "跑 ls /" 被误判
+  if (/(跑命令|跑\s|shell|exec\s)/.test(t)) return 'shell';
+  if (/(读.*文件|看一下.*文件|cat\s+\/|read\s+file|\/[a-z\-]+\.(txt|md|json|yml))/.test(t)) return 'file_read';
+  if (/(列.*目录|看.*下有什么|list.*dir)/.test(t)) return 'list_dir';
   if (/(抓|fetch|og:title|example\.com|网页|standard\sof\s)/.test(t) || /example/.test(t)) return 'fetch';
-  if (/(ls|shell|跑命令|跑\s*ls)/.test(t)) return 'shell';
+  if (/(ls\s+\/|^ls$)/.test(t)) return 'shell';
   if (/(插件|plugin)/.test(t)) return 'plugin';
   return 'chat';
+}
+
+function extractPath(text) {
+  const m = (text || '').match(/(\/[\w./\-]+)/);
+  return m ? m[1] : '/tmp/bb-demo.txt';
 }
 
 /* ---------------- Handler ---------------- */
@@ -130,6 +139,8 @@ async function handleCompletion(req, res, body) {
     (intent === 'time' && toolNames.has('server_time'))
     || (intent === 'fetch' && toolNames.has('http_fetch'))
     || (intent === 'shell' && toolNames.has('shell_exec'))
+    || (intent === 'file_read' && toolNames.has('file_read'))
+    || (intent === 'list_dir' && toolNames.has('list_dir'))
   );
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
@@ -150,6 +161,12 @@ async function handleCompletion(req, res, body) {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'http_fetch', JSON.stringify({ url })));
     } else if (intent === 'shell') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'shell_exec', JSON.stringify({ command: 'ls /' })));
+    } else if (intent === 'file_read') {
+      const path = extractPath(userText);
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'file_read', JSON.stringify({ path })));
+    } else if (intent === 'list_dir') {
+      const path = extractPath(userText);
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path })));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
     sseDone(res);
@@ -167,6 +184,10 @@ async function handleCompletion(req, res, body) {
       finalText = `已抓取并解析：${toolResult.slice(0, 200)}…`;
     } else if (intent === 'shell') {
       finalText = `沙箱执行结果：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'file_read') {
+      finalText = `文件内容：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'list_dir') {
+      finalText = `目录内容：${toolResult.slice(0, 200)}`;
     } else {
       finalText = `工具结果：${toolResult.slice(0, 120)}`;
     }
