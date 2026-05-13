@@ -89,7 +89,15 @@ public class AiToolExecutor {
             return err;
         }
 
-        Callable<Object> task = () -> desc.getMethod().invoke(desc.getBeanInstance(), args);
+        // 把 caller user_id 放进 ThreadLocal，memory 系列工具用它做 namespace 隔离
+        Callable<Object> task = () -> {
+            com.bb.bot.aiAgent.tools.MemoryToolContext.setUserId(callerUserId);
+            try {
+                return desc.getMethod().invoke(desc.getBeanInstance(), args);
+            } finally {
+                com.bb.bot.aiAgent.tools.MemoryToolContext.clear();
+            }
+        };
         Future<Object> future = toolPool.submit(task);
         try {
             Object result = future.get(TOOL_TIMEOUT_SECONDS, TimeUnit.SECONDS);
