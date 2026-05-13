@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
 @Component
 public class Splatoon3ApiCaller {
 
+    @Autowired
+    private NsoRetryExecutor nsoRetryExecutor;
+
     public static final String SPLATNET3_URL = "https://api.lp1.av5ja.srv.nintendo.net";
     public static final String GRAPHQL_URL = SPLATNET3_URL + "/api/graphql";
     public static final UUID S3S_NAMESPACE = UUID.fromString("b3a2dbf5-2c09-4792-b78c-00b548b70aeb");
@@ -250,13 +253,13 @@ public class Splatoon3ApiCaller {
     }
 
     /**
-     * 调用斯普拉顿3服务的api
+     * 调用斯普拉顿3服务的api。401/403 不重试直接抛 {@link Splatoon3ApiException.ErrorType#UNAUTHORIZED}
+     * 让上层 TokenManager 触发刷新；429 退避后重试；5xx 重试满次抛 RETRYABLE。
      */
     public JSONObject callSplatoon3Api(Object data, String bulletToken, String webServiceToken, JSONObject userInfo) {
         HttpHeaders headers = getBulletHead(bulletToken, webServiceToken, userInfo);
-
-        JSONObject response = restUtils.post(GRAPHQL_URL, headers, data, JSONObject.class);
-        return response;
+        return nsoRetryExecutor.execute("splatoon3.graphql",
+                () -> restUtils.post(GRAPHQL_URL, headers, data, JSONObject.class));
     }
 
     /**

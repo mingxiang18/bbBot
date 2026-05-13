@@ -1,24 +1,30 @@
 package com.bb.bot.handler.aiChat;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.api.MessageStreamSession;
-import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.aiChat.AiChatClient;
 import com.bb.bot.common.util.aiChat.ChatGPTContent;
+import com.bb.bot.common.util.aiChat.MessageBuilder;
+import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
+import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
+import com.bb.bot.common.util.aiChat.provider.AIException;
+import com.bb.bot.common.util.aiChat.provider.AiChatService;
+import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.MessageContent;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
+import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.aiKeywordAndClue.service.IAiClueService;
+import com.bb.bot.database.aiKeywordAndClue.vo.ClueDetail;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.service.IChatHistoryService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
@@ -26,34 +32,61 @@ import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.database.aiKeywordAndClue.vo.ClueDetail;
 import com.bb.bot.entity.bb.MessageUser;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.Asserts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.DoubleSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * ai聊天事件处理器
+ * AI 聊天事件处理器（merge 后）。
+ *
+ * <p>结构来自 quizzical-pare 的清晰拆分（decide / load / compose / send），
+ * 但所有上下文 IO 走 M8 ai_memory_event 新事件流：</p>
+ * <ul>
+ *   <li>{@link MemoryQueryService} 读「同 session 内 chat / chat_reply」最近 N 条</li>
+ *   <li>{@link MemoryEventRecorder} 写 kind=chat_reply（老 chat_history 表已停写）</li>
+ *   <li>{@link com.bb.bot.aiAgent.memory.MemoryCompiler} 把 memory.md 注入 system prompt</li>
+ * </ul>
+ *
+ * <p>LLM 调用两条路径：</p>
+ * <ul>
+ *   <li>{@code streamEnabled=true} → {@link AiChatClient#askChatGPTStream}（M1 SSE 流式）</li>
+ *   <li>{@code streamEnabled=false} → {@link AiChatService#chat}（quizzical 的 provider 抽象，自带错误分类）</li>
+ * </ul>
+ *
  * @author ren
  */
+@Slf4j
 @BootEventHandler(botType = BotType.BB, name = "AI聊天")
 public class BbAiChatHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(BbAiChatHandler.class);
     @Autowired
     private BbMessageApi bbMessageApi;
 
+    /** 流式路径（M1：SSE + function calling 协议）。 */
     @Autowired
     private AiChatClient aiChatClient;
+
+    /** 阻塞路径（quizzical：AIProvider 抽象 + 错误分类）。 */
+    @Autowired
+    private AiChatService aiChatService;
 
     @Autowired
     private IChatHistoryService chatHistoryService;
@@ -65,171 +98,95 @@ public class BbAiChatHandler {
     private IUserConfigValueService userConfigValueService;
 
     @Autowired
-    private MemoryQueryService memoryQueryService;
+    private PromptProperties promptProperties;
 
+    /** M8 长期记忆三件套。 */
     @Autowired
-    private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
+    private MemoryQueryService memoryQueryService;
 
     @Autowired
     private MemoryEventRecorder memoryEventRecorder;
 
-    /**
-     * chatGPT的性格
-     */
-    @Value("${chatGPT.personality:你的名字是冥想bb，你是一只充满活力和可爱的鱿鱼偶像。你在一个充满零碎消息的群聊中，请根据以下指示进行回复：\n" +
-            "1. **判断上下文**：请仔细阅读群聊中的消息，判断是否有人提出了问题。如果有人提问，请从专业的角度进行准确、详细地解答；如果没有，请以自然聊天的方式进行回复。\n" +
-            "2. **表现风格**：回复时请使用充满偶像活力和可爱的方式。使用颜文字让你的回复更加生动有趣。不要机械地重复回答，也不要模棱两可，给出明确的观点。}")
-    private String chatGPTPersonality;
+    @Autowired
+    private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
 
-    /**
-     * ai回复需要携带的历史记录数量
-     */
+    @Value("${aiChat.autoReplyRate:0.99}")
+    private double autoReplyRate;
+
     @Value("${aiChat.chatHistoryNum:10}")
     private int chatHistoryNum;
 
-    /**
-     * ai自动回复概率
-     */
-    @Value("${aiChat.autoReplyRate:0.99}")
-    private Double autoReplyRate;
+    @Value("#{'${aiChat.adminUserIds:}'.split(',')}")
+    private List<String> adminUserIds;
 
-    /**
-     * 是否启用 LLM SSE 流式回复 + IM 端流式呈现。
-     * 默认关闭以避免影响现有用户；开启后长回复会按 token 流式吐字。
-     */
     @Value("${chatGPT.streamEnabled:false}")
     private Boolean streamEnabled;
 
+    /** 测试注入用的确定性随机源。 */
+    DoubleSupplier randomSource = () -> ThreadLocalRandom.current().nextDouble();
+
+    // =========================================================================
+    // 主入口
+    // =========================================================================
+
     @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.DEFAULT, name = "ai自动回复")
     public void aiChatHandle(BbReceiveMessage bbReceiveMessage) {
-        //线索列表
-        List<String> clueList = new ArrayList<>();
-        //是否回复
-        boolean isReply = false;
-
-        //如果是私人消息必然触发
-        if (MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType())) {
-            isReply = true;
-        }else if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
-            //如果是群聊消息判断是否被@
-            Optional<MessageUser> atMeFlag = bbReceiveMessage.getAtUserList().stream().filter(MessageUser::getBotFlag).findFirst();
-            if (atMeFlag.isPresent()) {
-                //如果被@则回复
-                isReply = true;
-                //获取线索
-                clueList = aiClueService.selectClue((bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") +
-                        bbReceiveMessage.getMessage());
-            }else {
-                //如果没有被@，查询群聊是否配置自动回复
-                UserConfigValue configValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                        .eq(UserConfigValue::getGroupId, bbReceiveMessage.getGroupId())
-                        .eq(UserConfigValue::getType, "AI")
-                        .eq(UserConfigValue::getKeyName, "aiAutoReply")
-                        .eq(UserConfigValue::getValueName, "1")
-                        .last("limit 1"));
-
-                if (configValue != null) {
-                    //判断用户讨论内容是否触发关键字
-                    clueList = aiClueService.selectClue((bbReceiveMessage.getSender() == null ? "" : bbReceiveMessage.getSender().getNickname() + "：") +
-                            bbReceiveMessage.getMessage());
-                    //如果触发关键字，且概率大于自动回复概率，则开始自动回复
-                    double replyRate = new Random().nextDouble();
-                    log.info("回复概率：" + replyRate);
-                    if (!CollectionUtils.isEmpty(clueList) && replyRate > autoReplyRate) {
-                        isReply = true;
-                    }
-                }
-            }
-        }
-
-        //不回复则结束
-        if (!isReply) {
+        ReplyDecision decision = decideShouldReply(bbReceiveMessage);
+        if (!decision.isShouldReply()) {
             return;
         }
 
-        // M8.3 cutover：用 MemoryQueryService 从 ai_memory_event 拉同 session 内
-        // kind ∈ {chat, chat_reply} 的最近 N 条；reply 关联消息也从新表查。
-        // 这里把 AiMemoryEvent 适配成原 ChatHistory 类型，保留 buildChatContentList 旧签名。
-        List<AiMemoryEvent> events = memoryQueryService.loadChatContext(
-                bbReceiveMessage.getUserId(),
-                bbReceiveMessage.getGroupId(),
-                bbReceiveMessage.getBotType(),
-                chatHistoryNum);
-        List<ChatHistory> chatHistoryList = events.stream()
-                .map(BbAiChatHandler::eventToLegacyChatHistory)
-                .collect(Collectors.toList());
+        // M8 cutover：history 从 ai_memory_event 拉，转 ChatHistory 兼容 MessageBuilder
+        List<ChatHistory> historyList = loadHistory(bbReceiveMessage);
+        ChatHistory replyTarget = findReplyTarget(bbReceiveMessage, historyList);
 
-        //如果有 reply 引用的消息，从新事件表里取
-        ChatHistory replyHistory = null;
-        for (BbMessageContent bbMessageContent : bbReceiveMessage.getMessageContentList()) {
-            if (BbSendMessageType.REPLY.equals(bbMessageContent.getType()) && bbMessageContent.getData() != null) {
-                String quotedId = bbMessageContent.getData().toString();
-                AiMemoryEvent ref = events.stream()
-                        .filter(e -> quotedId.equals(e.getMessageId()))
-                        .findFirst().orElse(null);
-                if (ref != null) {
-                    replyHistory = eventToLegacyChatHistory(ref);
-                }
-                break;
-            }
-        }
+        // personality = prompts.yml 模板 + clue suffix + memory.md 注入
+        String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues());
 
-        String personality = chatGPTPersonality;
-        if (!CollectionUtils.isEmpty(clueList)) {
-            personality = personality +
-                    "3. **使用记忆**：你有以下事件记忆，请优先基于记忆中的内容进行回复。回复中要带有以前记忆中谁做过对应的某件什么事，但要指明是“曾经讨论”或“曾经出现”，以强调是过去的事件。例如，如果有人提到某个事件，你可以说：“曾经讨论过这个话题呢，xx当时说...” 或者 “这个问题曾经出现过哦，xx做了...”\n" +
-                    "记忆如下：" + String.join("-", clueList);
-        }
-
-        // M8.6：把 caller user 的长期记忆 memory.md prepend 到 personality
-        try {
-            String userMemoryMd = memoryCompiler.ensureCompiledMemory(bbReceiveMessage.getUserId());
-            if (StringUtils.isNoneBlank(userMemoryMd)) {
-                personality = personality + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n";
-            }
-        } catch (Exception e) {
-            log.warn("注入 memory.md 失败 user={}", bbReceiveMessage.getUserId(), e);
-        }
-
-        //构建ai模型请求信息体
-        List<ChatGPTContent> chatContentList = buildChatContentList(personality, bbReceiveMessage.getMessageContentList(), chatHistoryList, replyHistory);
+        List<ChatMessage> messages = MessageBuilder.buildContextMessages(
+                personality, bbReceiveMessage.getMessageContentList(), historyList, replyTarget);
 
         if (Boolean.TRUE.equals(streamEnabled)) {
-            streamAiReply(bbReceiveMessage, chatContentList);
+            streamAiReply(bbReceiveMessage, messages);
         } else {
-            blockingAiReply(bbReceiveMessage, chatContentList);
+            blockingAiReply(bbReceiveMessage, messages);
         }
     }
 
-    /**
-     * 阻塞模式：等 AI 完整生成后一次性发送（旧行为）。
-     */
-    private void blockingAiReply(BbReceiveMessage bbReceiveMessage, List<ChatGPTContent> chatContentList) {
-        String answer = aiChatClient.askChatGPT(chatContentList);
+    /** 阻塞分支：走 AiChatService（quizzical provider 抽象，带错误分类）。 */
+    private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+        String answer;
+        try {
+            answer = aiChatService.chat(messages);
+        } catch (AIException e) {
+            log.error("AI provider call failed (type={}, status={}), skipping reply",
+                    e.getErrorType(), e.getHttpStatus(), e);
+            return;
+        }
         if (StringUtils.isBlank(answer)) {
             return;
         }
         List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
-        persistBotReply(bbReceiveMessage, answerMessage);
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(answerMessage);
-        bbMessageApi.sendMessage(bbSendMessage);
+        persistBotReply(msg, answerMessage);
+        sendReply(msg, answerMessage);
     }
 
-    /**
-     * 流式模式：SSE 拉取 → 适配器侧 edit / chunked 呈现 → 完成后落历史记录。
-     */
-    private void streamAiReply(BbReceiveMessage bbReceiveMessage, List<ChatGPTContent> chatContentList) {
-        BbSendMessage envelope = new BbSendMessage(bbReceiveMessage);
+    /** 流式分支：走 AiChatClient.askChatGPTStream（M1 SSE）。 */
+    private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+        // ChatMessage → ChatGPTContent 适配（流式 client 是 M1 时基于旧类型的）
+        List<ChatGPTContent> legacy = messages.stream()
+                .map(BbAiChatHandler::chatMessageToLegacy)
+                .collect(Collectors.toList());
+
+        BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
         aiChatClient.askChatGPTStream(
-                chatContentList,
+                legacy,
                 session::appendDelta,
                 fullText -> {
                     session.complete();
                     if (StringUtils.isNoneBlank(fullText)) {
-                        persistBotReply(bbReceiveMessage,
-                                Collections.singletonList(BbMessageContent.buildTextContent(fullText)));
+                        persistBotReply(msg, Collections.singletonList(BbMessageContent.buildTextContent(fullText)));
                     }
                 },
                 err -> {
@@ -238,224 +195,243 @@ public class BbAiChatHandler {
                 });
     }
 
-    private void persistBotReply(BbReceiveMessage bbReceiveMessage, List<BbMessageContent> answerMessage) {
-        // M8.3 cutover：bot 回复进 ai_memory_event(kind=chat_reply)，不再写 chat_history
+    // =========================================================================
+    // M8 长期记忆 hooks
+    // =========================================================================
+
+    /** M8.3：bot 回复进 ai_memory_event(kind=chat_reply)，不再写老 chat_history。 */
+    private void persistBotReply(BbReceiveMessage msg, List<BbMessageContent> answerMessage) {
         String text = answerMessage.stream()
                 .filter(c -> c.getData() != null)
                 .map(c -> c.getData().toString())
                 .reduce("", (a, b) -> a + b);
-        memoryEventRecorder.recordOutbound(bbReceiveMessage, "chat_reply", text, IdWorker.getIdStr());
+        memoryEventRecorder.recordOutbound(msg, "chat_reply", text, IdWorker.getIdStr());
     }
 
-    /** AiMemoryEvent → ChatHistory 兼容层，保留下游 buildChatContentList 旧签名不动。 */
-    private static ChatHistory eventToLegacyChatHistory(AiMemoryEvent e) {
-        ChatHistory ch = new ChatHistory();
-        ch.setMessageId(e.getMessageId());
-        ch.setUserQq("bot".equals(e.getSource()) ? "bot" : e.getUserId());
-        ch.setUserName(e.getUserName());
-        ch.setGroupId(e.getGroupId());
-        ch.setPrivateUserId(e.getUserId());
-        // payload 是 messageContentList JSON 形式（入站时存）；没有就裸文本包一层
-        if (org.apache.commons.lang3.StringUtils.isNoneBlank(e.getPayload())) {
-            ch.setText(e.getPayload());
-        } else {
-            ch.setText("[{\"type\":\"text\",\"data\":" + com.alibaba.fastjson2.JSON.toJSONString(e.getText() == null ? "" : e.getText()) + "}]");
-        }
-        ch.setCreateTime(e.getCreatedAt());
-        return ch;
+    /** M8.3：history 从 ai_memory_event 拉，转 ChatHistory 给 MessageBuilder 用。 */
+    private List<ChatHistory> loadHistory(BbReceiveMessage msg) {
+        List<AiMemoryEvent> events = memoryQueryService.loadChatContext(
+                msg.getUserId(), msg.getGroupId(), msg.getBotType(), chatHistoryNum);
+        return events.stream().map(BbAiChatHandler::eventToLegacyChatHistory).collect(Collectors.toList());
     }
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
-    public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
-        //todo 暂时没做权限，只判断是自己用的
-        if (!bbReceiveMessage.getUserId().equals("1105048721")) {
-            //发送消息
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("您当前不具备该权限噢"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
+    /** Reply 引用消息：在当前批次 history 里找；找不到返回 null。 */
+    private ChatHistory findReplyTarget(BbReceiveMessage msg, List<ChatHistory> historyList) {
+        Optional<BbMessageContent> reply = msg.getMessageContentList().stream()
+                .filter(c -> BbSendMessageType.REPLY.equals(c.getType()) && c.getData() != null)
+                .findFirst();
+        if (reply.isEmpty()) {
+            return null;
         }
-
-        List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("\n" + JSON.toJSONString(clueDetailList)))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        String quotedId = reply.get().getData().toString();
+        return historyList.stream()
+                .filter(h -> quotedId.equals(h.getMessageId()))
+                .findFirst()
+                .orElse(null);
     }
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?导入线索\\s?"}, name = "导入线索")
-    public void importClueHandle(BbReceiveMessage bbReceiveMessage) {
-        // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("导入线索([\\s\\S]*)");
-        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        String clue = null;
-        // 如果找到匹配项
-        if (matcher.find()) {
-            clue = matcher.group(1);
+    /** M8.6：personality = prompts.yml 模板 + clue suffix + 长期记忆 memory.md 注入。 */
+    String composePersonality(String userId, List<String> clues) {
+        String base = StringUtils.defaultString(promptProperties.getAiChat().getPersonality());
+        if (!CollectionUtils.isEmpty(clues)) {
+            Map<String, String> vars = new HashMap<>();
+            vars.put("clues", String.join("-", clues));
+            base = base + "\n" + PromptRenderer.render(promptProperties.getAiChat().getClueSuffix(), vars);
         }
-
-        List<ClueDetail> clueDetailList = new ArrayList<>();
+        // M8.6：把 caller user 的长期记忆 memory.md prepend 到 personality
         try {
-            Asserts.notNull(clue, "线索不能为空");
-            clueDetailList = JSON.parseObject(clue, new TypeReference<List<ClueDetail>>() {});
-        }catch (Exception e) {
-            //发送消息
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("线索格式不正确"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
+            String userMemoryMd = memoryCompiler.ensureCompiledMemory(userId);
+            if (StringUtils.isNoneBlank(userMemoryMd)) {
+                base = base + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n";
+            }
+        } catch (Exception e) {
+            log.warn("注入 memory.md 失败 user={}", userId, e);
         }
-
-        //导入线索
-        aiClueService.importGroupClue(bbReceiveMessage.getGroupId(), clueDetailList);
-
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("导入成功"))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        return base;
     }
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?删除线索\\s?"}, name = "删除线索")
-    public void deleteClueHandle(BbReceiveMessage bbReceiveMessage) {
-        // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("^/?删除线索(\\d+)");
-        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        String clueId = null;
-        // 如果找到匹配项
-        if (matcher.find()) {
-            clueId = matcher.group(1);
-        }
-
-        try {
-            boolean deleted = aiClueService.deleteClue(Long.parseLong(clueId));
-        }catch (Exception e) {
-            log.error("删除线索失败", e);
-            //发送消息
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("删除失败，格式不正确"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("删除成功"))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
-    }
+    // =========================================================================
+    // 决策 / 路由
+    // =========================================================================
 
     /**
-     * 获取ai模型请求信息体
+     * 判断本轮消息是否需要 AI 回复。私聊必回；群聊@必回；群聊未@时按配置 + 关键词 + 概率门控。
+     * 包级可见：方便单元测试在 Mock 服务后直接调用。
      */
-    private static List<ChatGPTContent> buildChatContentList(String personality,
-                                                             List<BbMessageContent> messageContentList, List<ChatHistory> chatHistoryList,
-                                                             ChatHistory replyHistory) {
-        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
-
-        //构建机器人性格消息体
-        if (StringUtils.isNoneBlank(personality)) {
-            chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, personality));
+    ReplyDecision decideShouldReply(BbReceiveMessage msg) {
+        if (MessageType.PRIVATE.equals(msg.getMessageType())) {
+            return ReplyDecision.reply(Collections.emptyList());
+        }
+        if (!isGroupLike(msg)) {
+            return ReplyDecision.skip();
         }
 
-        //如果聊天历史记录不为空，将历史记录构建成消息体
-        if (!CollectionUtils.isEmpty(chatHistoryList)) {
-            //过滤掉重复消息
-            chatHistoryList = chatHistoryList.stream().filter(chatHistory -> !JSON.toJSONString(messageContentList).contains(chatHistory.getText())).toList();
-            //构建历史消息体
-            List<ChatGPTContent> historyChatContentList = buildChatContentListFromHistory(chatHistoryList);
-            chatGPTContentList.addAll(historyChatContentList);
+        boolean atMe = msg.getAtUserList() != null && msg.getAtUserList().stream()
+                .filter(MessageUser::getBotFlag).findFirst().isPresent();
+        if (atMe) {
+            return ReplyDecision.reply(aiClueService.selectClue(formatForClueLookup(msg)));
         }
 
-        //提问内容
-        List<Map<String, Object>> askContent = new ArrayList<>();
-        //如果回复消息不为空，获取回复消息中的图片添加到提问内容中
-        if (replyHistory != null) {
-            List<BbMessageContent> replyContentList = JSON.parseObject(replyHistory.getText(), new TypeReference<List<BbMessageContent>>() {});
-            for (BbMessageContent bbMessageContent : replyContentList) {
-                //如果回复的消息包含图片，则构建图片消息体
-                if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
-                    askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
+        UserConfigValue autoConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getGroupId, msg.getGroupId())
+                .eq(UserConfigValue::getType, "AI")
+                .eq(UserConfigValue::getKeyName, "aiAutoReply")
+                .eq(UserConfigValue::getValueName, "1")
+                .last("limit 1"));
+        if (autoConfig == null) {
+            return ReplyDecision.skip();
+        }
+
+        List<String> clues = aiClueService.selectClue(formatForClueLookup(msg));
+        if (CollectionUtils.isEmpty(clues)) {
+            return ReplyDecision.skip();
+        }
+        double rand = randomSource.getAsDouble();
+        log.info("AI 自动回复随机数：{} (阈值 {})", rand, autoReplyRate);
+        return rand > autoReplyRate ? ReplyDecision.reply(clues) : ReplyDecision.skip();
+    }
+
+    // =========================================================================
+    // 线索管理（owner 才能玩）
+    // =========================================================================
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
+            keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
+    public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
+        if (!isAdmin(bbReceiveMessage.getUserId())) {
+            sendAtText(bbReceiveMessage, "您当前不具备该权限噢");
+            return;
+        }
+        List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
+        sendAtText(bbReceiveMessage, "\n" + JSON.toJSONString(clueDetailList));
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?导入线索\\s?"}, name = "导入线索")
+    public void importClueHandle(BbReceiveMessage bbReceiveMessage) {
+        Matcher matcher = Pattern.compile("导入线索([\\s\\S]*)").matcher(bbReceiveMessage.getMessage());
+        String clue = matcher.find() ? matcher.group(1) : null;
+
+        List<ClueDetail> clueDetailList;
+        try {
+            Asserts.notNull(clue, "线索不能为空");
+            clueDetailList = JSON.parseArray(clue, ClueDetail.class);
+        } catch (Exception e) {
+            sendAtText(bbReceiveMessage, "线索格式不正确");
+            return;
+        }
+
+        aiClueService.importGroupClue(bbReceiveMessage.getGroupId(), clueDetailList);
+        sendAtText(bbReceiveMessage, "导入成功");
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?删除线索\\s?"}, name = "删除线索")
+    public void deleteClueHandle(BbReceiveMessage bbReceiveMessage) {
+        Matcher matcher = Pattern.compile("^/?删除线索(\\d+)").matcher(bbReceiveMessage.getMessage());
+        String clueId = matcher.find() ? matcher.group(1) : null;
+
+        try {
+            aiClueService.deleteClue(Long.parseLong(clueId));
+        } catch (Exception e) {
+            log.error("删除线索失败", e);
+            sendAtText(bbReceiveMessage, "删除失败，格式不正确");
+            return;
+        }
+        sendAtText(bbReceiveMessage, "删除成功");
+    }
+
+    // =========================================================================
+    // helpers
+    // =========================================================================
+
+    private void sendReply(BbReceiveMessage source, List<BbMessageContent> answerMessage) {
+        BbSendMessage out = new BbSendMessage(source);
+        out.setMessageList(answerMessage);
+        bbMessageApi.sendMessage(out);
+    }
+
+    private void sendAtText(BbReceiveMessage source, String text) {
+        BbSendMessage out = new BbSendMessage(source);
+        out.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(source.getUserId()),
+                BbMessageContent.buildTextContent(text)));
+        bbMessageApi.sendMessage(out);
+    }
+
+    private boolean isGroupLike(BbReceiveMessage msg) {
+        return MessageType.GROUP.equals(msg.getMessageType())
+                || MessageType.CHANNEL.equals(msg.getMessageType());
+    }
+
+    private boolean isAdmin(String userId) {
+        if (CollectionUtils.isEmpty(adminUserIds)) {
+            return false;
+        }
+        return adminUserIds.stream().map(String::trim).filter(StringUtils::isNotBlank)
+                .anyMatch(id -> id.equals(userId));
+    }
+
+    private String formatForClueLookup(BbReceiveMessage msg) {
+        String prefix = msg.getSender() == null ? "" : msg.getSender().getNickname() + "：";
+        return prefix + msg.getMessage();
+    }
+
+    // ---- 类型适配 ----
+
+    /** ChatMessage（quizzical）→ ChatGPTContent（M1 流式 client 用的旧类型）。 */
+    private static ChatGPTContent chatMessageToLegacy(ChatMessage m) {
+        ChatGPTContent c = new ChatGPTContent();
+        // ChatMessage.Role 是 enum，ChatGPTContent 的 role 是 String 常量
+        switch (m.getRole()) {
+            case SYSTEM:    c.setRole(ChatGPTContent.SYSTEM_ROLE); break;
+            case ASSISTANT: c.setRole(ChatGPTContent.ASSISTANT_ROLE); break;
+            case USER:
+            default:        c.setRole(ChatGPTContent.USER_ROLE); break;
+        }
+        // 把 MessageContent 列表展开成 ChatGPTContent.content（List<Map>）
+        List<Map<String, Object>> parts = new ArrayList<>();
+        if (m.getContents() != null) {
+            for (MessageContent mc : m.getContents()) {
+                if (mc == null) continue;
+                switch (mc.getType()) {
+                    case TEXT:
+                        parts.add(ChatGPTContent.buildTextContent(StringUtils.defaultString(mc.getValue())));
+                        break;
+                    case NET_IMAGE:
+                        parts.add(ChatGPTContent.buildNetImageContent(mc.getValue()));
+                        break;
+                    case BASE64_IMAGE:
+                        parts.add(ChatGPTContent.buildBase64ImageContent(mc.getValue()));
+                        break;
                 }
             }
         }
-        //添加提问文字内容
-        StringBuilder askText = new StringBuilder();
-        for (BbMessageContent bbMessageContent : messageContentList) {
-            //构建文本
-            if (BbSendMessageType.TEXT.equals(bbMessageContent.getType())) {
-                askText.append(bbMessageContent.getData().toString());
-            }
-            //如果消息包含图片，则构建图片消息体
-            if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
-                askContent.add(ChatGPTContent.buildNetImageContent(bbMessageContent.getData().toString()));
-            }
-            if (BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())) {
-                askContent.add(ChatGPTContent.buildBase64ImageContent(bbMessageContent.getData().toString()));
-            }
+        // 若只有一段纯文本，content 直接是 String（兼容现有 LLM provider）
+        if (parts.size() == 1 && "text".equals(parts.get(0).get("type"))) {
+            c.setContent(parts.get(0).get("text"));
+        } else if (!parts.isEmpty()) {
+            c.setContent(parts);
+        } else {
+            c.setContent("");
         }
-        askContent.add(ChatGPTContent.buildTextContent(askText.toString()));
-        //添加提问消息到ai模型请求体
-        chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, askContent));
-        return chatGPTContentList;
+        return c;
     }
 
-    /**
-     * 从历史消息中构建ai模型请求信息体
-     */
-    private static List<ChatGPTContent> buildChatContentListFromHistory(List<ChatHistory> chatHistoryList) {
-        List<ChatGPTContent> chatGPTContentList = new ArrayList<>();
-        for (ChatHistory chatHistory : chatHistoryList) {
-            //历史消息的文本内容
-            String textContent = chatHistory.getText();
-            try {
-                //如果能格式化为json说明是新版，格式化后获取指定文字内容
-                List<BbMessageContent> contentList = JSON.parseObject(chatHistory.getText(), new TypeReference<List<BbMessageContent>>() {});
-                textContent = contentList.stream()
-                        //本地图片或者回复消息跳过
-                        .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())
-                                && !BbSendMessageType.REPLY.equals(bbMessageContent.getType())
-                                && !BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType()))
-                        //将内容转字符串后拼接
-                        .map(bbMessageContent -> {
-                            if (BbSendMessageType.AT.equals(bbMessageContent.getType())) {
-                                return "@" + bbMessageContent.getData().toString();
-                            }else {
-                                return bbMessageContent.getData().toString();
-                            }
-                        })
-                        .collect(Collectors.joining(" "));
-            }catch (Exception ignored) {
-
-            }
-
-            //如果是机器人的qq号发送的消息，构建机器人消息体
-            if ("bot".equals(chatHistory.getUserQq())) {
-                chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.ASSISTANT_ROLE, textContent));
-            }else {
-                //如果是用户的qq号发送的消息，构建用户消息体
-                chatGPTContentList.add(new ChatGPTContent(ChatGPTContent.USER_ROLE,
-                        (StringUtils.isBlank(chatHistory.getUserName()) ? chatHistory.getUserQq() : chatHistory.getUserName()) + "：" + textContent
-                ));
-            }
+    /** AiMemoryEvent → ChatHistory：保留 MessageBuilder 既有签名不动。 */
+    private static ChatHistory eventToLegacyChatHistory(AiMemoryEvent e) {
+        ChatHistory ch = new ChatHistory();
+        ch.setMessageId(e.getMessageId());
+        ch.setUserQq("bot".equals(e.getSource()) ? MessageBuilder.BOT_USER_FLAG : e.getUserId());
+        ch.setUserName(e.getUserName());
+        ch.setGroupId(e.getGroupId());
+        ch.setPrivateUserId(e.getUserId());
+        if (StringUtils.isNoneBlank(e.getPayload())) {
+            ch.setText(e.getPayload());
+        } else {
+            ch.setText("[{\"type\":\"text\",\"data\":" + JSON.toJSONString(e.getText() == null ? "" : e.getText()) + "}]");
         }
-
-        return chatGPTContentList;
+        ch.setCreateTime(e.getCreatedAt());
+        return ch;
     }
 }

@@ -1,5 +1,6 @@
 package com.bb.bot.handler.horseRace;
 
+import com.alibaba.fastjson2.JSON;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
@@ -7,178 +8,161 @@ import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.MessageType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.constant.BotType;
+import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
+import com.bb.bot.handler.game.GameStateStore;
+import com.bb.bot.handler.horseRace.engine.HorseRaceEngine;
+import com.bb.bot.handler.horseRace.engine.HorseRaceEventLoader;
+import com.bb.bot.handler.horseRace.engine.HorseRaceState;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 赛马小游戏事件处理器
+ * 赛马 handler。负责协议解析；规则在 {@link HorseRaceEngine}，事件在
+ * {@link HorseRaceEventLoader}，初始化阶段的状态走 {@link GameStateStore}。
+ *
  * @author ren
  */
+@Slf4j
 @BootEventHandler(botType = BotType.BB, name = "赛马小游戏")
 public class HorseRaceHandler {
+
+    private static final String GAME_TYPE = "HORSE_RACE";
+    private static final long TICK_DELAY_MS = 4000L;
+    private static final long INITIAL_DELAY_MS = 2000L;
+    private final Pattern emojiPattern = Pattern.compile("[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+");
 
     @Autowired
     private BbMessageApi bbMessageApi;
 
-    /**
-     * emoji表情正则
-     */
-    private final Pattern emojiPattern = Pattern.compile("[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+");
+    @Autowired
+    private GameStateStore gameStateStore;
 
-    /**
-     * 进行中的赛马游戏map
-     */
-    private static Map<String, HorseRaceGame> horseRaceGameMap = new ConcurrentHashMap<>();
+    @Autowired
+    private HorseRaceEventLoader eventLoader;
+
+    private final HorseRaceEngine engine = new HorseRaceEngine();
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.MATCH, keyword = {"赛马", "/赛马"}, name = "赛马")
-    public void initGameHandle(BbReceiveMessage bbReceiveMessage) {
-        //初始化游戏
-        HorseRaceGame horseRaceGame = initGame(bbReceiveMessage.getGroupId());
-
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("赛马开始，当前有以下马匹，请选择你要下注的马匹，" +
-                "发送“下注1号位”可进行下注，发送“添加马匹[emoji表情]”可添加马匹, 发送“开始赛马”可进行比赛, 发送“中止赛马”可结束比赛\n\n" +
-                horseRaceGame.generateHorseDescriptions())));
-        bbMessageApi.sendMessage(bbSendMessage);
+    public void initGameHandle(BbReceiveMessage msg) {
+        HorseRaceState state = engine.newGame();
+        saveState(msg.getGroupId(), state);
+        sendText(msg, "赛马开始，当前有以下马匹，请选择你要下注的马匹，" +
+                "发送\"下注1号位\"可进行下注，发送\"添加马匹[emoji表情]\"可添加马匹, " +
+                "发送\"开始赛马\"可进行比赛, 发送\"中止赛马\"可结束比赛\n\n" +
+                engine.describeHorses(state));
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.REGEX, keyword = {"^/?下注(\\d+)号位"}, name = "下注赛马")
-    public void betGameHandle(BbReceiveMessage bbReceiveMessage) {
-        try {
-            //获取游戏
-            HorseRaceGame horseRaceGame = getGame(bbReceiveMessage.getGroupId());
-
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("玩家" + bbReceiveMessage.getUserId() + "下注成功")));
-            bbMessageApi.sendMessage(bbSendMessage);
-        }catch (Exception e) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(e.getMessage())));
-            bbMessageApi.sendMessage(bbSendMessage);
+    public void betGameHandle(BbReceiveMessage msg) {
+        Optional<HorseRaceState> stateOpt = loadState(msg.getGroupId());
+        if (stateOpt.isEmpty()) {
+            sendText(msg, "赛马游戏不存在，请发送\"赛马\"开始游戏");
+            return;
         }
+        sendText(msg, "玩家" + msg.getUserId() + "下注成功");
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.REGEX, keyword = {"^/?添加马匹\\s?"}, name = "添加马匹")
-    public void addHorseHandle(BbReceiveMessage bbReceiveMessage) {
-        try {
-            Matcher matcher = emojiPattern.matcher(bbReceiveMessage.getMessage());
-            if (matcher.find()) {
-                String emoji = matcher.group();
-                //获取游戏
-                HorseRaceGame horseRaceGame = getGame(bbReceiveMessage.getGroupId());
-                //添加马匹
-                horseRaceGame.addHorse(emoji);
+    public void addHorseHandle(BbReceiveMessage msg) {
+        Matcher matcher = emojiPattern.matcher(msg.getMessage());
+        if (!matcher.find()) {
+            sendText(msg, "马匹图标格式不正确，只能为emoji表情");
+            return;
+        }
+        String emoji = matcher.group();
 
-                BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-                bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("添加马匹成功，当前马匹如下\n" + horseRaceGame.printHorses())));
-                bbMessageApi.sendMessage(bbSendMessage);
-            }else {
-                throw new IllegalArgumentException("马匹图标格式不正确，只能为emoji表情");
-            }
-        }catch (Exception e) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(e.getMessage())));
-            bbMessageApi.sendMessage(bbSendMessage);
+        Optional<HorseRaceState> stateOpt = loadState(msg.getGroupId());
+        if (stateOpt.isEmpty()) {
+            sendText(msg, "赛马游戏不存在，请发送\"赛马\"开始游戏");
+            return;
+        }
+        try {
+            HorseRaceState state = stateOpt.get();
+            engine.addHorse(state, emoji);
+            saveState(msg.getGroupId(), state);
+            sendText(msg, "添加马匹成功，当前马匹如下\n" + engine.renderHorses(state));
+        } catch (IllegalArgumentException e) {
+            sendText(msg, e.getMessage());
         }
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.MATCH, keyword = {"开始赛马", "/开始赛马"}, name = "开始赛马")
-    public void startGameHandle(BbReceiveMessage bbReceiveMessage) {
-        int msgSeq = 1;
+    public void startGameHandle(BbReceiveMessage msg) {
+        Optional<HorseRaceState> stateOpt = loadState(msg.getGroupId());
+        if (stateOpt.isEmpty()) {
+            sendText(msg, "赛马游戏不存在，请发送\"赛马\"开始游戏");
+            return;
+        }
+        HorseRaceState state = stateOpt.get();
+        int seq = 1;
+        BbSendMessage out = new BbSendMessage(msg);
         try {
-            //获取游戏
-            HorseRaceGame horseRaceGame = getGame(bbReceiveMessage.getGroupId());
+            out.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(
+                    "赛马比赛开始！\n" + engine.renderHorses(state))));
+            out.setMessageSeq(seq++);
+            bbMessageApi.sendMessage(out);
+            Thread.sleep(INITIAL_DELAY_MS);
 
-            //发送开始消息
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent("赛马比赛开始！\n" + horseRaceGame.printHorses())));
-            bbSendMessage.setMessageSeq(msgSeq++);
-            bbMessageApi.sendMessage(bbSendMessage);
-            //休眠2秒
-            Thread.sleep(2000);
-
-            //循环遍历移动马匹，输出位置
-            while (!horseRaceGame.raceFinished()) {
-                //随机事件，并按照随机事件移动马匹
-                String horseEvent = horseRaceGame.moveHorses();
-                //输出马的当前位置
-                String horsePosition = horseRaceGame.printHorses();
-
-                //发送比赛实况消息
-                bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(horseEvent + horsePosition)));
-                bbSendMessage.setMessageSeq(msgSeq++);
-                bbMessageApi.sendMessage(bbSendMessage);
-                Thread.sleep(4000); //休眠2秒
+            while (!engine.isFinished(state)) {
+                String event = engine.tick(state, eventLoader.getEvents());
+                String position = engine.renderHorses(state);
+                out.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(event + position)));
+                out.setMessageSeq(seq++);
+                bbMessageApi.sendMessage(out);
+                Thread.sleep(TICK_DELAY_MS);
             }
 
-            //发送胜利消息
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(horseRaceGame.getWinHorseContent())));
-            bbSendMessage.setMessageSeq(msgSeq++);
-            bbMessageApi.sendMessage(bbSendMessage);
-        }catch (Exception e) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(e.getMessage())));
-            bbSendMessage.setMessageSeq(msgSeq++);
-            bbMessageApi.sendMessage(bbSendMessage);
-        }finally {
-            //移除游戏
-            deleteGame(bbReceiveMessage.getGroupId());
+            out.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(engine.winnerSummary(state))));
+            out.setMessageSeq(seq);
+            bbMessageApi.sendMessage(out);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("Horse race interrupted for group {}", msg.getGroupId());
+        } finally {
+            gameStateStore.clear(GAME_TYPE, msg.getGroupId());
         }
     }
 
     @Rule(eventType = EventType.MESSAGE, messageType = MessageType.GROUP, needAtMe = true,
             ruleType = RuleType.MATCH, keyword = {"中止赛马", "/中止赛马"}, name = "中止赛马")
-    public void endGameHandle(BbReceiveMessage bbReceiveMessage) {
+    public void endGameHandle(BbReceiveMessage msg) {
+        gameStateStore.clear(GAME_TYPE, msg.getGroupId());
+        sendText(msg, "赛马已中止");
+    }
+
+    private Optional<HorseRaceState> loadState(String groupId) {
+        Optional<UserConfigValue> row = gameStateStore.findActive(GAME_TYPE, groupId);
+        if (row.isEmpty()) {
+            return Optional.empty();
+        }
         try {
-            //获取游戏
-            HorseRaceGame horseRaceGame = getGame(bbReceiveMessage.getGroupId());
-            horseRaceGame.finishGame();
-        }catch (Exception e) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(e.getMessage())));
-            bbMessageApi.sendMessage(bbSendMessage);
-        }finally {
-            //移除游戏
-            deleteGame(bbReceiveMessage.getGroupId());
+            return Optional.of(JSON.parseObject(row.get().getValueName(), HorseRaceState.class));
+        } catch (Exception e) {
+            log.warn("Failed to deserialize horse race state for group {}, dropping", groupId, e);
+            gameStateStore.clear(GAME_TYPE, groupId);
+            return Optional.empty();
         }
     }
 
-    /**
-     * 初始化指定id的赛马比赛
-     */
-    private static HorseRaceGame initGame(String id) {
-        HorseRaceGame game = new HorseRaceGame();
-        horseRaceGameMap.put(id, game);
-        return game;
+    private void saveState(String groupId, HorseRaceState state) {
+        gameStateStore.save(GAME_TYPE, groupId, JSON.toJSONString(state));
     }
 
-    /**
-     * 获取指定id的赛马比赛
-     */
-    private static HorseRaceGame getGame(String id) {
-        if (!horseRaceGameMap.containsKey(id)) {
-            throw new IllegalArgumentException("赛马游戏不存在，请发送“赛马”开始游戏");
-        }else {
-            return horseRaceGameMap.get(id);
-        }
-    }
-
-    /**
-     * 删除指定id的赛马比赛
-     */
-    private static void deleteGame(String id) {
-        horseRaceGameMap.remove(id);
+    private void sendText(BbReceiveMessage source, String text) {
+        BbSendMessage out = new BbSendMessage(source);
+        out.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
+        bbMessageApi.sendMessage(out);
     }
 }

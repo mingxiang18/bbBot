@@ -87,6 +87,9 @@ spring:
   #配置文件
   profiles:
     active: local
+  #导入 prompt 配置文件，所有 prompt 见 prompts.yml
+  config:
+    import: optional:classpath:prompts.yml
   #mysql druid数据源相关配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -128,10 +131,42 @@ rest:
 aiChat:
   #如果为0则不回复，否则随机一个0-1之间的数，回复数值大于此数值则回复
   replyNum: 0.95d
+  #群聊未@时触发自动回复的阈值（>该值才回复）
+  autoReplyRate: 0.99d
+  #ai回复时携带的历史消息条数
+  chatHistoryNum: 10
+  #具有线索管理权限的用户ID列表
+  adminUserIds:
 
-# chatGPT相关配置
+# AI 模型调用配置
+# active-provider 决定调用哪家：openai / deepseek
+ai:
+  active-provider: openai
+  providers:
+    openai:
+      base-url: https://api.openai.com/v1
+      api-key:
+      model: gpt-4
+      vision-enable: false
+    deepseek:
+      base-url: https://api.deepseek.com/v1
+      api-key:
+      model: deepseek-chat
+      vision-enable: false
+  retry:
+    max-attempts: 3
+    initial-interval-ms: 500
+    multiplier: 2.0
+    max-interval-ms: 4000
+
+# 旧版 chatGPT.* 配置（已废弃，保留兼容期。请迁移至上面的 ai.providers.openai.*）
 chatGPT:
   apiKey:
+
+# 总结聊天记录拉取的历史长度
+chatHistory:
+  summary:
+    chatHistoryNum: 100
 
 tencent:
   #腾讯云对象存储配置

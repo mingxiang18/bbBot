@@ -44,6 +44,9 @@ public class NsoApiCaller {
     @Autowired
     private IUserConfigValueService userConfigValueService;
 
+    @Autowired
+    private NsoRetryExecutor nsoRetryExecutor;
+
     @Value("${nso.fGenerationApi:https://api.imink.app/f}")
     private String fGenerationApi;
 
@@ -163,7 +166,7 @@ public class NsoApiCaller {
     }
 
     /**
-     * 获取f码
+     * 获取f码。带分类异常 + 退避重试。
      */
     public JSONObject callNsoFApi(String token, Integer step, String userId, String coralUserId) {
         HttpHeaders headers = new HttpHeaders();
@@ -181,7 +184,8 @@ public class NsoApiCaller {
             paramMap.put("coral_user_id", coralUserId);
         }
 
-        return restUtils.post(fGenerationApi, headers, paramMap, JSONObject.class);
+        return nsoRetryExecutor.execute("nso.f-api",
+                () -> restUtils.post(fGenerationApi, headers, paramMap, JSONObject.class));
     }
 
     /**
