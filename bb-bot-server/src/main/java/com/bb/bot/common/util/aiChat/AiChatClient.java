@@ -21,6 +21,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -229,6 +230,212 @@ public class AiChatClient {
             }
             onError.accept(e);
         }
+    }
+
+    /**
+     * 流式 + tool calling 循环。
+     *
+     * <p>步骤：</p>
+     * <ol>
+     *   <li>构造请求（带 tools 字段 + stream=true），POST → 接 SSE</li>
+     *   <li>遍历 delta：纯文本 delta 通过 onDelta 实时吐出；tool_calls delta 按 index 聚合</li>
+     *   <li>finish_reason="stop" → onComplete 调一次，循环结束</li>
+     *   <li>finish_reason="tool_calls" → 把 assistant 工具调用消息 + 每个工具的执行结果 message 追加到上下文，下一轮请求</li>
+     *   <li>循环达到 maxSteps 强制收尾</li>
+     * </ol>
+     *
+     * <p>onDelta 只在 LLM 实际吐字时调用 —— 工具调用阶段 LLM 不吐字，对应静默期。</p>
+     */
+    public void askChatGPTStreamWithTools(
+            List<ChatGPTContent> messages,
+            List<Object> tools,
+            java.util.function.BiFunction<String, String, String> toolInvoker,
+            Consumer<String> onDelta,
+            Consumer<String> onComplete,
+            Consumer<Throwable> onError,
+            int maxSteps) {
+        if (StringUtils.isBlank(chatGPTApiKey)) {
+            onError.accept(new IllegalStateException("chatGPT.apiKey 未配置"));
+            return;
+        }
+        preprocessImageContent(messages);
+
+        StringBuilder accumulatedText = new StringBuilder();
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(15))
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+
+        try {
+            for (int step = 0; step < maxSteps; step++) {
+                ChatGPTRequest body = new ChatGPTRequest(model, messages);
+                body.setStream(true);
+                if (tools != null && !tools.isEmpty()) {
+                    body.setTools(tools);
+                    body.setTool_choice("auto");
+                }
+                String reqJson = JSON.toJSONString(body);
+
+                HttpRequest req = HttpRequest.newBuilder()
+                        .uri(URI.create(chatGPTUrl))
+                        .timeout(Duration.ofSeconds(120))
+                        .header("Authorization", "Bearer " + chatGPTApiKey)
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "text/event-stream")
+                        .POST(HttpRequest.BodyPublishers.ofString(reqJson, StandardCharsets.UTF_8))
+                        .build();
+
+                HttpResponse<InputStream> resp = client.send(req, HttpResponse.BodyHandlers.ofInputStream());
+                if (resp.statusCode() != 200) {
+                    String bodyText = new String(resp.body().readAllBytes(), StandardCharsets.UTF_8);
+                    onError.accept(new RuntimeException("chatGPT HTTP " + resp.statusCode() + ": " + bodyText));
+                    return;
+                }
+
+                // 解析这一步的 SSE
+                StepResult result = consumeSseStep(resp.body(), accumulatedText, onDelta);
+
+                if ("stop".equals(result.finishReason) || result.finishReason == null) {
+                    onComplete.accept(accumulatedText.toString());
+                    return;
+                }
+
+                if ("tool_calls".equals(result.finishReason)) {
+                    // 把 assistant 的 tool_calls 决策追加到上下文
+                    ChatGPTContent assistantMsg = new ChatGPTContent();
+                    assistantMsg.setRole(ChatGPTContent.ASSISTANT_ROLE);
+                    assistantMsg.setContent(result.assistantTextThisStep.length() == 0 ? null : result.assistantTextThisStep.toString());
+                    assistantMsg.setTool_calls(new java.util.ArrayList<>(result.toolCalls.values()));
+                    messages.add(assistantMsg);
+
+                    // 串行执行每个工具
+                    for (Map<String, Object> toolCall : result.toolCalls.values()) {
+                        String toolId = (String) toolCall.get("id");
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> function = (Map<String, Object>) toolCall.get("function");
+                        String toolName = function == null ? null : (String) function.get("name");
+                        String argsJson = function == null ? null : (String) function.get("arguments");
+                        String toolResult;
+                        try {
+                            toolResult = toolInvoker.apply(toolName, argsJson);
+                        } catch (Exception toolErr) {
+                            log.warn("工具 {} 调用器异常", toolName, toolErr);
+                            toolResult = "{\"error\":\"executor_threw\",\"message\":" + JSON.toJSONString(toolErr.getMessage()) + "}";
+                        }
+                        ChatGPTContent toolMsg = new ChatGPTContent();
+                        toolMsg.setRole(ChatGPTContent.TOOL_ROLE);
+                        toolMsg.setContent(toolResult);
+                        toolMsg.setTool_call_id(toolId);
+                        messages.add(toolMsg);
+                    }
+                    // 进入下一轮
+                    continue;
+                }
+
+                // 其他 finish_reason（length / content_filter 等）：当 stop 处理
+                onComplete.accept(accumulatedText.toString());
+                return;
+            }
+            // maxSteps 用尽
+            log.warn("askChatGPTStreamWithTools 达到 maxSteps={}，强制收尾", maxSteps);
+            accumulatedText.append("\n[已达工具调用步数上限，停止]");
+            onComplete.accept(accumulatedText.toString());
+        } catch (Exception e) {
+            log.error("askChatGPTStreamWithTools 失败", e);
+            if (accumulatedText.length() > 0) {
+                try {
+                    onComplete.accept(accumulatedText.toString());
+                } catch (Exception ignore) {}
+            }
+            onError.accept(e);
+        }
+    }
+
+    /** 一次 SSE step 的解析结果。 */
+    private static class StepResult {
+        String finishReason;
+        StringBuilder assistantTextThisStep = new StringBuilder();
+        /** key=index, value=tool_call object（按 OpenAI 协议）。 */
+        Map<Integer, Map<String, Object>> toolCalls = new LinkedHashMap<>();
+    }
+
+    /**
+     * 消费一次 SSE 流，把文本 delta 立即喷给 onDelta + 累计到 accumulatedText，
+     * 同时聚合 tool_calls delta，返回最终的 finish_reason 和 tool_calls。
+     */
+    private StepResult consumeSseStep(InputStream stream,
+                                       StringBuilder accumulatedText,
+                                       Consumer<String> onDelta) throws java.io.IOException {
+        StepResult sr = new StepResult();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty() || !line.startsWith("data:")) {
+                    continue;
+                }
+                String payload = line.substring(5).trim();
+                if ("[DONE]".equals(payload)) {
+                    break;
+                }
+                try {
+                    JSONObject obj = JSON.parseObject(payload);
+                    JSONArray choices = obj.getJSONArray("choices");
+                    if (choices == null || choices.isEmpty()) continue;
+                    JSONObject choice = choices.getJSONObject(0);
+                    JSONObject delta = choice.getJSONObject("delta");
+                    String finish = choice.getString("finish_reason");
+                    if (finish != null && !"null".equals(finish)) {
+                        sr.finishReason = finish;
+                    }
+                    if (delta == null) continue;
+                    // 普通文本
+                    String text = delta.getString("content");
+                    if (text != null && !text.isEmpty()) {
+                        accumulatedText.append(text);
+                        sr.assistantTextThisStep.append(text);
+                        try {
+                            onDelta.accept(text);
+                        } catch (Exception cbErr) {
+                            log.warn("onDelta 回调异常", cbErr);
+                        }
+                    }
+                    // tool_calls delta
+                    JSONArray toolCallsDelta = delta.getJSONArray("tool_calls");
+                    if (toolCallsDelta != null) {
+                        for (int i = 0; i < toolCallsDelta.size(); i++) {
+                            JSONObject tcd = toolCallsDelta.getJSONObject(i);
+                            Integer idx = tcd.getInteger("index");
+                            if (idx == null) idx = 0;
+                            Map<String, Object> tc = sr.toolCalls.computeIfAbsent(idx, k -> {
+                                Map<String, Object> m = new LinkedHashMap<>();
+                                m.put("id", "");
+                                m.put("type", "function");
+                                Map<String, Object> f = new LinkedHashMap<>();
+                                f.put("name", "");
+                                f.put("arguments", "");
+                                m.put("function", f);
+                                return m;
+                            });
+                            String id = tcd.getString("id");
+                            if (id != null) tc.put("id", id);
+                            JSONObject fnDelta = tcd.getJSONObject("function");
+                            if (fnDelta != null) {
+                                @SuppressWarnings("unchecked")
+                                Map<String, Object> fn = (Map<String, Object>) tc.get("function");
+                                String nm = fnDelta.getString("name");
+                                if (nm != null) fn.put("name", (String) fn.get("name") + nm);
+                                String args = fnDelta.getString("arguments");
+                                if (args != null) fn.put("arguments", (String) fn.get("arguments") + args);
+                            }
+                        }
+                    }
+                } catch (Exception parseErr) {
+                    log.debug("SSE payload 解析失败: {}", payload);
+                }
+            }
+        }
+        return sr;
     }
 
     /**

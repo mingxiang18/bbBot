@@ -24,10 +24,23 @@ public class ChatGPTContent {
      */
     private String role = USER_ROLE;
 
+    public final static String TOOL_ROLE = "tool";
+
     /**
      * 具体消息内容
      */
     private Object content;
+
+    /**
+     * 仅 assistant 消息使用：function calling 协议中模型决定调用的工具列表。
+     * 不需要时为 null（fastjson2 默认跳过）。
+     */
+    private List<Map<String, Object>> tool_calls;
+
+    /**
+     * 仅 tool 消息使用：本条 tool 结果对应哪个 tool_call.id。
+     */
+    private String tool_call_id;
 
     public ChatGPTContent() {}
 
