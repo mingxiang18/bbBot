@@ -11,9 +11,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 启动期扫描所有 Spring bean，把带 {@link AiTool} 注解的方法注册成可被 AI 调用的工具。
@@ -27,7 +30,10 @@ public class AiToolRegistry {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private final Map<String, AiToolDescriptor> tools = new LinkedHashMap<>();
+    private final Map<String, AiToolDescriptor> tools = new ConcurrentHashMap<>();
+
+    /** 工具名 → 来源插件名（核心工具映射为 "_core"）。给 plugin reload 用于清理。 */
+    private final Map<String, String> toolSource = new ConcurrentHashMap<>();
 
     @EventListener
     public synchronized void onContextRefreshed(ContextRefreshedEvent event) {
@@ -36,13 +42,24 @@ public class AiToolRegistry {
         }
         Map<String, Object> beans = applicationContext.getBeansOfType(Object.class);
         for (Object bean : beans.values()) {
-            registerToolsFromBean(bean);
+            registerToolsFromInstance(bean, "_core");
         }
-        log.info("AiToolRegistry 注册完成，共 {} 个工具：{}", tools.size(), tools.keySet());
+        log.info("AiToolRegistry 注册完成（核心），共 {} 个工具：{}", tools.size(), tools.keySet());
     }
 
-    private void registerToolsFromBean(Object bean) {
-        Class<?> clazz = org.springframework.aop.support.AopUtils.getTargetClass(bean);
+    /**
+     * 把一个实例的 @AiTool 方法注册进来。可以是 Spring bean，也可以是插件加载出来的普通实例。
+     *
+     * @param instance   持有方法的对象
+     * @param sourceName 来源标识。核心 = {@code _core}；插件 = 插件名
+     */
+    public synchronized void registerToolsFromInstance(Object instance, String sourceName) {
+        Class<?> clazz;
+        try {
+            clazz = org.springframework.aop.support.AopUtils.getTargetClass(instance);
+        } catch (Exception e) {
+            clazz = instance.getClass();
+        }
         for (Method method : clazz.getDeclaredMethods()) {
             AiTool ann = method.getAnnotation(AiTool.class);
             if (ann == null) {
@@ -55,16 +72,36 @@ public class AiToolRegistry {
                     ann.description(),
                     ann.requiresOwner(),
                     ann.requiresSandbox(),
-                    bean,
+                    instance,
                     method,
                     params);
             if (tools.containsKey(ann.name())) {
-                throw new IllegalStateException("AiTool 名称冲突: " + ann.name() +
-                        "（已注册于 " + tools.get(ann.name()).getMethod() +
-                        "，当前 " + method + "）");
+                log.warn("AiTool 名称冲突（已跳过新注册）: {} 在 {}，旧来源 {}", ann.name(),
+                        sourceName, toolSource.get(ann.name()));
+                continue;
             }
             tools.put(ann.name(), desc);
+            toolSource.put(ann.name(), sourceName);
         }
+    }
+
+    /** 移除来自指定 source（如某插件）的所有工具。返回被移除的工具名集合。 */
+    public synchronized Set<String> unregisterBySource(String sourceName) {
+        Set<String> removed = new HashSet<>();
+        for (Map.Entry<String, String> e : toolSource.entrySet()) {
+            if (sourceName.equals(e.getValue())) {
+                removed.add(e.getKey());
+            }
+        }
+        for (String name : removed) {
+            tools.remove(name);
+            toolSource.remove(name);
+        }
+        return removed;
+    }
+
+    public String sourceOf(String toolName) {
+        return toolSource.get(toolName);
     }
 
     private List<AiToolDescriptor.ParamMeta> buildParamMetas(Method method) {
