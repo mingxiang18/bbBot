@@ -2,11 +2,15 @@ package com.bb.bot.aiAgent.core;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.bot.aiAgent.auth.AiAgentAuthService;
+import com.bb.bot.database.aiAgent.entity.AiToolInvocationLog;
+import com.bb.bot.database.aiAgent.service.IAiToolInvocationLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +32,12 @@ public class AiToolExecutor {
     @Autowired
     private AiToolRegistry registry;
 
+    @Autowired
+    private AiAgentAuthService authService;
+
+    @Autowired
+    private IAiToolInvocationLogService invocationLogService;
+
     private final ExecutorService toolPool = Executors.newCachedThreadPool(r -> {
         Thread t = new Thread(r, "ai-tool-" + System.nanoTime());
         t.setDaemon(true);
@@ -38,49 +48,89 @@ public class AiToolExecutor {
     private static final long TOOL_TIMEOUT_SECONDS = 30;
 
     /**
-     * 执行一次工具调用。
-     *
-     * @param toolName  工具名（function.name）
-     * @param argsJson  function calling 的 arguments 字段（JSON 字符串）
-     * @param callerUserId 调用者用户 ID（M4 授权使用，MVP 阶段透传备用）
-     * @return 序列化后的字符串结果（成功时是 JSON 或文本，失败时是错误消息）
+     * 兼容旧调用签名（无 platform / sessionId）。建议改用 4 参数版本。
      */
     public String invoke(String toolName, String argsJson, String callerUserId) {
+        return invoke(toolName, argsJson, callerUserId, null, null);
+    }
+
+    /**
+     * 执行一次工具调用。
+     *
+     * <p>调用顺序：① auth 预检 → ② 参数解析 → ③ 沙箱 / 反射执行 → ④ 审计日志落库</p>
+     *
+     * @param toolName     工具名
+     * @param argsJson     function calling arguments
+     * @param callerUserId 调用者 user id
+     * @param platform     平台标识（BotType 字符串），用于角色查询和审计
+     * @param sessionId    一次 agent 派活的串联 id（null 也行，落库时为空）
+     */
+    public String invoke(String toolName, String argsJson, String callerUserId, String platform, String sessionId) {
+        long start = System.currentTimeMillis();
         AiToolDescriptor desc = registry.get(toolName);
         if (desc == null) {
-            return "{\"error\":\"unknown_tool\",\"tool\":\"" + toolName + "\"}";
+            String err = "{\"error\":\"unknown_tool\",\"tool\":\"" + toolName + "\"}";
+            audit(sessionId, callerUserId, platform, toolName, argsJson, err, start, "error");
+            return err;
         }
 
-        // 权限预检（MVP 阶段，仅按 requiresOwner 标志做简单 owner 校验；M4 替换为 DB 策略）
-        if (desc.isRequiresOwner() && !isOwner(callerUserId)) {
-            log.warn("非 owner 用户 {} 试图调用需要 owner 权限的工具 {}", callerUserId, toolName);
-            return "{\"error\":\"permission_denied\",\"tool\":\"" + toolName + "\"}";
+        AiAgentAuthService.AuthDecision decision = authService.canInvoke(callerUserId, platform, toolName);
+        if (!decision.allowed) {
+            log.warn("授权拒绝：user={} platform={} tool={} reason={}", callerUserId, platform, toolName, decision.reason);
+            String err = "{\"error\":\"permission_denied\",\"tool\":\"" + toolName + "\",\"reason\":\"" + decision.reason + "\"}";
+            audit(sessionId, callerUserId, platform, toolName, argsJson, err, start, "denied");
+            return err;
         }
 
         Object[] args = parseArgs(desc, argsJson);
         if (args == null) {
-            return "{\"error\":\"invalid_arguments\",\"tool\":\"" + toolName + "\",\"raw\":" + JSON.toJSONString(argsJson) + "}";
+            String err = "{\"error\":\"invalid_arguments\",\"tool\":\"" + toolName + "\",\"raw\":" + JSON.toJSONString(argsJson) + "}";
+            audit(sessionId, callerUserId, platform, toolName, argsJson, err, start, "error");
+            return err;
         }
 
         Callable<Object> task = () -> desc.getMethod().invoke(desc.getBeanInstance(), args);
         Future<Object> future = toolPool.submit(task);
         try {
             Object result = future.get(TOOL_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            return serializeResult(result);
+            String text = serializeResult(result);
+            audit(sessionId, callerUserId, platform, toolName, argsJson, text, start, "ok");
+            return text;
         } catch (TimeoutException toe) {
             future.cancel(true);
             log.warn("工具 {} 执行超时", toolName);
-            return "{\"error\":\"timeout\",\"tool\":\"" + toolName + "\",\"timeoutSec\":" + TOOL_TIMEOUT_SECONDS + "}";
+            String err = "{\"error\":\"timeout\",\"tool\":\"" + toolName + "\",\"timeoutSec\":" + TOOL_TIMEOUT_SECONDS + "}";
+            audit(sessionId, callerUserId, platform, toolName, argsJson, err, start, "timeout");
+            return err;
         } catch (Exception e) {
             Throwable cause = e instanceof InvocationTargetException ? e.getCause() : e;
             log.warn("工具 {} 执行失败", toolName, cause);
-            return "{\"error\":\"execution_failed\",\"tool\":\"" + toolName + "\",\"message\":" + JSON.toJSONString(cause == null ? "" : cause.getMessage()) + "}";
+            String err = "{\"error\":\"execution_failed\",\"tool\":\"" + toolName + "\",\"message\":" + JSON.toJSONString(cause == null ? "" : cause.getMessage()) + "}";
+            audit(sessionId, callerUserId, platform, toolName, argsJson, err, start, "error");
+            return err;
         }
     }
 
-    /** MVP owner 判断：硬编码原 BbAiChatHandler 用的 UID。M4 接 MySQL 角色表后替换。 */
-    private boolean isOwner(String userId) {
-        return "1105048721".equals(userId);
+    private void audit(String sessionId, String userId, String platform, String toolName,
+                       String argsJson, String resultJson, long startMs, String status) {
+        try {
+            AiToolInvocationLog row = new AiToolInvocationLog();
+            row.setSessionId(sessionId);
+            row.setUserId(userId);
+            row.setPlatform(platform);
+            row.setToolName(toolName);
+            row.setArgsJson(argsJson);
+            // 审计 result 限长，避免把 4KB 抓取正文塞满表
+            row.setResultJson(resultJson != null && resultJson.length() > 2000
+                    ? resultJson.substring(0, 2000) + "...[truncated]"
+                    : resultJson);
+            row.setLatencyMs(System.currentTimeMillis() - startMs);
+            row.setStatus(status);
+            row.setCreatedAt(LocalDateTime.now());
+            invocationLogService.save(row);
+        } catch (Exception e) {
+            log.warn("ai_tool_invocation_log 落库失败（非致命）", e);
+        }
     }
 
     private Object[] parseArgs(AiToolDescriptor desc, String argsJson) {

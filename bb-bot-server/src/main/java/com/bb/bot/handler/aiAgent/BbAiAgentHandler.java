@@ -80,6 +80,8 @@ public class BbAiAgentHandler {
 
         List<Object> tools = toolRegistry.toOpenAiTools();
         String callerUserId = bbReceiveMessage.getUserId();
+        String platform = bbReceiveMessage.getBotType();
+        String sessionId = "agent-" + System.currentTimeMillis() + "-" + Integer.toHexString(System.identityHashCode(bbReceiveMessage));
 
         BbSendMessage envelope = new BbSendMessage(bbReceiveMessage);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
@@ -87,7 +89,7 @@ public class BbAiAgentHandler {
         aiChatClient.askChatGPTStreamWithTools(
                 messages,
                 tools,
-                (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId),
+                (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId),
                 session::appendDelta,
                 fullText -> session.complete(),
                 err -> {
