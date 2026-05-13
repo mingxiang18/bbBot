@@ -26,12 +26,43 @@ public class TelegramApiCaller {
     private RestUtils restUtils;
 
     public void sendMessage(TelegramConfig telegramConfig, String chatId, String text, String replyMessageId) {
+        sendMessageReturningId(telegramConfig, chatId, text, replyMessageId);
+    }
+
+    /**
+     * 发送消息并返回 Telegram 分配的 message_id（流式 edit 用）。失败时返回 null。
+     */
+    public String sendMessageReturningId(TelegramConfig telegramConfig, String chatId, String text, String replyMessageId) {
         Map<String, Object> params = new HashMap<>();
         params.put("chat_id", chatId);
         params.put("text", text);
         putReplyParameters(params, replyMessageId);
 
-        checkResponse(restUtils.postForForm(buildApiUrl(telegramConfig, "sendMessage"), params, JSONObject.class));
+        JSONObject response = restUtils.postForForm(buildApiUrl(telegramConfig, "sendMessage"), params, JSONObject.class);
+        checkResponse(response);
+        JSONObject result = response.getJSONObject("result");
+        return result == null ? null : result.getString("message_id");
+    }
+
+    /**
+     * 编辑已发送消息文本（流式回复用）。
+     *
+     * <p>Telegram 限制：同一条消息 1 秒内只能编辑一次，全 chat 维度也有节流。
+     * 若 edit 失败（比如内容未变化），日志告警但不抛异常 —— 流式吐字过程中不应中断。</p>
+     */
+    public void editMessageText(TelegramConfig telegramConfig, String chatId, String messageId, String text) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("chat_id", chatId);
+        params.put("message_id", messageId);
+        params.put("text", text);
+        try {
+            JSONObject response = restUtils.postForForm(buildApiUrl(telegramConfig, "editMessageText"), params, JSONObject.class);
+            if (response == null || !Boolean.TRUE.equals(response.getBoolean("ok"))) {
+                log.warn("telegram editMessageText 失败（流式吐字非致命）: {}", response);
+            }
+        } catch (Exception e) {
+            log.warn("telegram editMessageText 异常（流式吐字非致命）", e);
+        }
     }
 
     public void sendPhoto(TelegramConfig telegramConfig, String chatId, File photo, String caption, String replyMessageId) {

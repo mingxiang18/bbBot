@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.bb.bot.api.BbMessageApi;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
@@ -79,6 +80,13 @@ public class BbAiChatHandler {
      */
     @Value("${aiChat.autoReplyRate:0.99}")
     private Double autoReplyRate;
+
+    /**
+     * 是否启用 LLM SSE 流式回复 + IM 端流式呈现。
+     * 默认关闭以避免影响现有用户；开启后长回复会按 token 流式吐字。
+     */
+    @Value("${chatGPT.streamEnabled:false}")
+    private Boolean streamEnabled;
 
     @Rule(eventType = EventType.MESSAGE, ruleType = RuleType.DEFAULT, name = "ai自动回复")
     public void aiChatHandle(BbReceiveMessage bbReceiveMessage) {
@@ -182,18 +190,52 @@ public class BbAiChatHandler {
 
         //构建ai模型请求信息体
         List<ChatGPTContent> chatContentList = buildChatContentList(personality, bbReceiveMessage.getMessageContentList(), chatHistoryList, replyHistory);
-        //请求ai模型获取回复
-        String answer = aiChatClient.askChatGPT(chatContentList);
 
-        //如果回复为空，说明是接口异常，直接结束
-        if(StringUtils.isBlank(answer)) {
+        if (Boolean.TRUE.equals(streamEnabled)) {
+            streamAiReply(bbReceiveMessage, chatContentList);
+        } else {
+            blockingAiReply(bbReceiveMessage, chatContentList);
+        }
+    }
+
+    /**
+     * 阻塞模式：等 AI 完整生成后一次性发送（旧行为）。
+     */
+    private void blockingAiReply(BbReceiveMessage bbReceiveMessage, List<ChatGPTContent> chatContentList) {
+        String answer = aiChatClient.askChatGPT(chatContentList);
+        if (StringUtils.isBlank(answer)) {
             return;
         }
-
-        //构建回复消息
         List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
+        persistBotReply(bbReceiveMessage, answerMessage);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(answerMessage);
+        bbMessageApi.sendMessage(bbSendMessage);
+    }
 
-        //保存机器人回复
+    /**
+     * 流式模式：SSE 拉取 → 适配器侧 edit / chunked 呈现 → 完成后落历史记录。
+     */
+    private void streamAiReply(BbReceiveMessage bbReceiveMessage, List<ChatGPTContent> chatContentList) {
+        BbSendMessage envelope = new BbSendMessage(bbReceiveMessage);
+        MessageStreamSession session = bbMessageApi.startStream(envelope);
+        aiChatClient.askChatGPTStream(
+                chatContentList,
+                session::appendDelta,
+                fullText -> {
+                    session.complete();
+                    if (StringUtils.isNoneBlank(fullText)) {
+                        persistBotReply(bbReceiveMessage,
+                                Collections.singletonList(BbMessageContent.buildTextContent(fullText)));
+                    }
+                },
+                err -> {
+                    log.error("ai 流式回复异常", err);
+                    session.fail(err);
+                });
+    }
+
+    private void persistBotReply(BbReceiveMessage bbReceiveMessage, List<BbMessageContent> answerMessage) {
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setMessageId(IdWorker.getIdStr());
         chatHistory.setUserQq("bot");
@@ -201,11 +243,6 @@ public class BbAiChatHandler {
         chatHistory.setGroupId(bbReceiveMessage.getGroupId());
         chatHistory.setText(JSON.toJSONString(answerMessage));
         chatHistoryService.save(chatHistory);
-
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(answerMessage);
-        bbMessageApi.sendMessage(bbSendMessage);
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")

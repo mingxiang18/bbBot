@@ -1,6 +1,9 @@
 package com.bb.bot.api.oneBot;
 
 import com.alibaba.fastjson2.JSON;
+import com.bb.bot.api.AbstractMessageStreamSession;
+import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.MessageType;
 import com.bb.bot.entity.bb.BbMessageContent;
@@ -14,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -60,6 +64,82 @@ public class OneBotMessageApi {
         //发送消息
         if (action != null && bbSendMessage.getWebSocket().isOpen()) {
             bbSendMessage.getWebSocket().send(JSON.toJSONString(action));
+        }
+    }
+
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        if (bbSendMessage.getWebSocket() == null || !bbSendMessage.getWebSocket().isOpen()) {
+            return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+        }
+        return new OneBotStreamSession(this, bbSendMessage);
+    }
+
+    /**
+     * OneBot 流式呈现：协议不支持 edit-message，走 chunked-send。
+     * 累计达到 80 字符且遇到句子边界 / 换行时切段；最终 flush 把剩余发完。
+     */
+    private static class OneBotStreamSession extends AbstractMessageStreamSession {
+        private final OneBotMessageApi api;
+        private final BbSendMessage template;
+        private int chunkIndex = 0;
+
+        OneBotStreamSession(OneBotMessageApi api, BbSendMessage template) {
+            this.api = api;
+            this.template = template;
+            this.minFlushChars = 80;
+            this.minFlushIntervalMs = 2500L;
+        }
+
+        @Override
+        protected void flush(boolean isFinal) {
+            String pending = pendingChunk.toString();
+            if (pending.isEmpty()) {
+                return;
+            }
+            String toSend;
+            if (isFinal) {
+                toSend = pending;
+                pendingChunk.setLength(0);
+            } else {
+                int cut = findSentenceBoundary(pending);
+                if (cut <= 0) {
+                    // 没找到句子边界，等下一轮累计
+                    return;
+                }
+                toSend = pending.substring(0, cut);
+                pendingChunk.delete(0, cut);
+            }
+            chunkIndex++;
+            BbSendMessage envelope = cloneEnvelope(template);
+            envelope.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(toSend)));
+            api.sendMessage(envelope);
+        }
+
+        /**
+         * 在字符串中找句子边界（句号 / 问号 / 感叹号 / 换行），返回切分点（包含边界字符）。
+         * 找不到返回 -1。
+         */
+        private int findSentenceBoundary(String s) {
+            for (int i = s.length() - 1; i >= 0; i--) {
+                char c = s.charAt(i);
+                if (c == '\n' || c == '。' || c == '！' || c == '？' || c == '.' || c == '!' || c == '?') {
+                    return i + 1;
+                }
+            }
+            return -1;
+        }
+
+        private BbSendMessage cloneEnvelope(BbSendMessage src) {
+            BbSendMessage dst = new BbSendMessage();
+            dst.setBotType(src.getBotType());
+            dst.setMessageType(src.getMessageType());
+            dst.setUserId(src.getUserId());
+            dst.setGroupId(src.getGroupId());
+            dst.setReceiveMessageId(src.getReceiveMessageId());
+            dst.setMessageSeq(src.getMessageSeq() + chunkIndex);
+            dst.setWebSocket(src.getWebSocket());
+            dst.setConfig(src.getConfig());
+            return dst;
         }
     }
 

@@ -1,5 +1,8 @@
 package com.bb.bot.api.telegram;
 
+import com.bb.bot.api.AbstractMessageStreamSession;
+import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.TelegramConfig;
 import com.bb.bot.connection.telegram.TelegramApiCaller;
 import com.bb.bot.constant.BbSendMessageType;
@@ -57,6 +60,49 @@ public class TelegramMessageApi {
                 telegramApiCaller.sendPhoto(telegramConfig, chatId, bbMessageContent.getData().toString(), null, replyMessageId);
                 replyUsed = true;
             }
+        }
+    }
+
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        TelegramConfig telegramConfig = (TelegramConfig) bbSendMessage.getConfig();
+        String chatId = getChatId(bbSendMessage);
+        if (telegramConfig == null || StringUtils.isBlank(chatId)) {
+            return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+        }
+        return new TelegramStreamSession(telegramApiCaller, telegramConfig, chatId, bbSendMessage.getReceiveMessageId());
+    }
+
+    /**
+     * Telegram 流式呈现：首次 send 拿到 message_id，后续节流 editMessageText 覆盖完整文本。
+     * 节流 1.5s + 60 字符，避免触发 TG 限速。
+     */
+    private static class TelegramStreamSession extends AbstractMessageStreamSession {
+        private final TelegramApiCaller caller;
+        private final TelegramConfig config;
+        private final String chatId;
+        private final String replyToMessageId;
+        private String messageId;
+
+        TelegramStreamSession(TelegramApiCaller caller, TelegramConfig config, String chatId, String replyToMessageId) {
+            this.caller = caller;
+            this.config = config;
+            this.chatId = chatId;
+            this.replyToMessageId = replyToMessageId;
+        }
+
+        @Override
+        protected void flush(boolean isFinal) {
+            String text = buffer.toString();
+            if (text.isEmpty()) {
+                return;
+            }
+            if (messageId == null) {
+                messageId = caller.sendMessageReturningId(config, chatId, text, replyToMessageId);
+                pendingChunk.setLength(0);
+                return;
+            }
+            caller.editMessageText(config, chatId, messageId, text);
+            pendingChunk.setLength(0);
         }
     }
 
