@@ -64,15 +64,15 @@ cmd_init_db() {
 }
 
 cmd_build() {
-  if [[ -f "$JAR" && "${1:-}" != "--force" ]]; then
-    log "已存在 $JAR，跳过 build（强制重建用 ./bb-dev.sh up --build）"
+  if [[ -f "${JAR}" && "${1:-}" != "--force" ]]; then
+    log "已存在 ${JAR}，跳过 build（强制重建用 ./bb-dev.sh up --build）"
     return
   fi
   log "mvn package 中（首次约 1-2 分钟）…"
   cd "$REPO_DIR"
   # 跳过 test 编译 + 执行（项目里有过时 test 源）
   "$MVN" -pl bb-bot-server -am package -Dmaven.test.skip=true -q
-  ok "build 完成：$JAR"
+  ok "build 完成：${JAR}"
 }
 
 cmd_up() {
@@ -100,7 +100,7 @@ cmd_up() {
   else
     log "启动 bbBot (profile=bbtest) on http :$HTTP_PORT, bb-ws :$BB_WS_PORT …"
     # spring 会按 active=local（默认）+ bbtest profile 合并；application-bbtest.yml 里的字段优先级最高
-    nohup java -jar "$JAR" \
+    nohup java -jar "${JAR}" \
       --spring.profiles.active=bbtest \
       > "$LOGS_DIR/bot.log" 2>&1 &
     echo $! > "$PIDS_DIR/bot.pid"
@@ -155,9 +155,12 @@ cmd_logs() {
 
 cmd_test() {
   log "跑 BB 协议测试客户端…"
-  local args=()
-  [[ -n "${1:-}" ]] && args+=("--case=$1")
-  node "$SCRIPT_DIR/bb-client.mjs" "${args[@]}"
+  # bash 3.2 + set -u 下不能直接展开可能为空的数组，分两路写
+  if [[ -n "${1:-}" ]]; then
+    node "$SCRIPT_DIR/bb-client.mjs" "--case=$1"
+  else
+    node "$SCRIPT_DIR/bb-client.mjs"
+  fi
 }
 
 cmd_repl() {
