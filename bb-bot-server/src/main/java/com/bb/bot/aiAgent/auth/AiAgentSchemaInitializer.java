@@ -64,6 +64,22 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_tool_created (tool_name, created_at)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 工具调用审计'",
 
+            "CREATE TABLE IF NOT EXISTS ai_cron_task (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  owner_user_id VARCHAR(64) NOT NULL," +
+                    "  platform VARCHAR(32) NOT NULL," +
+                    "  bot_name VARCHAR(64) DEFAULT NULL," +
+                    "  target_group_id VARCHAR(64) DEFAULT NULL," +
+                    "  target_user_id VARCHAR(64) DEFAULT NULL," +
+                    "  cron_expr VARCHAR(64) NOT NULL," +
+                    "  prompt TEXT NOT NULL," +
+                    "  enabled TINYINT(1) NOT NULL DEFAULT 1," +
+                    "  last_run_at DATETIME DEFAULT NULL," +
+                    "  last_status VARCHAR(16) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_enabled (enabled)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 定时任务'",
+
             // 种子：内置工具的默认 user 策略（http_fetch / server_time 对普通用户开放）
             "INSERT IGNORE INTO ai_tool_policy (tool_name, role, allowed) VALUES " +
                     "('server_time','user',1)," +
