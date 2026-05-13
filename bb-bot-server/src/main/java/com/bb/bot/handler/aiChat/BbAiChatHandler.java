@@ -68,6 +68,9 @@ public class BbAiChatHandler {
     private MemoryQueryService memoryQueryService;
 
     @Autowired
+    private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
+
+    @Autowired
     private MemoryEventRecorder memoryEventRecorder;
 
     /**
@@ -176,6 +179,16 @@ public class BbAiChatHandler {
             personality = personality +
                     "3. **使用记忆**：你有以下事件记忆，请优先基于记忆中的内容进行回复。回复中要带有以前记忆中谁做过对应的某件什么事，但要指明是“曾经讨论”或“曾经出现”，以强调是过去的事件。例如，如果有人提到某个事件，你可以说：“曾经讨论过这个话题呢，xx当时说...” 或者 “这个问题曾经出现过哦，xx做了...”\n" +
                     "记忆如下：" + String.join("-", clueList);
+        }
+
+        // M8.6：把 caller user 的长期记忆 memory.md prepend 到 personality
+        try {
+            String userMemoryMd = memoryCompiler.ensureCompiledMemory(bbReceiveMessage.getUserId());
+            if (StringUtils.isNoneBlank(userMemoryMd)) {
+                personality = personality + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n";
+            }
+        } catch (Exception e) {
+            log.warn("注入 memory.md 失败 user={}", bbReceiveMessage.getUserId(), e);
         }
 
         //构建ai模型请求信息体

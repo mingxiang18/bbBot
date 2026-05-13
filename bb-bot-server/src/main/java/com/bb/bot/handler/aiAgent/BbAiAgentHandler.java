@@ -53,6 +53,9 @@ public class BbAiAgentHandler {
     @Autowired
     private SkillRegistry skillRegistry;
 
+    @Autowired
+    private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
+
     @Value("${aiAgent.maxSteps:10}")
     private int maxSteps;
 
@@ -78,8 +81,21 @@ public class BbAiAgentHandler {
 
         log.info("AI Agent 派活 user={} prompt={}", bbReceiveMessage.getUserId(), prompt);
 
+        // M8.6：把 caller user 的长期记忆（memory.md）prepend 到 system prompt。
+        // 跨进程持久 + progressive disclosure：LLM 一开始就看得到 facts/today/week/longterm。
+        String userMemoryMd = "";
+        try {
+            userMemoryMd = memoryCompiler.ensureCompiledMemory(bbReceiveMessage.getUserId());
+        } catch (Exception e) {
+            log.warn("ensureCompiledMemory 失败 user={}", bbReceiveMessage.getUserId(), e);
+        }
+        String memoryBlock = "";
+        if (org.apache.commons.lang3.StringUtils.isNoneBlank(userMemoryMd)) {
+            memoryBlock = "\n\n--- 你的长期记忆（来自历史会话的提炼，请用作上下文）---\n"
+                    + userMemoryMd + "\n--- 长期记忆结束 ---\n";
+        }
         // 把 SKILL 目录（progressive disclosure 的 metadata 层）拼进 system prompt
-        String effectiveSystemPrompt = systemPrompt + skillRegistry.describeAllForSystemPrompt();
+        String effectiveSystemPrompt = systemPrompt + memoryBlock + skillRegistry.describeAllForSystemPrompt();
 
         List<ChatGPTContent> messages = new ArrayList<>();
         messages.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, effectiveSystemPrompt));
