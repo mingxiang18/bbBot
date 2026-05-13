@@ -33,6 +33,15 @@ JAR="$REPO_DIR/bb-bot-server/target/bb-bot-server.jar"
 
 mkdir -p "$PIDS_DIR" "$LOGS_DIR"
 
+# 自动 source 真实 LLM 配置（若存在）
+REAL_LLM_ENV="$SCRIPT_DIR/real-llm.env"
+if [[ -f "$REAL_LLM_ENV" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$REAL_LLM_ENV"
+  set +a
+fi
+
 c_red()   { printf '\033[31m%s\033[0m' "$*"; }
 c_grn()   { printf '\033[32m%s\033[0m' "$*"; }
 c_ylw()   { printf '\033[33m%s\033[0m' "$*"; }
@@ -85,14 +94,24 @@ cmd_up() {
   cmd_init_db
   cmd_build $force_build
 
-  if is_running "$PIDS_DIR/mock.pid"; then
-    warn "mock OpenAI 已在跑 (pid=$(cat "$PIDS_DIR/mock.pid"))"
+  # 接的是真实 LLM 就跳过 mock；接的还是 mock 默认就把 mock 起起来
+  local using_mock=1
+  if [[ -n "${CHATGPT_URL:-}" && "${CHATGPT_URL:-}" != *"localhost:$MOCK_PORT"* ]]; then
+    using_mock=0
+  fi
+
+  if [[ $using_mock -eq 1 ]]; then
+    if is_running "$PIDS_DIR/mock.pid"; then
+      warn "mock OpenAI 已在跑 (pid=$(cat "$PIDS_DIR/mock.pid"))"
+    else
+      log "启动 mock OpenAI on :$MOCK_PORT …"
+      nohup node "$SCRIPT_DIR/mock-openai-server.mjs" --port=$MOCK_PORT > "$LOGS_DIR/mock.log" 2>&1 &
+      echo $! > "$PIDS_DIR/mock.pid"
+      sleep 0.5
+      ok "mock OpenAI pid=$(cat "$PIDS_DIR/mock.pid")"
+    fi
   else
-    log "启动 mock OpenAI on :$MOCK_PORT …"
-    nohup node "$SCRIPT_DIR/mock-openai-server.mjs" --port=$MOCK_PORT > "$LOGS_DIR/mock.log" 2>&1 &
-    echo $! > "$PIDS_DIR/mock.pid"
-    sleep 0.5
-    ok "mock OpenAI pid=$(cat "$PIDS_DIR/mock.pid")"
+    ok "检测到 CHATGPT_URL=$CHATGPT_URL，跳过 mock，直接接真实 LLM"
   fi
 
   if is_running "$PIDS_DIR/bot.pid"; then
@@ -107,14 +126,17 @@ cmd_up() {
     ok "bbBot pid=$(cat "$PIDS_DIR/bot.pid")"
   fi
 
-  log "等待 bbBot 启动完成 (最多 60s)…"
-  for i in $(seq 1 60); do
-    if grep -q "WebSocket服务器启动成功\|Started.*Application in " "$LOGS_DIR/bot.log" 2>/dev/null; then
+  log "等待 bbBot 启动完成 (最多 90s)…"
+  # 等 Spring 完整 ready —— 早于此点工具注册表是空的，agent 路由会用 tools=[] 请求 LLM
+  for i in $(seq 1 90); do
+    if grep -q "Started.*Application in " "$LOGS_DIR/bot.log" 2>/dev/null; then
+      # 再等 1s 让 @EventListener (AiToolRegistry / SkillRegistry / SchemaInitializer) 完成
+      sleep 1
       ok "bbBot 已就绪"
       break
     fi
     sleep 1
-    [[ $i -eq 60 ]] && { err "bbBot 60s 内未就绪，查看日志：$LOGS_DIR/bot.log"; exit 1; }
+    [[ $i -eq 90 ]] && { err "bbBot 90s 内未就绪，查看日志：$LOGS_DIR/bot.log"; exit 1; }
   done
 
   cmd_status
@@ -167,6 +189,21 @@ cmd_repl() {
   node "$SCRIPT_DIR/bb-client.mjs" --interactive
 }
 
+cmd_which_llm() {
+  echo "当前 LLM endpoint："
+  if [[ -z "${CHATGPT_URL:-}" ]] || [[ "${CHATGPT_URL:-}" == *"localhost:$MOCK_PORT"* ]]; then
+    echo "  $(c_ylw '模式') : mock（本地 mock-openai-server.mjs）"
+    echo "  $(c_ylw 'URL')  : http://localhost:$MOCK_PORT/v1/chat/completions"
+    echo "  $(c_ylw '说明') : 没花真 token；要切真实 LLM 见 .dev/real-llm.env.example"
+  else
+    echo "  $(c_grn '模式') : real"
+    echo "  $(c_grn 'URL')  : $CHATGPT_URL"
+    echo "  $(c_grn 'MODEL'): ${CHATGPT_MODEL:-未设置（用 application.yml 默认值）}"
+    echo "  $(c_grn 'KEY')  : ${CHATGPT_API_KEY:0:8}...（已掩码）"
+  fi
+  echo "  $(c_blu '配置文件'): ${REAL_LLM_ENV} $([[ -f $REAL_LLM_ENV ]] && echo '(已加载)' || echo '(不存在，可参考 real-llm.env.example 创建)')"
+}
+
 cmd_help() {
   cat <<EOF
 bb-dev.sh — bbBot 本地端到端测试 orchestrator
@@ -181,7 +218,13 @@ bb-dev.sh — bbBot 本地端到端测试 orchestrator
   test [case]       跑测试客户端（无参 = 全部场景；如 A2 / A4）
   repl              交互式手动收发
   logs [bot|mock]   tail 日志
+  which-llm         显示当前接的是 mock 还是真实 LLM endpoint
   help              本帮助
+
+接真实 LLM：
+  cp .dev/real-llm.env.example .dev/real-llm.env
+  # 编辑 real-llm.env 取消注释你的 endpoint 段、填上 key
+  ./.dev/bb-dev.sh down && ./.dev/bb-dev.sh up    # up 时自动 source
 
 依赖：
   - misu-server 的 MySQL 容器 $MYSQL_CONTAINER 已在跑（端口 3316）
@@ -202,6 +245,7 @@ main() {
     test)    cmd_test    "$@" ;;
     repl)    cmd_repl    "$@" ;;
     logs)    cmd_logs    "$@" ;;
+    which-llm) cmd_which_llm "$@" ;;
     help|--help|-h) cmd_help ;;
     *) err "未知命令 $cmd"; cmd_help; exit 1 ;;
   esac

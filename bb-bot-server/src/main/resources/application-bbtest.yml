@@ -26,9 +26,12 @@ bot:
       secret: bb-test-secret
 
 chatGPT:
-  apiKey: sk-mock-localtest
-  url: http://localhost:18800/v1/chat/completions
-  model: mock-gpt-4
+  # 环境变量优先级最高；没设则 fallback 到 mock-openai-server.mjs
+  # 配真实 LLM 的最简方式：在 .dev/real-llm.env 里写好 CHATGPT_* 变量，
+  # ./.dev/bb-dev.sh up 会自动 source 它再启动。
+  apiKey: ${CHATGPT_API_KEY:sk-mock-localtest}
+  url: ${CHATGPT_URL:http://localhost:18800/v1/chat/completions}
+  model: ${CHATGPT_MODEL:mock-gpt-4}
   streamEnabled: true
 
 aiAgent:
