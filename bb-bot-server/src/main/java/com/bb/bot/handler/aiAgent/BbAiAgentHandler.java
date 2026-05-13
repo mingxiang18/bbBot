@@ -2,6 +2,7 @@ package com.bb.bot.handler.aiAgent;
 
 import com.bb.bot.aiAgent.core.AiToolExecutor;
 import com.bb.bot.aiAgent.core.AiToolRegistry;
+import com.bb.bot.aiAgent.skills.SkillRegistry;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.common.annotation.BootEventHandler;
@@ -49,6 +50,9 @@ public class BbAiAgentHandler {
     @Autowired
     private AiToolExecutor toolExecutor;
 
+    @Autowired
+    private SkillRegistry skillRegistry;
+
     @Value("${aiAgent.maxSteps:10}")
     private int maxSteps;
 
@@ -74,8 +78,11 @@ public class BbAiAgentHandler {
 
         log.info("AI Agent 派活 user={} prompt={}", bbReceiveMessage.getUserId(), prompt);
 
+        // 把 SKILL 目录（progressive disclosure 的 metadata 层）拼进 system prompt
+        String effectiveSystemPrompt = systemPrompt + skillRegistry.describeAllForSystemPrompt();
+
         List<ChatGPTContent> messages = new ArrayList<>();
-        messages.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, systemPrompt));
+        messages.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, effectiveSystemPrompt));
         messages.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, prompt));
 
         List<Object> tools = toolRegistry.toOpenAiTools();

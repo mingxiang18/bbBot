@@ -85,7 +85,10 @@ public class AiAgentSchemaInitializer {
                     "('server_time','user',1)," +
                     "('http_fetch','user',1)," +
                     "('file_read','user',1)," +
-                    "('list_dir','user',1)"
+                    "('list_dir','user',1)," +
+                    "('web_search','user',1)," +
+                    "('grep_search','user',1)," +
+                    "('load_skill','user',1)"
     };
 
     @EventListener

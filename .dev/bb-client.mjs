@@ -259,6 +259,75 @@ const scenarios = {
     },
   },
 
+  A8: {
+    title: 'A8 file_write (owner 写文件到白名单根)',
+    async run() {
+      const fs = await import('node:fs/promises');
+      await fs.mkdir('/tmp/bb-bot-test', { recursive: true });
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 把 "hello bbBot" 写到 /tmp/bb-bot-test/agent-out.txt 文件');
+      const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      // 检查文件是不是真被写了
+      let written = '';
+      try { written = await fs.readFile('/tmp/bb-bot-test/agent-out.txt', 'utf8'); } catch {}
+      const ok = /(已写入|bytesWritten|overwrite)/.test(text) && written.includes('hello');
+      c.close();
+      return { ok, detail: `回复 ${text.slice(0, 80)} / 文件实际内容="${written.trim()}"` };
+    },
+  },
+
+  A10: {
+    title: 'A10 web_search (DuckDuckGo HTML 后端)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 帮我搜索 example domain 是干什么的');
+      const frames = await c.collectUntilIdle({ idleMs: 8000, maxMs: 35000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      // 网络可能不通，宽松判定：触发了 web_search 工具就算 pass
+      const ok = /(搜索结果|duckduckgo|serpapi|search_failed|results)/i.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 160) };
+    },
+  },
+
+  A11: {
+    title: 'A11 grep_search (在白名单目录里搜内容)',
+    async run() {
+      const fs = await import('node:fs/promises');
+      await fs.mkdir('/tmp/bb-bot-test', { recursive: true });
+      await fs.writeFile('/tmp/bb-bot-test/notes.md', 'line1\nTODO: 测试 grep\nline3\n');
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 帮我找一下哪些文件提到 TODO');
+      const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /(notes\.md|TODO|matchCount|搜索匹配)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 200) };
+    },
+  },
+
+  A12: {
+    title: 'A12 SKILLS (load_skill 读 log-triage 指引)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent 帮我分析日志');
+      const frames = await c.collectUntilIdle({ idleMs: 6000, maxMs: 25000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /(log-triage|分诊|SKILL)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 200) };
+    },
+  },
+
   A9: {
     title: 'A9 回归 (无 agent 前缀 → 走聊天人格)',
     async run() {

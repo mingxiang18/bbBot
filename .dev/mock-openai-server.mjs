@@ -88,6 +88,11 @@ function pickIntent(text) {
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
   // shell 优先级要高于 list_dir / file_read，避免 "跑 ls /" 被误判
   if (/(跑命令|跑\s|shell|exec\s)/.test(t)) return 'shell';
+  // SKILL 路由：用户说「分析日志 / 日志」时引导 LLM 走 log-triage skill
+  if (/(分析日志|日志诊断|日志.*异常|log.*triage)/.test(t)) return 'skill_log_triage';
+  if (/(搜.*内容|grep|包含.*文件|找.*提到|哪些.*文件.*有)/.test(t)) return 'grep';
+  if (/(写.*文件|保存.*到|create\s+file|save\s+to|写一个.*文件)/.test(t)) return 'file_write';
+  if (/(搜索|search|查一下.*最新|google|百度|web)/.test(t)) return 'web_search';
   if (/(读.*文件|看一下.*文件|cat\s+\/|read\s+file|\/[a-z\-]+\.(txt|md|json|yml))/.test(t)) return 'file_read';
   if (/(列.*目录|看.*下有什么|list.*dir)/.test(t)) return 'list_dir';
   if (/(抓|fetch|og:title|example\.com|网页|standard\sof\s)/.test(t) || /example/.test(t)) return 'fetch';
@@ -141,6 +146,10 @@ async function handleCompletion(req, res, body) {
     || (intent === 'shell' && toolNames.has('shell_exec'))
     || (intent === 'file_read' && toolNames.has('file_read'))
     || (intent === 'list_dir' && toolNames.has('list_dir'))
+    || (intent === 'file_write' && toolNames.has('file_write'))
+    || (intent === 'web_search' && toolNames.has('web_search'))
+    || (intent === 'grep' && toolNames.has('grep_search'))
+    || (intent === 'skill_log_triage' && toolNames.has('load_skill'))
   );
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
@@ -167,6 +176,22 @@ async function handleCompletion(req, res, body) {
     } else if (intent === 'list_dir') {
       const path = extractPath(userText);
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path })));
+    } else if (intent === 'file_write') {
+      const path = extractPath(userText) || '/tmp/bb-bot-test/agent-out.txt';
+      // 从用户文本里粗暴取一段 "把 'xxx' 写到" 的内容
+      const m = userText.match(/['"]([^'"]+)['"]/);
+      const content = m ? m[1] : '由 agent 写入：' + new Date().toISOString();
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'file_write', JSON.stringify({ path, content })));
+    } else if (intent === 'web_search') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'web_search', JSON.stringify({ query: userText })));
+    } else if (intent === 'grep') {
+      // 从文本里粗暴提个关键词
+      const tokens = userText.split(/\s+/).filter(s => s.length > 1 && !/^(agent|帮|我|找|搜|grep|的|文件|包含|哪些|提到)$/.test(s));
+      const pattern = tokens.length > 0 ? tokens[tokens.length - 1] : 'TODO';
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'grep_search',
+          JSON.stringify({ pattern, path: '/tmp/bb-bot-test' })));
+    } else if (intent === 'skill_log_triage') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'load_skill', JSON.stringify({ name: 'log-triage' })));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
     sseDone(res);
@@ -188,6 +213,14 @@ async function handleCompletion(req, res, body) {
       finalText = `文件内容：${toolResult.slice(0, 200)}`;
     } else if (intent === 'list_dir') {
       finalText = `目录内容：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'file_write') {
+      finalText = `文件已写入：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'web_search') {
+      finalText = `搜索结果：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'grep') {
+      finalText = `搜索匹配：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'skill_log_triage') {
+      finalText = `已加载 log-triage SKILL，按其指引：${toolResult.slice(0, 200)}`;
     } else {
       finalText = `工具结果：${toolResult.slice(0, 120)}`;
     }

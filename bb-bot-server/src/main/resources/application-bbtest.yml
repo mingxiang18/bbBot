@@ -38,3 +38,7 @@ aiAgent:
   sandbox:
     preferred: noop
   pluginDir: /tmp/bb-bot-test/plugins
+  skillsDir: ./.dev/skills
+  fs:
+    allowedRoots: /tmp
+    writeRoots: /tmp/bb-bot-test
