@@ -15,6 +15,9 @@ import com.bb.bot.common.util.aiChat.ChatGPTContent;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
+import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
+import com.bb.bot.aiAgent.memory.MemoryQueryService;
+import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.mapper.ChatHistoryMapper;
 import com.bb.bot.entity.bb.BbMessageContent;
@@ -44,6 +47,12 @@ public class BbChatHistoryHandler {
 
     @Autowired
     private AiChatClient aiChatClient;
+
+    @Autowired
+    private MemoryQueryService memoryQueryService;
+
+    @Autowired
+    private MemoryEventRecorder memoryEventRecorder;
 
     /**
      * ai回复需要携带的历史记录数量
@@ -78,56 +87,9 @@ public class BbChatHistoryHandler {
             "请尽可能详细分析，输出尽可能多的线索，每个说过话的用户都要有对应的用户线索！用户所讨论的每个事件都要输出相关事件线索！}")
     private String chatHistoryCharacteristicPersonality;
 
-    @Rule(eventType = EventType.MESSAGE, name = "聊天历史记录, 用于记录所有聊天消息", syncType = SyncType.SYNC)
-    public void chatHistoryHandle(BbReceiveMessage bbReceiveMessage) {
-        //过滤掉本地图片，因为数据太大
-        List<BbMessageContent> bbMessageContentList = bbReceiveMessage.getMessageContentList()
-                .stream()
-                .filter(bbMessageContent -> !BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType()))
-                .toList();
-        //如果为空则不记录聊天消息
-        if (CollectionUtils.isEmpty(bbMessageContentList)) {
-            return;
-        }
-
-        //跳过 agent / 命令类消息：它们不是「自由聊天」，进了 chat_history 会污染 BbAiChatHandler
-        //的上下文，导致后续普通聊天回复变成一锅乱炖（用户上次报的真 bug）。
-        if (isCommandMessage(bbReceiveMessage.getMessage())) {
-            return;
-        }
-
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.setMessageId(bbReceiveMessage.getMessageId());
-        chatHistory.setUserQq(bbReceiveMessage.getUserId());
-        chatHistory.setUserName(bbReceiveMessage.getSender() == null ? null : bbReceiveMessage.getSender().getNickname());
-        chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setPrivateUserId(bbReceiveMessage.getUserId());
-        chatHistory.setText(JSON.toJSONString(bbMessageContentList));
-        chatHistoryMapper.insert(chatHistory);
-    }
-
-    /**
-     * 判断是不是命令类消息（agent 派活 / 斜杠管理命令 / 内置功能词）。
-     * 命令消息不应进「自由聊天」历史，否则 BbAiChatHandler 拉历史时会带进 LLM 上下文。
-     */
-    private boolean isCommandMessage(String message) {
-        if (message == null) return false;
-        String trimmed = message.trim();
-        if (trimmed.isEmpty()) return false;
-        // 1) agent 模式派活
-        if (trimmed.startsWith("agent ") || trimmed.startsWith("/agent ") || trimmed.startsWith("Agent ")) {
-            return true;
-        }
-        // 2) 任何斜杠开头的管理命令
-        if (trimmed.startsWith("/")) {
-            return true;
-        }
-        // 3) aiAgent.* 开头但没斜杠的也算
-        if (trimmed.startsWith("aiAgent.")) {
-            return true;
-        }
-        return false;
-    }
+    // M8.3 cutover：原 chatHistoryHandle 已删。所有入站消息现在由 MemoryEventRecorder
+    // 在 BbEventListener.listenMessageEvent 里统一落 ai_memory_event（按 kind 分类）。
+    // 不再写 chat_history 表（保留只读以查迁移前的老数据）。
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"聊天记录总结", "/聊天记录总结"}, name = "近期聊天记录总结")
     public void chatHistorySummaryHandle(BbReceiveMessage bbReceiveMessage) {
@@ -143,23 +105,8 @@ public class BbChatHistoryHandler {
             return;
         }
 
-        //查询历史记录
-        List<ChatHistory> chatHistoryList = new ArrayList<>();
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
-            //群组
-            chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
-                            .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())
-                            .orderByDesc(ChatHistory::getCreateTime)
-                            .last("limit " + chatHistoryNum))
-                    .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
-        }else if (MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType())) {
-            chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
-                            .isNull(ChatHistory::getGroupId)
-                            .eq(ChatHistory::getPrivateUserId, bbReceiveMessage.getUserId())
-                            .orderByDesc(ChatHistory::getCreateTime)
-                            .last("limit " + chatHistoryNum))
-                    .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
-        }
+        //M8.3：从 ai_memory_event 拉历史，转兼容 ChatHistory
+        List<ChatHistory> chatHistoryList = loadChatHistoryFromMemory(bbReceiveMessage);
         if (CollectionUtils.isEmpty(chatHistoryList)) {
             //发送消息
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -176,13 +123,8 @@ public class BbChatHistoryHandler {
         //调用ai模型获取请求
         String answer = aiChatClient.askChatGPT(chatContentList);
 
-        //保存机器人回复
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.setMessageId(IdWorker.getIdStr());
-        chatHistory.setUserQq("bot");
-        chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(JSON.toJSONString(Collections.singletonList(BbMessageContent.buildTextContent(answer))));
-        chatHistoryMapper.insert(chatHistory);
+        //M8.3：bot 回复进 ai_memory_event(kind=chat_reply)
+        memoryEventRecorder.recordOutbound(bbReceiveMessage, "chat_reply", answer, IdWorker.getIdStr());
 
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -207,22 +149,8 @@ public class BbChatHistoryHandler {
             return;
         }
 
-        //查询历史记录
-        List<ChatHistory> chatHistoryList = new ArrayList<>();
-        if (MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType())) {
-            //群组
-            chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
-                            .eq(ChatHistory::getGroupId, bbReceiveMessage.getGroupId())
-                            .orderByDesc(ChatHistory::getCreateTime)
-                            .last("limit " + chatHistoryNum))
-                    .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
-        }else if (MessageType.PRIVATE.equals(bbReceiveMessage.getMessageType())) {
-            chatHistoryList = chatHistoryMapper.selectList(new LambdaQueryWrapper<ChatHistory>()
-                            .isNull(ChatHistory::getGroupId)
-                            .orderByDesc(ChatHistory::getCreateTime)
-                            .last("limit " + chatHistoryNum))
-                    .stream().sorted(Comparator.comparing(ChatHistory::getCreateTime)).collect(Collectors.toList());
-        }
+        //M8.3：从 ai_memory_event 拉历史，转兼容 ChatHistory
+        List<ChatHistory> chatHistoryList = loadChatHistoryFromMemory(bbReceiveMessage);
         if (CollectionUtils.isEmpty(chatHistoryList)) {
             //发送消息
             BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -239,13 +167,8 @@ public class BbChatHistoryHandler {
         //调用ai模型获取请求
         String answer = aiChatClient.askChatGPT(chatContentList);
 
-        //保存机器人回复
-        ChatHistory chatHistory = new ChatHistory();
-        chatHistory.setMessageId(IdWorker.getIdStr());
-        chatHistory.setUserQq("bot");
-        chatHistory.setGroupId(bbReceiveMessage.getGroupId());
-        chatHistory.setText(JSON.toJSONString(Collections.singletonList(BbMessageContent.buildTextContent(answer))));
-        chatHistoryMapper.insert(chatHistory);
+        //M8.3：bot 回复进 ai_memory_event(kind=chat_reply)
+        memoryEventRecorder.recordOutbound(bbReceiveMessage, "chat_reply", answer, IdWorker.getIdStr());
 
         //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
@@ -254,6 +177,32 @@ public class BbChatHistoryHandler {
                 BbMessageContent.buildTextContent("\n" + answer))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * M8.3 helper：从 ai_memory_event 拉历史（同 user/group 维度最近 chatHistoryNum 条），
+     * 转成原 ChatHistory 兼容结构给 buildChatContentList 用。
+     */
+    private List<ChatHistory> loadChatHistoryFromMemory(BbReceiveMessage msg) {
+        List<AiMemoryEvent> events = memoryQueryService.loadRecent(
+                msg.getUserId(), msg.getGroupId(), chatHistoryNum);
+        return events.stream().map(BbChatHistoryHandler::eventToLegacyChatHistory).collect(Collectors.toList());
+    }
+
+    private static ChatHistory eventToLegacyChatHistory(AiMemoryEvent e) {
+        ChatHistory ch = new ChatHistory();
+        ch.setMessageId(e.getMessageId());
+        ch.setUserQq("bot".equals(e.getSource()) ? "bot" : e.getUserId());
+        ch.setUserName(e.getUserName());
+        ch.setGroupId(e.getGroupId());
+        ch.setPrivateUserId(e.getUserId());
+        if (StringUtils.isNoneBlank(e.getPayload())) {
+            ch.setText(e.getPayload());
+        } else {
+            ch.setText("[{\"type\":\"text\",\"data\":" + JSON.toJSONString(e.getText() == null ? "" : e.getText()) + "}]");
+        }
+        ch.setCreateTime(e.getCreatedAt());
+        return ch;
     }
 
     /**
