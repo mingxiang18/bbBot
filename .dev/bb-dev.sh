@@ -35,6 +35,7 @@ mkdir -p "$PIDS_DIR" "$LOGS_DIR"
 
 # 自动 source 真实 LLM 配置（若存在）
 REAL_LLM_ENV="$SCRIPT_DIR/real-llm.env"
+ACTIVE_LLM_ENV="$RUN_DIR/active-llm.env"   # up 时记录 bot 实际用的 endpoint
 if [[ -f "$REAL_LLM_ENV" ]]; then
   set -a
   # shellcheck disable=SC1090
@@ -124,6 +125,14 @@ cmd_up() {
       > "$LOGS_DIR/bot.log" 2>&1 &
     echo $! > "$PIDS_DIR/bot.pid"
     ok "bbBot pid=$(cat "$PIDS_DIR/bot.pid")"
+    # 把本次 bot 进程实际使用的 LLM endpoint 写到 active-llm.env
+    # which-llm 等命令会优先读它，避免 inline env vars 一过 up 就丢的迷惑
+    {
+      echo "ACTIVE_USING_MOCK=$using_mock"
+      echo "ACTIVE_CHATGPT_URL=${CHATGPT_URL:-}"
+      echo "ACTIVE_CHATGPT_MODEL=${CHATGPT_MODEL:-}"
+      echo "ACTIVE_CHATGPT_KEY=${CHATGPT_API_KEY:-}"
+    } > "$ACTIVE_LLM_ENV"
   fi
 
   log "等待 bbBot 启动完成 (最多 90s)…"
@@ -151,6 +160,7 @@ cmd_down() {
       rm -f "$pidfile"
     fi
   done
+  rm -f "$ACTIVE_LLM_ENV"
   ok "全部停止"
 }
 
@@ -191,16 +201,39 @@ cmd_repl() {
 
 cmd_which_llm() {
   echo "当前 LLM endpoint："
-  if [[ -z "${CHATGPT_URL:-}" ]] || [[ "${CHATGPT_URL:-}" == *"localhost:$MOCK_PORT"* ]]; then
+  # 优先看正在跑的 bot 实际用的（避免 inline env vars 过 up 即丢的误判）
+  local effective_url effective_model effective_key effective_mock source_label
+  if is_running "$PIDS_DIR/bot.pid" && [[ -f "$ACTIVE_LLM_ENV" ]]; then
+    # shellcheck disable=SC1090
+    source "$ACTIVE_LLM_ENV"
+    effective_url="${ACTIVE_CHATGPT_URL:-}"
+    effective_model="${ACTIVE_CHATGPT_MODEL:-}"
+    effective_key="${ACTIVE_CHATGPT_KEY:-}"
+    effective_mock="${ACTIVE_USING_MOCK:-1}"
+    source_label="bot 当前进程实际配置（pid=$(cat "$PIDS_DIR/bot.pid")）"
+  else
+    effective_url="${CHATGPT_URL:-}"
+    effective_model="${CHATGPT_MODEL:-}"
+    effective_key="${CHATGPT_API_KEY:-}"
+    if [[ -z "$effective_url" ]] || [[ "$effective_url" == *"localhost:$MOCK_PORT"* ]]; then
+      effective_mock=1
+    else
+      effective_mock=0
+    fi
+    source_label="当前 shell 环境（bot 未运行；up 后会以这套启）"
+  fi
+
+  if [[ "$effective_mock" == "1" ]]; then
     echo "  $(c_ylw '模式') : mock（本地 mock-openai-server.mjs）"
     echo "  $(c_ylw 'URL')  : http://localhost:$MOCK_PORT/v1/chat/completions"
     echo "  $(c_ylw '说明') : 没花真 token；要切真实 LLM 见 .dev/real-llm.env.example"
   else
     echo "  $(c_grn '模式') : real"
-    echo "  $(c_grn 'URL')  : $CHATGPT_URL"
-    echo "  $(c_grn 'MODEL'): ${CHATGPT_MODEL:-未设置（用 application.yml 默认值）}"
-    echo "  $(c_grn 'KEY')  : ${CHATGPT_API_KEY:0:8}...（已掩码）"
+    echo "  $(c_grn 'URL')  : $effective_url"
+    echo "  $(c_grn 'MODEL'): ${effective_model:-未设置（用 application.yml 默认值）}"
+    echo "  $(c_grn 'KEY')  : ${effective_key:0:8}...（已掩码）"
   fi
+  echo "  $(c_blu '来源')  : $source_label"
   echo "  $(c_blu '配置文件'): ${REAL_LLM_ENV} $([[ -f $REAL_LLM_ENV ]] && echo '(已加载)' || echo '(不存在，可参考 real-llm.env.example 创建)')"
 }
 
