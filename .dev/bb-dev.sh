@@ -111,7 +111,7 @@ cmd_up() {
       ok "mock OpenAI pid=$(cat "$PIDS_DIR/mock.pid")"
     fi
   else
-    ok "检测到 CHATGPT_URL=$CHATGPT_URL，跳过 mock，直接接真实 LLM"
+    ok "检测到 CHATGPT_URL=${CHATGPT_URL}，跳过 mock，直接接真实 LLM"
   fi
 
   if is_running "$PIDS_DIR/bot.pid"; then
