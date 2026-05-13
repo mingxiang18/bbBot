@@ -86,6 +86,10 @@ function hasToolMessage(messages) {
 function pickIntent(text) {
   const t = (text || '').toLowerCase();
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
+  // Memory 系统三件套
+  if (/(记住|记下来|remember|帮我记)/.test(t)) return 'record_experience';
+  if (/(我说过.*吗|我喜欢什么|记得.*我|recall)/.test(t)) return 'recall_experience';
+  if (/(搜索记忆|search.*memory|查记忆)/.test(t)) return 'search_memory';
   // Splatoon3 打工：专用工具优先级高于 web_search / http_fetch
   if (/(打工|salmon\s*run|splatoon.*武器|splatoon.*地图|鲑鱼跑|喷喷.*打工)/.test(t)) return 'splatoon3_salmon';
   // shell 优先级要高于 list_dir / file_read，避免 "跑 ls /" 被误判
@@ -153,6 +157,9 @@ async function handleCompletion(req, res, body) {
     || (intent === 'grep' && toolNames.has('grep_search'))
     || (intent === 'skill_log_triage' && toolNames.has('load_skill'))
     || (intent === 'splatoon3_salmon' && toolNames.has('splatoon3_salmon_run'))
+    || (intent === 'record_experience' && toolNames.has('record_experience'))
+    || (intent === 'recall_experience' && toolNames.has('recall_experience'))
+    || (intent === 'search_memory' && toolNames.has('search_memory'))
   );
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
@@ -197,6 +204,19 @@ async function handleCompletion(req, res, body) {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'load_skill', JSON.stringify({ name: 'log-triage' })));
     } else if (intent === 'splatoon3_salmon') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'splatoon3_salmon_run', JSON.stringify({ limit: 2 })));
+    } else if (intent === 'record_experience') {
+      // 从消息里粗暴取「记住 X」或「remember X」后面的部分作为内容
+      const m1 = userText.match(/(?:记住|记下来|remember)[，,:：\s]*([\s\S]+)$/);
+      const content = (m1 ? m1[1] : userText).trim().slice(0, 500);
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'record_experience',
+          JSON.stringify({ category: 'preferences', content })));
+    } else if (intent === 'recall_experience') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'recall_experience',
+          JSON.stringify({ category: 'preferences' })));
+    } else if (intent === 'search_memory') {
+      const tokens = userText.split(/\s+/).filter(s => s.length > 1).slice(-1);
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'search_memory',
+          JSON.stringify({ query: tokens[0] || userText.slice(-20) })));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
     sseDone(res);
@@ -228,6 +248,12 @@ async function handleCompletion(req, res, body) {
       finalText = `已加载 log-triage SKILL，按其指引：${toolResult.slice(0, 200)}`;
     } else if (intent === 'splatoon3_salmon') {
       finalText = `Splatoon3 打工：${toolResult.slice(0, 280)}`;
+    } else if (intent === 'record_experience') {
+      finalText = `已记入长期记忆：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'recall_experience') {
+      finalText = `调出长期记忆：${toolResult.slice(0, 280)}`;
+    } else if (intent === 'search_memory') {
+      finalText = `记忆检索结果：${toolResult.slice(0, 280)}`;
     } else {
       finalText = `工具结果：${toolResult.slice(0, 120)}`;
     }
