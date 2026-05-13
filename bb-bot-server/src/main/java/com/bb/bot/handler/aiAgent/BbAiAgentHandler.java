@@ -61,8 +61,8 @@ public class BbAiAgentHandler {
     @Rule(
             eventType = EventType.MESSAGE,
             needAtMe = true,
-            ruleType = RuleType.MATCH,
-            keyword = {"agent ", "/agent ", "Agent "},
+            ruleType = RuleType.REGEX,
+            keyword = {"^/?[Aa]gent\\s"},
             name = "AI Agent 派活"
     )
     public void agentHandle(BbReceiveMessage bbReceiveMessage) {

@@ -1,0 +1,207 @@
+#!/usr/bin/env node
+/**
+ * Mock OpenAI / OpenAI-compatible /v1/chat/completions SSE server.
+ *
+ * 路由策略（按用户最后一条消息文本）：
+ *   - 包含「时间」/「几点」/「time」 → 触发 server_time tool 调用 → 回灌后吐出时间
+ *   - 包含「抓」/「example」/「fetch」/「og」  → 触发 http_fetch tool 调用 → 回灌后写摘要
+ *   - 包含「ls」/「shell」/「跑命令」 → 触发 shell_exec tool 调用
+ *   - 包含「插件」 → 询问插件状态（无工具，纯文本测试）
+ *   - 其它 → 纯文本「你好…」流式输出（默认聊天回归测试用）
+ *
+ * 启动：node mock-openai-server.mjs [--port 18800]
+ */
+
+import http from 'node:http';
+
+const PORT = Number(process.argv.find(a => a.startsWith('--port='))?.split('=')[1]
+                || process.env.MOCK_PORT
+                || 18800);
+
+/* ---------------- SSE helpers ---------------- */
+
+function sseChunk(res, payload) {
+  res.write(`data: ${JSON.stringify(payload)}\n\n`);
+}
+function sseDone(res) {
+  res.write('data: [DONE]\n\n');
+  res.end();
+}
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function makeId() { return 'chatcmpl-' + Math.random().toString(36).slice(2, 12); }
+function makeToolId() { return 'call_' + Math.random().toString(36).slice(2, 12); }
+
+function textChunk(id, model, content) {
+  return {
+    id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
+    choices: [{ index: 0, delta: { content }, finish_reason: null }],
+  };
+}
+function finishChunk(id, model, reason) {
+  return {
+    id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
+    choices: [{ index: 0, delta: {}, finish_reason: reason }],
+  };
+}
+function toolCallChunk(id, model, callId, fnName, argsJson) {
+  return {
+    id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
+    choices: [{
+      index: 0,
+      delta: {
+        tool_calls: [
+          {
+            index: 0, id: callId, type: 'function',
+            function: { name: fnName, arguments: argsJson },
+          },
+        ],
+      },
+      finish_reason: null,
+    }],
+  };
+}
+
+/* ---------------- Routing ---------------- */
+
+function lastUserMessage(messages) {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user') {
+      const c = messages[i].content;
+      if (typeof c === 'string') return c;
+      if (Array.isArray(c)) {
+        for (const part of c) {
+          if (part?.type === 'text' && typeof part.text === 'string') return part.text;
+        }
+      }
+    }
+  }
+  return '';
+}
+
+function hasToolMessage(messages) {
+  return messages.some(m => m.role === 'tool');
+}
+
+function pickIntent(text) {
+  const t = (text || '').toLowerCase();
+  if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
+  if (/(抓|fetch|og:title|example\.com|网页|standard\sof\s)/.test(t) || /example/.test(t)) return 'fetch';
+  if (/(ls|shell|跑命令|跑\s*ls)/.test(t)) return 'shell';
+  if (/(插件|plugin)/.test(t)) return 'plugin';
+  return 'chat';
+}
+
+/* ---------------- Handler ---------------- */
+
+async function handleCompletion(req, res, body) {
+  let parsed;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'invalid_json' }));
+  }
+  const { model = 'mock-gpt-4', messages = [], stream = false, tools = [] } = parsed;
+  const id = makeId();
+
+  if (!stream) {
+    // 非流式分支（本测试 profile 用不到，但兜底实现）
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({
+      id, object: 'chat.completion', created: Math.floor(Date.now() / 1000), model,
+      choices: [{ index: 0, message: { role: 'assistant', content: '（mock non-stream 回复）' }, finish_reason: 'stop' }],
+    }));
+  }
+
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  });
+
+  const userText = lastUserMessage(messages);
+  const intent = pickIntent(userText);
+  const toolNames = new Set(tools.map(t => t?.function?.name).filter(Boolean));
+  const toolFinished = hasToolMessage(messages);
+
+  // 工具阶段未完成时：决定是否要触发 tool call
+  const triggerTool = !toolFinished && (
+    (intent === 'time' && toolNames.has('server_time'))
+    || (intent === 'fetch' && toolNames.has('http_fetch'))
+    || (intent === 'shell' && toolNames.has('shell_exec'))
+  );
+
+  console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
+
+  if (triggerTool) {
+    // 流出几个 leading 文本 token，然后 tool_calls，然后 finish
+    const lead = '让我用工具查一下…';
+    for (const ch of lead) {
+      sseChunk(res, textChunk(id, model, ch));
+      await delay(15);
+    }
+    if (intent === 'time') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'server_time', '{}'));
+    } else if (intent === 'fetch') {
+      // 从用户文本里粗暴提个 URL
+      const m = userText.match(/https?:\/\/\S+/);
+      const url = m ? m[0] : 'https://example.com';
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'http_fetch', JSON.stringify({ url })));
+    } else if (intent === 'shell') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'shell_exec', JSON.stringify({ command: 'ls /' })));
+    }
+    sseChunk(res, finishChunk(id, model, 'tool_calls'));
+    sseDone(res);
+    return;
+  }
+
+  // 没工具阶段，或工具结果已经回来，吐 final 文字
+  let finalText;
+  if (toolFinished) {
+    const toolMsg = messages.filter(m => m.role === 'tool').pop();
+    const toolResult = typeof toolMsg.content === 'string' ? toolMsg.content : JSON.stringify(toolMsg.content);
+    if (intent === 'time') {
+      finalText = `根据 server_time 返回：${toolResult}。也就是说现在时间已经拿到了。`;
+    } else if (intent === 'fetch') {
+      finalText = `已抓取并解析：${toolResult.slice(0, 200)}…`;
+    } else if (intent === 'shell') {
+      finalText = `沙箱执行结果：${toolResult.slice(0, 200)}`;
+    } else {
+      finalText = `工具结果：${toolResult.slice(0, 120)}`;
+    }
+  } else {
+    if (intent === 'plugin') {
+      finalText = '我看一下插件信息——目前没有可调用的插件工具，但流式回复链路是通的。';
+    } else {
+      finalText = '你好，这是一段模拟的流式回复用来验证 bb 协议在 chunked-send 下的分段呈现。第一句结束。第二句继续。第三句收尾，over。';
+    }
+  }
+
+  for (const ch of finalText) {
+    sseChunk(res, textChunk(id, model, ch));
+    await delay(8);
+  }
+  sseChunk(res, finishChunk(id, model, 'stop'));
+  sseDone(res);
+}
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url.startsWith('/v1/chat/completions')) {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => handleCompletion(req, res, body));
+    return;
+  }
+  if (req.method === 'GET' && req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    return res.end('ok\n');
+  }
+  res.writeHead(404, { 'Content-Type': 'text/plain' });
+  res.end('not found\n');
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`[mock-openai] listening on http://127.0.0.1:${PORT}`);
+  console.log('[mock-openai] POST /v1/chat/completions (SSE stream) + /health');
+});

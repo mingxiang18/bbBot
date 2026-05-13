@@ -1,0 +1,40 @@
+# 本地 BB 协议端到端测试 profile。
+# 启动方式：mvn ... -Dspring.profiles.active=bbtest
+# 或在 IDE Run Configuration 里把 Active profile 设成 bbtest。
+#
+# 复用 misu-server 的 MySQL（已在端口 3316 上跑，root/root），数据库 bb_bot_local
+# 由 .dev/sql/01-init-bb-bot-local.sql 创建。
+
+mysql:
+  # 数据库由 .dev/sql/01-init-bb-bot-local.sql 预先建好（bb-dev.sh init-db 跑）
+  address: localhost:3316/bb_bot_local
+  username: root
+  password: root
+
+file:
+  path: /tmp/bb-bot-test/static/
+
+server:
+  port: 18199
+
+bot:
+  bb:
+    bb1:
+      enable: true
+      port: 18765
+      appId: bb-test
+      secret: bb-test-secret
+
+chatGPT:
+  apiKey: sk-mock-localtest
+  url: http://localhost:18800/v1/chat/completions
+  model: mock-gpt-4
+  streamEnabled: true
+
+aiAgent:
+  owners: tester-owner
+  maxSteps: 10
+  autoCreateTables: true
+  sandbox:
+    preferred: noop
+  pluginDir: /tmp/bb-bot-test/plugins
