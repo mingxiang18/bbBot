@@ -64,6 +64,57 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_tool_created (tool_name, created_at)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 工具调用审计'",
 
+            "CREATE TABLE IF NOT EXISTS ai_memory_event (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  session_id VARCHAR(64) DEFAULT NULL," +
+                    "  platform VARCHAR(32) DEFAULT NULL," +
+                    "  user_id VARCHAR(64) DEFAULT NULL," +
+                    "  group_id VARCHAR(64) DEFAULT NULL," +
+                    "  user_name VARCHAR(128) DEFAULT NULL," +
+                    "  source VARCHAR(16) NOT NULL," +
+                    "  kind VARCHAR(32) NOT NULL," +
+                    "  message_id VARCHAR(64) DEFAULT NULL," +
+                    "  text MEDIUMTEXT," +
+                    "  payload JSON," +
+                    "  reply_to_event_id BIGINT DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_session (session_id, created_at)," +
+                    "  KEY idx_user_time (user_id, created_at)," +
+                    "  KEY idx_group_time (group_id, created_at)," +
+                    "  KEY idx_kind_time (kind, created_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 完整事件流（审计 + 回放）'",
+
+            "CREATE TABLE IF NOT EXISTS ai_memory_session (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  session_id VARCHAR(64) NOT NULL," +
+                    "  user_id VARCHAR(64) DEFAULT NULL," +
+                    "  group_id VARCHAR(64) DEFAULT NULL," +
+                    "  platform VARCHAR(32) DEFAULT NULL," +
+                    "  started_at DATETIME NOT NULL," +
+                    "  ended_at DATETIME DEFAULT NULL," +
+                    "  message_count INT DEFAULT 0," +
+                    "  summary MEDIUMTEXT," +
+                    "  summary_compiled_at DATETIME DEFAULT NULL," +
+                    "  UNIQUE KEY uk_session (session_id)," +
+                    "  KEY idx_user_started (user_id, started_at)," +
+                    "  KEY idx_unended (ended_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 会话窗口 + 蒸馏 summary'",
+
+            // ai_memory_fact 的 FULLTEXT 用 ngram 分词（MySQL 5.7+ / 8.0 支持 CJK）
+            "CREATE TABLE IF NOT EXISTS ai_memory_fact (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  fact TEXT NOT NULL," +
+                    "  search_text TEXT NOT NULL," +
+                    "  tags VARCHAR(512) DEFAULT '[]'," +
+                    "  fact_time DATETIME DEFAULT NULL," +
+                    "  source_session_id VARCHAR(64) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_user_created (user_id, created_at)," +
+                    "  KEY idx_session (source_session_id)," +
+                    "  FULLTEXT KEY ft_search (search_text) WITH PARSER ngram" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 长期事实库（openhanako FactStore 等价）'",
+
             "CREATE TABLE IF NOT EXISTS ai_cron_task (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  owner_user_id VARCHAR(64) NOT NULL," +
@@ -89,7 +140,10 @@ public class AiAgentSchemaInitializer {
                     "('web_search','user',1)," +
                     "('grep_search','user',1)," +
                     "('load_skill','user',1)," +
-                    "('splatoon3_salmon_run','user',1)"
+                    "('splatoon3_salmon_run','user',1)," +
+                    "('search_memory','user',1)," +
+                    "('recall_experience','user',1)," +
+                    "('record_experience','user',1)"
     };
 
     @EventListener
