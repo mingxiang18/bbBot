@@ -1,6 +1,5 @@
 package com.bb.bot.api.qq;
 
-import com.bb.bot.api.AbstractMessageStreamSession;
 import com.bb.bot.api.FallbackMessageStreamSession;
 import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.QqConfig;
@@ -21,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 public class QqToBbMessageApi {
@@ -127,75 +125,14 @@ public class QqToBbMessageApi {
         qqApiCaller.sendChannelMessage(qqConfig, bbSendMessage.getGroupId(), channelMessage);
     }
 
-    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
-        if (bbSendMessage.getConfig() == null) {
-            return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
-        }
-        return new QqStreamSession(this, bbSendMessage);
-    }
-
     /**
-     * QQ 官方流式呈现：协议无 edit，走 chunked-send。
-     * QQ 群 / 频道消息有 msgSeq 机制，每次 chunk 必须不同 seq —— 沿用模板的 seq 起点累加。
+     * QQ 官方 Bot API 没有 edit 接口，且被动消息有 5 条上限。
+     * 强行 chunked-send 会被官方截断 + 体感差，所以 QQ 走 fallback：
+     * 累积所有 delta 到 buffer，complete() 时一次性 sendMessage。
+     * 等真正的流式接口（如有）出来再升级。
      */
-    private static class QqStreamSession extends AbstractMessageStreamSession {
-        private final QqToBbMessageApi api;
-        private final BbSendMessage template;
-        private int chunkIndex = 0;
-
-        QqStreamSession(QqToBbMessageApi api, BbSendMessage template) {
-            this.api = api;
-            this.template = template;
-            this.minFlushChars = 80;
-            this.minFlushIntervalMs = 2500L;
-        }
-
-        @Override
-        protected void flush(boolean isFinal) {
-            String pending = pendingChunk.toString();
-            if (pending.isEmpty()) {
-                return;
-            }
-            String toSend;
-            if (isFinal) {
-                toSend = pending;
-                pendingChunk.setLength(0);
-            } else {
-                int cut = findSentenceBoundary(pending);
-                if (cut <= 0) {
-                    return;
-                }
-                toSend = pending.substring(0, cut);
-                pendingChunk.delete(0, cut);
-            }
-            chunkIndex++;
-            BbSendMessage envelope = cloneEnvelope(template);
-            envelope.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(toSend)));
-            api.sendMessage(envelope);
-        }
-
-        private int findSentenceBoundary(String s) {
-            for (int i = s.length() - 1; i >= 0; i--) {
-                char c = s.charAt(i);
-                if (c == '\n' || c == '。' || c == '！' || c == '？' || c == '.' || c == '!' || c == '?') {
-                    return i + 1;
-                }
-            }
-            return -1;
-        }
-
-        private BbSendMessage cloneEnvelope(BbSendMessage src) {
-            BbSendMessage dst = new BbSendMessage();
-            dst.setBotType(src.getBotType());
-            dst.setMessageType(src.getMessageType());
-            dst.setUserId(src.getUserId());
-            dst.setGroupId(src.getGroupId());
-            dst.setReceiveMessageId(src.getReceiveMessageId());
-            dst.setMessageSeq(src.getMessageSeq() + chunkIndex);
-            dst.setWebSocket(src.getWebSocket());
-            dst.setConfig(src.getConfig());
-            return dst;
-        }
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
     }
 
 }
