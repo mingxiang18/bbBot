@@ -189,47 +189,78 @@ public class AiChatClient {
                 .build();
 
         StringBuilder fullText = new StringBuilder();
-        try {
-            HttpResponse<InputStream> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream());
-            if (response.statusCode() != 200) {
-                String bodyText = new String(response.body().readAllBytes(), StandardCharsets.UTF_8);
-                onError.accept(new RuntimeException("chatGPT 流式请求 HTTP " + response.statusCode() + ": " + bodyText));
-                return;
-            }
-            try (java.io.BufferedReader reader = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(response.body(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.isEmpty() || !line.startsWith("data:")) {
-                        continue;
-                    }
-                    String payload = line.substring(5).trim();
-                    if ("[DONE]".equals(payload)) {
-                        break;
-                    }
-                    String deltaContent = parseDeltaContent(payload);
-                    if (deltaContent != null && !deltaContent.isEmpty()) {
-                        fullText.append(deltaContent);
-                        try {
-                            onDelta.accept(deltaContent);
-                        } catch (Exception cbErr) {
-                            log.warn("askChatGPTStream onDelta 回调异常", cbErr);
+        // 国内代理 / DeepSeek 偶尔 SSL handshake 中断，重试 1 次大多能成功
+        int maxAttempts = 2;
+        Exception lastErr = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                HttpResponse<InputStream> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream());
+                if (response.statusCode() != 200) {
+                    String bodyText = new String(response.body().readAllBytes(), StandardCharsets.UTF_8);
+                    onError.accept(new RuntimeException("chatGPT 流式请求 HTTP " + response.statusCode() + ": " + bodyText));
+                    return;
+                }
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(response.body(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.isEmpty() || !line.startsWith("data:")) {
+                            continue;
+                        }
+                        String payload = line.substring(5).trim();
+                        if ("[DONE]".equals(payload)) {
+                            break;
+                        }
+                        String deltaContent = parseDeltaContent(payload);
+                        if (deltaContent != null && !deltaContent.isEmpty()) {
+                            fullText.append(deltaContent);
+                            try {
+                                onDelta.accept(deltaContent);
+                            } catch (Exception cbErr) {
+                                log.warn("askChatGPTStream onDelta 回调异常", cbErr);
+                            }
                         }
                     }
                 }
-            }
-            onComplete.accept(fullText.toString());
-        } catch (Exception e) {
-            log.error("askChatGPTStream 失败", e);
-            // 已经吐出来的内容也算部分成功，先 complete 已收的内容再 error
-            if (fullText.length() > 0) {
-                try {
-                    onComplete.accept(fullText.toString());
-                } catch (Exception ignore) {
+                onComplete.accept(fullText.toString());
+                return;
+            } catch (Exception e) {
+                lastErr = e;
+                // 已收到部分内容就不重试，直接交付（避免重复输出）
+                if (fullText.length() > 0) {
+                    log.warn("askChatGPTStream 中途中断（已收 {} 字符），不重试", fullText.length(), e);
+                    break;
                 }
+                if (attempt < maxAttempts && isRetriable(e)) {
+                    log.warn("askChatGPTStream 第 {} 次失败，重试中…", attempt, e);
+                    try { Thread.sleep(500L * attempt); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); break; }
+                    continue;
+                }
+                log.error("askChatGPTStream 失败（{} 次尝试均失败）", attempt, e);
+                break;
             }
-            onError.accept(e);
         }
+        // 跑到这里说明所有重试都失败或已部分收到
+        if (fullText.length() > 0) {
+            try { onComplete.accept(fullText.toString()); } catch (Exception ignore) {}
+        }
+        onError.accept(lastErr != null ? lastErr : new RuntimeException("unknown stream error"));
+    }
+
+    /** SSL handshake / connection reset / read timeout 类的瞬时网络错误值得重试。 */
+    private boolean isRetriable(Exception e) {
+        if (e == null) return false;
+        String msg = e.getMessage();
+        Throwable cause = e.getCause();
+        String causeMsg = cause == null ? "" : (cause.getMessage() == null ? "" : cause.getMessage());
+        String allMsg = (msg == null ? "" : msg) + " | " + causeMsg;
+        return allMsg.contains("Remote host terminated the handshake")
+                || allMsg.contains("Connection reset")
+                || allMsg.contains("handshake")
+                || allMsg.contains("timed out")
+                || e instanceof java.net.http.HttpTimeoutException
+                || e instanceof javax.net.ssl.SSLException
+                || e instanceof java.net.SocketException;
     }
 
     /**
@@ -285,7 +316,25 @@ public class AiChatClient {
                         .POST(HttpRequest.BodyPublishers.ofString(reqJson, StandardCharsets.UTF_8))
                         .build();
 
-                HttpResponse<InputStream> resp = client.send(req, HttpResponse.BodyHandlers.ofInputStream());
+                // 每步加 1 次重试，应对 DeepSeek 偶发 SSL handshake 中断
+                HttpResponse<InputStream> resp = null;
+                Exception stepErr = null;
+                for (int attempt = 1; attempt <= 2; attempt++) {
+                    try {
+                        resp = client.send(req, HttpResponse.BodyHandlers.ofInputStream());
+                        stepErr = null;
+                        break;
+                    } catch (Exception e) {
+                        stepErr = e;
+                        if (attempt < 2 && isRetriable(e)) {
+                            log.warn("askChatGPTStreamWithTools step {} 第 {} 次失败，重试…", step, attempt, e);
+                            try { Thread.sleep(500L); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); break; }
+                            continue;
+                        }
+                        throw e;
+                    }
+                }
+                if (resp == null) throw stepErr != null ? stepErr : new RuntimeException("no response");
                 if (resp.statusCode() != 200) {
                     String bodyText = new String(resp.body().readAllBytes(), StandardCharsets.UTF_8);
                     onError.accept(new RuntimeException("chatGPT HTTP " + resp.statusCode() + ": " + bodyText));

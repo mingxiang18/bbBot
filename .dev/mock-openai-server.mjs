@@ -86,6 +86,8 @@ function hasToolMessage(messages) {
 function pickIntent(text) {
   const t = (text || '').toLowerCase();
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
+  // Splatoon3 打工：专用工具优先级高于 web_search / http_fetch
+  if (/(打工|salmon\s*run|splatoon.*武器|splatoon.*地图|鲑鱼跑|喷喷.*打工)/.test(t)) return 'splatoon3_salmon';
   // shell 优先级要高于 list_dir / file_read，避免 "跑 ls /" 被误判
   if (/(跑命令|跑\s|shell|exec\s)/.test(t)) return 'shell';
   // SKILL 路由：用户说「分析日志 / 日志」时引导 LLM 走 log-triage skill
@@ -150,6 +152,7 @@ async function handleCompletion(req, res, body) {
     || (intent === 'web_search' && toolNames.has('web_search'))
     || (intent === 'grep' && toolNames.has('grep_search'))
     || (intent === 'skill_log_triage' && toolNames.has('load_skill'))
+    || (intent === 'splatoon3_salmon' && toolNames.has('splatoon3_salmon_run'))
   );
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
@@ -192,6 +195,8 @@ async function handleCompletion(req, res, body) {
           JSON.stringify({ pattern, path: '/tmp/bb-bot-test' })));
     } else if (intent === 'skill_log_triage') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'load_skill', JSON.stringify({ name: 'log-triage' })));
+    } else if (intent === 'splatoon3_salmon') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'splatoon3_salmon_run', JSON.stringify({ limit: 2 })));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
     sseDone(res);
@@ -221,6 +226,8 @@ async function handleCompletion(req, res, body) {
       finalText = `搜索匹配：${toolResult.slice(0, 200)}`;
     } else if (intent === 'skill_log_triage') {
       finalText = `已加载 log-triage SKILL，按其指引：${toolResult.slice(0, 200)}`;
+    } else if (intent === 'splatoon3_salmon') {
+      finalText = `Splatoon3 打工：${toolResult.slice(0, 280)}`;
     } else {
       finalText = `工具结果：${toolResult.slice(0, 120)}`;
     }

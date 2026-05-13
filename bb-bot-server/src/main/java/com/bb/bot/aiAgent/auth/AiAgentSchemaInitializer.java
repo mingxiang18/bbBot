@@ -88,7 +88,8 @@ public class AiAgentSchemaInitializer {
                     "('list_dir','user',1)," +
                     "('web_search','user',1)," +
                     "('grep_search','user',1)," +
-                    "('load_skill','user',1)"
+                    "('load_skill','user',1)," +
+                    "('splatoon3_salmon_run','user',1)"
     };
 
     @EventListener

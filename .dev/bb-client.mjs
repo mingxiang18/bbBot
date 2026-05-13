@@ -328,6 +328,22 @@ const scenarios = {
     },
   },
 
+  A13: {
+    title: 'A13 Splatoon3 打工查询 (专用工具一步直达)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('agent splatoon3 现在打工是什么地图和武器');
+      const frames = await c.collectUntilIdle({ idleMs: 8000, maxMs: 30000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      // 真去抓 splatoon3.ink，可能 timeout / 国内访问不通 → 宽松判断只要工具被调即可
+      const ok = /(打工|shifts|stage|weapons|salmon|splatoon3\.ink|fetch_failed|upstream_http)/i.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 200) };
+    },
+  },
+
   A9: {
     title: 'A9 回归 (无 agent 前缀 → 走聊天人格)',
     async run() {

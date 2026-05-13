@@ -90,6 +90,12 @@ public class BbChatHistoryHandler {
             return;
         }
 
+        //跳过 agent / 命令类消息：它们不是「自由聊天」，进了 chat_history 会污染 BbAiChatHandler
+        //的上下文，导致后续普通聊天回复变成一锅乱炖（用户上次报的真 bug）。
+        if (isCommandMessage(bbReceiveMessage.getMessage())) {
+            return;
+        }
+
         ChatHistory chatHistory = new ChatHistory();
         chatHistory.setMessageId(bbReceiveMessage.getMessageId());
         chatHistory.setUserQq(bbReceiveMessage.getUserId());
@@ -98,6 +104,29 @@ public class BbChatHistoryHandler {
         chatHistory.setPrivateUserId(bbReceiveMessage.getUserId());
         chatHistory.setText(JSON.toJSONString(bbMessageContentList));
         chatHistoryMapper.insert(chatHistory);
+    }
+
+    /**
+     * 判断是不是命令类消息（agent 派活 / 斜杠管理命令 / 内置功能词）。
+     * 命令消息不应进「自由聊天」历史，否则 BbAiChatHandler 拉历史时会带进 LLM 上下文。
+     */
+    private boolean isCommandMessage(String message) {
+        if (message == null) return false;
+        String trimmed = message.trim();
+        if (trimmed.isEmpty()) return false;
+        // 1) agent 模式派活
+        if (trimmed.startsWith("agent ") || trimmed.startsWith("/agent ") || trimmed.startsWith("Agent ")) {
+            return true;
+        }
+        // 2) 任何斜杠开头的管理命令
+        if (trimmed.startsWith("/")) {
+            return true;
+        }
+        // 3) aiAgent.* 开头但没斜杠的也算
+        if (trimmed.startsWith("aiAgent.")) {
+            return true;
+        }
+        return false;
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"聊天记录总结", "/聊天记录总结"}, name = "近期聊天记录总结")

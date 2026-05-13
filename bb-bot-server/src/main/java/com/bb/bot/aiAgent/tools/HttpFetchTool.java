@@ -26,7 +26,9 @@ import java.util.Map;
 @Component
 public class HttpFetchTool {
 
-    private static final int BODY_LIMIT = 4096;
+    /** 提到 32KB：足够装下 splatoon3.ink/data/schedules.json 这类完整 API 响应。
+     *  LLM 上下文窗口都 >=128K，32KB 不会撑爆。 */
+    private static final int BODY_LIMIT = 32 * 1024;
 
     @AiTool(
             name = "http_fetch",
