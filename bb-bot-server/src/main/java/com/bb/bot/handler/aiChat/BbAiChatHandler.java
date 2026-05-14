@@ -10,15 +10,14 @@ import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.common.util.aiChat.AiChatClient;
-import com.bb.bot.common.util.aiChat.ChatGPTContent;
 import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
 import com.bb.bot.common.util.aiChat.provider.AIException;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
-import com.bb.bot.common.util.aiChat.provider.MessageContent;
+import com.bb.bot.common.util.aiChat.provider.StreamHandler;
+import com.bb.bot.common.util.aiChat.provider.ToolCall;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
@@ -65,11 +64,13 @@ import java.util.stream.Collectors;
  *   <li>{@link com.bb.bot.aiAgent.memory.MemoryCompiler} 把 memory.md 注入 system prompt</li>
  * </ul>
  *
- * <p>LLM 调用两条路径：</p>
+ * <p>LLM 调用走统一的 {@link AiChatService}（M9 重构后唯一入口）：</p>
  * <ul>
- *   <li>{@code streamEnabled=true} → {@link AiChatClient#askChatGPTStream}（M1 SSE 流式）</li>
- *   <li>{@code streamEnabled=false} → {@link AiChatService#chat}（quizzical 的 provider 抽象，自带错误分类）</li>
+ *   <li>{@code streamEnabled=true} → {@link AiChatService#chatStream}（流式）</li>
+ *   <li>{@code streamEnabled=false} → {@link AiChatService#chat}（阻塞）</li>
  * </ul>
+ * <p>两条路都共享同一份 {@link com.bb.bot.common.util.aiChat.provider.AIProvider} 实现，
+ * 错误分类 / 重试策略 / endpoint 配置完全一致。</p>
  *
  * @author ren
  */
@@ -80,11 +81,7 @@ public class BbAiChatHandler {
     @Autowired
     private BbMessageApi bbMessageApi;
 
-    /** 流式路径（M1：SSE + function calling 协议）。 */
-    @Autowired
-    private AiChatClient aiChatClient;
-
-    /** 阻塞路径（quizzical：AIProvider 抽象 + 错误分类）。 */
+    /** 阻塞 + 流式都走 AiChatService（M9 重构后唯一入口）。 */
     @Autowired
     private AiChatService aiChatService;
 
@@ -119,7 +116,8 @@ public class BbAiChatHandler {
     @Value("#{'${aiChat.adminUserIds:}'.split(',')}")
     private List<String> adminUserIds;
 
-    @Value("${chatGPT.streamEnabled:false}")
+    /** M9.9：迁到 aiChat.streamEnabled，跟 provider 配置解耦。chatGPT.streamEnabled 仍兼容（fallback）。 */
+    @Value("${aiChat.streamEnabled:${chatGPT.streamEnabled:false}}")
     private Boolean streamEnabled;
 
     /** 测试注入用的确定性随机源。 */
@@ -171,28 +169,32 @@ public class BbAiChatHandler {
         sendReply(msg, answerMessage);
     }
 
-    /** 流式分支：走 AiChatClient.askChatGPTStream（M1 SSE）。 */
+    /** 流式分支：走 AiChatService.chatStream（M9 重构后跟阻塞同一个 provider 抽象）。 */
     private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
-        // ChatMessage → ChatGPTContent 适配（流式 client 是 M1 时基于旧类型的）
-        List<ChatGPTContent> legacy = messages.stream()
-                .map(BbAiChatHandler::chatMessageToLegacy)
-                .collect(Collectors.toList());
-
         BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
-        aiChatClient.askChatGPTStream(
-                legacy,
-                session::appendDelta,
-                fullText -> {
-                    session.complete();
-                    if (StringUtils.isNoneBlank(fullText)) {
-                        persistBotReply(msg, Collections.singletonList(BbMessageContent.buildTextContent(fullText)));
-                    }
-                },
-                err -> {
-                    log.error("ai 流式回复异常", err);
-                    session.fail(err);
-                });
+        aiChatService.chatStream(messages, new StreamHandler() {
+            @Override
+            public void onTextDelta(String delta) {
+                session.appendDelta(delta);
+            }
+            @Override
+            public void onToolCalls(java.util.List<ToolCall> calls) {
+                // 聊天人格不开 function calling，正常不会触发
+            }
+            @Override
+            public void onComplete(String fullText, String finishReason) {
+                session.complete();
+                if (StringUtils.isNoneBlank(fullText)) {
+                    persistBotReply(msg, Collections.singletonList(BbMessageContent.buildTextContent(fullText)));
+                }
+            }
+            @Override
+            public void onError(Throwable err) {
+                log.error("ai 流式回复异常", err);
+                session.fail(err);
+            }
+        });
     }
 
     // =========================================================================
@@ -378,45 +380,6 @@ public class BbAiChatHandler {
     }
 
     // ---- 类型适配 ----
-
-    /** ChatMessage（quizzical）→ ChatGPTContent（M1 流式 client 用的旧类型）。 */
-    private static ChatGPTContent chatMessageToLegacy(ChatMessage m) {
-        ChatGPTContent c = new ChatGPTContent();
-        // ChatMessage.Role 是 enum，ChatGPTContent 的 role 是 String 常量
-        switch (m.getRole()) {
-            case SYSTEM:    c.setRole(ChatGPTContent.SYSTEM_ROLE); break;
-            case ASSISTANT: c.setRole(ChatGPTContent.ASSISTANT_ROLE); break;
-            case USER:
-            default:        c.setRole(ChatGPTContent.USER_ROLE); break;
-        }
-        // 把 MessageContent 列表展开成 ChatGPTContent.content（List<Map>）
-        List<Map<String, Object>> parts = new ArrayList<>();
-        if (m.getContents() != null) {
-            for (MessageContent mc : m.getContents()) {
-                if (mc == null) continue;
-                switch (mc.getType()) {
-                    case TEXT:
-                        parts.add(ChatGPTContent.buildTextContent(StringUtils.defaultString(mc.getValue())));
-                        break;
-                    case NET_IMAGE:
-                        parts.add(ChatGPTContent.buildNetImageContent(mc.getValue()));
-                        break;
-                    case BASE64_IMAGE:
-                        parts.add(ChatGPTContent.buildBase64ImageContent(mc.getValue()));
-                        break;
-                }
-            }
-        }
-        // 若只有一段纯文本，content 直接是 String（兼容现有 LLM provider）
-        if (parts.size() == 1 && "text".equals(parts.get(0).get("type"))) {
-            c.setContent(parts.get(0).get("text"));
-        } else if (!parts.isEmpty()) {
-            c.setContent(parts);
-        } else {
-            c.setContent("");
-        }
-        return c;
-    }
 
     /** AiMemoryEvent → ChatHistory：保留 MessageBuilder 既有签名不动。 */
     private static ChatHistory eventToLegacyChatHistory(AiMemoryEvent e) {

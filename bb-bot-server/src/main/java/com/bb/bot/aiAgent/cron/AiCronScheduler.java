@@ -5,8 +5,10 @@ import com.bb.bot.aiAgent.core.AiToolExecutor;
 import com.bb.bot.aiAgent.core.AiToolRegistry;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.api.MessageStreamSession;
-import com.bb.bot.common.util.aiChat.AiChatClient;
-import com.bb.bot.common.util.aiChat.ChatGPTContent;
+import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.StreamHandler;
+import com.bb.bot.common.util.aiChat.provider.ToolCall;
+import com.bb.bot.common.util.aiChat.provider.ToolLoopExecutor;
 import com.bb.bot.config.BotConfig;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
@@ -55,7 +57,7 @@ public class AiCronScheduler {
     private BbMessageApi bbMessageApi;
 
     @Autowired
-    private AiChatClient aiChatClient;
+    private ToolLoopExecutor toolLoopExecutor;
 
     @Autowired
     private AiToolRegistry toolRegistry;
@@ -121,28 +123,31 @@ public class AiCronScheduler {
                 return;
             }
             MessageStreamSession session = bbMessageApi.startStream(envelope);
-            List<ChatGPTContent> messages = new ArrayList<>();
-            messages.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, systemPrompt));
-            messages.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, task.getPrompt()));
+            List<ChatMessage> messages = new ArrayList<>();
+            messages.add(ChatMessage.system(systemPrompt));
+            messages.add(ChatMessage.user(task.getPrompt()));
 
             String sessionId = "cron-" + task.getId() + "-" + System.currentTimeMillis();
             String ownerId = task.getOwnerUserId();
             String platform = task.getPlatform();
 
-            aiChatClient.askChatGPTStreamWithTools(
+            toolLoopExecutor.run(
                     messages,
-                    toolRegistry.toOpenAiTools(),
+                    toolRegistry.toToolDefinitions(),
                     (name, args) -> toolExecutor.invoke(name, args, ownerId, platform, sessionId),
-                    session::appendDelta,
-                    full -> {
-                        session.complete();
-                        updateStatus(task, triggerAt, "ok");
-                    },
-                    err -> {
-                        session.fail(err);
-                        updateStatus(task, triggerAt, "error");
-                    },
-                    maxSteps
+                    maxSteps,
+                    new StreamHandler() {
+                        @Override public void onTextDelta(String delta) { session.appendDelta(delta); }
+                        @Override public void onToolCalls(List<ToolCall> calls) {}
+                        @Override public void onComplete(String fullText, String finishReason) {
+                            session.complete();
+                            updateStatus(task, triggerAt, "ok");
+                        }
+                        @Override public void onError(Throwable err) {
+                            session.fail(err);
+                            updateStatus(task, triggerAt, "error");
+                        }
+                    }
             );
         } catch (Exception e) {
             log.warn("AiCron 执行异常 id={}", task.getId(), e);

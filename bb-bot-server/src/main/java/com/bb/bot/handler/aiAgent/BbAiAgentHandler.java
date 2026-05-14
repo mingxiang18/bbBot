@@ -9,8 +9,11 @@ import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.common.util.aiChat.AiChatClient;
-import com.bb.bot.common.util.aiChat.ChatGPTContent;
+import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.StreamHandler;
+import com.bb.bot.common.util.aiChat.provider.ToolCall;
+import com.bb.bot.common.util.aiChat.provider.ToolDefinition;
+import com.bb.bot.common.util.aiChat.provider.ToolLoopExecutor;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
@@ -42,7 +45,7 @@ public class BbAiAgentHandler {
     private BbMessageApi bbMessageApi;
 
     @Autowired
-    private AiChatClient aiChatClient;
+    private ToolLoopExecutor toolLoopExecutor;
 
     @Autowired
     private AiToolRegistry toolRegistry;
@@ -97,11 +100,11 @@ public class BbAiAgentHandler {
         // 把 SKILL 目录（progressive disclosure 的 metadata 层）拼进 system prompt
         String effectiveSystemPrompt = systemPrompt + memoryBlock + skillRegistry.describeAllForSystemPrompt();
 
-        List<ChatGPTContent> messages = new ArrayList<>();
-        messages.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, effectiveSystemPrompt));
-        messages.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, prompt));
+        List<ChatMessage> messages = new ArrayList<>();
+        messages.add(ChatMessage.system(effectiveSystemPrompt));
+        messages.add(ChatMessage.user(prompt));
 
-        List<Object> tools = toolRegistry.toOpenAiTools();
+        List<ToolDefinition> tools = toolRegistry.toToolDefinitions();
         String callerUserId = bbReceiveMessage.getUserId();
         String platform = bbReceiveMessage.getBotType();
         String sessionId = "agent-" + System.currentTimeMillis() + "-" + Integer.toHexString(System.identityHashCode(bbReceiveMessage));
@@ -109,17 +112,31 @@ public class BbAiAgentHandler {
         BbSendMessage envelope = new BbSendMessage(bbReceiveMessage);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
 
-        aiChatClient.askChatGPTStreamWithTools(
+        toolLoopExecutor.run(
                 messages,
                 tools,
                 (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId),
-                session::appendDelta,
-                fullText -> session.complete(),
-                err -> {
-                    log.error("AI Agent 流式失败", err);
-                    session.fail(err);
-                },
-                maxSteps
+                maxSteps,
+                new StreamHandler() {
+                    @Override
+                    public void onTextDelta(String delta) {
+                        session.appendDelta(delta);
+                    }
+                    @Override
+                    public void onToolCalls(java.util.List<ToolCall> calls) {
+                        // 单纯日志，IM 侧不显示工具调用细节（避免吐工具 JSON 出来）
+                        log.debug("agent step tool_calls: {}", calls);
+                    }
+                    @Override
+                    public void onComplete(String fullText, String finishReason) {
+                        session.complete();
+                    }
+                    @Override
+                    public void onError(Throwable err) {
+                        log.error("AI Agent 流式失败", err);
+                        session.fail(err);
+                    }
+                }
         );
     }
 

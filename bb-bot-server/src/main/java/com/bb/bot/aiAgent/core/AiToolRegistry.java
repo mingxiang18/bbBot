@@ -146,4 +146,23 @@ public class AiToolRegistry {
         }
         return list;
     }
+
+    /** 返回 provider-agnostic 的 ToolDefinition 列表，给新的 AIProvider.chatStream / ToolLoopExecutor 用。 */
+    public List<com.bb.bot.common.util.aiChat.provider.ToolDefinition> toToolDefinitions() {
+        List<com.bb.bot.common.util.aiChat.provider.ToolDefinition> list = new ArrayList<>();
+        for (AiToolDescriptor desc : tools.values()) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> wrapped = desc.toOpenAiSchema();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> fn = (Map<String, Object>) wrapped.get("function");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> params = (Map<String, Object>) fn.get("parameters");
+            list.add(com.bb.bot.common.util.aiChat.provider.ToolDefinition.builder()
+                    .name((String) fn.get("name"))
+                    .description((String) fn.get("description"))
+                    .parametersSchema(params)
+                    .build());
+        }
+        return list;
+    }
 }

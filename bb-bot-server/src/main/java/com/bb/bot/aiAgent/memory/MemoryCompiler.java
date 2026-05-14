@@ -2,8 +2,8 @@ package com.bb.bot.aiAgent.memory;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.bb.bot.common.util.aiChat.AiChatClient;
-import com.bb.bot.common.util.aiChat.ChatGPTContent;
+import com.bb.bot.common.util.aiChat.provider.AiChatService;
+import com.bb.bot.common.util.aiChat.provider.ChatMessage;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.aiAgent.entity.AiMemoryFact;
 import com.bb.bot.database.aiAgent.entity.AiMemorySession;
@@ -59,7 +59,7 @@ public class MemoryCompiler {
     private FactStore factStore;
 
     @Autowired
-    private AiChatClient aiChatClient;
+    private AiChatService aiChatService;
 
     @Value("${aiAgent.memory.workspaceDir:./memory-workspace}")
     private String workspaceDir;
@@ -105,12 +105,11 @@ public class MemoryCompiler {
                     "对话开始：\n" + conv + "\n对话结束。\n\n" +
                     "格式：\n## 摘要\n（3-5 句话总结这段对话的主题和结论）\n## 重要事实\n- 事实 1\n- 事实 2\n（仅列时间持久的事实：身份、偏好、长期关系、配置等；不要列工作流程/工具偏好/执行细节）";
 
-            List<ChatGPTContent> req = new ArrayList<>();
-            req.add(new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE,
-                    "你是一个对话摘要器。输出严格遵守用户给的 markdown 结构。"));
-            req.add(new ChatGPTContent(ChatGPTContent.USER_ROLE, prompt));
+            List<ChatMessage> req = new ArrayList<>();
+            req.add(ChatMessage.system("你是一个对话摘要器。输出严格遵守用户给的 markdown 结构。"));
+            req.add(ChatMessage.user(prompt));
 
-            String answer = aiChatClient.askChatGPT(req);
+            String answer = aiChatService.chat(req);
             if (StringUtils.isBlank(answer)) {
                 log.warn("compileSessionSummary 收到空 LLM 回复 session={}", s.getSessionId());
                 return;
@@ -264,11 +263,11 @@ public class MemoryCompiler {
             src.append("\n").append(s.getStartedAt()).append("\n").append(s.getSummary()).append("\n");
         }
         String prompt = "请把以下多段会话摘要浓缩成一段不超过 400 字的长期用户画像（中文），只保留长期值得知道的东西：\n" + src;
-        List<ChatGPTContent> req = List.of(
-                new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, "你是用户画像压缩器。"),
-                new ChatGPTContent(ChatGPTContent.USER_ROLE, prompt)
+        List<ChatMessage> req = List.of(
+                ChatMessage.system("你是用户画像压缩器。"),
+                ChatMessage.user(prompt)
         );
-        String ans = aiChatClient.askChatGPT(req);
+        String ans = aiChatService.chat(req);
         if (StringUtils.isBlank(ans)) ans = "(LLM 蒸馏失败，本期 longterm 跳过)";
         Files.writeString(out, "# Long-term context\n\n" + ans, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -300,11 +299,11 @@ public class MemoryCompiler {
         String prompt = "下面是一些用户的事实候选，请去重 + 仅保留时间持久的用户画像（身份、人格、兴趣、喜恶、" +
                 "长期关系、稳定偏好），剔除工作流程/工具偏好/执行细节。中文输出，每条一行，以「- 」开头，总长 ≤ 300 字。\n\n" +
                 body;
-        List<ChatGPTContent> req = List.of(
-                new ChatGPTContent(ChatGPTContent.SYSTEM_ROLE, "你是事实过滤器。"),
-                new ChatGPTContent(ChatGPTContent.USER_ROLE, prompt)
+        List<ChatMessage> req = List.of(
+                ChatMessage.system("你是事实过滤器。"),
+                ChatMessage.user(prompt)
         );
-        String filtered = aiChatClient.askChatGPT(req);
+        String filtered = aiChatService.chat(req);
         if (StringUtils.isBlank(filtered)) filtered = body.toString();
         Files.writeString(out, "# Key facts\n\n" + filtered, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
