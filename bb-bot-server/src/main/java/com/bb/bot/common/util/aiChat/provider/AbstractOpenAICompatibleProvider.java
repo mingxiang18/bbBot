@@ -159,20 +159,65 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                 "AI provider [" + name() + "] client error: " + body);
     }
 
-    private List<Map<String, Object>> serializeMessages(List<ChatMessage> messages) {
+    /** 包级可见：被 chatStream 路径复用。 */
+    List<Map<String, Object>> serializeMessages(List<ChatMessage> messages) {
         List<Map<String, Object>> out = new ArrayList<>(messages.size());
         for (ChatMessage m : messages) {
             Map<String, Object> obj = new LinkedHashMap<>();
             obj.put("role", roleName(m.getRole()));
+
+            // tool 角色单独处理：必须有 tool_call_id 字段，content 是纯字符串
+            if (m.getRole() == ChatMessage.Role.TOOL) {
+                obj.put("tool_call_id", m.getToolCallId());
+                obj.put("content", flattenToString(m.getContents()));
+                out.add(obj);
+                continue;
+            }
+
+            // content：纯文本走 string，否则走 parts 数组（图片）
             List<MessageContent> parts = m.getContents();
-            if (parts.size() == 1 && parts.get(0).getType() == MessageContent.Type.TEXT) {
+            if (parts == null || parts.isEmpty()) {
+                obj.put("content", null);
+            } else if (parts.size() == 1 && parts.get(0).getType() == MessageContent.Type.TEXT) {
                 obj.put("content", parts.get(0).getValue());
             } else {
                 obj.put("content", serializeParts(parts));
             }
+
+            // assistant 消息的 tool_calls（function calling 协议）
+            if (m.getRole() == ChatMessage.Role.ASSISTANT
+                    && m.getToolCalls() != null && !m.getToolCalls().isEmpty()) {
+                obj.put("tool_calls", serializeToolCalls(m.getToolCalls()));
+            }
             out.add(obj);
         }
         return out;
+    }
+
+    private String flattenToString(List<MessageContent> parts) {
+        if (parts == null || parts.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (MessageContent p : parts) {
+            if (p.getType() == MessageContent.Type.TEXT && p.getValue() != null) {
+                sb.append(p.getValue());
+            }
+        }
+        return sb.toString();
+    }
+
+    private List<Map<String, Object>> serializeToolCalls(List<ToolCall> calls) {
+        List<Map<String, Object>> arr = new ArrayList<>(calls.size());
+        for (ToolCall c : calls) {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("id", c.getId());
+            entry.put("type", "function");
+            Map<String, Object> fn = new LinkedHashMap<>();
+            fn.put("name", c.getName());
+            fn.put("arguments", c.getArgumentsJson() == null ? "{}" : c.getArgumentsJson());
+            entry.put("function", fn);
+            arr.add(entry);
+        }
+        return arr;
     }
 
     private List<Map<String, Object>> serializeParts(List<MessageContent> parts) {
@@ -223,6 +268,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             case SYSTEM -> "system";
             case USER -> "user";
             case ASSISTANT -> "assistant";
+            case TOOL -> "tool";
         };
     }
 
