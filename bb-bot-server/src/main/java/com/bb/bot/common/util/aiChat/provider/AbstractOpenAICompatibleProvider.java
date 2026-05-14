@@ -11,7 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,6 +69,12 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         return StringUtils.isNotBlank(config().getApiKey());
     }
 
+    /** 流式 chat 共享 HttpClient（线程安全）。 */
+    private static final HttpClient SHARED_HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(15))
+            .version(HttpClient.Version.HTTP_1_1)
+            .build();
+
     @Override
     public String chat(List<ChatMessage> messages) throws AIException {
         if (!isConfigured()) {
@@ -75,6 +89,210 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         }
 
         return executeWithRetry(processed);
+    }
+
+    @Override
+    public void chatStream(List<ChatMessage> messages,
+                            List<ToolDefinition> tools,
+                            StreamHandler handler) throws AIException {
+        if (!isConfigured()) {
+            throw new AIException(AIException.ErrorType.UNAUTHORIZED,
+                    "AI provider [" + name() + "] api key not configured");
+        }
+        List<ChatMessage> processed = new ArrayList<>(messages);
+        preprocessImages(processed);
+        if (!config().isVisionEnable()) {
+            processed = stripImages(processed);
+        }
+        executeStreamWithRetry(processed, tools, handler);
+    }
+
+    private void executeStreamWithRetry(List<ChatMessage> messages,
+                                         List<ToolDefinition> tools,
+                                         StreamHandler handler) {
+        AIProviderProperties.RetryConfig retry = properties.getRetry();
+        long interval = retry.getInitialIntervalMs();
+        AIException last = null;
+        for (int attempt = 1; attempt <= retry.getMaxAttempts(); attempt++) {
+            try {
+                doStreamCall(messages, tools, handler);
+                return;
+            } catch (AIException e) {
+                last = e;
+                if (!e.isRetryable() || attempt == retry.getMaxAttempts()) {
+                    handler.onError(e);
+                    throw e;
+                }
+                log.warn("AI provider [{}] stream failed (attempt {}/{}, type={}, status={}): {}. Retrying in {}ms",
+                        name(), attempt, retry.getMaxAttempts(), e.getErrorType(), e.getHttpStatus(), e.getMessage(), interval);
+                sleep(interval);
+                interval = Math.min((long) (interval * retry.getMultiplier()), retry.getMaxIntervalMs());
+            }
+        }
+        if (last != null) {
+            handler.onError(last);
+            throw last;
+        }
+    }
+
+    /**
+     * 真正发请求 + 解析 SSE。每次重试调一次。
+     * 已收到任何 token / 工具调用后，不再重试（避免重复输出）—— retry 仅覆盖握手 / 0 字节失败。
+     */
+    private void doStreamCall(List<ChatMessage> messages,
+                               List<ToolDefinition> tools,
+                               StreamHandler handler) {
+        String url = resolveBaseUrl() + "/chat/completions";
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("model", resolveModel());
+        body.put("messages", serializeMessages(messages));
+        body.put("stream", true);
+        if (tools != null && !tools.isEmpty()) {
+            body.put("tools", serializeTools(tools));
+            body.put("tool_choice", "auto");
+        }
+        String jsonBody = JSON.toJSONString(body);
+
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofSeconds(120))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + config().getApiKey())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header("Accept", "text/event-stream")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+                .build();
+
+        log.info("AI provider [{}] STREAM {} (model={}, msgs={}, tools={})",
+                name(), url, resolveModel(), messages.size(), tools == null ? 0 : tools.size());
+
+        StringBuilder fullText = new StringBuilder();
+        Map<Integer, ToolCall> pendingToolCalls = new LinkedHashMap<>();
+        String finishReason = null;
+        boolean anyByteReceived = false;
+
+        try {
+            HttpResponse<InputStream> resp = SHARED_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofInputStream());
+            if (resp.statusCode() / 100 != 2) {
+                String errBody = new String(resp.body().readAllBytes(), StandardCharsets.UTF_8);
+                throw classify(resp.statusCode(), errBody);
+            }
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(resp.body(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.isEmpty() || !line.startsWith("data:")) continue;
+                    String payload = line.substring(5).trim();
+                    if ("[DONE]".equals(payload)) break;
+                    anyByteReceived = true;
+                    SseChunkParsed parsed = parseSseChunk(payload);
+                    if (parsed == null) continue;
+                    if (parsed.finishReason != null) finishReason = parsed.finishReason;
+                    if (parsed.textDelta != null && !parsed.textDelta.isEmpty()) {
+                        fullText.append(parsed.textDelta);
+                        try { handler.onTextDelta(parsed.textDelta); }
+                        catch (Exception cbErr) { log.warn("StreamHandler.onTextDelta 异常", cbErr); }
+                    }
+                    if (parsed.toolCallDeltas != null) {
+                        for (ToolCall delta : parsed.toolCallDeltas) {
+                            mergeToolCallDelta(pendingToolCalls, delta);
+                        }
+                    }
+                }
+            }
+        } catch (AIException ae) {
+            throw ae;
+        } catch (Exception e) {
+            // 网络层异常：已收到字节就当部分完成，不让重试覆盖；零字节就 RETRYABLE
+            if (anyByteReceived) {
+                log.warn("AI provider [{}] stream interrupted after {} chars, treating as partial complete",
+                        name(), fullText.length(), e);
+            } else {
+                throw new AIException(AIException.ErrorType.RETRYABLE, -1,
+                        "AI provider [" + name() + "] stream IO error: " + e.getMessage(), e);
+            }
+        }
+
+        if (!pendingToolCalls.isEmpty()) {
+            try { handler.onToolCalls(new ArrayList<>(pendingToolCalls.values())); }
+            catch (Exception cbErr) { log.warn("StreamHandler.onToolCalls 异常", cbErr); }
+        }
+        try { handler.onComplete(fullText.toString(), finishReason); }
+        catch (Exception cbErr) { log.warn("StreamHandler.onComplete 异常", cbErr); }
+    }
+
+    /** SSE 单 chunk 解析结果。 */
+    private static class SseChunkParsed {
+        String textDelta;
+        List<ToolCall> toolCallDeltas;
+        String finishReason;
+    }
+
+    private SseChunkParsed parseSseChunk(String payload) {
+        try {
+            JSONObject root = JSON.parseObject(payload);
+            JSONArray choices = root.getJSONArray("choices");
+            if (choices == null || choices.isEmpty()) return null;
+            JSONObject choice = choices.getJSONObject(0);
+            JSONObject delta = choice.getJSONObject("delta");
+            SseChunkParsed out = new SseChunkParsed();
+            String finishReason = choice.getString("finish_reason");
+            if (finishReason != null && !"null".equals(finishReason)) {
+                out.finishReason = finishReason;
+            }
+            if (delta == null) return out;
+            out.textDelta = delta.getString("content");
+            JSONArray toolCallsDelta = delta.getJSONArray("tool_calls");
+            if (toolCallsDelta != null) {
+                List<ToolCall> deltas = new ArrayList<>();
+                for (int i = 0; i < toolCallsDelta.size(); i++) {
+                    JSONObject tcd = toolCallsDelta.getJSONObject(i);
+                    Integer idx = tcd.getInteger("index");
+                    if (idx == null) idx = 0;
+                    String id = tcd.getString("id");
+                    String fnName = null, fnArgs = null;
+                    JSONObject fn = tcd.getJSONObject("function");
+                    if (fn != null) {
+                        fnName = fn.getString("name");
+                        fnArgs = fn.getString("arguments");
+                    }
+                    deltas.add(ToolCall.builder().index(idx).id(id).name(fnName).argumentsJson(fnArgs).build());
+                }
+                out.toolCallDeltas = deltas;
+            }
+            return out;
+        } catch (Exception e) {
+            log.debug("SSE chunk parse failed: {}", payload, e);
+            return null;
+        }
+    }
+
+    private void mergeToolCallDelta(Map<Integer, ToolCall> agg, ToolCall delta) {
+        int idx = delta.getIndex() == null ? 0 : delta.getIndex();
+        ToolCall existing = agg.computeIfAbsent(idx, k -> ToolCall.builder()
+                .index(k).id("").name("").argumentsJson("").build());
+        if (delta.getId() != null) existing.setId(delta.getId());
+        if (delta.getName() != null) {
+            existing.setName((existing.getName() == null ? "" : existing.getName()) + delta.getName());
+        }
+        if (delta.getArgumentsJson() != null) {
+            existing.setArgumentsJson(
+                    (existing.getArgumentsJson() == null ? "" : existing.getArgumentsJson()) + delta.getArgumentsJson());
+        }
+    }
+
+    private List<Map<String, Object>> serializeTools(List<ToolDefinition> tools) {
+        List<Map<String, Object>> arr = new ArrayList<>(tools.size());
+        for (ToolDefinition t : tools) {
+            Map<String, Object> wrap = new LinkedHashMap<>();
+            wrap.put("type", "function");
+            Map<String, Object> fn = new LinkedHashMap<>();
+            fn.put("name", t.getName());
+            fn.put("description", t.getDescription());
+            fn.put("parameters", t.getParametersSchema());
+            wrap.put("function", fn);
+            arr.add(wrap);
+        }
+        return arr;
     }
 
     private String executeWithRetry(List<ChatMessage> messages) {
