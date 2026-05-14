@@ -162,6 +162,28 @@ ai:
 # 旧版 chatGPT.* 配置（已废弃，保留兼容期。请迁移至上面的 ai.providers.openai.*）
 chatGPT:
   apiKey:
+  # 启用 SSE 流式回复 + IM 端 edit/chunked 呈现。默认关闭以兼容现有部署。
+  streamEnabled: false
+
+# AI Agent（远程派活 + 工具调用 + cron + 插件）相关配置
+aiAgent:
+  # 拥有完全权限的用户 id，逗号分隔。仅这些用户能授予角色、跑 shell_exec、加 cron 等。
+  owners: 1105048721
+  # 工具调用循环硬上限，避免 LLM 跑飞
+  maxSteps: 10
+  # 启动时自动 CREATE TABLE IF NOT EXISTS ai_user_role / ai_tool_policy / ai_tool_invocation_log / ai_cron_task
+  autoCreateTables: true
+  # 沙箱
+  sandbox:
+    # auto / bubblewrap / docker / noop
+    preferred: auto
+    # docker 后端用什么镜像
+    dockerImage: alpine:3.20
+  # 插件目录（jar 放进去即可）
+  pluginDir: ./plugins
+  # cron 派活时 LLM 的 system prompt（可覆盖）
+  cron:
+    maxSteps: 10
 
 # 总结聊天记录拉取的历史长度
 chatHistory:
