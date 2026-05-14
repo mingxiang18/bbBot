@@ -59,6 +59,25 @@ public class AiChatService {
         return p.chat(messages);
     }
 
+    /**
+     * 流式调用（无 function calling）。上层 BbAiChatHandler 用这个，
+     * IM 端通过 handler.onTextDelta 实时吐字。
+     */
+    public void chatStream(List<ChatMessage> messages, StreamHandler handler) {
+        AIProvider p = current();
+        if (p == null) {
+            handler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
+                    "no AI provider matches active name [" + properties.getActiveProvider() + "]"));
+            return;
+        }
+        if (!p.isConfigured()) {
+            handler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
+                    "AI provider [" + p.name() + "] not configured"));
+            return;
+        }
+        p.chatStream(messages, null, handler);
+    }
+
     public AIProvider current() {
         return providers.get(properties.getActiveProvider());
     }
