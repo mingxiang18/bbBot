@@ -490,7 +490,13 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             if (kept.isEmpty()) {
                 kept = List.of(MessageContent.text(""));
             }
-            out.add(new ChatMessage(m.getRole(), kept));
+            ChatMessage copy = new ChatMessage(m.getRole(), kept);
+            // 关键：function-calling 协议字段必须随消息一起拷过来，否则下一轮回灌时
+            // assistant.tool_calls / tool.tool_call_id 会丢失，API 报 messages[i]
+            // missing field tool_call_id。
+            copy.setToolCalls(m.getToolCalls());
+            copy.setToolCallId(m.getToolCallId());
+            out.add(copy);
         }
         return out;
     }

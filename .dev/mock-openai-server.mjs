@@ -45,18 +45,16 @@ function finishChunk(id, model, reason) {
   };
 }
 function toolCallChunk(id, model, callId, fnName, argsJson) {
+  // DEBUG: MOCK_DROP_TOOL_ID=1 → simulate DeepSeek-like SSE that omits id
+  const dropId = process.env.MOCK_DROP_TOOL_ID === '1';
+  const entry = dropId
+    ? { index: 0, type: 'function', function: { name: fnName, arguments: argsJson } }
+    : { index: 0, id: callId, type: 'function', function: { name: fnName, arguments: argsJson } };
   return {
     id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
     choices: [{
       index: 0,
-      delta: {
-        tool_calls: [
-          {
-            index: 0, id: callId, type: 'function',
-            function: { name: fnName, arguments: argsJson },
-          },
-        ],
-      },
+      delta: { tool_calls: [entry] },
       finish_reason: null,
     }],
   };
