@@ -131,13 +131,13 @@ class BbAiChatHandlerDecisionTest {
 
     @Test
     void composePersonality_noClues_returnsBaseOnly() {
-        String personality = handler.composePersonality(Collections.emptyList());
+        String personality = handler.composePersonality("user-1", Collections.emptyList());
         assertEquals("BASE", personality);
     }
 
     @Test
     void composePersonality_withClues_appendsRenderedSuffix() {
-        String personality = handler.composePersonality(List.of("c1", "c2"));
+        String personality = handler.composePersonality("user-1", List.of("c1", "c2"));
         assertTrue(personality.contains("BASE"));
         assertTrue(personality.contains("c1-c2"));
         assertFalse(personality.contains("{clues}"), "placeholder should be replaced");

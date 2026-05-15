@@ -113,6 +113,15 @@ class AiChatServiceTest {
         }
 
         @Override
+        public void chatStream(List<ChatMessage> messages,
+                               List<ToolDefinition> tools,
+                               StreamHandler handler) {
+            calls++;
+            handler.onTextDelta(reply);
+            handler.onComplete(reply, "stop");
+        }
+
+        @Override
         public boolean isConfigured() {
             return configured;
         }
