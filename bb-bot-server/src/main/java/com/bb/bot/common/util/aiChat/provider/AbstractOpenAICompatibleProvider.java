@@ -213,6 +213,19 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         }
 
         if (!pendingToolCalls.isEmpty()) {
+            // 兜底：部分 OpenAI 兼容 provider（含某些代理）在 SSE 增量里不带 id，
+            // 聚合结束后 id 仍是空串。下一轮回灌时 tool 消息的 tool_call_id 会被
+            // API 视为 missing，整条请求被拒。这里合成一个稳定 id，并把同一 id
+            // 同时回写到 assistant.tool_calls[].id 与 tool.tool_call_id（共享同
+            // 一 ToolCall 引用），确保前后呼应。
+            for (Map.Entry<Integer, ToolCall> e : pendingToolCalls.entrySet()) {
+                ToolCall tc = e.getValue();
+                if (tc.getId() == null || tc.getId().isEmpty()) {
+                    String synthetic = "call_" + e.getKey() + "_" + Long.toHexString(System.nanoTime());
+                    log.warn("AI provider [{}] tool_call#{} 缺 id，合成 {}", name(), e.getKey(), synthetic);
+                    tc.setId(synthetic);
+                }
+            }
             try { handler.onToolCalls(new ArrayList<>(pendingToolCalls.values())); }
             catch (Exception cbErr) { log.warn("StreamHandler.onToolCalls 异常", cbErr); }
         }
@@ -270,7 +283,8 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         int idx = delta.getIndex() == null ? 0 : delta.getIndex();
         ToolCall existing = agg.computeIfAbsent(idx, k -> ToolCall.builder()
                 .index(k).id("").name("").argumentsJson("").build());
-        if (delta.getId() != null) existing.setId(delta.getId());
+        // 仅当 delta 带了非空 id 才覆盖：避免后续 chunk 的 id 缺省时把头一片的真实 id 抹掉
+        if (delta.getId() != null && !delta.getId().isEmpty()) existing.setId(delta.getId());
         if (delta.getName() != null) {
             existing.setName((existing.getName() == null ? "" : existing.getName()) + delta.getName());
         }
