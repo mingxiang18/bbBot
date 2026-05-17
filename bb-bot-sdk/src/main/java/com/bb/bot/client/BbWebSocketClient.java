@@ -145,6 +145,8 @@ public class BbWebSocketClient extends WebSocketClient {
     @Override
     public void onClose(int i, String s, boolean b) {
         log.info("【" + name + "】WebSocket客户端连接关闭:" + s);
+        //重置认证标识：否则重连后首帧（认证响应）会被当成业务消息错误解析
+        authPassFlag = false;
     }
 
     /**
