@@ -51,12 +51,12 @@ function reasoningChunk(id, model, reasoning) {
     choices: [{ index: 0, delta: { reasoning_content: reasoning }, finish_reason: null }],
   };
 }
-function toolCallChunk(id, model, callId, fnName, argsJson) {
+function toolCallChunk(id, model, callId, fnName, argsJson, idx = 0) {
   // DEBUG: MOCK_DROP_TOOL_ID=1 → simulate DeepSeek-like SSE that omits id
   const dropId = process.env.MOCK_DROP_TOOL_ID === '1';
   const entry = dropId
-    ? { index: 0, type: 'function', function: { name: fnName, arguments: argsJson } }
-    : { index: 0, id: callId, type: 'function', function: { name: fnName, arguments: argsJson } };
+    ? { index: idx, type: 'function', function: { name: fnName, arguments: argsJson } }
+    : { index: idx, id: callId, type: 'function', function: { name: fnName, arguments: argsJson } };
   return {
     id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
     choices: [{
@@ -124,6 +124,8 @@ function validateDeepSeekContract(messages) {
 
 function pickIntent(text) {
   const t = (text || '').toLowerCase();
+  // 并行工具测试：一轮里发两个 tool_call，验证 ToolLoopExecutor 的并发执行
+  if (/(并行|parallel)/.test(t)) return 'parallel';
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
   // Memory 系统三件套
   if (/(记住|记下来|remember|帮我记)/.test(t)) return 'record_experience';
@@ -197,7 +199,8 @@ async function handleCompletion(req, res, body) {
 
   // 工具阶段未完成时：决定是否要触发 tool call
   const triggerTool = !toolFinished && (
-    (intent === 'time' && toolNames.has('server_time'))
+    (intent === 'parallel' && toolNames.has('server_time') && toolNames.has('list_dir'))
+    || (intent === 'time' && toolNames.has('server_time'))
     || (intent === 'fetch' && toolNames.has('http_fetch'))
     || (intent === 'shell' && toolNames.has('shell_exec'))
     || (intent === 'file_read' && toolNames.has('file_read'))
@@ -214,6 +217,12 @@ async function handleCompletion(req, res, body) {
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
 
+  // S5 steering 测试：对含 STEERTEST 的首轮（工具未完成）人为延迟，
+  // 给测试客户端的第二条消息留出"在 agent 运行期间到达"的窗口。
+  if (/STEERTEST/.test(userText) && !toolFinished) {
+    await delay(1500);
+  }
+
   if (triggerTool) {
     // thinking 模式：先吐一段 reasoning_content（思维链）
     if (process.env.MOCK_REASONING === '1') {
@@ -228,7 +237,11 @@ async function handleCompletion(req, res, body) {
       sseChunk(res, textChunk(id, model, ch));
       await delay(15);
     }
-    if (intent === 'time') {
+    if (intent === 'parallel') {
+      // 一轮发两个无依赖的 tool_call，index 0 / 1，触发 ToolLoopExecutor 并发执行
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'server_time', '{}', 0));
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path: '/tmp' }), 1));
+    } else if (intent === 'time') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'server_time', '{}'));
     } else if (intent === 'fetch') {
       // 从用户文本里粗暴提个 URL
@@ -285,7 +298,11 @@ async function handleCompletion(req, res, body) {
   if (toolFinished) {
     const toolMsg = messages.filter(m => m.role === 'tool').pop();
     const toolResult = typeof toolMsg.content === 'string' ? toolMsg.content : JSON.stringify(toolMsg.content);
-    if (intent === 'time') {
+    if (intent === 'parallel') {
+      const allTools = messages.filter(m => m.role === 'tool')
+        .map(m => typeof m.content === 'string' ? m.content : JSON.stringify(m.content));
+      finalText = `并行工具结果（共 ${allTools.length} 个）：${allTools.join(' || ').slice(0, 320)}`;
+    } else if (intent === 'time') {
       finalText = `根据 server_time 返回：${toolResult}。也就是说现在时间已经拿到了。`;
     } else if (intent === 'fetch') {
       finalText = `已抓取并解析：${toolResult.slice(0, 200)}…`;

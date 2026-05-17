@@ -52,3 +52,36 @@ CREATE TABLE IF NOT EXISTS bb_misc_placeholder (
   id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   k VARCHAR(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='占位，不使用';
+
+-- SKILL 已改为纯 DB 托管（不再扫描 skillsDir 目录）。ai_skill 表本由
+-- AiAgentSchemaInitializer 启动时自动建，这里提前建好并 seed 一条 log-triage，
+-- 供 A12 / S6 SKILL 场景使用。CREATE / INSERT 均幂等。
+CREATE TABLE IF NOT EXISTS ai_skill (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(64) NOT NULL,
+  description VARCHAR(1024) NOT NULL,
+  body MEDIUMTEXT NOT NULL,
+  enabled TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_name (name),
+  KEY idx_enabled (enabled)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent SKILL（DB 托管）';
+
+INSERT IGNORE INTO ai_skill (name, description, body) VALUES
+('log-triage',
+ '当用户让你「分析日志 / 查日志里出错的地方 / log 里有啥异常」时按本指引执行。组合 list_dir + grep_search + file_read 三个原语完成。',
+ '# 日志分诊 (log-triage)
+
+当用户要分析日志时，按下面流程：
+
+## 步骤
+1. 定位日志文件。如果用户给了具体路径，直接 file_read 它；否则 list_dir 用户指定的目录（默认 /tmp），挑后缀 .log 的文件。
+2. 抓异常行。对每个候选日志文件用 grep_search，正则 (ERROR|Exception|FATAL|panic)，得到匹配列表。
+3. 取上下文。匹配少于 20 条用 file_read 读出上下文；多于 20 条仅返回 grep 统计 + 前 10 条。
+4. 总结。中文 200 字内总结最常见异常类型、时间线、可能根因。
+
+## 边界
+- 不要试图修复 bug，只做诊断
+- 不要读 > 1MB 的日志文件
+- 不要请求 root 权限或动用 shell_exec');

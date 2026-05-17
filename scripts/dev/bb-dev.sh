@@ -68,7 +68,9 @@ cmd_check_mysql() {
 cmd_init_db() {
   cmd_check_mysql
   log "初始化数据库 bb_bot_local …"
-  docker exec -i "$MYSQL_CONTAINER" mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" \
+  # --default-character-set=utf8mb4：否则 SQL 里的中文行数据会被按 latin1 误存成乱码
+  docker exec -i "$MYSQL_CONTAINER" mysql --default-character-set=utf8mb4 \
+    -u"$MYSQL_USER" -p"$MYSQL_PASS" \
     < "$SCRIPT_DIR/sql/01-init-bb-bot-local.sql" 2>&1 | grep -v 'Using a password' || true
   ok "数据库就绪"
 }

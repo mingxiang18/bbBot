@@ -1,32 +1,29 @@
 package com.bb.bot.aiAgent.skills;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.bot.database.aiAgent.entity.AiSkill;
+import com.bb.bot.database.aiAgent.service.IAiSkillService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 /**
- * 扫描 {@code aiAgent.skillsDir/<name>/SKILL.md}，按 agentskills.io 规范解析 YAML
- * frontmatter，只装载 {@code name + description}（progressive disclosure 的 metadata 层）。
- * 完整 body 由 {@link com.bb.bot.aiAgent.tools.LoadSkillTool} 按需读。
+ * SKILL 注册表，从 {@code ai_skill} 表加载（progressive disclosure 的 metadata 层，
+ * 只装载 name + description，完整 body 由
+ * {@link com.bb.bot.aiAgent.tools.LoadSkillTool} 按需取）。
  *
- * <p>简化 YAML 解析：只支持 {@code key: value}（单行）和 {@code key: |} 块。
- * 复杂 YAML 不支持；spec 上只需要 name + description 单行字符串。</p>
+ * <p>SKILL 的增删改直接操作 {@code ai_skill} 表，{@code /aiAgent.skill.reload}
+ * 可在不重启的情况下重新加载。</p>
  */
 @Slf4j
 @Component
@@ -34,79 +31,57 @@ public class SkillRegistry {
 
     private static final Pattern NAME_RE = Pattern.compile("^[a-z0-9]+(-[a-z0-9]+)*$");
 
-    @Value("${aiAgent.skillsDir:./skills}")
-    private String skillsDir;
+    @Autowired
+    private IAiSkillService aiSkillService;
 
     private final Map<String, SkillManifest> skills = new LinkedHashMap<>();
 
     @EventListener
     public synchronized void onContextRefreshed(ContextRefreshedEvent ev) {
-        skills.clear();
-        Path root = Paths.get(skillsDir).toAbsolutePath().normalize();
-        if (!Files.exists(root) || !Files.isDirectory(root)) {
-            log.info("SKILLS 目录 {} 不存在，跳过", root);
-            return;
-        }
-        try (Stream<Path> children = Files.list(root)) {
-            children.filter(Files::isDirectory).forEach(this::tryLoad);
-        } catch (IOException e) {
-            log.warn("SKILLS 目录扫描失败", e);
-        }
-        log.info("SkillRegistry 注册完成，共 {} 个 SKILL：{}", skills.size(), skills.keySet());
-    }
-
-    private void tryLoad(Path dir) {
-        Path skillMd = dir.resolve("SKILL.md");
-        if (!Files.exists(skillMd)) return;
-        try {
-            String raw = Files.readString(skillMd, StandardCharsets.UTF_8);
-            Map<String, String> fm = parseFrontmatter(raw);
-            if (fm == null) {
-                log.warn("SKILL 缺少 frontmatter，跳过: {}", skillMd);
-                return;
-            }
-            String name = fm.get("name");
-            String description = fm.get("description");
-            if (name == null || description == null) {
-                log.warn("SKILL 缺 name 或 description，跳过: {}", skillMd);
-                return;
-            }
-            if (!NAME_RE.matcher(name).matches()) {
-                log.warn("SKILL name {} 不符规范，跳过: {}", name, skillMd);
-                return;
-            }
-            if (!name.equals(dir.getFileName().toString())) {
-                log.warn("SKILL name {} 与目录名 {} 不一致，跳过", name, dir.getFileName());
-                return;
-            }
-            skills.put(name, new SkillManifest(name, description, dir, skillMd));
-        } catch (Exception e) {
-            log.warn("加载 SKILL 失败: {}", skillMd, e);
-        }
+        reload();
     }
 
     /**
-     * 简单 YAML 解析。匹配开头的 {@code ---} 至下一个 {@code ---} 之间，
-     * 每行按第一个 {@code :} 切。值前后空白会被 trim，引号会被剥掉。
+     * 重新加载全部 SKILL（{@code ai_skill} 表）。可被管理命令调用，无需重启。
+     *
+     * @return 加载完成后的 skill 名列表
      */
-    private Map<String, String> parseFrontmatter(String raw) {
-        String[] lines = raw.split("\\r?\\n", -1);
-        if (lines.length < 2 || !lines[0].trim().equals("---")) return null;
-        Map<String, String> map = new LinkedHashMap<>();
-        for (int i = 1; i < lines.length; i++) {
-            String line = lines[i];
-            if (line.trim().equals("---")) return map;
-            int idx = line.indexOf(':');
-            if (idx < 0) continue;
-            String key = line.substring(0, idx).trim();
-            String val = line.substring(idx + 1).trim();
-            // 剥引号
-            if ((val.startsWith("\"") && val.endsWith("\"")) || (val.startsWith("'") && val.endsWith("'"))) {
-                val = val.substring(1, val.length() - 1);
-            }
-            map.put(key, val);
+    public synchronized List<String> reload() {
+        skills.clear();
+        int count = loadFromDatabase();
+        log.info("SkillRegistry 注册完成，共 {} 个 SKILL：{}", count, skills.keySet());
+        return names();
+    }
+
+    /** 加载 ai_skill 表中启用的行，返回成功加载的数量。 */
+    private int loadFromDatabase() {
+        List<AiSkill> rows;
+        try {
+            rows = aiSkillService.list(new LambdaQueryWrapper<AiSkill>()
+                    .eq(AiSkill::getEnabled, true));
+        } catch (Exception e) {
+            // 表尚未建好 / DB 不可用：本轮无 skill，待 reload 重试
+            log.warn("ai_skill 表加载失败，本轮无 SKILL：{}", e.getMessage());
+            return 0;
         }
-        return null;  // 没找到收尾 ---
+        int count = 0;
+        for (AiSkill row : rows) {
+            String name = row.getName();
+            if (StringUtils.isAnyBlank(name, row.getDescription(), row.getBody())) {
+                log.warn("ai_skill 行缺 name/description/body，跳过: id={}", row.getId());
+                continue;
+            }
+            if (!NAME_RE.matcher(name).matches()) {
+                log.warn("ai_skill name {} 不符规范（小写+连字符），跳过", name);
+                continue;
+            }
+            if (skills.containsKey(name)) {
+                log.warn("ai_skill 存在重名 SKILL {}，后者覆盖前者", name);
+            }
+            skills.put(name, new SkillManifest(name, row.getDescription(), row.getBody()));
+            count++;
+        }
+        return count;
     }
 
     public Collection<SkillManifest> all() {

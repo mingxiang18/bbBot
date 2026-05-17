@@ -30,11 +30,13 @@ const argv = Object.fromEntries(process.argv.slice(2).map(a => {
 /* ---------------- WebSocket helper ---------------- */
 
 class BbClient {
-  constructor({ url = WS_URL, appId = APP_ID, secret = SECRET, userId = 'tester-001' } = {}) {
+  constructor({ url = WS_URL, appId = APP_ID, secret = SECRET, userId = 'tester-001',
+                capabilities = ['stream', 'file'] } = {}) {
     this.url = url;
     this.appId = appId;
     this.secret = secret;
     this.userId = userId;
+    this.capabilities = capabilities;   // 认证握手上报的能力位（stream / file）
     this.ws = null;
     this.authed = false;
     this.inbox = [];               // 累积所有服务器回包
@@ -49,8 +51,12 @@ class BbClient {
     return new Promise((resolve, reject) => {
       this.ws = new WS(this.url);
       this.ws.addEventListener('open', () => {
-        // 首帧：认证
-        this.ws.send(JSON.stringify({ appId: this.appId, secret: this.secret }));
+        // 首帧：认证 + 上报客户端能力（stream / file）
+        this.ws.send(JSON.stringify({
+          appId: this.appId,
+          secret: this.secret,
+          capabilities: this.capabilities,
+        }));
       });
       this.ws.addEventListener('message', (ev) => {
         let data;
@@ -92,6 +98,24 @@ class BbClient {
       messageId: 'm-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
       message: text,
       messageContentList: [{ type: 'text', data: text }],
+      atUserList: atBot ? [{ id: 'bbBot', nickname: 'bbBot', botFlag: true }] : [],
+      sendTime: new Date().toISOString(),
+    };
+    this.ws.send(JSON.stringify(msg));
+    return msg;
+  }
+
+  /** 发一条自定义 messageContentList 的消息（用于文件附件等场景）。 */
+  sendContent(messageContentList, { messageType = 'private', groupId = null, userId = this.userId, nickname = 'Tester', atBot = false } = {}) {
+    const msg = {
+      botType: 'bb',
+      messageType,
+      userId,
+      sender: { id: userId, nickname, botFlag: false },
+      groupId,
+      messageId: 'm-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      message: messageContentList.filter(c => c.type === 'text').map(c => c.data).join(''),
+      messageContentList,
       atUserList: atBot ? [{ id: 'bbBot', nickname: 'bbBot', botFlag: true }] : [],
       sendTime: new Date().toISOString(),
     };
@@ -143,6 +167,27 @@ function showFrame(frame, idx) {
 
 function joinText(frames) {
   return frames.map(f => (f?.messageList || []).map(c => c?.data ?? '').join('')).join('');
+}
+
+/** 分析回包帧：区分流式帧（带 streamId）与普通帧，提取 streamState 序列。 */
+function analyzeStream(frames) {
+  const streamIds = new Set();
+  const states = [];
+  let plainCount = 0;
+  for (const f of frames) {
+    if (f && f.streamId) {
+      streamIds.add(f.streamId);
+      if (f.streamState) states.push(f.streamState);
+    } else {
+      plainCount++;
+    }
+  }
+  return {
+    streamIds: [...streamIds],
+    states,
+    plainCount,
+    streamFrameCount: frames.length - plainCount,
+  };
 }
 
 /* ---------------- Scenarios ---------------- */
@@ -355,6 +400,126 @@ const scenarios = {
       const ok = frames.length >= 1;
       c.close();
       return { ok, detail: `收到 ${frames.length} 帧` };
+    },
+  },
+
+  /* ===== BB 协议改造 + handler 合并 + pi 三特性的新增边界场景 ===== */
+
+  S1: {
+    title: 'S1 真流式帧 (capability=stream → streamId + start/delta/end 序列)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner', capabilities: ['stream', 'file'] });
+      await c.connect();
+      c.sendUserMessage('你好讲个故事');
+      const frames = await c.collectUntilIdle({ idleMs: 3000 });
+      frames.forEach(showFrame);
+      const a = analyzeStream(frames);
+      const ok = a.streamIds.length === 1
+        && a.states.length >= 2
+        && a.states[0] === 'start'
+        && a.states[a.states.length - 1] === 'end'
+        && a.states.slice(1, -1).every(s => s === 'delta');
+      c.close();
+      return { ok, detail: `streamId=${a.streamIds.length} 个, streamState=[${a.states.join(',')}]` };
+    },
+  },
+
+  S2: {
+    title: 'S2 chunked 回退 (无 capability → 帧不带 streamId)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner', capabilities: [] });
+      await c.connect();
+      c.sendUserMessage('你好讲个故事');
+      const frames = await c.collectUntilIdle({ idleMs: 3000 });
+      frames.forEach(showFrame);
+      const a = analyzeStream(frames);
+      const ok = frames.length >= 1 && a.streamIds.length === 0 && a.streamFrameCount === 0;
+      c.close();
+      return { ok, detail: `普通帧 ${a.plainCount}, 流式帧 ${a.streamFrameCount}` };
+    },
+  },
+
+  S3: {
+    title: 'S3 入站文件附件 (netFile content → bot 正常处理并回复)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendContent([
+        { type: 'text', data: '看看这个文件' },
+        { type: 'netFile', data: 'https://example.com/report.pdf', fileName: 'report.pdf', mimeType: 'application/pdf' },
+      ]);
+      const frames = await c.collectUntilIdle({ idleMs: 4000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = frames.length >= 1 && text.length > 0;
+      c.close();
+      return { ok, detail: `带 netFile 附件的消息收到回复 ${text.length} 字` };
+    },
+  },
+
+  S4: {
+    title: 'S4 无 agent 前缀直接干活 (智能路由 → server_time 工具)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      // 关键：没有 "agent" 前缀，靠 handler 合并后模型自行决定调工具
+      c.sendUserMessage('现在几点了');
+      const frames = await c.collectUntilIdle({ idleMs: 6000, maxMs: 20000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /(时间|iso|zone|server_time)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 120) };
+    },
+  },
+
+  S5: {
+    title: 'S5 steering (agent 运行中追加消息 → 并入同一轮)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner', capabilities: ['stream'] });
+      await c.connect();
+      // A 触发慢响应（mock 对 STEERTEST 延迟），B 在 A 运行期间发出
+      c.sendUserMessage('STEERTEST 现在几点');
+      await sleep(300);
+      c.sendUserMessage('STEERTEST 顺便今天几号');
+      const frames = await c.collectUntilIdle({ idleMs: 6000, maxMs: 30000 });
+      frames.forEach(showFrame);
+      const a = analyzeStream(frames);
+      // B 被并入 A 那一轮 → 全部帧共享 1 个 streamId；未 steer 则会出现 2 个
+      const ok = a.streamIds.length === 1;
+      c.close();
+      return { ok, detail: `回复 streamId 数=${a.streamIds.length}（1=已并入, 2=未 steer）` };
+    },
+  },
+
+  S6: {
+    title: 'S6 SKILL DB 管理 (/aiAgent.skill.list 列出 ai_skill 表)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('/aiAgent.skill.list');
+      const frames = await c.collectUntilIdle({ idleMs: 3000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      const ok = /log-triage/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 160) };
+    },
+  },
+
+  S7: {
+    title: 'S7 工具并行执行 (一轮 2 个 tool_call → 并发跑)',
+    async run() {
+      const c = new BbClient({ userId: 'tester-owner' });
+      await c.connect();
+      c.sendUserMessage('并行测试：同时查时间和列一下目录');
+      const frames = await c.collectUntilIdle({ idleMs: 6000, maxMs: 25000 });
+      frames.forEach(showFrame);
+      const text = joinText(frames);
+      // 两个工具结果都回来：server_time 的 zone + list_dir 的 entries/count
+      const ok = /共 2 个/.test(text) && /zone/.test(text) && /(entries|count)/.test(text);
+      c.close();
+      return { ok, detail: text.slice(0, 200) };
     },
   },
 };

@@ -3,6 +3,8 @@ package com.bb.bot.aiAgent.auth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -131,6 +133,18 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_enabled (enabled)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 定时任务'",
 
+            "CREATE TABLE IF NOT EXISTS ai_skill (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  name VARCHAR(64) NOT NULL," +
+                    "  description VARCHAR(1024) NOT NULL," +
+                    "  body MEDIUMTEXT NOT NULL," +
+                    "  enabled TINYINT(1) NOT NULL DEFAULT 1," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+                    "  UNIQUE KEY uk_name (name)," +
+                    "  KEY idx_enabled (enabled)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent SKILL（DB 托管）'",
+
             // 种子：内置工具的默认 user 策略（无副作用的原语都对普通用户开放）
             "INSERT IGNORE INTO ai_tool_policy (tool_name, role, allowed) VALUES " +
                     "('server_time','user',1)," +
@@ -147,6 +161,7 @@ public class AiAgentSchemaInitializer {
     };
 
     @EventListener
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public void onContextRefreshed(ContextRefreshedEvent event) {
         if (!autoCreateTables) {
             log.info("aiAgent.autoCreateTables=false，跳过表初始化");

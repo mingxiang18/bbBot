@@ -2,8 +2,13 @@ package com.bb.bot.handler.aiChat;
 
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.bb.bot.aiAgent.core.AgentRunRegistry;
+import com.bb.bot.aiAgent.core.AiToolExecutor;
+import com.bb.bot.aiAgent.core.AiToolRegistry;
+import com.bb.bot.aiAgent.core.RunHandle;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
+import com.bb.bot.aiAgent.skills.SkillRegistry;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.common.annotation.BootEventHandler;
@@ -18,6 +23,8 @@ import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
 import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
+import com.bb.bot.common.util.aiChat.provider.ToolDefinition;
+import com.bb.bot.common.util.aiChat.provider.ToolLoopExecutor;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
@@ -54,23 +61,20 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * AI 聊天事件处理器（merge 后）。
+ * 统一 AI 处理器：一个 handler 同时承担「聊天」和「干活」。
  *
- * <p>结构来自 quizzical-pare 的清晰拆分（decide / load / compose / send），
- * 但所有上下文 IO 走 M8 ai_memory_event 新事件流：</p>
+ * <p>不再需要 {@code agent } 前缀显式切换。直接对话（私聊 / @机器人）时把已注册的
+ * 工具一并交给模型，由模型自己通过 function calling 决定是闲聊还是调用工具完成任务
+ * ——模型的工具决策本身就是路由器，无需额外的意图分类调用。</p>
+ *
  * <ul>
- *   <li>{@link MemoryQueryService} 读「同 session 内 chat / chat_reply」最近 N 条</li>
- *   <li>{@link MemoryEventRecorder} 写 kind=chat_reply（老 chat_history 表已停写）</li>
- *   <li>{@link com.bb.bot.aiAgent.memory.MemoryCompiler} 把 memory.md 注入 system prompt</li>
+ *   <li>直接对话 + {@code aiChat.toolsEnabled} → 走 {@link ToolLoopExecutor} 工具循环，
+ *       system prompt = 人格 + 工具引导 + 技能目录 + 长期记忆，全程流式</li>
+ *   <li>群聊概率自动回复 → 纯聊天（不挂工具，省 token、防误触发）</li>
  * </ul>
  *
- * <p>LLM 调用走统一的 {@link AiChatService}（M9 重构后唯一入口）：</p>
- * <ul>
- *   <li>{@code streamEnabled=true} → {@link AiChatService#chatStream}（流式）</li>
- *   <li>{@code streamEnabled=false} → {@link AiChatService#chat}（阻塞）</li>
- * </ul>
- * <p>两条路都共享同一份 {@link com.bb.bot.common.util.aiChat.provider.AIProvider} 实现，
- * 错误分类 / 重试策略 / endpoint 配置完全一致。</p>
+ * <p>历史上为单独的 {@code BbAiAgentHandler}，已合并至此；老的 {@code agent } 前缀
+ * 仍被识别并剥离，保证向后兼容。</p>
  *
  * @author ren
  */
@@ -107,6 +111,23 @@ public class BbAiChatHandler {
     @Autowired
     private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
 
+    /** 工具循环编排 + 注册表 + 执行器 + 技能目录（合并 agent 能力后引入）。 */
+    @Autowired
+    private ToolLoopExecutor toolLoopExecutor;
+
+    @Autowired
+    private AiToolRegistry toolRegistry;
+
+    @Autowired
+    private AiToolExecutor toolExecutor;
+
+    @Autowired
+    private SkillRegistry skillRegistry;
+
+    /** steering 支撑：记录运行中的 agent，用户中途追加消息时并入而非另起。 */
+    @Autowired
+    private AgentRunRegistry agentRunRegistry;
+
     @Value("${aiChat.autoReplyRate:0.99}")
     private double autoReplyRate;
 
@@ -120,8 +141,26 @@ public class BbAiChatHandler {
     @Value("${aiChat.streamEnabled:${chatGPT.streamEnabled:false}}")
     private Boolean streamEnabled;
 
+    /** 是否在直接对话时给模型挂载工具（让它能干活）。关掉则退化为纯聊天机器人。 */
+    @Value("${aiChat.toolsEnabled:true}")
+    private boolean toolsEnabled;
+
+    /** 工具调用循环硬上限，复用 agent 配置。 */
+    @Value("${aiAgent.maxSteps:10}")
+    private int maxSteps;
+
+    /** 挂载工具时追加到 system prompt 的工具使用引导。 */
+    @Value("${aiChat.toolGuidance:你不仅能聊天，还能调用工具真正帮用户干活——" +
+            "查实时/外部信息、读写文件、跑命令、联网搜索等。当用户明确要求执行某个操作、" +
+            "查询实时或外部信息、或处理文件时，直接调用合适的工具完成；普通闲聊就正常对话，" +
+            "不要为了用工具而用工具。把工具结果用你一贯的人格讲给用户，不要原样贴 JSON。}")
+    private String toolGuidance;
+
     /** 测试注入用的确定性随机源。 */
     DoubleSupplier randomSource = () -> ThreadLocalRandom.current().nextDouble();
+
+    /** 老的 agent 前缀，向后兼容：识别并剥离，不再作为开启工具的必要条件。 */
+    private static final String[] LEGACY_AGENT_PREFIXES = {"agent ", "/agent ", "Agent "};
 
     // =========================================================================
     // 主入口
@@ -138,17 +177,118 @@ public class BbAiChatHandler {
         List<ChatHistory> historyList = loadHistory(bbReceiveMessage);
         ChatHistory replyTarget = findReplyTarget(bbReceiveMessage, historyList);
 
-        // personality = prompts.yml 模板 + clue suffix + memory.md 注入
-        String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues());
+        // 直接对话（私聊 / @我）才挂工具，让模型自行决定聊天还是干活
+        boolean useTools = toolsEnabled && decision.isDirectTrigger();
+
+        String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
+        List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
         List<ChatMessage> messages = MessageBuilder.buildContextMessages(
-                personality, bbReceiveMessage.getMessageContentList(), historyList, replyTarget);
+                personality, currentContent, historyList, replyTarget);
 
-        if (Boolean.TRUE.equals(streamEnabled)) {
+        if (useTools) {
+            toolLoopReply(bbReceiveMessage, messages);
+        } else if (Boolean.TRUE.equals(streamEnabled)) {
             streamAiReply(bbReceiveMessage, messages);
         } else {
             blockingAiReply(bbReceiveMessage, messages);
         }
+    }
+
+    /**
+     * 工具循环分支：把已注册工具交给模型，跑 function calling 循环，全程流式。
+     * 模型若判断只是闲聊则不会调用任何工具，行为与纯聊天一致。
+     *
+     * <p>steering：同一会话已有运行中的 agent 时，本条消息并入那一轮（中途改方向 /
+     * 追加需求），不另起回复。run 收尾的极小竞态窗口里漏接的消息会被补派。</p>
+     */
+    private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+        String sessionKey = AgentRunRegistry.sessionKey(msg.getBotType(), msg.getGroupId(), msg.getUserId());
+        RunHandle handle = agentRunRegistry.beginOrSteer(sessionKey, extractPlainText(msg));
+        if (handle == null) {
+            // 已并入运行中的 agent（steering），不另起回复
+            log.info("消息并入运行中的 agent steering：session={}", sessionKey);
+            return;
+        }
+
+        List<ToolDefinition> tools = toolRegistry.toToolDefinitions();
+        String callerUserId = msg.getUserId();
+        String platform = msg.getBotType();
+        String sessionId = "chat-" + msg.getMessageId();
+
+        BbSendMessage envelope = new BbSendMessage(msg);
+        MessageStreamSession session = bbMessageApi.startStream(envelope);
+
+        try {
+            toolLoopExecutor.run(
+                    messages,
+                    tools,
+                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId),
+                    maxSteps,
+                    new StreamHandler() {
+                        @Override
+                        public void onTextDelta(String delta) {
+                            session.appendDelta(delta);
+                        }
+                        @Override
+                        public void onToolCalls(List<ToolCall> calls) {
+                            // 仅日志，IM 端不展示工具调用细节
+                            log.debug("AI 工具调用 step tool_calls: {}", calls);
+                        }
+                        @Override
+                        public void onComplete(String fullText, String finishReason) {
+                            session.complete();
+                            if (StringUtils.isNoneBlank(fullText)) {
+                                persistBotReply(msg, Collections.singletonList(
+                                        BbMessageContent.buildTextContent(fullText)));
+                            }
+                        }
+                        @Override
+                        public void onError(Throwable err) {
+                            log.error("AI 工具循环流式失败", err);
+                            session.fail(err);
+                        }
+                    },
+                    handle);
+        } finally {
+            List<String> leftover = handle.close();
+            agentRunRegistry.end(sessionKey, handle);
+            if (!leftover.isEmpty()) {
+                // run 收尾瞬间漏接的 steering 消息：合并成一条新消息补派
+                log.info("agent run 收尾残留 {} 条 steering 消息，补派", leftover.size());
+                aiChatHandle(cloneWithText(msg, String.join("\n", leftover)));
+            }
+        }
+    }
+
+    /** 抽出消息里的纯文本（剥离老 agent 前缀），用作 steering 消息体。 */
+    private String extractPlainText(BbReceiveMessage msg) {
+        StringBuilder sb = new StringBuilder();
+        for (BbMessageContent c : stripLegacyAgentPrefix(msg.getMessageContentList())) {
+            if (BbSendMessageType.TEXT.equals(c.getType()) && c.getData() != null) {
+                sb.append(c.getData());
+            }
+        }
+        return sb.toString().trim();
+    }
+
+    /** 克隆一条接收消息、替换为指定文本，用于补派漏接的 steering 消息。 */
+    private BbReceiveMessage cloneWithText(BbReceiveMessage src, String text) {
+        BbReceiveMessage c = new BbReceiveMessage();
+        c.setBotType(src.getBotType());
+        c.setMessageType(src.getMessageType());
+        c.setUserId(src.getUserId());
+        c.setSender(src.getSender());
+        c.setGroupId(src.getGroupId());
+        c.setMessageId(src.getMessageId() + "-steer-" + System.nanoTime());
+        c.setMessage(text);
+        c.setMessageContentList(new ArrayList<>(
+                Collections.singletonList(BbMessageContent.buildTextContent(text))));
+        c.setAtUserList(src.getAtUserList());
+        c.setSendTime(java.time.LocalDateTime.now());
+        c.setWebSocket(src.getWebSocket());
+        c.setConfig(src.getConfig());
+        return c;
     }
 
     /** 阻塞分支：走 AiChatService（quizzical provider 抽象，带错误分类）。 */
@@ -232,8 +372,16 @@ public class BbAiChatHandler {
                 .orElse(null);
     }
 
-    /** M8.6：personality = prompts.yml 模板 + clue suffix + 长期记忆 memory.md 注入。 */
+    /** 测试兼容用 2 参重载：等价于不挂工具。 */
     String composePersonality(String userId, List<String> clues) {
+        return composePersonality(userId, clues, false);
+    }
+
+    /**
+     * M8.6：personality = prompts.yml 模板 + clue suffix + 长期记忆 memory.md 注入。
+     * useTools 时再追加工具使用引导 + 技能目录（progressive disclosure）。
+     */
+    String composePersonality(String userId, List<String> clues, boolean useTools) {
         String base = StringUtils.defaultString(promptProperties.getAiChat().getPersonality());
         if (!CollectionUtils.isEmpty(clues)) {
             Map<String, String> vars = new HashMap<>();
@@ -249,7 +397,37 @@ public class BbAiChatHandler {
         } catch (Exception e) {
             log.warn("注入 memory.md 失败 user={}", userId, e);
         }
+        if (useTools) {
+            base = base + "\n\n" + toolGuidance;
+            try {
+                base = base + skillRegistry.describeAllForSystemPrompt();
+            } catch (Exception e) {
+                log.warn("注入技能目录失败 user={}", userId, e);
+            }
+        }
         return base;
+    }
+
+    /**
+     * 向后兼容：剥离消息首段文本里的老 {@code agent } 前缀。返回新列表，不改原始消息体。
+     */
+    private List<BbMessageContent> stripLegacyAgentPrefix(List<BbMessageContent> contentList) {
+        if (CollectionUtils.isEmpty(contentList)) {
+            return contentList;
+        }
+        BbMessageContent first = contentList.get(0);
+        if (!BbSendMessageType.TEXT.equals(first.getType()) || first.getData() == null) {
+            return contentList;
+        }
+        String text = first.getData().toString();
+        for (String prefix : LEGACY_AGENT_PREFIXES) {
+            if (text.startsWith(prefix)) {
+                List<BbMessageContent> copy = new ArrayList<>(contentList);
+                copy.set(0, BbMessageContent.buildTextContent(text.substring(prefix.length()).trim()));
+                return copy;
+            }
+        }
+        return contentList;
     }
 
     // =========================================================================
@@ -258,11 +436,12 @@ public class BbAiChatHandler {
 
     /**
      * 判断本轮消息是否需要 AI 回复。私聊必回；群聊@必回；群聊未@时按配置 + 关键词 + 概率门控。
+     * 私聊与 @机器人 标记为 directTrigger（会挂工具）；概率自动回复不挂工具。
      * 包级可见：方便单元测试在 Mock 服务后直接调用。
      */
     ReplyDecision decideShouldReply(BbReceiveMessage msg) {
         if (MessageType.PRIVATE.equals(msg.getMessageType())) {
-            return ReplyDecision.reply(Collections.emptyList());
+            return ReplyDecision.replyDirect(Collections.emptyList());
         }
         if (!isGroupLike(msg)) {
             return ReplyDecision.skip();
@@ -271,7 +450,7 @@ public class BbAiChatHandler {
         boolean atMe = msg.getAtUserList() != null && msg.getAtUserList().stream()
                 .filter(MessageUser::getBotFlag).findFirst().isPresent();
         if (atMe) {
-            return ReplyDecision.reply(aiClueService.selectClue(formatForClueLookup(msg)));
+            return ReplyDecision.replyDirect(aiClueService.selectClue(formatForClueLookup(msg)));
         }
 
         UserConfigValue autoConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()

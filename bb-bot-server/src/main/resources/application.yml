@@ -137,6 +137,8 @@ aiChat:
   chatHistoryNum: 10
   #具有线索管理权限的用户ID列表
   adminUserIds:
+  #直接对话（私聊/@机器人）时是否给模型挂载工具，使其能自行判断聊天还是干活；关闭则退化为纯聊天机器人
+  toolsEnabled: true
 
 # AI 模型调用配置
 # active-provider 决定调用哪家：openai / deepseek
@@ -171,6 +173,12 @@ aiAgent:
   owners: 1105048721
   # 工具调用循环硬上限，避免 LLM 跑飞
   maxSteps: 10
+  # 一轮里多个无依赖的工具调用是否并发执行
+  toolParallel: true
+  # 会话内上下文压缩：工具循环上下文超过 thresholdChars 字符时，把早期内容蒸馏成摘要
+  compact:
+    thresholdChars: 40000
+    keepChars: 12000
   # 启动时自动 CREATE TABLE IF NOT EXISTS ai_user_role / ai_tool_policy / ai_tool_invocation_log / ai_cron_task
   autoCreateTables: true
   # 沙箱

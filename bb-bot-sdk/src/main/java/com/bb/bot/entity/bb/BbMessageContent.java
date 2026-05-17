@@ -25,6 +25,21 @@ public class BbMessageContent {
     private Object data;
 
     /**
+     * 附件文件名（仅 localFile / netFile / localImage / netImage 时有意义）
+     */
+    private String fileName;
+
+    /**
+     * 附件 MIME 类型（如 application/pdf、image/png；可空）
+     */
+    private String mimeType;
+
+    /**
+     * 附件字节大小（可空）
+     */
+    private Long size;
+
+    /**
      * 构建文本消息
      *
      * @param text 消息文本内容
@@ -86,6 +101,36 @@ public class BbMessageContent {
         return BbMessageContent.builder()
                 .type(BbSendMessageType.REPLY)
                 .data(messageId)
+                .build();
+    }
+
+    /**
+     * 从本地文件构建附件消息（非图片，发送时转 base64）。
+     *
+     * @param file 本地文件
+     * @return 封装后的消息实体
+     */
+    public static BbMessageContent buildLocalFileMessageContent(File file) {
+        return BbMessageContent.builder()
+                .type(BbSendMessageType.LOCAL_FILE)
+                .data(file)
+                .fileName(file == null ? null : file.getName())
+                .size(file == null || !file.exists() ? null : file.length())
+                .build();
+    }
+
+    /**
+     * 从网络地址构建附件消息（非图片）。
+     *
+     * @param url      文件下载地址
+     * @param fileName 文件名
+     * @return 封装后的消息实体
+     */
+    public static BbMessageContent buildNetFileMessageContent(String url, String fileName) {
+        return BbMessageContent.builder()
+                .type(BbSendMessageType.NET_FILE)
+                .data(url)
+                .fileName(fileName)
                 .build();
     }
 }

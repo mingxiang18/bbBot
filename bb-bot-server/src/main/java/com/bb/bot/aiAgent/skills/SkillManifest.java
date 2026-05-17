@@ -1,25 +1,24 @@
 package com.bb.bot.aiAgent.skills;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import java.nio.file.Path;
+import lombok.Getter;
 
 /**
- * 一个 SKILL.md 加载后的元信息（不含 body —— body 由 LoadSkillTool 按需读）。
- * <p>遵循 agentskills.io 规范：</p>
- * <ul>
- *   <li>{@code name}：lowercase + hyphen，必须与父目录名一致</li>
- *   <li>{@code description}：何时调用本 skill 的说明（≤1024 字符）</li>
- *   <li>{@code skillDir}：SKILL.md 所在目录，便于解析 scripts/ references/ assets/</li>
- *   <li>{@code skillFile}：SKILL.md 本身</li>
- * </ul>
+ * 一个 SKILL 加载后的元信息，来源于 {@code ai_skill} 表。
+ *
+ * <p>遵循 agentskills.io 规范：name 为 lowercase + hyphen；description 说明何时调用
+ * （progressive disclosure 的 metadata 层，注入 system prompt）；body 为完整指引正文，
+ * 由 {@link com.bb.bot.aiAgent.tools.LoadSkillTool} 按需取。</p>
  */
-@Data
-@AllArgsConstructor
+@Getter
 public class SkillManifest {
+
     private final String name;
     private final String description;
-    private final Path skillDir;
-    private final Path skillFile;
+    private final String body;
+
+    public SkillManifest(String name, String description, String body) {
+        this.name = name;
+        this.description = description;
+        this.body = body;
+    }
 }

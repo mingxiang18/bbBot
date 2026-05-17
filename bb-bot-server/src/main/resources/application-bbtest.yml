@@ -25,23 +25,38 @@ bot:
       appId: bb-test
       secret: bb-test-secret
 
+# AI provider 配置：直接指向 mock-openai-server.mjs。
+# 注意键名是 ai.openai.*（对应 AIProviderProperties 的 openai 字段），不是 ai.providers.openai.*。
+# 切真实 LLM：把下面三项改成真实 endpoint / key / model，或在 real-llm.env 里设环境变量。
+ai:
+  active-provider: openai
+  openai:
+    base-url: ${AI_OPENAI_BASE_URL:http://localhost:18800/v1}
+    api-key: ${AI_OPENAI_API_KEY:sk-mock-localtest}
+    model: ${AI_OPENAI_MODEL:mock-gpt-4}
+    vision-enable: false
+
+# 旧 chatGPT.* 配置保留：仅供 streamEnabled 等少量字段；endpoint 以上面的 ai.* 为准。
 chatGPT:
-  # 环境变量优先级最高；没设则 fallback 到 mock-openai-server.mjs
-  # 配真实 LLM 的最简方式：在 scripts/dev/real-llm.env 里写好 CHATGPT_* 变量，
-  # ./scripts/dev/bb-dev.sh up 会自动 source 它再启动。
-  apiKey: ${CHATGPT_API_KEY:sk-mock-localtest}
-  url: ${CHATGPT_URL:http://localhost:18800/v1/chat/completions}
-  model: ${CHATGPT_MODEL:mock-gpt-4}
   streamEnabled: true
+
+aiChat:
+  streamEnabled: true
+  # 直接对话挂载工具（统一 handler，无需 agent 前缀）
+  toolsEnabled: true
 
 aiAgent:
   owners: tester-owner
   maxSteps: 10
   autoCreateTables: true
+  # 工具并行执行 + 会话内上下文压缩（压缩阈值调低，便于测试触发）
+  toolParallel: true
+  compact:
+    thresholdChars: 40000
+    keepChars: 12000
   sandbox:
     preferred: noop
   pluginDir: /tmp/bb-bot-test/plugins
-  skillsDir: ./scripts/dev/skills
   fs:
     allowedRoots: /tmp
     writeRoots: /tmp/bb-bot-test

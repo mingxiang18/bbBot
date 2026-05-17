@@ -95,6 +95,25 @@ A6 沙箱、A7 cron、A8 插件在 BB 协议测试客户端里没覆盖：
 - **A7**：cron 至少需要等一个分钟整点触发，自动化测试不实用。`./scripts/dev/bb-dev.sh repl` 进交互模式手动 `/aiAgent.cron.add "0 */1 * * * *" 报时` 看下一分钟的自动执行更直观。
 - **A8**：需要一个示例 plugin jar，超出本测试环境范围。
 
+## 新增场景 S1–S7（BB 协议改造 + handler 合并 + agent 运行时增强）
+
+> 注：A 系列描述里提到的 `agent` 前缀 / `BbAiAgentHandler` 已是历史。chat 与 agent
+> handler 已合并为统一的 `BbAiChatHandler`——直接对话即挂载工具，由模型自行决定是否
+> 干活；`agent` 前缀仍兼容但不再必需。
+
+| ID | 测什么 | 期望 |
+|---|---|---|
+| S1 | 认证握手报 `capabilities:[stream]` → 服务端走 streamId 帧式真流式 | 帧带 `streamId`，`streamState` 序列 start → delta* → end |
+| S2 | 认证不报 capabilities → 服务端降级 chunked-send | 帧不带 `streamId`，分段连发 |
+| S3 | 入站 `netFile` 文件附件 → MessageBuilder 渲染成文本提示喂模型 | bot 正常处理并回复，不崩溃 |
+| S4 | 无 `agent` 前缀直接发"现在几点" → 统一 handler 智能路由 | 模型自行决定调 server_time 工具 |
+| S5 | agent 运行中追加第二条消息 → steering 并入同一轮 | 两条消息共享一个 `streamId`（未 steer 会有 2 个） |
+| S6 | `/aiAgent.skill.list` 列出 `ai_skill` 表 | 输出含 DB 托管的 `log-triage` skill |
+| S7 | 一轮内 2 个 tool_call → `ToolLoopExecutor` 并发执行 | server_time + list_dir 两个工具结果都回灌 |
+
+SKILL 已改为纯 DB 托管：`ai_skill` 表由 `sql/01-init-bb-bot-local.sql` 预建并 seed
+一条 `log-triage`，不再扫描 `skillsDir` 目录。AI provider 配置键为 `ai.openai.*`。
+
 ## REPL 模式
 
 需要手动玩的场景：

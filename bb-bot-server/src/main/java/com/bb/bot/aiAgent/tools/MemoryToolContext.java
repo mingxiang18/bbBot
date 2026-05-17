@@ -8,7 +8,7 @@ package com.bb.bot.aiAgent.tools;
  * 通过反射，参数列表是 LLM 编排的，user_id 不在签名里。</p>
  *
  * <p>解决：由 AiToolExecutor 在 invoke 入口处把 user_id 放进 ThreadLocal；
- * memory 系列工具用本类的 getUserId() 取。BbAiAgentHandler 等 caller 来自
+ * memory 系列工具用本类的 getUserId() 取。BbAiChatHandler 等 caller 来自
  * 同一线程 → ThreadLocal 安全。AiToolExecutor 的 toolPool 是 cachedThreadPool，
  * 任务跑完会被 finally 块清掉。</p>
  */

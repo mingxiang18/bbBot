@@ -148,6 +148,10 @@ public final class MessageBuilder {
                     parts.add(MessageContent.netImage(String.valueOf(c.getData())));
                 } else if (BbSendMessageType.LOCAL_IMAGE.equals(c.getType())) {
                     parts.add(MessageContent.base64Image(String.valueOf(c.getData())));
+                } else if (BbSendMessageType.LOCAL_FILE.equals(c.getType())
+                        || BbSendMessageType.NET_FILE.equals(c.getType())) {
+                    // 文件附件无法直接喂模型，以文本提示告知；模型可用 file 工具处理
+                    askText.append(fileNote(c));
                 }
             }
         }
@@ -175,13 +179,23 @@ public final class MessageBuilder {
     }
 
     private static String stringifyPart(BbMessageContent content) {
+        String type = content.getType();
+        if (BbSendMessageType.LOCAL_FILE.equals(type) || BbSendMessageType.NET_FILE.equals(type)) {
+            return fileNote(content);
+        }
         if (content.getData() == null) {
             return "";
         }
-        if (BbSendMessageType.AT.equals(content.getType())) {
+        if (BbSendMessageType.AT.equals(type)) {
             return "@" + content.getData();
         }
         return content.getData().toString();
+    }
+
+    /** 文件附件渲染成对模型可读的文本提示。 */
+    private static String fileNote(BbMessageContent content) {
+        String name = StringUtils.isBlank(content.getFileName()) ? "未命名文件" : content.getFileName();
+        return "[附件文件：" + name + "]";
     }
 
     /** 仅供构建测试 fixture 时使用：包装单条文本为 {@link ChatMessage} 列表。 */
