@@ -21,7 +21,7 @@
 | **SKILLS 体系** | `skills/<name>/SKILL.md` 自动注入 system prompt + `load_skill` 工具 | `688b9c2a` |
 | **Splatoon3 专用工具** | `splatoon3_salmon_run` 一步直达 schedules.json | `beebdeb1` |
 | **M8 记忆系统重构** | `ai_memory_event` + `ai_memory_session` + `ai_memory_fact` 三表 + 4 阶段编译 + 跨进程持久 | `49cfa470` → `175fdf0a` |
-| **本地测试环境** | `.dev/bb-dev.sh` + mock OpenAI + BB 协议测试客户端 + 13 个 A 场景 | `93aafe2b` |
+| **本地测试环境** | `scripts/dev/bb-dev.sh` + mock OpenAI + BB 协议测试客户端 + 13 个 A 场景 | `93aafe2b` |
 | **真实 LLM 接入** | `application-bbtest.yml` 环境变量化 + `real-llm.env` 自动 source + `which-llm` 命令 | `6e997bb9` |
 
 注册到 `AiToolRegistry` 的工具最终为 **13 个** + **1 个示例 SKILL**：
@@ -147,23 +147,23 @@ git fetch origin claude/gifted-tesla-c73b2e
 git checkout claude/gifted-tesla-c73b2e
 
 # 2. （仅一次）准备真实 LLM 配置
-cp .dev/real-llm.env.example .dev/real-llm.env
-$EDITOR .dev/real-llm.env   # 取消注释你的 endpoint 段、填 key
+cp scripts/dev/real-llm.env.example scripts/dev/real-llm.env
+$EDITOR scripts/dev/real-llm.env   # 取消注释你的 endpoint 段、填 key
 
 # 3. 启动（自动建库 + 起 bbBot）
-./.dev/bb-dev.sh up
+./scripts/dev/bb-dev.sh up
 
 # 4. 验证
-./.dev/bb-dev.sh which-llm    # 确认接的是真实 endpoint
-./.dev/bb-dev.sh test         # 跑 13 个 A 场景（mock 模式才有意义；接真 LLM 可能部分宽松失败）
+./scripts/dev/bb-dev.sh which-llm    # 确认接的是真实 endpoint
+./scripts/dev/bb-dev.sh test         # 跑 13 个 A 场景（mock 模式才有意义；接真 LLM 可能部分宽松失败）
 
 # 5. 进交互模式手动玩
-./.dev/bb-dev.sh repl
+./scripts/dev/bb-dev.sh repl
 > 你好
 > agent 现在几点
 > agent 帮我记住：我是 splatoon3 老玩家
 > :q
-./.dev/bb-dev.sh down
+./scripts/dev/bb-dev.sh down
 ```
 
 ### 形态 B：已有 Docker 部署升级（misuaa/bb-bot 镜像）
@@ -337,7 +337,7 @@ cat memory-workspace/user/<你的id>/compiled/memory.md
 
 ```bash
 # 1. 停 bbBot
-docker stop bb-bot   # 或 ./.dev/bb-dev.sh down
+docker stop bb-bot   # 或 ./scripts/dev/bb-dev.sh down
 
 # 2. 切回老 commit
 git checkout master   # 或具体老 tag
@@ -416,7 +416,7 @@ chatGPT:
   apiKey: sk-xxxxx
 ```
 
-热重载需要重启 bbBot 进程；如想运行时切，可走环境变量（参考本地 `.dev/real-llm.env` 模式）。
+热重载需要重启 bbBot 进程；如想运行时切，可走环境变量（参考本地 `scripts/dev/real-llm.env` 模式）。
 
 ---
 
@@ -426,7 +426,7 @@ chatGPT:
 |---|---|
 | 总体设计 / Phase 1-2 思路 | `.ai-workflow/01-discover.md` |
 | M1-M7 SHIP 总结 | `.ai-workflow/04-ship.md` |
-| 本地 dev 环境 | `.dev/` 整个目录，入口 `.dev/bb-dev.sh` |
+| 本地 dev 环境 | `scripts/dev/` 整个目录，入口 `scripts/dev/bb-dev.sh` |
 | 测试 profile 配置 | `bb-bot-server/src/main/resources/application-bbtest.yml` |
 | 生产配置模板 | `bb-bot-server/src/main/resources/application.yml` |
 | 全部 23 commits | `git log --oneline master..claude/gifted-tesla-c73b2e` |
@@ -461,5 +461,5 @@ git commit -m "feat(ai): bbBot AI Agent upgrade (M1-M8)"
 
 ---
 
-> 部署有疑问看：[`.ai-workflow/01-discover.md`](.ai-workflow/01-discover.md) 完整 plan，或 `.dev/README.md` 本地测试指引。
+> 部署有疑问看：[`.ai-workflow/01-discover.md`](.ai-workflow/01-discover.md) 完整 plan，或 `scripts/dev/README.md` 本地测试指引。
 > 紧急回滚：`git checkout master && docker run misuaa/bb-bot:<旧 tag>`，新表保留不动不影响。

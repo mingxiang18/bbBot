@@ -16,7 +16,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 RUN_DIR="$SCRIPT_DIR/run"
 PIDS_DIR="$RUN_DIR/pids"
 LOGS_DIR="$RUN_DIR/logs"

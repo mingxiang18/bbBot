@@ -1,4 +1,4 @@
-# bbBot 本地测试环境（.dev/）
+# bbBot 本地测试环境（scripts/dev/）
 
 零外部依赖（除复用 misu-server 的 MySQL）地把 M1-M7 全套 agent 能力跑起来，用 bb 私有协议测。
 
@@ -9,9 +9,9 @@
 docker ps --filter name=misu-mysql-local
 
 # 启动 + 跑全部场景
-./.dev/bb-dev.sh up
-./.dev/bb-dev.sh test
-./.dev/bb-dev.sh down
+./scripts/dev/bb-dev.sh up
+./scripts/dev/bb-dev.sh test
+./scripts/dev/bb-dev.sh down
 ```
 
 跑通的样子：
@@ -50,7 +50,7 @@ docker ps --filter name=misu-mysql-local
 ## 目录结构
 
 ```
-.dev/
+scripts/dev/
 ├── README.md                   # 本文件
 ├── bb-dev.sh                   # orchestrator（up/down/build/test/repl/logs/status）
 ├── sql/01-init-bb-bot-local.sql  # bb_bot_local 库 + 基础 4 表（dispatcher / chat / clue / 占位）
@@ -66,16 +66,16 @@ profile 配置在仓库内（提交版本控制）：`bb-bot-server/src/main/res
 ## 常用命令
 
 ```bash
-./.dev/bb-dev.sh up [--build]    # 启动；--build 强制重建 jar
-./.dev/bb-dev.sh down            # 停 bot + mock
-./.dev/bb-dev.sh status          # 查运行状态
-./.dev/bb-dev.sh logs bot        # tail bbBot 日志
-./.dev/bb-dev.sh logs mock       # tail mock 日志
-./.dev/bb-dev.sh build [--force] # 仅 build jar
-./.dev/bb-dev.sh init-db         # 仅初始化数据库
-./.dev/bb-dev.sh test            # 跑全部场景
-./.dev/bb-dev.sh test A2         # 只跑 A2
-./.dev/bb-dev.sh repl            # 进交互式 REPL，手动收发
+./scripts/dev/bb-dev.sh up [--build]    # 启动；--build 强制重建 jar
+./scripts/dev/bb-dev.sh down            # 停 bot + mock
+./scripts/dev/bb-dev.sh status          # 查运行状态
+./scripts/dev/bb-dev.sh logs bot        # tail bbBot 日志
+./scripts/dev/bb-dev.sh logs mock       # tail mock 日志
+./scripts/dev/bb-dev.sh build [--force] # 仅 build jar
+./scripts/dev/bb-dev.sh init-db         # 仅初始化数据库
+./scripts/dev/bb-dev.sh test            # 跑全部场景
+./scripts/dev/bb-dev.sh test A2         # 只跑 A2
+./scripts/dev/bb-dev.sh repl            # 进交互式 REPL，手动收发
 ```
 
 ## 验收场景说明
@@ -92,7 +92,7 @@ profile 配置在仓库内（提交版本控制）：`bb-bot-server/src/main/res
 A6 沙箱、A7 cron、A8 插件在 BB 协议测试客户端里没覆盖：
 
 - **A6**：mock 模式下 SandboxRunnerFactory 选 `noop`（Mac 没 bwrap），shell_exec 调用会返回 `sandbox_unavailable`，A4 实际就走过了这条降级路径。生产 Linux + bwrap 才能验真正的沙箱挂载效果。
-- **A7**：cron 至少需要等一个分钟整点触发，自动化测试不实用。`./.dev/bb-dev.sh repl` 进交互模式手动 `/aiAgent.cron.add "0 */1 * * * *" 报时` 看下一分钟的自动执行更直观。
+- **A7**：cron 至少需要等一个分钟整点触发，自动化测试不实用。`./scripts/dev/bb-dev.sh repl` 进交互模式手动 `/aiAgent.cron.add "0 */1 * * * *" 报时` 看下一分钟的自动执行更直观。
 - **A8**：需要一个示例 plugin jar，超出本测试环境范围。
 
 ## REPL 模式
@@ -100,7 +100,7 @@ A6 沙箱、A7 cron、A8 插件在 BB 协议测试客户端里没覆盖：
 需要手动玩的场景：
 
 ```
-$ ./.dev/bb-dev.sh repl
+$ ./scripts/dev/bb-dev.sh repl
 > agent 现在几点
   ← [*] type=private text="让我用工具查一下…根据 server_time 返回：{...}"
 > /aiAgent.audit guest-777 7
@@ -108,15 +108,15 @@ $ ./.dev/bb-dev.sh repl
 > :q
 ```
 
-默认用 `tester-owner` 身份登录。换身份：`BB_APP_ID=... BB_SECRET=... node .dev/bb-client.mjs --interactive`。
+默认用 `tester-owner` 身份登录。换身份：`BB_APP_ID=... BB_SECRET=... node scripts/dev/bb-client.mjs --interactive`。
 
 ## 数据库随时清空
 
 ```bash
 docker exec -i misu-mysql-local mysql -uroot -proot \
   -e "DROP DATABASE IF EXISTS bb_bot_local;"
-./.dev/bb-dev.sh init-db
-./.dev/bb-dev.sh down && ./.dev/bb-dev.sh up
+./scripts/dev/bb-dev.sh init-db
+./scripts/dev/bb-dev.sh down && ./scripts/dev/bb-dev.sh up
 ```
 
 ## 切换到真实 OpenAI
@@ -127,6 +127,6 @@ docker exec -i misu-mysql-local mysql -uroot -proot \
 
 - **`misu-mysql-local 没在跑`** → 到 `~/IdeaProjects/misu-server` 那边 `./dev.sh up` 把容器起来。
 - **`bb_bot_local 表里有数据，bbBot 报 Unknown column`** → DB schema 漂移了，按上一节"随时清空"重建即可。
-- **`bbBot 60s 内未就绪`** → 看 `.dev/run/logs/bot.log`，常见原因是 MySQL 拒连或端口 18199/18765 被占。
+- **`bbBot 60s 内未就绪`** → 看 `scripts/dev/run/logs/bot.log`，常见原因是 MySQL 拒连或端口 18199/18765 被占。
 - **测试客户端 connect 失败** → 确认 `bb-dev.sh status` 里 `bot` 是 running，否则 mock + bbBot 都要重启。
-- **更改源码后** → `./.dev/bb-dev.sh down && ./.dev/bb-dev.sh up --build`。
+- **更改源码后** → `./scripts/dev/bb-dev.sh down && ./scripts/dev/bb-dev.sh up --build`。

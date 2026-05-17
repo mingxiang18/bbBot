@@ -92,28 +92,28 @@ bbBot 现在不只是聊天机器人，还是一个 **完整的 IM Agent**，对
 
 ```bash
 # 一行启动（依赖 misu-server 的 MySQL 3316 容器）
-./.dev/bb-dev.sh up
+./scripts/dev/bb-dev.sh up
 
 # 验证当前接的是 mock 还是真实 LLM
-./.dev/bb-dev.sh which-llm
+./scripts/dev/bb-dev.sh which-llm
 
 # 跑 13 个 A 场景回归
-./.dev/bb-dev.sh test
+./scripts/dev/bb-dev.sh test
 
 # 交互式手动玩
-./.dev/bb-dev.sh repl
+./scripts/dev/bb-dev.sh repl
 ```
 
-详细见 [.dev/README.md](.dev/README.md)。
+详细见 [scripts/dev/README.md](scripts/dev/README.md)。
 
 ### 接真实 LLM
 
 支持任一 OpenAI 兼容 endpoint（必须支持 function calling）：
 
 ```bash
-cp .dev/real-llm.env.example .dev/real-llm.env
+cp scripts/dev/real-llm.env.example scripts/dev/real-llm.env
 # 编辑 real-llm.env 填好 CHATGPT_API_KEY / CHATGPT_URL / CHATGPT_MODEL
-./.dev/bb-dev.sh up   # 自动 source
+./scripts/dev/bb-dev.sh up   # 自动 source
 ```
 
 四个推荐 endpoint（模板里有）：
