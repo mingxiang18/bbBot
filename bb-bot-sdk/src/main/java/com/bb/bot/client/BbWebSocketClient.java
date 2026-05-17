@@ -9,9 +9,22 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * bb机器人websocket客户端连接
+ * bb机器人websocket客户端连接。
+ *
+ * <p>BB 私有协议握手时通过 {@link BbAuthMessage#getCapabilities()} 上报客户端能力位
+ * （见 {@code com.bb.bot.constant.BbCapability}）：</p>
+ * <ul>
+ *   <li>声明 {@code stream}：服务端按 streamId/streamState 帧式真流式下发，
+ *       {@link BbSocketServerMessage} 会带 {@code streamId} 与 {@code streamState}
+ *       （start/delta/end），由 {@link BbClientMessageHandler} 自行按 streamId 重组呈现；</li>
+ *   <li>声明 {@code file}：服务端可下发 localFile / netFile 附件消息；</li>
+ *   <li>不声明（用 6 参构造，capabilities 为空）：服务端降级为分段连发，行为与旧版一致。</li>
+ * </ul>
+ *
  * @author ren
  */
 @Slf4j
@@ -24,6 +37,11 @@ public class BbWebSocketClient extends WebSocketClient {
      */
     private final String appId;
     private final String secret;
+
+    /**
+     * 握手时上报的客户端能力位（stream / file）。空表示不支持新协议特性。
+     */
+    private final List<String> capabilities;
 
     /**
      * 客户端消息处理者
@@ -43,21 +61,36 @@ public class BbWebSocketClient extends WebSocketClient {
     private Boolean authPassFlag = false;
 
     /**
-     * 构造方法
-     *
-     * @param name, connectInterval, serverUri
+     * 构造方法（不声明任何能力位，服务端走分段连发，兼容旧版行为）。
      */
     public BbWebSocketClient(String name, String appId, String secret,
                              long connectInterval,
                              URI serverUri,
                              BbClientMessageHandler bbClientMessageHandler) {
+        this(name, appId, secret, connectInterval, serverUri, bbClientMessageHandler,
+                Collections.emptyList());
+    }
+
+    /**
+     * 构造方法。
+     *
+     * @param capabilities 握手上报的能力位，见 {@code com.bb.bot.constant.BbCapability}
+     *                     （如 {@code List.of(BbCapability.STREAM, BbCapability.FILE)}）
+     */
+    public BbWebSocketClient(String name, String appId, String secret,
+                             long connectInterval,
+                             URI serverUri,
+                             BbClientMessageHandler bbClientMessageHandler,
+                             List<String> capabilities) {
         super(serverUri);
         this.name = name;
         this.appId = appId;
         this.secret = secret;
         this.connectInterval = connectInterval;
         this.bbClientMessageHandler = bbClientMessageHandler;
-        log.info("【" + name + "】WebSocket客户端初始化:" + serverUri.toString());
+        this.capabilities = capabilities == null ? Collections.emptyList() : capabilities;
+        log.info("【" + name + "】WebSocket客户端初始化:" + serverUri.toString()
+                + " capabilities=" + this.capabilities);
         connect();
         startConnectThread();
     }
@@ -68,17 +101,20 @@ public class BbWebSocketClient extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         log.info("【" + name + "】WebSocket客户端连接成功");
-        //发送认证消息
+        //发送认证消息，并上报客户端能力位（stream / file）
         BbAuthMessage bbAuthMessage = new BbAuthMessage();
         bbAuthMessage.setAppId(appId);
         bbAuthMessage.setSecret(secret);
+        bbAuthMessage.setCapabilities(capabilities);
         this.send(JSON.toJSONString(bbAuthMessage));
     }
 
     /**
-     * 收到消息时
+     * 收到消息时。
      *
-     * @param s
+     * <p>认证后收到的是 {@link BbSocketServerMessage}。若握手声明了 {@code stream} 能力，
+     * 该消息可能是流式帧（带 {@code streamId} 与 {@code streamState}）——由
+     * {@link BbClientMessageHandler} 按 streamId 重组；未声明时每条都是完整消息。</p>
      */
     @Override
     public void onMessage(String s) {
