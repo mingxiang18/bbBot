@@ -75,9 +75,14 @@ public class ToolLoopExecutor {
             }
 
             // 把 assistant 的工具调用决策追加到上下文
-            messages.add(ChatMessage.assistantWithToolCalls(
+            ChatMessage assistantMsg = ChatMessage.assistantWithToolCalls(
                     step1.assistantText.length() == 0 ? null : step1.assistantText.toString(),
-                    new ArrayList<>(step1.toolCalls)));
+                    new ArrayList<>(step1.toolCalls));
+            // thinking 模式模型要求把本轮 reasoning_content 随 assistant 消息回灌
+            if (step1.reasoningText.length() > 0) {
+                assistantMsg.setReasoningContent(step1.reasoningText.toString());
+            }
+            messages.add(assistantMsg);
 
             // 串行执行每个工具，把结果作为 tool 消息回灌
             for (ToolCall call : step1.toolCalls) {
@@ -110,6 +115,7 @@ public class ToolLoopExecutor {
         private final StreamHandler outer;
         private final StringBuilder accumulatedText;
         private final StringBuilder assistantText = new StringBuilder();
+        private final StringBuilder reasoningText = new StringBuilder();
         private List<ToolCall> toolCalls = new ArrayList<>();
         private String finishReason;
 
@@ -124,6 +130,13 @@ public class ToolLoopExecutor {
             assistantText.append(delta);
             accumulatedText.append(delta);
             outer.onTextDelta(delta);
+        }
+
+        @Override
+        public void onReasoningDelta(String delta) {
+            if (delta == null || delta.isEmpty()) return;
+            // 思维链只累计、不透传给 IM 端（用户看 content，不看 reasoning）
+            reasoningText.append(delta);
         }
 
         @Override

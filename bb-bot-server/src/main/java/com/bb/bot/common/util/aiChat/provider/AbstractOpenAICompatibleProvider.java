@@ -192,6 +192,10 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                         try { handler.onTextDelta(parsed.textDelta); }
                         catch (Exception cbErr) { log.warn("StreamHandler.onTextDelta 异常", cbErr); }
                     }
+                    if (parsed.reasoningDelta != null && !parsed.reasoningDelta.isEmpty()) {
+                        try { handler.onReasoningDelta(parsed.reasoningDelta); }
+                        catch (Exception cbErr) { log.warn("StreamHandler.onReasoningDelta 异常", cbErr); }
+                    }
                     if (parsed.toolCallDeltas != null) {
                         for (ToolCall delta : parsed.toolCallDeltas) {
                             mergeToolCallDelta(pendingToolCalls, delta);
@@ -236,6 +240,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
     /** SSE 单 chunk 解析结果。 */
     private static class SseChunkParsed {
         String textDelta;
+        String reasoningDelta;
         List<ToolCall> toolCallDeltas;
         String finishReason;
     }
@@ -254,6 +259,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             }
             if (delta == null) return out;
             out.textDelta = delta.getString("content");
+            out.reasoningDelta = delta.getString("reasoning_content");
             JSONArray toolCallsDelta = delta.getJSONArray("tool_calls");
             if (toolCallsDelta != null) {
                 List<ToolCall> deltas = new ArrayList<>();
@@ -421,6 +427,11 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                     && m.getToolCalls() != null && !m.getToolCalls().isEmpty()) {
                 obj.put("tool_calls", serializeToolCalls(m.getToolCalls()));
             }
+            // thinking 模式模型要求把上一轮 assistant 的 reasoning_content 原样回灌
+            if (m.getRole() == ChatMessage.Role.ASSISTANT
+                    && StringUtils.isNotEmpty(m.getReasoningContent())) {
+                obj.put("reasoning_content", m.getReasoningContent());
+            }
             out.add(obj);
         }
         return out;
@@ -492,10 +503,11 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             }
             ChatMessage copy = new ChatMessage(m.getRole(), kept);
             // 关键：function-calling 协议字段必须随消息一起拷过来，否则下一轮回灌时
-            // assistant.tool_calls / tool.tool_call_id 会丢失，API 报 messages[i]
-            // missing field tool_call_id。
+            // assistant.tool_calls / tool.tool_call_id / reasoning_content 会丢失，
+            // API 报 missing field tool_call_id / reasoning_content must be passed back。
             copy.setToolCalls(m.getToolCalls());
             copy.setToolCallId(m.getToolCallId());
+            copy.setReasoningContent(m.getReasoningContent());
             out.add(copy);
         }
         return out;

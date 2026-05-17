@@ -44,6 +44,13 @@ function finishChunk(id, model, reason) {
     choices: [{ index: 0, delta: {}, finish_reason: reason }],
   };
 }
+// thinking 模式：模型先吐 reasoning_content（思维链），再吐 content / tool_calls
+function reasoningChunk(id, model, reasoning) {
+  return {
+    id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model,
+    choices: [{ index: 0, delta: { reasoning_content: reasoning }, finish_reason: null }],
+  };
+}
 function toolCallChunk(id, model, callId, fnName, argsJson) {
   // DEBUG: MOCK_DROP_TOOL_ID=1 → simulate DeepSeek-like SSE that omits id
   const dropId = process.env.MOCK_DROP_TOOL_ID === '1';
@@ -132,6 +139,21 @@ async function handleCompletion(req, res, body) {
     }));
   }
 
+  // MOCK_REASONING=1：模拟 thinking 模式模型（deepseek-reasoner / v4-flash）。
+  // 工具回灌轮里如果上一条 assistant 没带 reasoning_content，按真实 API 那样拒绝。
+  if (process.env.MOCK_REASONING === '1' && hasToolMessage(messages)) {
+    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
+    if (lastAssistant && !lastAssistant.reasoning_content) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({
+        error: {
+          message: 'The `reasoning_content` in the thinking mode must be passed back to the API.',
+          type: 'invalid_request_error', param: null, code: 'invalid_request_error',
+        },
+      }));
+    }
+  }
+
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
@@ -163,6 +185,13 @@ async function handleCompletion(req, res, body) {
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
 
   if (triggerTool) {
+    // thinking 模式：先吐一段 reasoning_content（思维链）
+    if (process.env.MOCK_REASONING === '1') {
+      for (const seg of ['用户要调工具，', '我先想一下该用哪个…']) {
+        sseChunk(res, reasoningChunk(id, model, seg));
+        await delay(15);
+      }
+    }
     // 流出几个 leading 文本 token，然后 tool_calls，然后 finish
     const lead = '让我用工具查一下…';
     for (const ch of lead) {

@@ -35,6 +35,14 @@ public class ChatMessage {
     @Setter
     private String toolCallId;
 
+    /**
+     * assistant 消息：thinking 模式模型（如 deepseek-reasoner / deepseek-v4-flash）
+     * 输出的思维链。这类模型在工具循环里要求把上一轮 assistant 的 reasoning_content
+     * 原样回灌，否则报 "reasoning_content must be passed back"。其它角色为 null。
+     */
+    @Setter
+    private String reasoningContent;
+
     public ChatMessage(Role role, List<MessageContent> contents) {
         this.role = role;
         this.contents = new ArrayList<>(contents == null ? Collections.emptyList() : contents);

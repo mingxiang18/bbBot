@@ -26,6 +26,13 @@ public interface StreamHandler {
     void onTextDelta(String delta);
 
     /**
+     * thinking 模式模型的思维链增量（reasoning_content）。普通模型不会触发。
+     * 默认空实现：只有 ToolLoopExecutor 关心它（用于回灌时带回 assistant
+     * 消息），IM 端不展示思维链。
+     */
+    default void onReasoningDelta(String delta) {}
+
+    /**
      * 本轮模型决定的工具调用列表（function calling）。一轮 SSE 流只调一次，
      * 已经把所有 tool_calls delta 按 index 聚合好。
      */
