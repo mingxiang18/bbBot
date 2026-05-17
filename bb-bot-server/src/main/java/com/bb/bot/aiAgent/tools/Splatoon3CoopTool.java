@@ -5,14 +5,12 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +31,10 @@ public class Splatoon3CoopTool {
 
     private static final String SCHEDULES_URL = "https://splatoon3.ink/data/schedules.json";
 
+    /** 走项目统一的 RestClient（RestClientConfig 里配了代理），否则国内抓不到 splatoon3.ink。 */
+    @Autowired
+    private RestUtils restUtils;
+
     @AiTool(
             name = "splatoon3_salmon_run",
             description = "查询 Splatoon3 打工模式（Salmon Run）当前 + 后续时段的地图和支给武器。" +
@@ -47,20 +49,10 @@ public class Splatoon3CoopTool {
         int cap = limit == null || limit <= 0 ? 2 : Math.min(limit, 5);
         Map<String, Object> result = new LinkedHashMap<>();
         try {
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .build();
-            HttpRequest req = HttpRequest.newBuilder(URI.create(SCHEDULES_URL))
-                    .timeout(Duration.ofSeconds(20))
-                    .header("User-Agent", "bbBot-agent")
-                    .GET()
-                    .build();
-            HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
-            if (resp.statusCode() != 200) {
-                result.put("error", "upstream_http_" + resp.statusCode());
-                return result;
-            }
-            JSONObject root = JSON.parseObject(resp.body());
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (compatible; bbBot-agent)");
+            String body = restUtils.get(SCHEDULES_URL, headers, String.class);
+            JSONObject root = JSON.parseObject(body);
             JSONObject data = root.getJSONObject("data");
             if (data == null) {
                 result.put("error", "no_data_field");

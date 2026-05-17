@@ -5,22 +5,20 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +40,10 @@ import java.util.Map;
 public class WebSearchTool {
 
     private static final int MAX_RESULTS = 5;
+
+    /** 走项目统一的 RestClient（RestClientConfig 里配了代理），否则国内搜不到外网。 */
+    @Autowired
+    private RestUtils restUtils;
 
     @Value("${aiAgent.webSearch.serpApiKey:}")
     private String serpApiKey;
@@ -89,11 +91,10 @@ public class WebSearchTool {
     private List<Map<String, Object>> searchViaDuckDuckGo(String query) throws Exception {
         String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String url = duckDuckGoUrl + "?q=" + encoded;
-        Document doc = Jsoup.connect(url)
-                .userAgent("Mozilla/5.0 bbBot-agent")
-                .timeout(15000)
-                .followRedirects(true)
-                .get();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("User-Agent", "Mozilla/5.0 (compatible; bbBot-agent)");
+        String html = restUtils.get(url, headers, String.class);
+        Document doc = Jsoup.parse(html, url);
         List<Map<String, Object>> items = new ArrayList<>();
         Elements results = doc.select(".result");
         for (Element r : results) {
@@ -134,13 +135,8 @@ public class WebSearchTool {
         String url = "https://serpapi.com/search.json?engine=google&q="
                 + URLEncoder.encode(query, StandardCharsets.UTF_8)
                 + "&api_key=" + serpApiKey;
-        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
-        HttpRequest req = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(20)).GET().build();
-        HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
-        if (resp.statusCode() != 200) {
-            throw new RuntimeException("serpapi HTTP " + resp.statusCode() + ": " + resp.body());
-        }
-        JSONObject root = JSON.parseObject(resp.body());
+        String body = restUtils.get(url, String.class);
+        JSONObject root = JSON.parseObject(body);
         JSONArray organic = root.getJSONArray("organic_results");
         List<Map<String, Object>> items = new ArrayList<>();
         if (organic == null) return items;

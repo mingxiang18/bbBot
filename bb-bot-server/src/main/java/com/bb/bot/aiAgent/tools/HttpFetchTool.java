@@ -2,9 +2,12 @@ package com.bb.bot.aiAgent.tools;
 
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.common.util.RestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
@@ -30,6 +33,10 @@ public class HttpFetchTool {
      *  LLM 上下文窗口都 >=128K，32KB 不会撑爆。 */
     private static final int BODY_LIMIT = 32 * 1024;
 
+    /** 走项目统一的 RestClient（RestClientConfig 里配了代理），否则国内抓不到外网。 */
+    @Autowired
+    private RestUtils restUtils;
+
     @AiTool(
             name = "http_fetch",
             description = "抓取一个公网 URL 的正文文本和 og:title / og:description 元数据。" +
@@ -54,11 +61,10 @@ public class HttpFetchTool {
                 result.put("host", uri.getHost());
                 return result;
             }
-            Document doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 bbBot-agent")
-                    .timeout(15000)
-                    .followRedirects(true)
-                    .get();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (compatible; bbBot-agent)");
+            String html = restUtils.get(url, headers, String.class);
+            Document doc = Jsoup.parse(html, url);
             result.put("url", url);
             result.put("title", doc.title());
             result.put("ogTitle", metaContent(doc, "og:title"));
