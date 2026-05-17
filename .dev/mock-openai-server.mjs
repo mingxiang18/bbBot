@@ -88,6 +88,40 @@ function hasToolMessage(messages) {
   return messages.some(m => m.role === 'tool');
 }
 
+/**
+ * 按真实 DeepSeek V4 (deepseek-v4-flash/pro) 的请求体契约校验回灌消息。
+ * 返回错误字符串表示违约（mock 会回 400），返回 null 表示通过。
+ *
+ * 契约来源：https://api-docs.deepseek.com/guides/thinking_mode
+ *           https://api-docs.deepseek.com/guides/function_calling
+ *  1. 每条 role=tool 的消息必须有非空 tool_call_id
+ *  2. 每条 role=assistant 且带 tool_calls 的消息，每个 tool_call 必须有非空 id
+ *  3. MOCK_REASONING=1（模拟 thinking 模式）：做过 tool call 的 assistant 轮，
+ *     reasoning_content 必须原样回灌
+ */
+function validateDeepSeekContract(messages) {
+  const reasoningRequired = process.env.MOCK_REASONING === '1';
+  for (let i = 0; i < messages.length; i++) {
+    const m = messages[i];
+    if (m.role === 'tool') {
+      if (!m.tool_call_id) {
+        return `Failed to deserialize the JSON body into the target type: messages[${i}]: missing field \`tool_call_id\``;
+      }
+    }
+    if (m.role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0) {
+      for (let j = 0; j < m.tool_calls.length; j++) {
+        if (!m.tool_calls[j]?.id) {
+          return `messages[${i}].tool_calls[${j}]: missing field \`id\``;
+        }
+      }
+      if (reasoningRequired && !m.reasoning_content) {
+        return 'The `reasoning_content` in the thinking mode must be passed back to the API.';
+      }
+    }
+  }
+  return null;
+}
+
 function pickIntent(text) {
   const t = (text || '').toLowerCase();
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
@@ -139,19 +173,15 @@ async function handleCompletion(req, res, body) {
     }));
   }
 
-  // MOCK_REASONING=1：模拟 thinking 模式模型（deepseek-reasoner / v4-flash）。
-  // 工具回灌轮里如果上一条 assistant 没带 reasoning_content，按真实 API 那样拒绝。
-  if (process.env.MOCK_REASONING === '1' && hasToolMessage(messages)) {
-    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant');
-    if (lastAssistant && !lastAssistant.reasoning_content) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      return res.end(JSON.stringify({
-        error: {
-          message: 'The `reasoning_content` in the thinking mode must be passed back to the API.',
-          type: 'invalid_request_error', param: null, code: 'invalid_request_error',
-        },
-      }));
-    }
+  // 按真实 DeepSeek V4 的契约校验回灌的消息体。任一项不满足都像真实 API 一样回 400，
+  // 让本地测试能完整复现生产报错，避免「改一次部署一次」。
+  const contractErr = validateDeepSeekContract(messages);
+  if (contractErr) {
+    console.log(`[mock] 契约校验失败: ${contractErr}`);
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({
+      error: { message: contractErr, type: 'invalid_request_error', param: null, code: 'invalid_request_error' },
+    }));
   }
 
   res.writeHead(200, {
