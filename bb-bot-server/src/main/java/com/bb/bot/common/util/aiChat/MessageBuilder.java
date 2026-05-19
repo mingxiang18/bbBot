@@ -10,6 +10,9 @@ import com.bb.bot.entity.bb.BbMessageContent;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -192,10 +195,41 @@ public final class MessageBuilder {
         return content.getData().toString();
     }
 
-    /** 文件附件渲染成对模型可读的文本提示。 */
+    /**
+     * 文件附件渲染成对模型可读的文本提示。
+     *
+     * <p>附件经 {@code AgentFileStore} 落盘后，{@code data} 会被改写成本地绝对路径，
+     * 此时把路径一并告诉模型，模型可用 file_read 读取真实内容；否则（历史消息里
+     * data 仍是旧 base64 / URL）只渲染文件名。</p>
+     */
     private static String fileNote(BbMessageContent content) {
         String name = StringUtils.isBlank(content.getFileName()) ? "未命名文件" : content.getFileName();
+        String localPath = localFilePath(content);
+        if (localPath != null) {
+            return "[附件文件：" + name + "，本地路径：" + localPath + "（用 file_read 读取内容）]";
+        }
         return "[附件文件：" + name + "]";
+    }
+
+    /** 若 {@code data} 是一个已落盘的绝对文件路径则返回它，否则返回 null。 */
+    private static String localFilePath(BbMessageContent content) {
+        Object data = content.getData();
+        if (data == null) {
+            return null;
+        }
+        String s = data.toString();
+        if (StringUtils.isBlank(s)) {
+            return null;
+        }
+        try {
+            Path p = Paths.get(s);
+            if (p.isAbsolute() && Files.isRegularFile(p)) {
+                return p.toString();
+            }
+        } catch (Exception ignored) {
+            // data 不是合法路径（base64 / URL）→ 当作无路径
+        }
+        return null;
     }
 
     /** 仅供构建测试 fixture 时使用：包装单条文本为 {@link ChatMessage} 列表。 */

@@ -7,7 +7,10 @@ import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.entity.bb.BbMessageContent;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -139,6 +142,43 @@ class MessageBuilderTest {
         String body = messages.get(1).getContents().get(0).getValue();
         assertTrue(body.contains("alice:msg1"));
         assertTrue(body.contains("bob:msg2"));
+    }
+
+    @Test
+    void buildAskMessage_fileWithLocalPath_exposesPathAndFileReadHintToModel(@TempDir Path tmp) throws Exception {
+        // AgentFileStore 落盘后，文件附件的 data 是一个存在的绝对路径
+        Path saved = tmp.resolve("report.txt");
+        Files.writeString(saved, "real content");
+        List<BbMessageContent> current = Arrays.asList(
+                BbMessageContent.buildTextContent("读一下"),
+                BbMessageContent.builder()
+                        .type(BbSendMessageType.LOCAL_FILE)
+                        .data(saved.toAbsolutePath().toString())
+                        .fileName("report.txt")
+                        .build());
+
+        ChatMessage ask = MessageBuilder.buildAskMessage(current, null);
+        String text = ask.getContents().get(ask.getContents().size() - 1).getValue();
+        assertTrue(text.contains("report.txt"));
+        assertTrue(text.contains(saved.toAbsolutePath().toString()));
+        assertTrue(text.contains("file_read"));
+    }
+
+    @Test
+    void buildAskMessage_fileWithoutLocalPath_showsOnlyFileName() {
+        // 未落盘的附件（data 仍是 URL / base64）只渲染文件名，不泄露 data
+        List<BbMessageContent> current = Collections.singletonList(
+                BbMessageContent.builder()
+                        .type(BbSendMessageType.NET_FILE)
+                        .data("https://example.com/x.pdf")
+                        .fileName("x.pdf")
+                        .build());
+
+        ChatMessage ask = MessageBuilder.buildAskMessage(current, null);
+        String text = ask.getContents().get(ask.getContents().size() - 1).getValue();
+        assertTrue(text.contains("x.pdf"));
+        assertFalse(text.contains("file_read"));
+        assertFalse(text.contains("https://"));
     }
 
     private static ChatHistory userHistory(String name, String text) {

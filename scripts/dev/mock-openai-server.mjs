@@ -148,9 +148,15 @@ function pickIntent(text) {
   return 'chat';
 }
 
-function extractPath(text) {
-  const m = (text || '').match(/(\/[\w./\-]+)/);
-  return m ? m[1] : '/tmp/bb-demo.txt';
+// 文件工具改为「每用户目录」模型后，路径既可能是绝对路径（落在用户目录内），
+// 也可能是相对路径（相对用户目录）。绝对路径优先 —— 入站附件的提示文本里同时有
+// 文件名和落盘绝对路径，必须取后者，否则 file_read 找不到文件。
+function extractPath(text, fallback = 'bb-demo.txt') {
+  const t = text || '';
+  const abs = t.match(/\/[\w./\-]+/);
+  if (abs) return abs[0];
+  const rel = t.match(/[A-Za-z0-9_.\-]+\.[a-z0-9]+/);
+  return rel ? rel[0] : fallback;
 }
 
 /* ---------------- Handler ---------------- */
@@ -240,7 +246,7 @@ async function handleCompletion(req, res, body) {
     if (intent === 'parallel') {
       // 一轮发两个无依赖的 tool_call，index 0 / 1，触发 ToolLoopExecutor 并发执行
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'server_time', '{}', 0));
-      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path: '/tmp' }), 1));
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path: '' }), 1));
     } else if (intent === 'time') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'server_time', '{}'));
     } else if (intent === 'fetch') {
@@ -251,13 +257,14 @@ async function handleCompletion(req, res, body) {
     } else if (intent === 'shell') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'shell_exec', JSON.stringify({ command: 'ls /' })));
     } else if (intent === 'file_read') {
-      const path = extractPath(userText);
+      const path = extractPath(userText, 'bb-demo.txt');
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'file_read', JSON.stringify({ path })));
     } else if (intent === 'list_dir') {
-      const path = extractPath(userText);
+      // 相对用户目录；留空 = 列用户目录根
+      const path = extractPath(userText, '');
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'list_dir', JSON.stringify({ path })));
     } else if (intent === 'file_write') {
-      const path = extractPath(userText) || '/tmp/bb-bot-test/agent-out.txt';
+      const path = extractPath(userText, 'agent-out.txt');
       // 从用户文本里粗暴取一段 "把 'xxx' 写到" 的内容
       const m = userText.match(/['"]([^'"]+)['"]/);
       const content = m ? m[1] : '由 agent 写入：' + new Date().toISOString();
@@ -269,7 +276,7 @@ async function handleCompletion(req, res, body) {
       const tokens = userText.split(/\s+/).filter(s => s.length > 1 && !/^(agent|帮|我|找|搜|grep|的|文件|包含|哪些|提到)$/.test(s));
       const pattern = tokens.length > 0 ? tokens[tokens.length - 1] : 'TODO';
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'grep_search',
-          JSON.stringify({ pattern, path: '/tmp/bb-bot-test' })));
+          JSON.stringify({ pattern, path: '' })));
     } else if (intent === 'skill_log_triage') {
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'load_skill', JSON.stringify({ name: 'log-triage' })));
     } else if (intent === 'splatoon3_salmon') {

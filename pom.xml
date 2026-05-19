@@ -202,6 +202,14 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!-- 显式钉版本：本项目用 spring-boot-dependencies BOM（非 starter-parent），
+                 surefire 不会被自动管理，会退回 Maven 内置的 2.12.4 —— 该版本识别不了
+                 JUnit 5 (Jupiter) 测试，导致 Tests run: 0。钉到 3.x 才能跑 Jupiter。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
         </plugins>
     </build>
 </project>

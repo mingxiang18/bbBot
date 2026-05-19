@@ -139,33 +139,31 @@ aiChat:
   adminUserIds:
   #直接对话（私聊/@机器人）时是否给模型挂载工具，使其能自行判断聊天还是干活；关闭则退化为纯聊天机器人
   toolsEnabled: true
+  #启用 SSE 流式回复 + IM 端 edit/chunked 呈现。默认关闭以兼容现有部署
+  streamEnabled: false
 
 # AI 模型调用配置
 # active-provider 决定调用哪家：openai / deepseek
+# 注意键名是 ai.openai.* / ai.deepseek.*（对应 AIProviderProperties 的字段），
+# 不是 ai.providers.openai.* —— 多套一层 providers 会绑定不上。
 ai:
   active-provider: openai
-  providers:
-    openai:
-      base-url: https://api.openai.com/v1
-      api-key:
-      model: gpt-4
-      vision-enable: false
-    deepseek:
-      base-url: https://api.deepseek.com/v1
-      api-key:
-      model: deepseek-chat
-      vision-enable: false
+  openai:
+    base-url: https://api.openai.com/v1
+    api-key:
+    # 需视觉能力（识图）：模型须支持 image_url，gpt-4 经典版不支持
+    model: gpt-4o
+    vision-enable: true
+  deepseek:
+    base-url: https://api.deepseek.com/v1
+    api-key:
+    model: deepseek-chat
+    vision-enable: false
   retry:
     max-attempts: 3
     initial-interval-ms: 500
     multiplier: 2.0
     max-interval-ms: 4000
-
-# 旧版 chatGPT.* 配置（已废弃，保留兼容期。请迁移至上面的 ai.providers.openai.*）
-chatGPT:
-  apiKey:
-  # 启用 SSE 流式回复 + IM 端 edit/chunked 呈现。默认关闭以兼容现有部署。
-  streamEnabled: false
 
 # AI Agent（远程派活 + 工具调用 + cron + 插件）相关配置
 aiAgent:
@@ -181,6 +179,16 @@ aiAgent:
     keepChars: 12000
   # 启动时自动 CREATE TABLE IF NOT EXISTS ai_user_role / ai_tool_policy / ai_tool_invocation_log / ai_cron_task
   autoCreateTables: true
+  # agent 文件空间：入站附件落盘 + 文件工具（file_read/write、list_dir、grep_search）的根目录。
+  # 每个用户独立子目录 {userFileRoot}/{userId}/，工具严格限定其中，杜绝跨用户越权访问。
+  fs:
+    userFileRoot: ./agent-files
+  # 联网搜索后端：优先级 brave > tavily > serpapi > duckduckgo（免 key 兜底）。
+  # 配了哪个 key 就启用哪个；都不配则退化到 DuckDuckGo（已不稳定，生产建议配 Brave/Tavily）。
+  webSearch:
+    braveApiKey:      # Brave Search API（推荐主后端：独立索引，免费 2000 次/月）
+    tavilyApiKey:     # Tavily（agent 友好：结果自带正文，免费 1000 次/月）
+    serpApiKey:       # SerpAPI（Google 结果，付费）
   # 沙箱
   sandbox:
     # auto / bubblewrap / docker / noop

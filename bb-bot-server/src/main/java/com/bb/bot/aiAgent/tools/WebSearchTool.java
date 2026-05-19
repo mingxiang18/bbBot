@@ -1,25 +1,16 @@
 package com.bb.bot.aiAgent.tools;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
-import com.bb.bot.common.util.RestUtils;
+import com.bb.bot.aiAgent.search.WebSearchProvider;
+import com.bb.bot.aiAgent.search.WebSearchResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +18,11 @@ import java.util.Map;
 /**
  * 通用原语：搜索引擎查询。
  *
- * <p>后端选择（优先级）：</p>
- * <ol>
- *   <li>如果 {@code aiAgent.webSearch.serpApiKey} 已配置 → 走 SerpAPI（更稳，但需付费）</li>
- *   <li>否则 → 走 DuckDuckGo HTML 端点（免 key，但稳定性看 DDG 心情）</li>
- * </ol>
+ * <p>后端做成 {@link WebSearchProvider} 插件化 + 优先级降级（参考 OpenClaw）：
+ * 把所有 provider 按 priority 升序排，取第一个就绪的执行；抛异常或返回空则降级到
+ * 下一个。优先级：Brave(10) → Tavily(20) → SerpAPI(30) → DuckDuckGo(100, 兜底)。</p>
  *
- * <p>返回最多 5 条结果：{@code title / url / snippet}。</p>
+ * <p>配了哪个后端的 key 就启用哪个；都不配则退化到免 key 的 DuckDuckGo。</p>
  */
 @Slf4j
 @Component
@@ -41,21 +30,16 @@ public class WebSearchTool {
 
     private static final int MAX_RESULTS = 5;
 
-    /** 走项目统一的 RestClient（RestClientConfig 里配了代理），否则国内搜不到外网。 */
+    /** Spring 注入全部 WebSearchProvider bean。 */
     @Autowired
-    private RestUtils restUtils;
-
-    @Value("${aiAgent.webSearch.serpApiKey:}")
-    private String serpApiKey;
-
-    @Value("${aiAgent.webSearch.duckDuckGoUrl:https://duckduckgo.com/html/}")
-    private String duckDuckGoUrl;
+    private List<WebSearchProvider> providers;
 
     @AiTool(
             name = "web_search",
             description = "用搜索引擎搜公网信息。用户问「最新 / 现在 / 实时」的事，" +
                     "或你不知道某个名词时调本工具。返回最多 5 条结果（title / url / snippet）。" +
-                    "拿到 url 后通常再用 http_fetch 把感兴趣的页面正文抓回来读。"
+                    "拿到 url 后通常再用 http_fetch 把感兴趣的页面正文抓回来读" +
+                    "（若结果里已带 content 字段则可直接用，无需再抓）。"
     )
     public Map<String, Object> search(
             @AiToolParam(name = "query", description = "搜索关键字")
@@ -66,88 +50,55 @@ public class WebSearchTool {
             result.put("error", "empty_query");
             return result;
         }
-        try {
-            List<Map<String, Object>> items;
-            if (StringUtils.isNotBlank(serpApiKey)) {
-                items = searchViaSerpApi(query);
-                result.put("backend", "serpapi");
-            } else {
-                items = searchViaDuckDuckGo(query);
-                result.put("backend", "duckduckgo");
+
+        List<WebSearchProvider> ordered = providers.stream()
+                .filter(WebSearchProvider::isAvailable)
+                .sorted(Comparator.comparingInt(WebSearchProvider::priority))
+                .toList();
+        if (ordered.isEmpty()) {
+            result.put("error", "no_provider");
+            return result;
+        }
+
+        String lastBackend = null;
+        for (WebSearchProvider provider : ordered) {
+            lastBackend = provider.name();
+            try {
+                List<WebSearchResult> items = provider.search(query, MAX_RESULTS);
+                if (items != null && !items.isEmpty()) {
+                    result.put("backend", provider.name());
+                    result.put("query", query);
+                    result.put("count", items.size());
+                    result.put("results", toMaps(items));
+                    return result;
+                }
+                log.info("web_search backend={} 返回空，降级下一个", provider.name());
+            } catch (Exception e) {
+                log.warn("web_search backend={} 失败，降级下一个 query={}", provider.name(), query, e);
             }
-            result.put("query", query);
-            result.put("count", items.size());
-            result.put("results", items);
-            return result;
-        } catch (Exception e) {
-            log.warn("web_search 失败 query={}", query, e);
-            result.put("error", "search_failed");
-            result.put("message", e.getMessage());
-            return result;
         }
+
+        // 所有后端都空 / 失败
+        result.put("backend", lastBackend);
+        result.put("query", query);
+        result.put("count", 0);
+        result.put("results", new ArrayList<>());
+        result.put("note", "all_backends_empty");
+        return result;
     }
 
-    /** DuckDuckGo 的 /html/ 端点返回 SSR 的 HTML，结果以 .result 选择器列出。 */
-    private List<Map<String, Object>> searchViaDuckDuckGo(String query) throws Exception {
-        String encoded = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = duckDuckGoUrl + "?q=" + encoded;
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "Mozilla/5.0 (compatible; bbBot-agent)");
-        String html = restUtils.get(url, headers, String.class);
-        Document doc = Jsoup.parse(html, url);
-        List<Map<String, Object>> items = new ArrayList<>();
-        Elements results = doc.select(".result");
-        for (Element r : results) {
-            if (items.size() >= MAX_RESULTS) break;
-            Elements aEls = r.select(".result__a");
-            Elements snipEls = r.select(".result__snippet");
-            Element titleEl = aEls.isEmpty() ? null : aEls.first();
-            Element snippetEl = snipEls.isEmpty() ? null : snipEls.first();
-            if (titleEl == null) continue;
-            String title = titleEl.text();
-            String href = titleEl.attr("href");
-            // DDG 把真实 URL 放在 uddg 参数里，回收一下
-            href = decodeDdgRedirect(href);
-            String snippet = snippetEl == null ? "" : snippetEl.text();
-            Map<String, Object> item = new LinkedHashMap<>();
-            item.put("title", title);
-            item.put("url", href);
-            item.put("snippet", snippet);
-            items.add(item);
+    private List<Map<String, Object>> toMaps(List<WebSearchResult> items) {
+        List<Map<String, Object>> out = new ArrayList<>(items.size());
+        for (WebSearchResult r : items) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("title", r.title());
+            m.put("url", r.url());
+            m.put("snippet", r.snippet());
+            if (StringUtils.isNotBlank(r.content())) {
+                m.put("content", r.content());
+            }
+            out.add(m);
         }
-        return items;
-    }
-
-    private String decodeDdgRedirect(String href) {
-        try {
-            int idx = href.indexOf("uddg=");
-            if (idx < 0) return href;
-            String enc = href.substring(idx + 5);
-            int amp = enc.indexOf('&');
-            if (amp > 0) enc = enc.substring(0, amp);
-            return java.net.URLDecoder.decode(enc, StandardCharsets.UTF_8);
-        } catch (Exception ignore) {
-            return href;
-        }
-    }
-
-    private List<Map<String, Object>> searchViaSerpApi(String query) throws Exception {
-        String url = "https://serpapi.com/search.json?engine=google&q="
-                + URLEncoder.encode(query, StandardCharsets.UTF_8)
-                + "&api_key=" + serpApiKey;
-        String body = restUtils.get(url, String.class);
-        JSONObject root = JSON.parseObject(body);
-        JSONArray organic = root.getJSONArray("organic_results");
-        List<Map<String, Object>> items = new ArrayList<>();
-        if (organic == null) return items;
-        for (int i = 0; i < organic.size() && items.size() < MAX_RESULTS; i++) {
-            JSONObject o = organic.getJSONObject(i);
-            Map<String, Object> item = new LinkedHashMap<>();
-            item.put("title", o.getString("title"));
-            item.put("url", o.getString("link"));
-            item.put("snippet", o.getString("snippet"));
-            items.add(item);
-        }
-        return items;
+        return out;
     }
 }

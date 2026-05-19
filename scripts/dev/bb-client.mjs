@@ -22,6 +22,10 @@ const WS_URL = process.env.BB_WS_URL || 'ws://127.0.0.1:18765';
 const APP_ID = process.env.BB_APP_ID || 'bb-test';
 const SECRET = process.env.BB_SECRET || 'bb-test-secret';
 
+// tester-owner 的每用户文件目录：application-bbtest.yml 的 aiAgent.fs.userFileRoot
+// (/tmp/bb-bot-test/agent-files) + userId。文件工具严格限定在此目录内。
+const USER_DIR = process.env.BB_USER_DIR || '/tmp/bb-bot-test/agent-files/tester-owner';
+
 const argv = Object.fromEntries(process.argv.slice(2).map(a => {
   const [k, v] = a.replace(/^--/, '').split('=');
   return [k, v === undefined ? true : v];
@@ -272,14 +276,15 @@ const scenarios = {
   },
 
   A6: {
-    title: 'A6 通用原语 (file_read 读 /tmp 下的文件)',
+    title: 'A6 通用原语 (file_read 读每用户目录下的文件)',
     async run() {
-      // 准备一个 demo 文件
+      // 文件工具已限定在「调用者自己的用户目录」内，demo 文件放进去，用相对路径访问
       const fs = await import('node:fs/promises');
-      await fs.writeFile('/tmp/bb-demo.txt', 'hello from agent test\n');
+      await fs.mkdir(USER_DIR, { recursive: true });
+      await fs.writeFile(USER_DIR + '/bb-demo.txt', 'hello from agent test\n');
       const c = new BbClient({ userId: 'tester-owner' });
       await c.connect();
-      c.sendUserMessage('agent 读一下 /tmp/bb-demo.txt 文件');
+      c.sendUserMessage('agent 读一下 bb-demo.txt 文件');
       const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
       frames.forEach(showFrame);
       const text = joinText(frames);
@@ -290,11 +295,14 @@ const scenarios = {
   },
 
   A7: {
-    title: 'A7 通用原语 (list_dir 列目录)',
+    title: 'A7 通用原语 (list_dir 列用户目录)',
     async run() {
+      const fs = await import('node:fs/promises');
+      await fs.mkdir(USER_DIR, { recursive: true });
+      await fs.writeFile(USER_DIR + '/bb-demo.txt', 'x');
       const c = new BbClient({ userId: 'tester-owner' });
       await c.connect();
-      c.sendUserMessage('agent 列一下 /tmp 目录下有什么');
+      c.sendUserMessage('agent 列一下你的目录里有什么');
       const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
       frames.forEach(showFrame);
       const text = joinText(frames);
@@ -305,19 +313,19 @@ const scenarios = {
   },
 
   A8: {
-    title: 'A8 file_write (owner 写文件到白名单根)',
+    title: 'A8 file_write (owner 写文件到自己的用户目录)',
     async run() {
       const fs = await import('node:fs/promises');
-      await fs.mkdir('/tmp/bb-bot-test', { recursive: true });
+      await fs.mkdir(USER_DIR, { recursive: true });
       const c = new BbClient({ userId: 'tester-owner' });
       await c.connect();
-      c.sendUserMessage('agent 把 "hello bbBot" 写到 /tmp/bb-bot-test/agent-out.txt 文件');
+      c.sendUserMessage('agent 把 "hello bbBot" 写到 agent-out.txt 文件');
       const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
       frames.forEach(showFrame);
       const text = joinText(frames);
-      // 检查文件是不是真被写了
+      // 检查文件是不是真被写到该用户目录里
       let written = '';
-      try { written = await fs.readFile('/tmp/bb-bot-test/agent-out.txt', 'utf8'); } catch {}
+      try { written = await fs.readFile(USER_DIR + '/agent-out.txt', 'utf8'); } catch {}
       const ok = /(已写入|bytesWritten|overwrite)/.test(text) && written.includes('hello');
       c.close();
       return { ok, detail: `回复 ${text.slice(0, 80)} / 文件实际内容="${written.trim()}"` };
@@ -341,11 +349,11 @@ const scenarios = {
   },
 
   A11: {
-    title: 'A11 grep_search (在白名单目录里搜内容)',
+    title: 'A11 grep_search (在用户目录里搜内容)',
     async run() {
       const fs = await import('node:fs/promises');
-      await fs.mkdir('/tmp/bb-bot-test', { recursive: true });
-      await fs.writeFile('/tmp/bb-bot-test/notes.md', 'line1\nTODO: 测试 grep\nline3\n');
+      await fs.mkdir(USER_DIR, { recursive: true });
+      await fs.writeFile(USER_DIR + '/notes.md', 'line1\nTODO: 测试 grep\nline3\n');
       const c = new BbClient({ userId: 'tester-owner' });
       await c.connect();
       c.sendUserMessage('agent 帮我找一下哪些文件提到 TODO');
@@ -440,20 +448,23 @@ const scenarios = {
   },
 
   S3: {
-    title: 'S3 入站文件附件 (netFile content → bot 正常处理并回复)',
+    title: 'S3 入站文件附件 (localFile → 落盘到用户目录 → file_read 读到内容)',
     async run() {
       const c = new BbClient({ userId: 'tester-owner' });
       await c.connect();
+      // 入站 localFile 的 data 是 base64；bot 应解码落盘，并把本地路径告诉模型
+      const b64 = Buffer.from('入站文件测试内容 INBOUND-OK\n').toString('base64');
       c.sendContent([
-        { type: 'text', data: '看看这个文件' },
-        { type: 'netFile', data: 'https://example.com/report.pdf', fileName: 'report.pdf', mimeType: 'application/pdf' },
+        { type: 'text', data: '读一下这个文件' },
+        { type: 'localFile', data: b64, fileName: 'inbound-note.txt', mimeType: 'text/plain' },
       ]);
-      const frames = await c.collectUntilIdle({ idleMs: 4000 });
+      const frames = await c.collectUntilIdle({ idleMs: 5000, maxMs: 20000 });
       frames.forEach(showFrame);
       const text = joinText(frames);
-      const ok = frames.length >= 1 && text.length > 0;
+      // 落盘 + file_read 链路打通：回复里应出现文件真实内容（而非仅 mock 前缀）
+      const ok = /(INBOUND-OK|入站文件测试内容)/.test(text);
       c.close();
-      return { ok, detail: `带 netFile 附件的消息收到回复 ${text.length} 字` };
+      return { ok, detail: text.slice(0, 200) };
     },
   },
 

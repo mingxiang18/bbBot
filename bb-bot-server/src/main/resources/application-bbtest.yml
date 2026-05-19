@@ -36,10 +36,6 @@ ai:
     model: ${AI_OPENAI_MODEL:mock-gpt-4}
     vision-enable: false
 
-# 旧 chatGPT.* 配置保留：仅供 streamEnabled 等少量字段；endpoint 以上面的 ai.* 为准。
-chatGPT:
-  streamEnabled: true
-
 aiChat:
   streamEnabled: true
   # 直接对话挂载工具（统一 handler，无需 agent 前缀）
@@ -58,5 +54,4 @@ aiAgent:
     preferred: noop
   pluginDir: /tmp/bb-bot-test/plugins
   fs:
-    allowedRoots: /tmp
-    writeRoots: /tmp/bb-bot-test
+    userFileRoot: /tmp/bb-bot-test/agent-files

@@ -84,10 +84,13 @@ aiAgent:
   pluginDir: ./plugins
   skillsDir: ./skills
   fs:
-    allowedRoots: /tmp               # file_read / list_dir / grep_search 白名单
-    writeRoots: /tmp/bb-bot-data     # file_write 白名单（更严）
-  webSearch:
-    serpApiKey: ""                   # 空则用 DuckDuckGo HTML（无需 key）
+    userFileRoot: ./agent-files      # file_read/write、list_dir、grep_search 与入站附件落盘根目录
+                                     # 每用户独立子目录 {userFileRoot}/{userId}/，工具严格限定其中防越权
+  webSearch:                         # 后端优先级 brave > tavily > serpapi > duckduckgo
+    braveApiKey: ""                  # Brave Search API（推荐主后端，免费 2000 次/月）
+    tavilyApiKey: ""                 # Tavily（结果自带正文，免费 1000 次/月）
+    serpApiKey: ""                   # SerpAPI（Google 结果，付费）
+                                     # 全空则退化到免 key 的 DuckDuckGo（已不稳定）
   memory:                            # M8 新增
     workspaceDir: ./memory-workspace
     sessionGapMinutes: 30

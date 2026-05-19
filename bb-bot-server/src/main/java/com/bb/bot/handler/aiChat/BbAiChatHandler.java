@@ -6,6 +6,7 @@ import com.bb.bot.aiAgent.core.AgentRunRegistry;
 import com.bb.bot.aiAgent.core.AiToolExecutor;
 import com.bb.bot.aiAgent.core.AiToolRegistry;
 import com.bb.bot.aiAgent.core.RunHandle;
+import com.bb.bot.aiAgent.fs.AgentFileStore;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
 import com.bb.bot.aiAgent.skills.SkillRegistry;
@@ -128,6 +129,10 @@ public class BbAiChatHandler {
     @Autowired
     private AgentRunRegistry agentRunRegistry;
 
+    /** 入站文件 / 图片落盘到每用户目录，供模型用 file_read 读取。 */
+    @Autowired
+    private AgentFileStore agentFileStore;
+
     @Value("${aiChat.autoReplyRate:0.99}")
     private double autoReplyRate;
 
@@ -182,6 +187,13 @@ public class BbAiChatHandler {
 
         String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
         List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
+
+        // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
+        // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
+        if (useTools) {
+            agentFileStore.materializeInbound(
+                    bbReceiveMessage.getUserId(), bbReceiveMessage.getMessageId(), currentContent);
+        }
 
         List<ChatMessage> messages = MessageBuilder.buildContextMessages(
                 personality, currentContent, historyList, replyTarget);

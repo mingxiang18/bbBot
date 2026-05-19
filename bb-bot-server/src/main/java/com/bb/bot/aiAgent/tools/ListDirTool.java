@@ -2,13 +2,13 @@ package com.bb.bot.aiAgent.tools;
 
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.aiAgent.fs.AgentFileSpace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +18,8 @@ import java.util.stream.Stream;
 /**
  * 通用原语工具：列一个目录。
  *
- * <p>跟 {@link FileReadTool} 共用路径白名单（避免两套配置）。</p>
+ * <p>跟 {@link FileReadTool} 一样，路径经 {@link AgentFileSpace} 严格限定在
+ * 当前调用者自己的用户目录内。</p>
  */
 @Slf4j
 @Component
@@ -27,26 +28,30 @@ public class ListDirTool {
     private static final int MAX_ENTRIES = 200;
 
     @Autowired
-    private FileReadTool fileReadTool;  // 复用 isAllowed
+    private AgentFileSpace fileSpace;
 
     @AiTool(
             name = "list_dir",
             description = "列出一个目录下的文件 / 子目录（按名字排序，最多 200 条）。" +
-                    "仅允许 allowedRoots 配置的目录下（默认 /tmp）。" +
-                    "用户让你「看一下 / 列出 /xxx 下有什么」时调用。"
+                    "只能访问你自己的用户目录：路径可写相对路径（相对你的用户目录），" +
+                    "或写绝对路径但必须落在该目录内。留空表示列你的用户目录根。" +
+                    "用户让你「看一下 / 列出某个目录下有什么」时调用。"
     )
     public Map<String, Object> listDir(
-            @AiToolParam(name = "path", description = "要列举的目录绝对路径")
+            @AiToolParam(name = "path", description = "要列举的目录路径（相对你的用户目录，留空=用户目录根）", required = false)
             String path
     ) {
         Map<String, Object> result = new LinkedHashMap<>();
+        Path dir;
         try {
-            Path dir = Paths.get(path).toAbsolutePath().normalize();
-            if (!fileReadTool.isAllowed(dir)) {
-                result.put("error", "path_not_allowed");
-                result.put("path", dir.toString());
-                return result;
-            }
+            dir = fileSpace.resolveForCurrentUser(path);
+        } catch (AgentFileSpace.PathEscapeException e) {
+            result.put("error", "path_not_allowed");
+            result.put("path", path);
+            result.put("hint", "只能访问你自己的用户目录");
+            return result;
+        }
+        try {
             if (!Files.exists(dir)) {
                 result.put("error", "not_found");
                 result.put("path", dir.toString());

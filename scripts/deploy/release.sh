@@ -65,8 +65,11 @@ mssh() { ssh "${SSH_OPTS[@]}" "${MASTER_SSH}" "$@"; }
 build_image() {
   local push="$1" image="${REGISTRY_PUSH}/misuaa/${SVC_NAME}:${TAG}"
   log "Maven 构建：${SVC_MODULE}"
+  # javadoc.skip：bb-bot-sdk 的 maven-javadoc-plugin(2.9.1) 在 -am 构建里会失败，
+  # 且 javadoc jar 对镜像部署无用，直接跳过。
   "${MVN}" clean package -pl "${SVC_MODULE}" -am -f pom.xml \
-    ${MAVEN_REPO:+-Dmaven.repo.local="${MAVEN_REPO}"} -Dmaven.test.skip=true -P prod
+    ${MAVEN_REPO:+-Dmaven.repo.local="${MAVEN_REPO}"} \
+    -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -P prod
   log "镜像构建：${image}"
   if [[ "${push}" == "1" ]]; then
     docker buildx build --platform "${PLATFORMS}" -t "${image}" --push \

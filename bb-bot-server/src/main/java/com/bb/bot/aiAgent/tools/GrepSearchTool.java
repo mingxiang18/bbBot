@@ -2,6 +2,7 @@ package com.bb.bot.aiAgent.tools;
 
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.aiAgent.fs.AgentFileSpace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +11,6 @@ import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  *
  * <p>护栏：</p>
  * <ul>
- *   <li>路径必须在 {@code FileReadTool.allowedRoots} 之内（共用配置）</li>
+ *   <li>路径经 {@link AgentFileSpace} 严格限定在当前调用者自己的用户目录内</li>
  *   <li>单文件 > 1MB 直接跳过</li>
  *   <li>结果上限 50 条</li>
  *   <li>仅扫文本文件（按扩展名简单过滤；二进制跳过）</li>
@@ -42,31 +42,35 @@ public class GrepSearchTool {
     );
 
     @Autowired
-    private FileReadTool fileReadTool;  // 共用 isAllowed
+    private AgentFileSpace fileSpace;
 
     @AiTool(
             name = "grep_search",
-            description = "在白名单目录树里搜内容（正则 + 递归）。" +
+            description = "在你自己的用户目录树里搜内容（正则 + 递归）。" +
                     "用户让你「找一下哪个文件提到 X / 包含 X 的文件 / 搜 X」时用。" +
+                    "路径可写相对路径（相对你的用户目录），留空表示从用户目录根搜起。" +
                     "返回最多 50 条匹配：file / line / text。仅扫常见文本扩展名。"
     )
     public Map<String, Object> grep(
             @AiToolParam(name = "pattern", description = "Java 正则表达式")
             String pattern,
-            @AiToolParam(name = "path", description = "起始搜索目录（绝对路径）")
+            @AiToolParam(name = "path", description = "起始搜索目录（相对你的用户目录，留空=用户目录根）", required = false)
             String path,
             @AiToolParam(name = "maxResults", description = "结果上限（默认 50）", required = false)
             Integer maxResults
     ) {
         Map<String, Object> result = new LinkedHashMap<>();
         int cap = maxResults == null || maxResults <= 0 ? DEFAULT_MAX_RESULTS : Math.min(maxResults, 200);
+        Path root;
         try {
-            Path root = Paths.get(path).toAbsolutePath().normalize();
-            if (!fileReadTool.isAllowed(root)) {
-                result.put("error", "path_not_allowed");
-                result.put("path", root.toString());
-                return result;
-            }
+            root = fileSpace.resolveForCurrentUser(path);
+        } catch (AgentFileSpace.PathEscapeException e) {
+            result.put("error", "path_not_allowed");
+            result.put("path", path);
+            result.put("hint", "只能搜索你自己的用户目录");
+            return result;
+        }
+        try {
             if (!Files.exists(root)) {
                 result.put("error", "not_found");
                 result.put("path", root.toString());

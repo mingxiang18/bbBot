@@ -2,29 +2,25 @@ package com.bb.bot.aiAgent.tools;
 
 import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.aiAgent.core.AiToolParam;
+import com.bb.bot.aiAgent.fs.AgentFileSpace;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * 通用原语：把字符串写到一个本地文件（创建或覆盖 / 追加）。
  *
- * <p>参考 openhanako 的 PathGuard 思路简化实现：</p>
  * <ul>
- *   <li>{@code requiresOwner=true}：本工具能改宿主文件，默认仅 owner 角色</li>
- *   <li>路径必须落在 {@code aiAgent.fs.writeRoots} 配置（默认 {@code /tmp}）下，
- *       正规化后再校验，杜绝 {@code ../}</li>
+ *   <li>{@code requiresOwner=true}：默认仅 owner 角色</li>
+ *   <li>路径经 {@link AgentFileSpace} 严格限定在「当前调用者自己的用户目录」内，
+ *       正规化后再校验，杜绝越权与 {@code ../}</li>
  *   <li>单次写入 ≤ 256 KB，避免 LLM 失控写大文件</li>
  *   <li>{@code append=true} 走追加；否则覆盖（先 truncate 再写）</li>
  * </ul>
@@ -36,22 +32,19 @@ public class FileWriteTool {
     private static final int MAX_BYTES = 256 * 1024;
 
     @Autowired
-    private FileReadTool fileReadTool;  // 复用 isAllowed 思路，但 write 用独立白名单
-
-    @Value("${aiAgent.fs.writeRoots:/tmp}")
-    private String writeRootsCsv;
+    private AgentFileSpace fileSpace;
 
     @AiTool(
             name = "file_write",
-            description = "把文本内容写到本地一个文件（创建或覆盖；append=true 走追加）。" +
-                    "仅允许 writeRoots 配置的目录下的路径（默认 /tmp）。" +
-                    "用户让你「写一个文件 / 保存到 /xxx / 把这段写到 /yyy」时调用。" +
-                    "单次 ≤ 256KB。",
+            description = "把文本内容写到一个本地文件（创建或覆盖；append=true 走追加）。" +
+                    "只能写到你自己的用户目录：路径可写相对路径（相对你的用户目录），" +
+                    "或写绝对路径但必须落在该目录内，否则拒绝。" +
+                    "用户让你「写一个文件 / 保存这段内容」时调用。单次 ≤ 256KB。",
             requiresOwner = true,
             requiresSandbox = false
     )
     public Map<String, Object> write(
-            @AiToolParam(name = "path", description = "目标文件绝对路径")
+            @AiToolParam(name = "path", description = "目标文件路径（相对你的用户目录，或该目录内的绝对路径）")
             String path,
             @AiToolParam(name = "content", description = "要写入的文本内容")
             String content,
@@ -59,14 +52,16 @@ public class FileWriteTool {
             Boolean append
     ) {
         Map<String, Object> result = new LinkedHashMap<>();
+        Path target;
         try {
-            Path target = Paths.get(path).toAbsolutePath().normalize();
-            if (!isAllowedWrite(target)) {
-                result.put("error", "path_not_allowed");
-                result.put("path", target.toString());
-                result.put("allowedWriteRoots", writeRoots());
-                return result;
-            }
+            target = fileSpace.resolveForCurrentUser(path);
+        } catch (AgentFileSpace.PathEscapeException e) {
+            result.put("error", "path_not_allowed");
+            result.put("path", path);
+            result.put("hint", "只能写到你自己的用户目录");
+            return result;
+        }
+        try {
             if (content == null) content = "";
             byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
             if (bytes.length > MAX_BYTES) {
@@ -77,8 +72,8 @@ public class FileWriteTool {
             }
             // 父目录如不存在则建
             Path parent = target.getParent();
-            if (parent != null && !java.nio.file.Files.exists(parent)) {
-                java.nio.file.Files.createDirectories(parent);
+            if (parent != null && !Files.exists(parent)) {
+                Files.createDirectories(parent);
             }
             if (Boolean.TRUE.equals(append)) {
                 Files.write(target, bytes, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -95,17 +90,5 @@ public class FileWriteTool {
             result.put("message", e.getMessage());
             return result;
         }
-    }
-
-    private List<String> writeRoots() {
-        return Arrays.asList(writeRootsCsv.split(","));
-    }
-
-    private boolean isAllowedWrite(Path absoluteNormalized) {
-        for (String root : writeRoots()) {
-            Path rootPath = Paths.get(root.trim()).toAbsolutePath().normalize();
-            if (absoluteNormalized.startsWith(rootPath)) return true;
-        }
-        return false;
     }
 }
