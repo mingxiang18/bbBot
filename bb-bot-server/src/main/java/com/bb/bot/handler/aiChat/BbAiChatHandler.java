@@ -7,6 +7,7 @@ import com.bb.bot.aiAgent.core.AiToolExecutor;
 import com.bb.bot.aiAgent.core.AiToolRegistry;
 import com.bb.bot.aiAgent.core.RunHandle;
 import com.bb.bot.aiAgent.fs.AgentFileStore;
+import com.bb.bot.aiAgent.tools.AgentReplySink;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
 import com.bb.bot.aiAgent.skills.SkillRegistry;
@@ -26,6 +27,8 @@ import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
 import com.bb.bot.common.util.aiChat.provider.ToolDefinition;
 import com.bb.bot.common.util.aiChat.provider.ToolLoopExecutor;
+import com.bb.bot.connection.bb.BbWebSocketServer;
+import com.bb.bot.constant.BbCapability;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
@@ -231,11 +234,30 @@ public class BbAiChatHandler {
         BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
 
+        // send_file 等工具的出站回传通道：把产物作为附件发回本会话（按 file 能力位降级）
+        AgentReplySink replySink = new AgentReplySink() {
+            @Override
+            public boolean fileSupported() {
+                return msg.getWebSocket() != null
+                        && BbWebSocketServer.getCapabilities(msg.getWebSocket()).contains(BbCapability.FILE);
+            }
+            @Override
+            public void sendFile(java.io.File file, String fileName) {
+                BbSendMessage out = new BbSendMessage(msg);
+                BbMessageContent content = BbMessageContent.buildLocalFileMessageContent(file);
+                if (StringUtils.isNotBlank(fileName)) {
+                    content.setFileName(fileName);
+                }
+                out.setMessageList(Collections.singletonList(content));
+                bbMessageApi.sendMessage(out);
+            }
+        };
+
         try {
             toolLoopExecutor.run(
                     messages,
                     tools,
-                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId),
+                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId, replySink),
                     maxSteps,
                     new StreamHandler() {
                         @Override

@@ -3,6 +3,9 @@ package com.bb.bot.aiAgent.core;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.aiAgent.auth.AiAgentAuthService;
+import com.bb.bot.aiAgent.tools.AgentReplyContext;
+import com.bb.bot.aiAgent.tools.AgentReplySink;
+import com.bb.bot.aiAgent.tools.MemoryToolContext;
 import com.bb.bot.database.aiAgent.entity.AiToolInvocationLog;
 import com.bb.bot.database.aiAgent.service.IAiToolInvocationLogService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +54,14 @@ public class AiToolExecutor {
      * 兼容旧调用签名（无 platform / sessionId）。建议改用 4 参数版本。
      */
     public String invoke(String toolName, String argsJson, String callerUserId) {
-        return invoke(toolName, argsJson, callerUserId, null, null);
+        return invoke(toolName, argsJson, callerUserId, null, null, null);
+    }
+
+    /**
+     * 兼容签名（无出站回传通道）。交互式会话应改用带 {@link AgentReplySink} 的 6 参版本。
+     */
+    public String invoke(String toolName, String argsJson, String callerUserId, String platform, String sessionId) {
+        return invoke(toolName, argsJson, callerUserId, platform, sessionId, null);
     }
 
     /**
@@ -64,8 +74,10 @@ public class AiToolExecutor {
      * @param callerUserId 调用者 user id
      * @param platform     平台标识（BotType 字符串），用于角色查询和审计
      * @param sessionId    一次 agent 派活的串联 id（null 也行，落库时为空）
+     * @param replySink    当前会话的出站回传通道（send_file 等用）；非交互场景传 null
      */
-    public String invoke(String toolName, String argsJson, String callerUserId, String platform, String sessionId) {
+    public String invoke(String toolName, String argsJson, String callerUserId, String platform,
+                         String sessionId, AgentReplySink replySink) {
         long start = System.currentTimeMillis();
         AiToolDescriptor desc = registry.get(toolName);
         if (desc == null) {
@@ -89,13 +101,16 @@ public class AiToolExecutor {
             return err;
         }
 
-        // 把 caller user_id 放进 ThreadLocal，memory 系列工具用它做 namespace 隔离
+        // 把 caller user_id + 出站回传通道放进 ThreadLocal：memory 系列工具用 userId 做 namespace
+        // 隔离，send_file 用 replySink 把产物发回当前会话。两者在同一执行线程 set/clear。
         Callable<Object> task = () -> {
-            com.bb.bot.aiAgent.tools.MemoryToolContext.setUserId(callerUserId);
+            MemoryToolContext.setUserId(callerUserId);
+            AgentReplyContext.set(replySink);
             try {
                 return desc.getMethod().invoke(desc.getBeanInstance(), args);
             } finally {
-                com.bb.bot.aiAgent.tools.MemoryToolContext.clear();
+                MemoryToolContext.clear();
+                AgentReplyContext.clear();
             }
         };
         Future<Object> future = toolPool.submit(task);
