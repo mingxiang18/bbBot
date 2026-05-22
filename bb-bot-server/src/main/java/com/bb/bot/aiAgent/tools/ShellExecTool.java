@@ -41,8 +41,13 @@ public class ShellExecTool {
                     "默认无网络、15s 超时、stdout 上限 8KB。" +
                     "工作目录就是你的文件空间：用户上传的文件、你写的产物都在这里（cwd 下可直接读写，" +
                     "产物写到当前目录即可被 file_read 读到 / 用 send_file 回传给用户）。" +
-                    "已预装 python3 与常用库：openpyxl、python-docx、pandas、numpy、xlsxwriter、pypdf、Pillow，" +
-                    "可直接 import 处理 Excel/Word/PDF/图片。沙箱禁网，不要 pip install 或联网下载（会失败）。" +
+                    "已预装 python3 及大量库，直接 import 即可（按 import 名）：" +
+                    "Office=openpyxl/docx(python-docx)/pptx(python-pptx)/xlsxwriter/xlrd/xlwt，" +
+                    "PDF=pypdf/pdfplumber/reportlab/fitz(PyMuPDF)，" +
+                    "数据=pandas/numpy/scipy/matplotlib，图片=PIL(Pillow)/qrcode，" +
+                    "解析=bs4/lxml/markdown/html2text/yaml(PyYAML)/tabulate/chardet/charset_normalizer/jinja2，" +
+                    "其它=cryptography/orjson/regex/sympy/dateutil/pytz。" +
+                    "沙箱禁网，不要 pip install 或联网下载（会失败）；缺的库就用已装的实现。" +
                     "用于：跑脚本、处理文件、运行小工具。绝不要用于持续运行的服务。",
             requiresOwner = true,
             requiresSandbox = true
