@@ -4,7 +4,8 @@
 # 钉 3.12-alpine：scipy/matplotlib/reportlab/PyMuPDF 等重库的 musl wheel 在 3.12 覆盖更全。
 FROM python:3.12-alpine
 
-RUN set -xe && apk --no-cache add bash bubblewrap coreutils
+# libstdc++/libgomp：PyMuPDF/scipy/matplotlib 等的 musl wheel 链接 C++ 运行时与 OpenMP，alpine 默认无
+RUN set -xe && apk --no-cache add bash bubblewrap coreutils libstdc++ libgomp
 
 # 预装文档/数据处理库：沙箱运行时禁网（bwrap --unshare-net），pip install 装不了，
 # 故构建期（有网）预装好，运行时离线可用（装在 /usr/local，bwrap 绑 /usr 后沙箱可见）。
