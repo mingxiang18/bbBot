@@ -151,7 +151,10 @@ public class AiAgentSchemaInitializer {
 
             // 给已存在的 ai_token_usage 补费用相关列（列已存在时本句报错被 onContextRefreshed 的逐句 try/catch 吞掉）
             "ALTER TABLE ai_token_usage ADD COLUMN cached_tokens INT DEFAULT 0",
+            "ALTER TABLE ai_token_usage ADD COLUMN cache_write_tokens INT DEFAULT 0",
             "ALTER TABLE ai_token_usage ADD COLUMN cost_cny DECIMAL(12,6) DEFAULT 0",
+            // 给已存在的 ai_model_pricing 补写缓存单价列
+            "ALTER TABLE ai_model_pricing ADD COLUMN cache_write_input_per_million DECIMAL(12,4) DEFAULT NULL",
 
             "CREATE TABLE IF NOT EXISTS ai_model_pricing (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
@@ -161,6 +164,7 @@ public class AiAgentSchemaInitializer {
                     "  input_per_million DECIMAL(12,4) NOT NULL DEFAULT 0," +
                     "  output_per_million DECIMAL(12,4) NOT NULL DEFAULT 0," +
                     "  cache_hit_input_per_million DECIMAL(12,4) DEFAULT NULL," +
+                    "  cache_write_input_per_million DECIMAL(12,4) DEFAULT NULL," +
                     "  source VARCHAR(16) NOT NULL DEFAULT 'manual'," +
                     "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
                     "  UNIQUE KEY uk_provider_model (provider_name, model)" +

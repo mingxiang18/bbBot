@@ -33,6 +33,17 @@ public class AiTokenUsageServiceImpl extends ServiceImpl<AiTokenUsageMapper, AiT
     }
 
     @Override
+    public long sumTotalTokensSince(java.time.LocalDateTime since) {
+        QueryWrapper<AiTokenUsage> qw = new QueryWrapper<>();
+        qw.select("IFNULL(SUM(total_tokens),0) AS s").ge("created_at", since);
+        List<Map<String, Object>> rows = baseMapper.selectMaps(qw);
+        if (rows.isEmpty() || rows.get(0).get("s") == null) {
+            return 0L;
+        }
+        return ((Number) rows.get(0).get("s")).longValue();
+    }
+
+    @Override
     public List<UserModelUsage> aggregateByUserAndModel(String userId) {
         QueryWrapper<AiTokenUsage> qw = new QueryWrapper<>();
         qw.eq("user_id", userId);

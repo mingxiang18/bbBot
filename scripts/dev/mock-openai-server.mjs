@@ -119,7 +119,15 @@ function promptTokensOf(messages) {
 function buildUsage(messages, outputText) {
   const prompt = promptTokensOf(messages);
   const completion = estTokens(outputText);
-  return { prompt_tokens: prompt, completion_tokens: completion, total_tokens: prompt + completion };
+  // 模拟 deepseek 风格的缓存命中：约一半输入命中缓存，验证分级计费
+  const cacheHit = Math.floor(prompt / 2);
+  return {
+    prompt_tokens: prompt,
+    prompt_cache_hit_tokens: cacheHit,
+    prompt_cache_miss_tokens: prompt - cacheHit,
+    completion_tokens: completion,
+    total_tokens: prompt + completion,
+  };
 }
 function usageChunk(id, model, usage) {
   // OpenAI 兼容协议：include_usage 末帧 choices 为空、顶层带 usage

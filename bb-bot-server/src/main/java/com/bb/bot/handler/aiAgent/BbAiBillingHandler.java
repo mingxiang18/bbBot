@@ -74,7 +74,7 @@ public class BbAiBillingHandler {
     private static final Pattern P_RESET = Pattern.compile("^/?额度重置\\s+(\\S+)\\s*$");
     private static final Pattern P_APPROVE = Pattern.compile("^/?额度审批\\s+(\\S+)(?:\\s+([0-9.]+))?\\s*$");
     private static final Pattern P_PRICE_SET = Pattern.compile(
-            "^/?价格设置\\s+(\\S+)\\s+(\\S+)\\s+([0-9.]+)\\s+([0-9.]+)(?:\\s+(\\S+))?(?:\\s+([0-9.]+))?\\s*$");
+            "^/?价格设置\\s+(\\S+)\\s+(\\S+)\\s+([0-9.]+)\\s+([0-9.]+)(?:\\s+([A-Za-z]{3}))?(?:\\s+([0-9.]+))?(?:\\s+([0-9.]+))?\\s*$");
 
     // ============ 用户命令 ============
 
@@ -222,7 +222,7 @@ public class BbAiBillingHandler {
         if (denyIfNotOwner(msg)) return;
         Matcher m = P_PRICE_SET.matcher(textOf(msg).trim());
         if (!m.find()) {
-            reply(msg, "用法: /价格设置 <provider> <model> <输入价/百万> <输出价/百万> [币种=CNY] [缓存命中价/百万]");
+            reply(msg, "用法: /价格设置 <provider> <model> <输入价/百万> <输出价/百万> [币种=CNY] [缓存命中价/百万] [写缓存价/百万]");
             return;
         }
         String provider = m.group(1);
@@ -238,14 +238,16 @@ public class BbAiBillingHandler {
         row.setOutputPerMillion(new BigDecimal(m.group(4)));
         row.setCurrency(StringUtils.defaultIfBlank(m.group(5), "CNY").toUpperCase());
         row.setCacheHitInputPerMillion(m.group(6) != null ? new BigDecimal(m.group(6)) : null);
+        row.setCacheWriteInputPerMillion(m.group(7) != null ? new BigDecimal(m.group(7)) : null);
         row.setSource("manual");
         row.setUpdatedAt(LocalDateTime.now());
         pricingService.saveOrUpdate(row);
         modelPricingService.invalidateCache();
-        reply(msg, String.format("已设置 %s/%s 单价：输入 %s、输出 %s、币种 %s%s（/百万 token）",
+        reply(msg, String.format("已设置 %s/%s 单价：输入 %s、输出 %s、币种 %s%s%s（/百万 token）",
                 provider, model, row.getInputPerMillion().toPlainString(), row.getOutputPerMillion().toPlainString(),
-                row.getCurrency(), row.getCacheHitInputPerMillion() != null
-                        ? "、缓存命中 " + row.getCacheHitInputPerMillion().toPlainString() : ""));
+                row.getCurrency(),
+                row.getCacheHitInputPerMillion() != null ? "、缓存命中 " + row.getCacheHitInputPerMillion().toPlainString() : "",
+                row.getCacheWriteInputPerMillion() != null ? "、写缓存 " + row.getCacheWriteInputPerMillion().toPlainString() : ""));
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -264,7 +266,10 @@ public class BbAiBillingHandler {
                     .append(" 入").append(r.getInputPerMillion().toPlainString())
                     .append(" 出").append(r.getOutputPerMillion().toPlainString());
             if (r.getCacheHitInputPerMillion() != null) {
-                sb.append(" 缓存").append(r.getCacheHitInputPerMillion().toPlainString());
+                sb.append(" 命中").append(r.getCacheHitInputPerMillion().toPlainString());
+            }
+            if (r.getCacheWriteInputPerMillion() != null) {
+                sb.append(" 写缓存").append(r.getCacheWriteInputPerMillion().toPlainString());
             }
             sb.append(" ").append(r.getCurrency()).append(" [").append(r.getSource()).append("]\n");
         }

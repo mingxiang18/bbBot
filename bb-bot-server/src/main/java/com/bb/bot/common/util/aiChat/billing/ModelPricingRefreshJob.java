@@ -128,12 +128,19 @@ public class ModelPricingRefreshJob {
             }
             BigDecimal inPerM = perMillion(entry.getBigDecimal("input_cost_per_token"));
             BigDecimal outPerM = perMillion(entry.getBigDecimal("output_cost_per_token"));
+            // cache 读单价：anthropic/openai 用 cache_read_input_token_cost；部分条目用 input_cost_per_token_cache(_hit)
+            BigDecimal cacheReadPerM = perMillionOrNull(entry,
+                    "cache_read_input_token_cost", "input_cost_per_token_cache_hit", "input_cost_per_token_cache");
+            // cache 写单价：anthropic cache_creation_input_token_cost
+            BigDecimal cacheWritePerM = perMillionOrNull(entry, "cache_creation_input_token_cost");
             AiModelPricing row = existing != null ? existing : new AiModelPricing();
             row.setProviderName(provider);
             row.setModel(model);
             row.setCurrency("USD");
             row.setInputPerMillion(inPerM);
             row.setOutputPerMillion(outPerM);
+            row.setCacheHitInputPerMillion(cacheReadPerM);
+            row.setCacheWriteInputPerMillion(cacheWritePerM);
             row.setSource("litellm");
             row.setUpdatedAt(LocalDateTime.now());
             pricingService.saveOrUpdate(row);
@@ -185,5 +192,15 @@ public class ModelPricingRefreshJob {
             return BigDecimal.ZERO;
         }
         return perToken.multiply(MILLION).setScale(4, RoundingMode.HALF_UP);
+    }
+
+    /** 取 entry 里第一个存在的 key（每 token 价）换算成每百万；都不存在返回 null（保持列为空，计算时回退）。 */
+    private BigDecimal perMillionOrNull(JSONObject entry, String... keys) {
+        for (String k : keys) {
+            if (entry.get(k) != null) {
+                return entry.getBigDecimal(k).multiply(MILLION).setScale(4, RoundingMode.HALF_UP);
+            }
+        }
+        return null;
     }
 }

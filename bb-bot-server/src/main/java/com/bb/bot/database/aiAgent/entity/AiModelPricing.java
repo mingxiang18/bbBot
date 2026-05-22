@@ -31,8 +31,11 @@ public class AiModelPricing {
     /** 输出（completion）单价/百万 token。 */
     private BigDecimal outputPerMillion;
 
-    /** 命中缓存的输入单价/百万 token；null 表示无分级，按 inputPerMillion 计。 */
+    /** 命中缓存（cache read）的输入单价/百万 token；null 表示无分级，按 inputPerMillion 计。 */
     private BigDecimal cacheHitInputPerMillion;
+
+    /** 写缓存（cache creation）的输入单价/百万 token；仅 Anthropic 收费，null/0 表示不收。 */
+    private BigDecimal cacheWriteInputPerMillion;
 
     /** seed / manual / litellm */
     private String source;

@@ -104,6 +104,10 @@ public class BbAiChatHandler {
     @Autowired
     private com.bb.bot.common.util.aiChat.billing.QuotaGuard quotaGuard;
 
+    /** 全局每日 token 兜底。 */
+    @Autowired
+    private com.bb.bot.common.util.aiChat.billing.GlobalUsageGuard globalUsageGuard;
+
     @Autowired
     private IChatHistoryService chatHistoryService;
 
@@ -189,6 +193,16 @@ public class BbAiChatHandler {
     public void aiChatHandle(BbReceiveMessage bbReceiveMessage) {
         ReplyDecision decision = decideShouldReply(bbReceiveMessage);
         if (!decision.isShouldReply()) {
+            return;
+        }
+
+        // 全局每日 token 兜底：达上限暂停所有 AI 回复，防止异常流量烧 token（直接对话才提示，避免刷屏）。
+        if (globalUsageGuard.isOverDailyLimit()) {
+            log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
+                    globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), bbReceiveMessage.getUserId());
+            if (decision.isDirectTrigger()) {
+                sendAtText(bbReceiveMessage, "今日 AI 调用量已达系统上限，请明天再试。");
+            }
             return;
         }
 

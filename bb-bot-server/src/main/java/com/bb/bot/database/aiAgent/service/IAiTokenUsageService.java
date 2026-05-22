@@ -16,6 +16,9 @@ public interface IAiTokenUsageService extends IService<AiTokenUsage> {
     /** 某用户累计消耗的总 token 数。 */
     long sumTotalTokensByUser(String userId);
 
+    /** 自某时刻起全部用户的 total token 合计（全局每日兜底计数 seed 用）。 */
+    long sumTotalTokensSince(java.time.LocalDateTime since);
+
     /** 某用户按模型聚合的用量明细。 */
     List<UserModelUsage> aggregateByUserAndModel(String userId);
 

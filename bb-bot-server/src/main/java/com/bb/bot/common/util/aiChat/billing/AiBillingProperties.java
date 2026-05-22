@@ -30,6 +30,12 @@ public class AiBillingProperties {
     /** 是否启用月度限额硬阻断。关闭则只统计费用、不拦截。 */
     private boolean enforce = false;
 
+    /**
+     * 全局每日 token 上限兜底（所有用户合计）。&gt;0 时生效，独立于 per-user enforce：
+     * 当天累计 token 达到上限后，暂停所有 AI 回复，防止异常流量/失控循环烧 token。0 = 关闭。
+     */
+    private long globalDailyTokenLimit = 0L;
+
     private Pricing pricing = new Pricing();
 
     @Data

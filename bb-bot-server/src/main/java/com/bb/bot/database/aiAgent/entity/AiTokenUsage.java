@@ -31,8 +31,11 @@ public class AiTokenUsage {
     private Integer completionTokens;
     private Integer totalTokens;
 
-    /** 命中缓存的输入 token 数（按 cache-hit 单价计费）；无则 0。 */
+    /** 命中缓存（cache read）的输入 token 数（按 cache-hit 单价计费）；无则 0。 */
     private Integer cachedTokens;
+
+    /** 写缓存（cache creation）的输入 token 数（按 cache-write 单价计费，仅 Anthropic）；无则 0。 */
+    private Integer cacheWriteTokens;
 
     /** 本次调用的费用（人民币元，落库时按当时单价/汇率快照）。 */
     private BigDecimal costCny;

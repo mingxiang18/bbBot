@@ -230,6 +230,8 @@ aiAgent:
     enforce: false
     usdToCny: 7.2
     defaultMonthlyLimitCny: 10.00
+    # 全局每日 token 上限兜底（所有用户合计），>0 生效、独立于 enforce，防异常流量烧 token。0=关闭。
+    globalDailyTokenLimit: 0
     pricing:
       refreshEnabled: true
       litellmUrl: https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json

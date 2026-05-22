@@ -43,9 +43,17 @@ public class ModelPricingService {
             .build();
 
     /**
-     * 计算一次调用的费用（CNY）。无单价则返回 0（记 warn，靠管理员补价）。
+     * 计算一次调用的费用（CNY），按四类 token 桶分别计价：
+     * 输入(cache-miss)、输入(cache-hit/read)、写缓存(cache-write，仅 Anthropic)、输出（含 reasoning）。
+     * 无单价则返回 0（记 warn，靠管理员补价）。
+     *
+     * @param promptTokens     总输入 token（含 cache-hit；不含 Anthropic 的 cache-write）
+     * @param cachedTokens     命中缓存的输入 token（cache read）
+     * @param cacheWriteTokens 写缓存的输入 token（cache creation）
+     * @param completionTokens 输出 token（含 reasoning）
      */
-    public BigDecimal costCny(String provider, String model, int promptTokens, int cachedTokens, int completionTokens) {
+    public BigDecimal costCny(String provider, String model,
+                              int promptTokens, int cachedTokens, int cacheWriteTokens, int completionTokens) {
         AiModelPricing p = find(provider, model);
         if (p == null) {
             log.warn("缺少模型单价，费用按 0 计：provider={} model={}（用 /价格设置 补价）", provider, model);
@@ -54,12 +62,16 @@ public class ModelPricingService {
         BigDecimal inputPerM = nz(p.getInputPerMillion());
         BigDecimal outputPerM = nz(p.getOutputPerMillion());
         BigDecimal cacheHitPerM = p.getCacheHitInputPerMillion() != null ? p.getCacheHitInputPerMillion() : inputPerM;
+        // 写缓存价缺省按标准输入价（多数厂商写缓存免费 → 通常为 0；只有 Anthropic 配了才有值）
+        BigDecimal cacheWritePerM = p.getCacheWriteInputPerMillion() != null ? p.getCacheWriteInputPerMillion() : inputPerM;
 
         int cached = Math.max(0, Math.min(cachedTokens, promptTokens));
         int nonCached = Math.max(0, promptTokens - cached);
+        int cacheWrite = Math.max(0, cacheWriteTokens);
 
         BigDecimal costNative = cacheHitPerM.multiply(BigDecimal.valueOf(cached))
                 .add(inputPerM.multiply(BigDecimal.valueOf(nonCached)))
+                .add(cacheWritePerM.multiply(BigDecimal.valueOf(cacheWrite)))
                 .add(outputPerM.multiply(BigDecimal.valueOf(completionTokens)))
                 .divide(MILLION, 8, RoundingMode.HALF_UP);
 
