@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -29,6 +30,12 @@ public class AiTokenUsage {
     private Integer promptTokens;
     private Integer completionTokens;
     private Integer totalTokens;
+
+    /** 命中缓存的输入 token 数（按 cache-hit 单价计费）；无则 0。 */
+    private Integer cachedTokens;
+
+    /** 本次调用的费用（人民币元，落库时按当时单价/汇率快照）。 */
+    private BigDecimal costCny;
 
     /** 会话标识，串联同一轮里的多次调用。 */
     private String sessionId;

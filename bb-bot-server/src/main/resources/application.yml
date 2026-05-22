@@ -223,6 +223,17 @@ aiAgent:
   # cron 派活时 LLM 的 system prompt（可覆盖）
   cron:
     maxSteps: 10
+  # 计费 / 月度限额。enforce 默认 false：只统计费用、不拦截（要开限额改 true）。
+  # 模型单价存 ai_model_pricing（按百万 token），seed 预置 deepseek/kimi 的 CNY 官方价（需核对），
+  # USD 厂商由定时任务从 LiteLLM 价格表刷新，按 usdToCny 折算成人民币结算。
+  billing:
+    enforce: false
+    usdToCny: 7.2
+    defaultMonthlyLimitCny: 10.00
+    pricing:
+      refreshEnabled: true
+      litellmUrl: https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json
+      refreshCron: 0 30 4 * * *
 
 # 总结聊天记录拉取的历史长度
 chatHistory:

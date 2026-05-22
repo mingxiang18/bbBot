@@ -261,7 +261,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             return;
         }
         try {
-            tokenUsageRecorder.record(name(), model, usage.prompt, usage.completion, usage.total);
+            tokenUsageRecorder.record(name(), model, usage.prompt, usage.cached, usage.completion, usage.total);
         } catch (Exception e) {
             log.warn("token 用量记录失败（忽略）", e);
         }
@@ -281,6 +281,8 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         int prompt;
         int completion;
         int total;
+        /** 命中缓存的输入 token（deepseek prompt_cache_hit_tokens / openai prompt_tokens_details.cached_tokens）。 */
+        int cached;
     }
 
     private SseChunkParsed parseSseChunk(String payload) {
@@ -343,6 +345,15 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         usage.prompt = u.getIntValue("prompt_tokens");
         usage.completion = u.getIntValue("completion_tokens");
         usage.total = u.getIntValue("total_tokens");
+        // 命中缓存 token：deepseek 顶层 prompt_cache_hit_tokens；openai 在 prompt_tokens_details.cached_tokens
+        int cached = u.getIntValue("prompt_cache_hit_tokens");
+        if (cached == 0) {
+            JSONObject details = u.getJSONObject("prompt_tokens_details");
+            if (details != null) {
+                cached = details.getIntValue("cached_tokens");
+            }
+        }
+        usage.cached = cached;
         return usage;
     }
 

@@ -100,6 +100,10 @@ public class BbAiChatHandler {
     @Autowired
     private ModelRouter modelRouter;
 
+    /** 月度限额拦截：超额硬阻断。 */
+    @Autowired
+    private com.bb.bot.common.util.aiChat.billing.QuotaGuard quotaGuard;
+
     @Autowired
     private IChatHistoryService chatHistoryService;
 
@@ -185,6 +189,19 @@ public class BbAiChatHandler {
     public void aiChatHandle(BbReceiveMessage bbReceiveMessage) {
         ReplyDecision decision = decideShouldReply(bbReceiveMessage);
         if (!decision.isShouldReply()) {
+            return;
+        }
+
+        // 月度限额：超额硬阻断（所有人含 owner）。命令类 handler 不经此入口，申请/审批不受影响。
+        if (quotaGuard.isOverLimit(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType())) {
+            // 仅直接对话（私聊 / @我）才回提示，群里概率自动回复直接静默跳过，避免刷屏
+            if (decision.isDirectTrigger()) {
+                com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
+                        quotaGuard.status(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType());
+                sendAtText(bbReceiveMessage, String.format(
+                        "本月 AI 额度已用完（已用 ¥%s / 额度 ¥%s）。发『/额度申请 理由』可请求管理员重置。",
+                        st.getSpent().toPlainString(), st.getLimit().toPlainString()));
+            }
             return;
         }
 
