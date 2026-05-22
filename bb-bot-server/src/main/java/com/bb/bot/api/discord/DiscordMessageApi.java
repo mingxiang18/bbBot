@@ -47,7 +47,7 @@ public class DiscordMessageApi {
         }
 
         sendTextMessages(channel, collectTextContent(bbSendMessage));
-        sendImageMessages(channel, bbSendMessage.getMessageList());
+        sendFileMessages(channel, bbSendMessage.getMessageList());
     }
 
     public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
@@ -182,23 +182,28 @@ public class DiscordMessageApi {
         return result;
     }
 
-    private void sendImageMessages(MessageChannel channel, List<BbMessageContent> messageList) {
+    /** 本地图片 / 本地文件都用 JDA sendFiles 上传（Discord 不区分图片与普通附件）。 */
+    private void sendFileMessages(MessageChannel channel, List<BbMessageContent> messageList) {
         for (BbMessageContent bbMessageContent : messageList) {
-            if (!BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())) {
+            String type = bbMessageContent.getType();
+            if (!BbSendMessageType.LOCAL_IMAGE.equals(type) && !BbSendMessageType.LOCAL_FILE.equals(type)) {
                 continue;
             }
             if (!(bbMessageContent.getData() instanceof File)) {
-                log.error("discord本地图片发送失败，消息内容不是File类型：{}", bbMessageContent.getData());
+                log.error("discord本地附件发送失败，消息内容不是File类型：{}", bbMessageContent.getData());
                 continue;
             }
-            File imageFile = (File) bbMessageContent.getData();
-            if (!imageFile.exists() || !imageFile.isFile()) {
-                log.error("discord本地图片发送失败，文件不存在：{}", imageFile.getAbsolutePath());
+            File file = (File) bbMessageContent.getData();
+            if (!file.exists() || !file.isFile()) {
+                log.error("discord本地附件发送失败，文件不存在：{}", file.getAbsolutePath());
                 continue;
             }
-            channel.sendFiles(FileUpload.fromData(imageFile))
-                    .queue(null, e -> log.error("discord本地图片发送失败，channelId：{}，file：{}",
-                            channel.getId(), imageFile.getAbsolutePath(), e));
+            // 优先用消息里指定的展示文件名，否则用文件本身的名字
+            String displayName = StringUtils.isNotBlank(bbMessageContent.getFileName())
+                    ? bbMessageContent.getFileName() : file.getName();
+            channel.sendFiles(FileUpload.fromData(file, displayName))
+                    .queue(null, e -> log.error("discord本地附件发送失败，channelId：{}，file：{}",
+                            channel.getId(), file.getAbsolutePath(), e));
         }
     }
 }

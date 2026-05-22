@@ -89,6 +89,22 @@ public class TelegramApiCaller {
         checkResponse(restUtils.postForForm(buildApiUrl(telegramConfig, "sendPhoto"), params, JSONObject.class));
     }
 
+    /**
+     * 以文档附件形式发送本地文件（Telegram Bot API sendDocument，multipart 上传 document 字段）。
+     * 任意类型文件都走这里（非图片），最大 50MB（Bot API 限制）。
+     */
+    public void sendDocument(TelegramConfig telegramConfig, String chatId, File document, String caption, String replyMessageId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("chat_id", chatId);
+        params.put("document", new FileSystemResource(document));
+        if (StringUtils.isNoneBlank(caption)) {
+            params.put("caption", caption);
+        }
+        putReplyParameters(params, replyMessageId);
+
+        checkResponse(restUtils.postForForm(buildApiUrl(telegramConfig, "sendDocument"), params, JSONObject.class));
+    }
+
     public TelegramFile getFile(TelegramConfig telegramConfig, String fileId) {
         Map<String, Object> params = new HashMap<>();
         params.put("file_id", fileId);

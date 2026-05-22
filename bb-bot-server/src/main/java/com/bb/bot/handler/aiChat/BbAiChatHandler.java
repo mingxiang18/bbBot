@@ -238,8 +238,16 @@ public class BbAiChatHandler {
         AgentReplySink replySink = new AgentReplySink() {
             @Override
             public boolean fileSupported() {
-                return msg.getWebSocket() != null
-                        && BbWebSocketServer.getCapabilities(msg.getWebSocket()).contains(BbCapability.FILE);
+                String bt = msg.getBotType();
+                if (BotType.BB.equals(bt)) {
+                    // BB：按客户端握手上报的 file 能力位
+                    return msg.getWebSocket() != null
+                            && BbWebSocketServer.getCapabilities(msg.getWebSocket()).contains(BbCapability.FILE);
+                }
+                // Discord（JDA sendFiles）/ Telegram（sendDocument）原生支持任意文件附件。
+                // QQ 官方机器人富媒体 file_type=4「文件」暂不开放、OneBot 未实现 → 不支持，
+                // send_file 会返回 client_no_file_capability，AI 改用文字告知。
+                return BotType.DISCORD.equals(bt) || BotType.TELEGRAM.equals(bt);
             }
             @Override
             public void sendFile(java.io.File file, String fileName) {

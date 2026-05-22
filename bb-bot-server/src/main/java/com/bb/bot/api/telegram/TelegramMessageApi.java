@@ -59,6 +59,11 @@ public class TelegramMessageApi {
             }else if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType())) {
                 telegramApiCaller.sendPhoto(telegramConfig, chatId, bbMessageContent.getData().toString(), null, replyMessageId);
                 replyUsed = true;
+            }else if (BbSendMessageType.LOCAL_FILE.equals(bbMessageContent.getType())
+                    && bbMessageContent.getData() instanceof File) {
+                // 非图片附件走 sendDocument（send_file 工具产物）
+                telegramApiCaller.sendDocument(telegramConfig, chatId, (File) bbMessageContent.getData(), null, replyMessageId);
+                replyUsed = true;
             }
         }
     }
