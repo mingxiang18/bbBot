@@ -133,6 +133,89 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_enabled (enabled)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 定时任务'",
 
+            "CREATE TABLE IF NOT EXISTS ai_token_usage (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  platform VARCHAR(32) DEFAULT NULL," +
+                    "  provider_name VARCHAR(32) NOT NULL," +
+                    "  model VARCHAR(64) NOT NULL," +
+                    "  model_role VARCHAR(16) DEFAULT NULL," +
+                    "  prompt_tokens INT DEFAULT 0," +
+                    "  completion_tokens INT DEFAULT 0," +
+                    "  total_tokens INT DEFAULT 0," +
+                    "  session_id VARCHAR(64) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_user_created (user_id, created_at)," +
+                    "  KEY idx_user_model (user_id, model)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 每用户每模型 token 用量'",
+
+            // 给已存在的 ai_token_usage 补费用相关列（列已存在时本句报错被 onContextRefreshed 的逐句 try/catch 吞掉）
+            "ALTER TABLE ai_token_usage ADD COLUMN cached_tokens INT DEFAULT 0",
+            "ALTER TABLE ai_token_usage ADD COLUMN cache_write_tokens INT DEFAULT 0",
+            "ALTER TABLE ai_token_usage ADD COLUMN cost_cny DECIMAL(12,6) DEFAULT 0",
+            // 给已存在的 ai_model_pricing 补写缓存单价列
+            "ALTER TABLE ai_model_pricing ADD COLUMN cache_write_input_per_million DECIMAL(12,4) DEFAULT NULL",
+
+            "CREATE TABLE IF NOT EXISTS ai_model_pricing (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  provider_name VARCHAR(32) NOT NULL," +
+                    "  model VARCHAR(64) NOT NULL," +
+                    "  currency VARCHAR(8) NOT NULL DEFAULT 'CNY'," +
+                    "  input_per_million DECIMAL(12,4) NOT NULL DEFAULT 0," +
+                    "  output_per_million DECIMAL(12,4) NOT NULL DEFAULT 0," +
+                    "  cache_hit_input_per_million DECIMAL(12,4) DEFAULT NULL," +
+                    "  cache_write_input_per_million DECIMAL(12,4) DEFAULT NULL," +
+                    "  source VARCHAR(16) NOT NULL DEFAULT 'manual'," +
+                    "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+                    "  UNIQUE KEY uk_provider_model (provider_name, model)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 模型单价（按百万 token）'",
+
+            "CREATE TABLE IF NOT EXISTS ai_user_quota (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  platform VARCHAR(32) NOT NULL DEFAULT ''," +
+                    "  monthly_limit_cny DECIMAL(10,2) NOT NULL," +
+                    "  updated_by VARCHAR(64) DEFAULT NULL," +
+                    "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+                    "  UNIQUE KEY uk_user_platform (user_id, platform)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='每用户月度限额覆盖（CNY）'",
+
+            "CREATE TABLE IF NOT EXISTS ai_quota_grant (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  month CHAR(7) NOT NULL," +
+                    "  credit_cny DECIMAL(10,2) NOT NULL," +
+                    "  granted_by VARCHAR(64) DEFAULT NULL," +
+                    "  reason VARCHAR(255) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_user_month (user_id, month)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='按月授信/额度重置（CNY）'",
+
+            "CREATE TABLE IF NOT EXISTS ai_quota_request (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  platform VARCHAR(32) DEFAULT NULL," +
+                    "  reason VARCHAR(255) DEFAULT NULL," +
+                    "  status VARCHAR(16) NOT NULL DEFAULT 'pending'," +
+                    "  decided_by VARCHAR(64) DEFAULT NULL," +
+                    "  decided_at DATETIME DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_status (status)," +
+                    "  KEY idx_user (user_id)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='额度审核申请'",
+
+            // 预置当前所用模型的 CNY 官方价（按百万 token）。⚠️ 数值需按官网核对，可用 /价格设置 命令更新。
+            // 列序：provider_name, model, currency, input_per_million, output_per_million, cache_hit_input_per_million, source
+            // provider_name 与 ai.models.*.kind 对应（deepseek / moonshot …），便于按 (kind, model) 命中价格
+            "INSERT IGNORE INTO ai_model_pricing " +
+                    "(provider_name, model, currency, input_per_million, output_per_million, cache_hit_input_per_million, source) VALUES " +
+                    "('deepseek','deepseek-chat','CNY',2.0000,8.0000,0.5000,'seed')," +
+                    "('deepseek','deepseek-reasoner','CNY',4.0000,16.0000,1.0000,'seed')," +
+                    "('moonshot','moonshot-v1-8k','CNY',12.0000,12.0000,NULL,'seed')," +
+                    "('moonshot','moonshot-v1-32k','CNY',24.0000,24.0000,NULL,'seed')," +
+                    "('moonshot','moonshot-v1-128k','CNY',60.0000,60.0000,NULL,'seed')," +
+                    "('moonshot','kimi-k2','CNY',4.0000,16.0000,1.0000,'seed')",
+
             "CREATE TABLE IF NOT EXISTS ai_skill (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  name VARCHAR(64) NOT NULL," +

@@ -107,7 +107,7 @@ public class BbChatHistoryHandler {
 
         String answer;
         try {
-            answer = aiChatService.chat(messages);
+            answer = aiChatService.chat(messages, com.bb.bot.common.util.aiChat.provider.ModelTier.LIGHT);
         } catch (AIException e) {
             log.error("AI summary failed (type={}, status={})", e.getErrorType(), e.getHttpStatus(), e);
             sendAtText(source, "AI 调用失败，请稍后再试");

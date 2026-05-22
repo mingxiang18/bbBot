@@ -88,6 +88,52 @@ function hasToolMessage(messages) {
   return messages.some(m => m.role === 'tool');
 }
 
+function systemText(messages) {
+  return messages.filter(m => m.role === 'system')
+    .map(m => (typeof m.content === 'string' ? m.content : JSON.stringify(m.content)))
+    .join('\n');
+}
+
+function messagesHaveImage(messages) {
+  return messages.some(m => Array.isArray(m.content)
+    && m.content.some(p => p?.type === 'image_url' || p?.type === 'image'));
+}
+
+/* ---------------- usage（token 用量） ---------------- */
+
+function estTokens(str) {
+  return Math.max(1, Math.ceil((str || '').length / 4));
+}
+function promptTokensOf(messages) {
+  let n = 0;
+  for (const m of messages) {
+    const c = m.content;
+    if (typeof c === 'string') n += estTokens(c);
+    else if (Array.isArray(c)) for (const p of c) {
+      if (p?.type === 'text') n += estTokens(p.text);
+      else n += 200; // 图片按固定成本
+    }
+  }
+  return n;
+}
+function buildUsage(messages, outputText) {
+  const prompt = promptTokensOf(messages);
+  const completion = estTokens(outputText);
+  // 模拟 deepseek 风格的缓存命中：约一半输入命中缓存，验证分级计费
+  const cacheHit = Math.floor(prompt / 2);
+  return {
+    prompt_tokens: prompt,
+    prompt_cache_hit_tokens: cacheHit,
+    prompt_cache_miss_tokens: prompt - cacheHit,
+    completion_tokens: completion,
+    total_tokens: prompt + completion,
+  };
+}
+function usageChunk(id, model, usage) {
+  // OpenAI 兼容协议：include_usage 末帧 choices 为空、顶层带 usage
+  return { id, object: 'chat.completion.chunk', created: Math.floor(Date.now() / 1000), model, choices: [], usage };
+}
+
 /**
  * 按真实 DeepSeek V4 (deepseek-v4-flash/pro) 的请求体契约校验回灌消息。
  * 返回错误字符串表示违约（mock 会回 400），返回 null 表示通过。
@@ -169,15 +215,32 @@ async function handleCompletion(req, res, body) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ error: 'invalid_json' }));
   }
-  const { model = 'mock-gpt-4', messages = [], stream = false, tools = [] } = parsed;
+  const { model = 'mock-gpt-4', messages = [], stream = false, tools = [], stream_options = null } = parsed;
   const id = makeId();
+  const sys = systemText(messages);
 
   if (!stream) {
-    // 非流式分支（本测试 profile 用不到，但兜底实现）
+    // 非流式分支：分类器 / 视觉桥接 / 内部总结都走 chat()（阻塞），在这里应答。
+    const uText = lastUserMessage(messages);
+    let content;
+    if (/任务分类器|回\s*SIMPLE/.test(sys)) {
+      // 与 mock 自身的工具路由保持一致：会触发某个工具的请求=干活(COMPLEX)，纯闲聊=SIMPLE
+      const intent = pickIntent(uText);
+      const work = intent !== 'chat' && intent !== 'plugin';
+      content = work ? 'COMPLEX' : 'SIMPLE';
+      console.log(`[mock] classify model=${model} intent=${intent} → ${content} ("${uText}")`);
+    } else if (/详细描述这张图片|图片描述/.test(sys)) {
+      // 视觉桥接：返回一段含方位的文字描述
+      content = '画面正中是一只橘色的猫，坐在左下角的木质桌面上；右上角有一扇窗，窗外是蓝天。整体暖色调。';
+      console.log(`[mock] vision describe model=${model} hasImage=${messagesHaveImage(messages)}`);
+    } else {
+      content = '（mock non-stream 回复）';
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({
       id, object: 'chat.completion', created: Math.floor(Date.now() / 1000), model,
-      choices: [{ index: 0, message: { role: 'assistant', content: '（mock non-stream 回复）' }, finish_reason: 'stop' }],
+      choices: [{ index: 0, message: { role: 'assistant', content }, finish_reason: 'stop' }],
+      usage: buildUsage(messages, content),
     }));
   }
 
@@ -296,6 +359,9 @@ async function handleCompletion(req, res, body) {
           JSON.stringify({ query: tokens[0] || userText.slice(-20) })));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
+    if (stream_options?.include_usage) {
+      sseChunk(res, usageChunk(id, model, buildUsage(messages, lead)));
+    }
     sseDone(res);
     return;
   }
@@ -351,6 +417,9 @@ async function handleCompletion(req, res, body) {
     await delay(8);
   }
   sseChunk(res, finishChunk(id, model, 'stop'));
+  if (stream_options?.include_usage) {
+    sseChunk(res, usageChunk(id, model, buildUsage(messages, finalText)));
+  }
   sseDone(res);
 }
 

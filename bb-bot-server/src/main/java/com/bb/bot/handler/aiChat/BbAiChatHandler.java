@@ -21,8 +21,11 @@ import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
 import com.bb.bot.common.util.aiChat.provider.AIException;
+import com.bb.bot.common.util.aiChat.provider.AiCallContext;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.ModelRouter;
+import com.bb.bot.common.util.aiChat.provider.ModelTier;
 import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
 import com.bb.bot.common.util.aiChat.provider.ToolDefinition;
@@ -92,6 +95,18 @@ public class BbAiChatHandler {
     /** 阻塞 + 流式都走 AiChatService（M9 重构后唯一入口）。 */
     @Autowired
     private AiChatService aiChatService;
+
+    /** 廉价模型分类器：判断本轮是轻量还是重度任务，决定走 LIGHT 还是 CHAT。 */
+    @Autowired
+    private ModelRouter modelRouter;
+
+    /** 月度限额拦截：超额硬阻断。 */
+    @Autowired
+    private com.bb.bot.common.util.aiChat.billing.QuotaGuard quotaGuard;
+
+    /** 全局每日 token 兜底。 */
+    @Autowired
+    private com.bb.bot.common.util.aiChat.billing.GlobalUsageGuard globalUsageGuard;
 
     @Autowired
     private IChatHistoryService chatHistoryService;
@@ -181,15 +196,46 @@ public class BbAiChatHandler {
             return;
         }
 
+        // 全局每日 token 兜底：达上限暂停所有 AI 回复，防止异常流量烧 token（直接对话才提示，避免刷屏）。
+        if (globalUsageGuard.isOverDailyLimit()) {
+            log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
+                    globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), bbReceiveMessage.getUserId());
+            if (decision.isDirectTrigger()) {
+                sendAtText(bbReceiveMessage, "今日 AI 调用量已达系统上限，请明天再试。");
+            }
+            return;
+        }
+
+        // 月度限额：超额硬阻断（所有人含 owner）。命令类 handler 不经此入口，申请/审批不受影响。
+        if (quotaGuard.isOverLimit(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType())) {
+            // 仅直接对话（私聊 / @我）才回提示，群里概率自动回复直接静默跳过，避免刷屏
+            if (decision.isDirectTrigger()) {
+                com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
+                        quotaGuard.status(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType());
+                sendAtText(bbReceiveMessage, String.format(
+                        "本月 AI 额度已用完（已用 ¥%s / 额度 ¥%s）。发『/额度申请 理由』可请求管理员重置。",
+                        st.getSpent().toPlainString(), st.getLimit().toPlainString()));
+            }
+            return;
+        }
+
         // M8 cutover：history 从 ai_memory_event 拉，转 ChatHistory 兼容 MessageBuilder
         List<ChatHistory> historyList = loadHistory(bbReceiveMessage);
         ChatHistory replyTarget = findReplyTarget(bbReceiveMessage, historyList);
+        List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
-        // 直接对话（私聊 / @我）才挂工具，让模型自行决定聊天还是干活
-        boolean useTools = toolsEnabled && decision.isDirectTrigger();
+        // 闲聊还是干活：直接对话用廉价模型分类；群聊概率自动回复一律按闲聊（轻模型、不挂工具）。
+        // 干活(CHAT) → 重模型 + 工具循环；闲聊(LIGHT) → 轻模型纯聊天。
+        ModelTier tier;
+        if (decision.isDirectTrigger()) {
+            ChatMessage ask = MessageBuilder.buildAskMessage(currentContent, replyTarget);
+            tier = modelRouter.classify(Collections.singletonList(ask));
+        } else {
+            tier = ModelTier.LIGHT;
+        }
+        boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
 
         String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
-        List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -201,12 +247,21 @@ public class BbAiChatHandler {
         List<ChatMessage> messages = MessageBuilder.buildContextMessages(
                 personality, currentContent, historyList, replyTarget);
 
-        if (useTools) {
-            toolLoopReply(bbReceiveMessage, messages);
-        } else if (Boolean.TRUE.equals(streamEnabled)) {
-            streamAiReply(bbReceiveMessage, messages);
-        } else {
-            blockingAiReply(bbReceiveMessage, messages);
+        // 把调用方身份带到 provider 层，供 token 用量按 用户/平台/会话 归属
+        AiCallContext.setIdentity(
+                bbReceiveMessage.getUserId(),
+                bbReceiveMessage.getBotType(),
+                "chat-" + bbReceiveMessage.getMessageId());
+        try {
+            if (useTools) {
+                toolLoopReply(bbReceiveMessage, messages);
+            } else if (Boolean.TRUE.equals(streamEnabled)) {
+                streamAiReply(bbReceiveMessage, messages, tier);
+            } else {
+                blockingAiReply(bbReceiveMessage, messages, tier);
+            }
+        } finally {
+            AiCallContext.clearIdentity();
         }
     }
 
@@ -333,11 +388,11 @@ public class BbAiChatHandler {
         return c;
     }
 
-    /** 阻塞分支：走 AiChatService（quizzical provider 抽象，带错误分类）。 */
-    private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+    /** 阻塞分支：走 AiChatService（轻/重模型由 tier 决定）。 */
+    private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages, ModelTier tier) {
         String answer;
         try {
-            answer = aiChatService.chat(messages);
+            answer = aiChatService.chat(messages, tier);
         } catch (AIException e) {
             log.error("AI provider call failed (type={}, status={}), skipping reply",
                     e.getErrorType(), e.getHttpStatus(), e);
@@ -351,8 +406,8 @@ public class BbAiChatHandler {
         sendReply(msg, answerMessage);
     }
 
-    /** 流式分支：走 AiChatService.chatStream（M9 重构后跟阻塞同一个 provider 抽象）。 */
-    private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+    /** 流式分支：走 AiChatService.chatStream（轻/重模型由 tier 决定）。 */
+    private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages, ModelTier tier) {
         BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
         aiChatService.chatStream(messages, new StreamHandler() {
@@ -376,7 +431,7 @@ public class BbAiChatHandler {
                 log.error("ai 流式回复异常", err);
                 session.fail(err);
             }
-        });
+        }, tier);
     }
 
     // =========================================================================

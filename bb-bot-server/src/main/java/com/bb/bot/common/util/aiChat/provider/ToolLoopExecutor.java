@@ -42,6 +42,9 @@ public class ToolLoopExecutor {
     @Autowired
     private ContextCompactor contextCompactor;
 
+    @Autowired
+    private VisionBridge visionBridge;
+
     /** 是否并行执行同一轮的多个工具调用。 */
     @Value("${aiAgent.toolParallel:true}")
     private boolean toolParallel;
@@ -84,14 +87,16 @@ public class ToolLoopExecutor {
                     StreamHandler outputHandler,
                     RunHandle handle) {
 
-        AIProvider provider = aiChatService.current();
-        if (provider == null || !provider.isConfigured()) {
+        AIProvider provider = aiChatService.provider();
+        ModelSpec spec = aiChatService.heavySpec();
+        if (spec == null || !spec.isConfigured()) {
             outputHandler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
-                    "no configured AI provider"));
+                    "no configured AI model (role heavy)"));
             return;
         }
 
-        List<ChatMessage> messages = new ArrayList<>(initialMessages);
+        // 主模型无视觉但消息带图时，先用视觉模型把图片转成文字描述注入上下文（描述带缓存）
+        List<ChatMessage> messages = new ArrayList<>(visionBridge.bridgeIfNeeded(initialMessages, spec));
         StringBuilder accumulatedText = new StringBuilder();
 
         for (int step = 1; step <= maxSteps; step++) {
@@ -105,7 +110,7 @@ public class ToolLoopExecutor {
             // 3. 调 LLM
             StepCollector collector = new StepCollector(outputHandler, accumulatedText);
             try {
-                provider.chatStream(messages, tools, collector);
+                provider.chatStream(spec, messages, tools, collector);
             } catch (AIException e) {
                 // chatStream 内部已调 outputHandler.onError，这里只补 log
                 log.warn("ToolLoopExecutor step {} provider error: {}", step, e.getMessage());

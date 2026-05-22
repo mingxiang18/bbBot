@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.ModelTier;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.aiAgent.entity.AiMemoryFact;
 import com.bb.bot.database.aiAgent.entity.AiMemorySession;
@@ -109,7 +110,7 @@ public class MemoryCompiler {
             req.add(ChatMessage.system("你是一个对话摘要器。输出严格遵守用户给的 markdown 结构。"));
             req.add(ChatMessage.user(prompt));
 
-            String answer = aiChatService.chat(req);
+            String answer = aiChatService.chat(req, ModelTier.LIGHT);
             if (StringUtils.isBlank(answer)) {
                 log.warn("compileSessionSummary 收到空 LLM 回复 session={}", s.getSessionId());
                 return;
@@ -267,7 +268,7 @@ public class MemoryCompiler {
                 ChatMessage.system("你是用户画像压缩器。"),
                 ChatMessage.user(prompt)
         );
-        String ans = aiChatService.chat(req);
+        String ans = aiChatService.chat(req, ModelTier.LIGHT);
         if (StringUtils.isBlank(ans)) ans = "(LLM 蒸馏失败，本期 longterm 跳过)";
         Files.writeString(out, "# Long-term context\n\n" + ans, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -303,7 +304,7 @@ public class MemoryCompiler {
                 ChatMessage.system("你是事实过滤器。"),
                 ChatMessage.user(prompt)
         );
-        String filtered = aiChatService.chat(req);
+        String filtered = aiChatService.chat(req, ModelTier.LIGHT);
         if (StringUtils.isBlank(filtered)) filtered = body.toString();
         Files.writeString(out, "# Key facts\n\n" + filtered, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

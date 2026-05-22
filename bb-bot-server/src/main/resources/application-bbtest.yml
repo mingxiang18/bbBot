@@ -25,16 +25,34 @@ bot:
       appId: bb-test
       secret: bb-test-secret
 
-# AI provider 配置：直接指向 mock-openai-server.mjs。
-# 注意键名是 ai.openai.*（对应 AIProviderProperties 的 openai 字段），不是 ai.providers.openai.*。
-# 切真实 LLM：把下面三项改成真实 endpoint / key / model，或在 real-llm.env 里设环境变量。
+# AI 模型配置：命名模型 + 角色，全部指向 mock-openai-server.mjs。
+# main=mock-gpt-4(重)、flash=mock-light(轻)、vis=mock-vision(视觉)。
 ai:
-  active-provider: openai
-  openai:
-    base-url: ${AI_OPENAI_BASE_URL:http://localhost:18800/v1}
-    api-key: ${AI_OPENAI_API_KEY:sk-mock-localtest}
-    model: ${AI_OPENAI_MODEL:mock-gpt-4}
-    vision-enable: false
+  models:
+    main:
+      base-url: ${AI_OPENAI_BASE_URL:http://localhost:18800/v1}
+      api-key: ${AI_OPENAI_API_KEY:sk-mock-localtest}
+      model: ${AI_OPENAI_MODEL:mock-gpt-4}
+      kind: openai
+      vision: false
+    flash:
+      base-url: http://localhost:18800/v1
+      api-key: sk-mock-localtest
+      model: mock-light
+      kind: openai
+      vision: false
+    vis:
+      base-url: http://localhost:18800/v1
+      api-key: sk-mock-localtest
+      model: mock-vision
+      kind: deepseek
+      vision: true
+  roles:
+    heavy: main
+    light: flash
+    vision: vis
+  usage:
+    stream-include-usage: true
 
 aiChat:
   streamEnabled: true
