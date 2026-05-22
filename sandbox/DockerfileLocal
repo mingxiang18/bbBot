@@ -7,6 +7,11 @@ FROM 192.168.50.227:30500/library/python:3-alpine
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN set -xe && apk --no-cache add bash bubblewrap coreutils
 
+# 预装文档/数据处理库（沙箱禁网，运行时离线可用；装在 /usr/local，bwrap 绑 /usr 后可见）
+RUN pip install --no-cache-dir --only-binary=:all: \
+        -i https://mirrors.aliyun.com/pypi/simple/ \
+        openpyxl python-docx xlsxwriter pypdf pandas pillow
+
 RUN adduser -D -u 1000 sandbox
 
 COPY exec_server.py /app/exec_server.py
