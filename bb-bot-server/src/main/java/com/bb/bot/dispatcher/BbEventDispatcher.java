@@ -94,9 +94,12 @@ public class BbEventDispatcher {
     }
 
     /**
-     * 机器人消息事件分发
+     * 机器人消息事件分发。
+     *
+     * @return 是否命中了某个「关键字命令」（占用 / 关键字规则）。命中即说明本条不是普通聊天，
+     *         调用方可据此把记忆里的 inbound 事件降级，避免命令污染聊天上下文。
      */
-    public void handleMessage(BbReceiveMessage bbReceiveMessage) {
+    public boolean handleMessage(BbReceiveMessage bbReceiveMessage) {
         //内容字符串移除开头空格和末尾空格
         String message = bbReceiveMessage.getMessage().replaceAll("^\\s+", "").replaceAll("\\s+$", "");
         bbReceiveMessage.setMessage(message);
@@ -114,7 +117,7 @@ public class BbEventDispatcher {
                 //如果找到占用方法且匹配规则，执行后直接结束
                 if (entry.getKey().getName().equals(useMethod.getKeyName()) && messageRuleMatch(bbReceiveMessage, rule)) {
                     handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
-                    return;
+                    return true;
                 }
             }
         }
@@ -165,6 +168,7 @@ public class BbEventDispatcher {
                 });
             }
         }
+        return matchFlag;
     }
 
     /**

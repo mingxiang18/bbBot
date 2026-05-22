@@ -502,8 +502,15 @@ public class BbAiChatHandler {
                 log.warn("注入技能目录失败 user={}", userId, e);
             }
         }
+        // 任务边界：历史仅作上下文参考，只回应最新一条消息，避免重复处理之前已经说过/已经处理过的请求
+        base = base + "\n\n" + HISTORY_BOUNDARY_GUIDANCE;
         return base;
     }
+
+    /** 防止模型把历史里更早的消息当成待办再处理一遍。 */
+    private static final String HISTORY_BOUNDARY_GUIDANCE =
+            "【对话边界】上面的对话历史只用于帮你理解上下文。你只需要回应用户【最新】发来的这一条消息；" +
+            "更早的消息仅作参考，不要重复回答、也不要重复执行历史里已经出现过或已经处理过的请求与指令。";
 
     /**
      * 向后兼容：剥离消息首段文本里的老 {@code agent } 前缀。返回新列表，不改原始消息体。
