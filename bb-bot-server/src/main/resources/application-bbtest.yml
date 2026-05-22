@@ -35,6 +35,20 @@ ai:
     api-key: ${AI_OPENAI_API_KEY:sk-mock-localtest}
     model: ${AI_OPENAI_MODEL:mock-gpt-4}
     vision-enable: false
+  # deepseek 槽借给 VISION 层（同样指向 mock，但 vision-enable=true，模型名 mock-vision）
+  deepseek:
+    base-url: http://localhost:18800/v1
+    api-key: sk-mock-localtest
+    model: mock-vision
+    vision-enable: true
+  # 多模型路由：LIGHT 走同一 mock 的 mock-light 模型；VISION 走 deepseek 槽（vision-enable）
+  tiers:
+    light:
+      model: mock-light
+    vision:
+      provider: deepseek
+  usage:
+    stream-include-usage: true
 
 aiChat:
   streamEnabled: true

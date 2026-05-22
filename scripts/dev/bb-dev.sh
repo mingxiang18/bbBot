@@ -83,7 +83,8 @@ cmd_build() {
   log "mvn package 中（首次约 1-2 分钟）…"
   cd "$REPO_DIR"
   # 跳过 test 编译 + 执行（项目里有过时 test 源）
-  "$MVN" -pl bb-bot-server -am package -Dmaven.test.skip=true -q
+  # 跳过 javadoc：bb-bot-sdk 的 maven-javadoc-plugin(attach-javadocs) 本地无 JAVA_HOME 时会失败
+  "$MVN" -pl bb-bot-server -am package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -q
   ok "build 完成：${JAR}"
 }
 
