@@ -142,42 +142,31 @@ aiChat:
   #启用 SSE 流式回复 + IM 端 edit/chunked 呈现。默认关闭以兼容现有部署
   streamEnabled: false
 
-# AI 模型调用配置
-# active-provider 决定调用哪家：openai / deepseek
-# 注意键名是 ai.openai.* / ai.deepseek.*（对应 AIProviderProperties 的字段），
-# 不是 ai.providers.openai.* —— 多套一层 providers 会绑定不上。
+# AI 模型调用配置：命名模型 + 角色绑定
+# - ai.models.<名字>: 一个模型的接入参数（base-url / api-key / model / kind / vision）
+#     kind: 厂商种类，用于 API 兼容差异(moonshot 网络图转 base64) + 计费归属，取值 openai/deepseek/moonshot/anthropic
+# - ai.roles: 把 heavy(干活/复杂) / light(闲聊/简单/内部总结) / vision(识图) 角色指向某个命名模型
+#     heavy 必填；light 不配则与 heavy 同（不分流）；vision 不配则不启用识图桥接
+# 同一厂商可命名多个模型（如 deepseek 的 reasoner 当 heavy、chat 当 light）。
 ai:
-  active-provider: openai
-  openai:
-    base-url: https://api.openai.com/v1
-    api-key:
-    # 需视觉能力（识图）：模型须支持 image_url，gpt-4 经典版不支持
-    model: gpt-4o
-    vision-enable: true
-  deepseek:
-    base-url: https://api.deepseek.com/v1
-    api-key:
-    model: deepseek-chat
-    vision-enable: false
+  models:
+    main:
+      base-url: https://api.deepseek.com/v1
+      api-key:
+      model: deepseek-chat
+      kind: deepseek
+      vision: false
+  roles:
+    heavy: main
+    light:           # 例：再加一个 ai.models.flash 后填 flash
+    vision:          # 例：再加一个 ai.models.kimi-v(kind: moonshot, vision: true) 后填 kimi-v
   retry:
     max-attempts: 3
     initial-interval-ms: 500
     multiplier: 2.0
     max-interval-ms: 4000
-  # 多模型路由：层级 → (provider, model)。缺省即回退到 active-provider + 其 model。
-  # CHAT（主对话/工具循环）永远 = active-provider，不在此配置。
-  # light：廉价模型先分类 + 内部总结/记忆压缩；vision：主模型无视觉时识图的多模态模型。
-  tiers:
-    light:
-      provider:        # 留空 = active-provider
-      model:           # 例：deepseek-chat / gpt-4o-mini。留空 = 该 provider 配置的 model
-    vision:
-      provider:        # 例：openai（其 vision-enable 须为 true）
-      model:           # 例：gpt-4o
-  # token 用量统计
+  # token 用量统计：流式是否发 stream_options.include_usage 拿用量末帧（个别网关不认可关）
   usage:
-    # 流式调用是否发送 stream_options.include_usage=true 以拿到 token 用量末帧。
-    # 个别 OpenAI 兼容网关不认这个字段，可置 false（流式不再统计，对话不受影响）。
     stream-include-usage: true
 
 # AI Agent（远程派活 + 工具调用 + cron + 插件）相关配置

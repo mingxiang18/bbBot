@@ -224,10 +224,11 @@ async function handleCompletion(req, res, body) {
     const uText = lastUserMessage(messages);
     let content;
     if (/任务分类器|回\s*SIMPLE/.test(sys)) {
-      // 廉价模型分类：简单问候 / 短文本 → SIMPLE，否则 COMPLEX
-      const simple = /(你好|您好|hi|hello|早|嗨|谢谢|在吗|几点)/i.test(uText) || uText.length <= 8;
-      content = simple ? 'SIMPLE' : 'COMPLEX';
-      console.log(`[mock] classify model=${model} → ${content} ("${uText}")`);
+      // 与 mock 自身的工具路由保持一致：会触发某个工具的请求=干活(COMPLEX)，纯闲聊=SIMPLE
+      const intent = pickIntent(uText);
+      const work = intent !== 'chat' && intent !== 'plugin';
+      content = work ? 'COMPLEX' : 'SIMPLE';
+      console.log(`[mock] classify model=${model} intent=${intent} → ${content} ("${uText}")`);
     } else if (/详细描述这张图片|图片描述/.test(sys)) {
       // 视觉桥接：返回一段含方位的文字描述
       content = '画面正中是一只橘色的猫，坐在左下角的木质桌面上；右上角有一扇窗，窗外是蓝天。整体暖色调。';

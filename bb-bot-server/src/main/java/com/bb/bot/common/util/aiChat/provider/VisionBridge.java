@@ -50,8 +50,8 @@ public class VisionBridge {
     /**
      * 按需桥接。不满足触发条件时原样返回入参列表（不复制）。
      */
-    public List<ChatMessage> bridgeIfNeeded(List<ChatMessage> messages, AIProvider mainProvider) {
-        if (mainProvider == null || mainProvider.visionEnable()) {
+    public List<ChatMessage> bridgeIfNeeded(List<ChatMessage> messages, ModelSpec mainSpec) {
+        if (mainSpec == null || mainSpec.isVision()) {
             return messages; // 主模型直接看图，无需桥接
         }
         if (messages == null || messages.isEmpty()) {
@@ -61,14 +61,9 @@ public class VisionBridge {
         if (!hasImage) {
             return messages;
         }
-        if (!properties.getTiers().getVision().isConfigured()) {
+        if (!aiChatService.visionConfigured()) {
+            log.warn("主模型无视觉且未配置 vision 角色，图片将被丢弃（配置 ai.roles.vision 可启用识图）");
             return messages; // 没配视觉模型 → provider 照旧 stripImages
-        }
-        AIProvider visionProvider = aiChatService.resolveProvider(ModelTier.VISION);
-        if (visionProvider == null || !visionProvider.isConfigured() || !visionProvider.visionEnable()) {
-            log.warn("VISION 层级未就绪（provider={}），跳过视觉桥接",
-                    visionProvider == null ? null : visionProvider.name());
-            return messages;
         }
 
         List<ChatMessage> out = new ArrayList<>(messages.size());

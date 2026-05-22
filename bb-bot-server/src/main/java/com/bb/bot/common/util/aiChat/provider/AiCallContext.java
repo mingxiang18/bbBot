@@ -19,7 +19,6 @@ public final class AiCallContext {
     private static final ThreadLocal<String> USER_ID = new ThreadLocal<>();
     private static final ThreadLocal<String> PLATFORM = new ThreadLocal<>();
     private static final ThreadLocal<String> SESSION_ID = new ThreadLocal<>();
-    private static final ThreadLocal<String> MODEL_OVERRIDE = new ThreadLocal<>();
     private static final ThreadLocal<String> MODEL_ROLE = new ThreadLocal<>();
 
     private AiCallContext() {}
@@ -53,18 +52,6 @@ public final class AiCallContext {
     }
 
     // ---- 模型层级：AiChatService set / clear ----
-
-    public static void setModelOverride(String model) {
-        MODEL_OVERRIDE.set(model);
-    }
-
-    public static String modelOverride() {
-        return MODEL_OVERRIDE.get();
-    }
-
-    public static void clearModelOverride() {
-        MODEL_OVERRIDE.remove();
-    }
 
     public static void setModelRole(String role) {
         MODEL_ROLE.set(role);

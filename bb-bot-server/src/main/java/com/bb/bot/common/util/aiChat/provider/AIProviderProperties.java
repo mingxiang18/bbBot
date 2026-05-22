@@ -4,9 +4,23 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
- * AI 调用全局配置：选哪个 provider、各 provider 的 baseUrl/key/model、重试参数。
- * 由 {@link com.bb.bot.config.LegacyAiConfigBackfill} 在启动期把旧的 chatGPT.* 配置回填到 openai 项。
+ * AI 调用全局配置：命名模型表 + 角色绑定 + 重试 + 用量开关。
+ *
+ * <pre>
+ * ai:
+ *   models:
+ *     ds-pro:  { base-url: ..., api-key: ..., model: deepseek-reasoner, kind: deepseek }
+ *     ds-flash:{ base-url: ..., api-key: ..., model: deepseek-chat,     kind: deepseek }
+ *     kimi-v:  { base-url: ..., api-key: ..., model: moonshot-v1-8k-vision, kind: moonshot, vision: true }
+ *   roles:
+ *     heavy:  ds-pro     # 干活 / 复杂任务
+ *     light:  ds-flash   # 闲聊 / 简单 / 内部总结
+ *     vision: kimi-v     # 主模型无视觉时识图
+ * </pre>
  *
  * @author ren
  */
@@ -15,25 +29,24 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "ai")
 public class AIProviderProperties {
 
-    /** 当前激活的 provider 名（与 {@link AIProvider#name()} 对应）。 */
-    private String activeProvider = "openai";
+    /** 命名模型表：key = 模型名（被 roles 引用）。 */
+    private Map<String, ModelSpec> models = new LinkedHashMap<>();
 
-    private ProviderConfig openai = new ProviderConfig();
-    private ProviderConfig deepseek = new ProviderConfig();
+    /** 角色 → 模型名。 */
+    private Roles roles = new Roles();
+
     private RetryConfig retry = new RetryConfig();
 
-    /** 模型层级路由：缺省即回退到 activeProvider + 其 model（CHAT 永远如此，不在此配置）。 */
-    private TierRouting tiers = new TierRouting();
-
-    /** token 用量统计相关开关。 */
     private UsageConfig usage = new UsageConfig();
 
     @Data
-    public static class ProviderConfig {
-        private String baseUrl;
-        private String apiKey;
-        private String model;
-        private boolean visionEnable = false;
+    public static class Roles {
+        /** 重模型：面向用户干活 / 复杂任务、工具循环。必填。 */
+        private String heavy;
+        /** 轻模型：闲聊 / 简单问答 / 廉价分类 / 内部总结。缺省回退 heavy。 */
+        private String light;
+        /** 视觉模型：主模型无视觉时识图。缺省则不启用视觉桥接。 */
+        private String vision;
     }
 
     @Data
@@ -42,26 +55,6 @@ public class AIProviderProperties {
         private long initialIntervalMs = 500L;
         private double multiplier = 2.0;
         private long maxIntervalMs = 4000L;
-    }
-
-    @Data
-    public static class TierRouting {
-        /** 轻量层（分类 / 内部总结 / 记忆压缩）。 */
-        private TierTarget light = new TierTarget();
-        /** 多模态视觉层（VisionBridge 用）。 */
-        private TierTarget vision = new TierTarget();
-    }
-
-    @Data
-    public static class TierTarget {
-        /** 目标 provider 名；null / 空 → 回退到 activeProvider。 */
-        private String provider;
-        /** 目标 model；null / 空 → 回退到该 provider 配置的 model。 */
-        private String model;
-
-        public boolean isConfigured() {
-            return (provider != null && !provider.isBlank()) || (model != null && !model.isBlank());
-        }
     }
 
     @Data

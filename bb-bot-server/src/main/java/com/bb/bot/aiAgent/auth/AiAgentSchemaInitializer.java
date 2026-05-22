@@ -206,14 +206,15 @@ public class AiAgentSchemaInitializer {
 
             // 预置当前所用模型的 CNY 官方价（按百万 token）。⚠️ 数值需按官网核对，可用 /价格设置 命令更新。
             // 列序：provider_name, model, currency, input_per_million, output_per_million, cache_hit_input_per_million, source
+            // provider_name 与 ai.models.*.kind 对应（deepseek / moonshot …），便于按 (kind, model) 命中价格
             "INSERT IGNORE INTO ai_model_pricing " +
                     "(provider_name, model, currency, input_per_million, output_per_million, cache_hit_input_per_million, source) VALUES " +
                     "('deepseek','deepseek-chat','CNY',2.0000,8.0000,0.5000,'seed')," +
                     "('deepseek','deepseek-reasoner','CNY',4.0000,16.0000,1.0000,'seed')," +
-                    "('openai','moonshot-v1-8k','CNY',12.0000,12.0000,NULL,'seed')," +
-                    "('openai','moonshot-v1-32k','CNY',24.0000,24.0000,NULL,'seed')," +
-                    "('openai','moonshot-v1-128k','CNY',60.0000,60.0000,NULL,'seed')," +
-                    "('openai','kimi-k2','CNY',4.0000,16.0000,1.0000,'seed')",
+                    "('moonshot','moonshot-v1-8k','CNY',12.0000,12.0000,NULL,'seed')," +
+                    "('moonshot','moonshot-v1-32k','CNY',24.0000,24.0000,NULL,'seed')," +
+                    "('moonshot','moonshot-v1-128k','CNY',60.0000,60.0000,NULL,'seed')," +
+                    "('moonshot','kimi-k2','CNY',4.0000,16.0000,1.0000,'seed')",
 
             "CREATE TABLE IF NOT EXISTS ai_skill (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +

@@ -222,12 +222,20 @@ public class BbAiChatHandler {
         // M8 cutover：history 从 ai_memory_event 拉，转 ChatHistory 兼容 MessageBuilder
         List<ChatHistory> historyList = loadHistory(bbReceiveMessage);
         ChatHistory replyTarget = findReplyTarget(bbReceiveMessage, historyList);
+        List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
-        // 直接对话（私聊 / @我）才挂工具，让模型自行决定聊天还是干活
-        boolean useTools = toolsEnabled && decision.isDirectTrigger();
+        // 闲聊还是干活：直接对话用廉价模型分类；群聊概率自动回复一律按闲聊（轻模型、不挂工具）。
+        // 干活(CHAT) → 重模型 + 工具循环；闲聊(LIGHT) → 轻模型纯聊天。
+        ModelTier tier;
+        if (decision.isDirectTrigger()) {
+            ChatMessage ask = MessageBuilder.buildAskMessage(currentContent, replyTarget);
+            tier = modelRouter.classify(Collections.singletonList(ask));
+        } else {
+            tier = ModelTier.LIGHT;
+        }
+        boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
 
         String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
-        List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -248,9 +256,9 @@ public class BbAiChatHandler {
             if (useTools) {
                 toolLoopReply(bbReceiveMessage, messages);
             } else if (Boolean.TRUE.equals(streamEnabled)) {
-                streamAiReply(bbReceiveMessage, messages);
+                streamAiReply(bbReceiveMessage, messages, tier);
             } else {
-                blockingAiReply(bbReceiveMessage, messages);
+                blockingAiReply(bbReceiveMessage, messages, tier);
             }
         } finally {
             AiCallContext.clearIdentity();
@@ -380,11 +388,11 @@ public class BbAiChatHandler {
         return c;
     }
 
-    /** 阻塞分支：走 AiChatService（quizzical provider 抽象，带错误分类）。 */
-    private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+    /** 阻塞分支：走 AiChatService（轻/重模型由 tier 决定）。 */
+    private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages, ModelTier tier) {
         String answer;
         try {
-            answer = aiChatService.chat(messages, modelRouter.classify(messages));
+            answer = aiChatService.chat(messages, tier);
         } catch (AIException e) {
             log.error("AI provider call failed (type={}, status={}), skipping reply",
                     e.getErrorType(), e.getHttpStatus(), e);
@@ -398,11 +406,10 @@ public class BbAiChatHandler {
         sendReply(msg, answerMessage);
     }
 
-    /** 流式分支：走 AiChatService.chatStream（M9 重构后跟阻塞同一个 provider 抽象）。 */
-    private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+    /** 流式分支：走 AiChatService.chatStream（轻/重模型由 tier 决定）。 */
+    private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages, ModelTier tier) {
         BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
-        ModelTier tier = modelRouter.classify(messages);
         aiChatService.chatStream(messages, new StreamHandler() {
             @Override
             public void onTextDelta(String delta) {

@@ -7,17 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 业务侧入口：选出目标 {@link AIProvider}（按层级 {@link ModelTier}）并代理 chat / 配置探测。
- * Handler 注入这个服务，而不是某个具体的 provider。
+ * 业务侧入口：按角色（{@link ModelTier}）解析出 {@link ModelSpec} 并调用唯一的
+ * {@link OpenAiCompatProvider}。角色 → 模型名的映射来自 {@code ai.roles}，
+ * 模型参数来自 {@code ai.models}。
  *
- * <p>多模型路由：层级 → (provider, model)。CHAT 永远 = activeProvider + 其 model；
- * LIGHT / VISION 可由 {@code ai.tiers.*} 覆写。per-call model 通过 {@link AiCallContext}
- * 的 modelOverride 传到 provider 层。</p>
+ * <p>LIGHT / VISION 未配置时回退 HEAVY（CHAT）。视觉桥接在委托前对消息处理一次。</p>
  *
  * @author ren
  */
@@ -25,143 +23,118 @@ import java.util.Map;
 @Service
 public class AiChatService {
 
-    private final Map<String, AIProvider> providers = new HashMap<>();
+    private final AIProvider provider;
     private final AIProviderProperties properties;
 
-    /** 视觉桥接：主模型无视觉时把图片转文字描述。与本类循环依赖，用 @Lazy 打破。 */
     @Autowired
     @Lazy
     private VisionBridge visionBridge;
 
     @Autowired
-    public AiChatService(List<AIProvider> providerBeans, AIProviderProperties properties) {
-        for (AIProvider p : providerBeans) {
-            providers.put(p.name(), p);
-        }
+    public AiChatService(AIProvider provider, AIProviderProperties properties) {
+        this.provider = provider;
         this.properties = properties;
     }
 
     @PostConstruct
     public void logStartup() {
-        log.info("AI providers registered: {}, active: {}, configured: {}",
-                providers.keySet(), properties.getActiveProvider(), isConfigured());
+        // 回填 spec.name，便于日志
+        properties.getModels().forEach((k, v) -> { if (v != null) v.setName(k); });
+        AIProviderProperties.Roles r = properties.getRoles();
+        log.info("AI models: {}, roles heavy={} light={} vision={}, configured={}",
+                properties.getModels().keySet(), r.getHeavy(), r.getLight(), r.getVision(), isConfigured());
     }
 
-    /** 当前激活的 provider 是否完成必要配置。 */
+    /** heavy（主）模型是否就绪。 */
     public boolean isConfigured() {
-        AIProvider p = current();
-        return p != null && p.isConfigured();
+        ModelSpec s = specForTier(ModelTier.CHAT);
+        return s != null && s.isConfigured();
     }
 
-    /**
-     * 调用激活 provider 进行聊天（CHAT 层级）。
-     */
+    /** 是否配置了可用的视觉模型。 */
+    public boolean visionConfigured() {
+        ModelSpec s = rawSpec(properties.getRoles().getVision());
+        return s != null && s.isConfigured() && s.isVision();
+    }
+
+    /** 解析某角色对应的模型；LIGHT/VISION 未配置回退 HEAVY。null 表示 heavy 都没配。 */
+    public ModelSpec specForTier(ModelTier tier) {
+        String name = switch (tier) {
+            case LIGHT -> firstNonBlank(properties.getRoles().getLight(), properties.getRoles().getHeavy());
+            case VISION -> firstNonBlank(properties.getRoles().getVision(), properties.getRoles().getHeavy());
+            default -> properties.getRoles().getHeavy();
+        };
+        ModelSpec s = rawSpec(name);
+        if (s == null && tier != ModelTier.CHAT) {
+            s = rawSpec(properties.getRoles().getHeavy());
+        }
+        return s;
+    }
+
+    private ModelSpec rawSpec(String name) {
+        if (StringUtils.isBlank(name)) {
+            return null;
+        }
+        ModelSpec s = properties.getModels().get(name);
+        if (s != null && s.getName() == null) {
+            s.setName(name);
+        }
+        return s;
+    }
+
+    private static String firstNonBlank(String a, String b) {
+        return StringUtils.isNotBlank(a) ? a : b;
+    }
+
+    // ---- chat（阻塞） ----
+
     public String chat(List<ChatMessage> messages) {
         return chat(messages, ModelTier.CHAT);
     }
 
-    /**
-     * 按层级调用聊天。调用方传入空消息或未配置 provider 时返回 null（沿用旧 API 的"未配置即静默"语义，
-     * 但失败抛 {@link AIException} 让调用方决定回退）。
-     */
     public String chat(List<ChatMessage> messages, ModelTier tier) {
-        AIProvider p = resolveProvider(tier);
-        if (p == null) {
-            log.warn("No AI provider matches tier [{}] (active={})", tier, properties.getActiveProvider());
+        ModelSpec spec = specForTier(tier);
+        if (spec == null || !spec.isConfigured()) {
+            log.warn("无可用模型（tier={}），跳过", tier);
             return null;
         }
-        if (!p.isConfigured()) {
-            return null;
-        }
-        List<ChatMessage> bridged = visionBridge.bridgeIfNeeded(messages, p);
-        String model = resolveModelForTier(tier);
+        List<ChatMessage> bridged = visionBridge.bridgeIfNeeded(messages, spec);
         try {
-            applyTier(model, tier);
-            return p.chat(bridged);
+            AiCallContext.setModelRole(tier.name());
+            return provider.chat(spec, bridged);
         } finally {
-            clearTier();
+            AiCallContext.clearModelRole();
         }
     }
 
-    /**
-     * 流式调用（无 function calling，CHAT 层级）。
-     */
+    // ---- chatStream（流式） ----
+
     public void chatStream(List<ChatMessage> messages, StreamHandler handler) {
         chatStream(messages, handler, ModelTier.CHAT);
     }
 
-    /**
-     * 按层级流式调用。上层 BbAiChatHandler 用这个，IM 端通过 handler.onTextDelta 实时吐字。
-     */
     public void chatStream(List<ChatMessage> messages, StreamHandler handler, ModelTier tier) {
-        AIProvider p = resolveProvider(tier);
-        if (p == null) {
+        ModelSpec spec = specForTier(tier);
+        if (spec == null || !spec.isConfigured()) {
             handler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
-                    "no AI provider matches tier [" + tier + "]"));
+                    "no configured AI model for tier " + tier));
             return;
         }
-        if (!p.isConfigured()) {
-            handler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
-                    "AI provider [" + p.name() + "] not configured"));
-            return;
-        }
-        List<ChatMessage> bridged = visionBridge.bridgeIfNeeded(messages, p);
-        String model = resolveModelForTier(tier);
+        List<ChatMessage> bridged = visionBridge.bridgeIfNeeded(messages, spec);
         try {
-            applyTier(model, tier);
-            p.chatStream(bridged, null, handler);
+            AiCallContext.setModelRole(tier.name());
+            provider.chatStream(spec, bridged, null, handler);
         } finally {
-            clearTier();
+            AiCallContext.clearModelRole();
         }
     }
 
-    /** 当前激活 provider（CHAT 层级 = activeProvider）。 */
-    public AIProvider current() {
-        return providers.get(properties.getActiveProvider());
+    /** 给 ToolLoopExecutor 用：底层 provider 与 heavy spec。 */
+    public AIProvider provider() {
+        return provider;
     }
 
-    /** 解析某层级对应的 provider。LIGHT / VISION 可指向其它 provider；否则回退 activeProvider。 */
-    public AIProvider resolveProvider(ModelTier tier) {
-        AIProviderProperties.TierTarget target = targetOf(tier);
-        if (target != null && StringUtils.isNotBlank(target.getProvider())) {
-            AIProvider p = providers.get(target.getProvider());
-            if (p != null) {
-                return p;
-            }
-            log.warn("tier [{}] 指定的 provider [{}] 不存在，回退 active", tier, target.getProvider());
-        }
-        return current();
-    }
-
-    /** 解析某层级对应的 model 覆写值；无覆写返回 null（provider 用自身配置 model）。 */
-    public String resolveModelForTier(ModelTier tier) {
-        AIProviderProperties.TierTarget target = targetOf(tier);
-        if (target != null && StringUtils.isNotBlank(target.getModel())) {
-            return target.getModel();
-        }
-        return null;
-    }
-
-    private AIProviderProperties.TierTarget targetOf(ModelTier tier) {
-        switch (tier) {
-            case LIGHT:
-                return properties.getTiers().getLight();
-            case VISION:
-                return properties.getTiers().getVision();
-            default:
-                return null; // CHAT 不可覆写
-        }
-    }
-
-    private void applyTier(String model, ModelTier tier) {
-        if (StringUtils.isNotBlank(model)) {
-            AiCallContext.setModelOverride(model);
-        }
-        AiCallContext.setModelRole(tier.name());
-    }
-
-    private void clearTier() {
-        AiCallContext.clearModelOverride();
-        AiCallContext.clearModelRole();
+    public ModelSpec heavySpec() {
+        return specForTier(ModelTier.CHAT);
     }
 }

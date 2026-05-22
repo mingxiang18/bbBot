@@ -25,9 +25,9 @@ import java.util.List;
 public class ModelRouter {
 
     private static final String CLASSIFY_PROMPT =
-            "你是任务分类器。判断下面这条用户请求属于哪类，只回一个词，不要解释、不要标点：\n" +
-            "- 简单闲聊、问候、简单事实问答 → 回 SIMPLE\n" +
-            "- 需要复杂推理、多步骤、写代码、长文创作、专业分析 → 回 COMPLEX";
+            "你是任务分类器。判断用户这条消息属于哪类，只回一个词，不要解释、不要标点：\n" +
+            "- 闲聊、问候、简单问答、不需要执行任何操作 → 回 SIMPLE\n" +
+            "- 需要执行操作（查实时/外部信息、读写文件、跑命令、联网搜索、写代码、多步骤任务）→ 回 COMPLEX";
 
     @Autowired
     private AiChatService aiChatService;
@@ -35,17 +35,24 @@ public class ModelRouter {
     @Autowired
     private AIProviderProperties properties;
 
+    /**
+     * 判断本轮该走轻模型(闲聊)还是重模型(干活)。
+     * LIGHT → 闲聊，上层走轻模型且不挂工具；CHAT → 干活，上层走重模型 + 工具循环。
+     */
     public ModelTier classify(List<ChatMessage> messages) {
-        if (!properties.getTiers().getLight().isConfigured()) {
+        // light 角色没单独配（或与 heavy 同一个）→ 路由无意义，统一 CHAT
+        AIProviderProperties.Roles roles = properties.getRoles();
+        if (StringUtils.isBlank(roles.getLight()) || roles.getLight().equals(roles.getHeavy())) {
             return ModelTier.CHAT;
         }
         ChatMessage lastUser = lastUser(messages);
-        if (lastUser == null || lastUser.hasImage()) {
+        if (lastUser == null) {
             return ModelTier.CHAT;
         }
         String text = textOf(lastUser);
         if (StringUtils.isBlank(text)) {
-            return ModelTier.CHAT;
+            // 纯图片无文字：当作轻量识图（视觉桥接处理），不挂工具
+            return lastUser.hasImage() ? ModelTier.LIGHT : ModelTier.CHAT;
         }
         try {
             List<ChatMessage> req = List.of(

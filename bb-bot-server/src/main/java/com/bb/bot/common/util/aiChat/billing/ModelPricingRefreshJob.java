@@ -152,15 +152,15 @@ public class ModelPricingRefreshJob {
         return msg;
     }
 
-    /** 候选 (provider, model)：当前配置的 provider 模型 + token 用量里出现过的模型。 */
+    /** 候选 (kind, model)：当前配置的命名模型 + token 用量里出现过的模型。 */
     private Set<String[]> candidatePairs() {
         Set<String> seen = new LinkedHashSet<>();
         Set<String[]> pairs = new LinkedHashSet<>();
-        addPair(pairs, seen, "openai", providerProperties.getOpenai().getModel());
-        addPair(pairs, seen, "deepseek", providerProperties.getDeepseek().getModel());
-        AIProviderProperties.TierRouting tiers = providerProperties.getTiers();
-        addPair(pairs, seen, tiers.getLight().getProvider(), tiers.getLight().getModel());
-        addPair(pairs, seen, tiers.getVision().getProvider(), tiers.getVision().getModel());
+        for (com.bb.bot.common.util.aiChat.provider.ModelSpec m : providerProperties.getModels().values()) {
+            if (m != null) {
+                addPair(pairs, seen, m.getKind(), m.getModel());
+            }
+        }
         // token 用量里实际出现过的 (provider, model)
         try {
             List<Map<String, Object>> rows = tokenUsageService.listMaps(
