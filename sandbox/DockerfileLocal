@@ -8,9 +8,17 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN set -xe && apk --no-cache add bash bubblewrap coreutils
 
 # 预装文档/数据处理库（沙箱禁网，运行时离线可用；装在 /usr/local，bwrap 绑 /usr 后可见）
+# 注意：本变体 base 是私有镜像 3-alpine(3.13)，个别重库(scipy/PyMuPDF 等)在 3.13 musl wheel
+# 可能未齐；规范构建走 sandbox/Dockerfile（3.12-alpine）。
 RUN pip install --no-cache-dir --only-binary=:all: \
         -i https://mirrors.aliyun.com/pypi/simple/ \
-        openpyxl python-docx xlsxwriter pypdf pandas pillow
+        openpyxl python-docx python-pptx xlsxwriter xlrd xlwt \
+        pypdf pdfplumber reportlab PyMuPDF \
+        pandas numpy scipy matplotlib \
+        pillow qrcode \
+        beautifulsoup4 lxml markdown html2text PyYAML tabulate \
+        chardet charset-normalizer Jinja2 \
+        python-dateutil pytz cryptography orjson regex sympy
 
 RUN adduser -D -u 1000 sandbox
 
