@@ -1,0 +1,68 @@
+# Helm values for chart: gha-runner-scale-set  (bbBot 专用 runner scale set)
+# 复用 misu-server 那套 ARC controller（arc-systems）+ runner 镜像 + GitHub App secret。
+# 安装命令见 ./README.md。
+githubConfigUrl: "https://github.com/mingxiang18/bbBot"
+githubConfigSecret: gh-app-creds       # 与 misu-runners 共用（arc-runners ns 里）
+
+minRunners: 0
+maxRunners: 1
+
+runnerScaleSetName: bbbot-runners       # workflow 里 runs-on: bbbot-runners
+
+containerMode:
+  type: ""
+
+# listener pod 也钉 misu-maco（跟 misu-runners 同款镜像，本地 containerd 有缓存）
+listenerTemplate:
+  spec:
+    nodeSelector:
+      kubernetes.io/hostname: misu-maco
+    containers:
+      - name: listener
+
+template:
+  spec:
+    serviceAccountName: misu-deployer    # 复用 misu-server ARC 建的 SA
+    nodeSelector:
+      kubernetes.io/hostname: misu-maco
+    securityContext:
+      # Kaniko 解压 base rootfs 要 chown，必须 root（k8s namespaced root）
+      runAsUser: 0
+      fsGroup: 1001
+    containers:
+      - name: runner
+        image: 10.8.0.26:30500/misuaa/misu-ci-runner:latest
+        imagePullPolicy: Always
+        command: ["/home/runner/run.sh"]
+        env:
+          - name: RUNNER_ALLOW_RUNASROOT
+            value: "1"
+          - name: GIT_TERMINAL_PROMPT
+            value: "0"
+          - name: HOME
+            value: /home/runner
+          # 锁 maven local repo 到 PVC，绕开 root/HOME 改写导致的空 repo 重下
+          - name: MAVEN_OPTS
+            value: "-Dmaven.repo.local=/home/runner/.m2/repository"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "4"
+            memory: "4Gi"
+        volumeMounts:
+          - name: maven-repo
+            mountPath: /home/runner/.m2/repository
+          - name: workspace
+            mountPath: /home/runner/_work
+    volumes:
+      # 复用 misu-server 的 maven cache PVC（同节点同 .m2，bb-bot-sdk 在 reactor 内构建）
+      - name: maven-repo
+        persistentVolumeClaim:
+          claimName: misu-ci-maven-repo
+      # workspace 用独立 hostPath，避免和 misu-runners 的 _work 撞车
+      - name: workspace
+        hostPath:
+          path: /mnt/misu/ci/bbbot-runner-work
+          type: Directory
