@@ -21,8 +21,11 @@ import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
 import com.bb.bot.common.util.aiChat.provider.AIException;
+import com.bb.bot.common.util.aiChat.provider.AiCallContext;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.ModelRouter;
+import com.bb.bot.common.util.aiChat.provider.ModelTier;
 import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
 import com.bb.bot.common.util.aiChat.provider.ToolDefinition;
@@ -92,6 +95,10 @@ public class BbAiChatHandler {
     /** 阻塞 + 流式都走 AiChatService（M9 重构后唯一入口）。 */
     @Autowired
     private AiChatService aiChatService;
+
+    /** 廉价模型分类器：判断本轮是轻量还是重度任务，决定走 LIGHT 还是 CHAT。 */
+    @Autowired
+    private ModelRouter modelRouter;
 
     @Autowired
     private IChatHistoryService chatHistoryService;
@@ -201,12 +208,21 @@ public class BbAiChatHandler {
         List<ChatMessage> messages = MessageBuilder.buildContextMessages(
                 personality, currentContent, historyList, replyTarget);
 
-        if (useTools) {
-            toolLoopReply(bbReceiveMessage, messages);
-        } else if (Boolean.TRUE.equals(streamEnabled)) {
-            streamAiReply(bbReceiveMessage, messages);
-        } else {
-            blockingAiReply(bbReceiveMessage, messages);
+        // 把调用方身份带到 provider 层，供 token 用量按 用户/平台/会话 归属
+        AiCallContext.setIdentity(
+                bbReceiveMessage.getUserId(),
+                bbReceiveMessage.getBotType(),
+                "chat-" + bbReceiveMessage.getMessageId());
+        try {
+            if (useTools) {
+                toolLoopReply(bbReceiveMessage, messages);
+            } else if (Boolean.TRUE.equals(streamEnabled)) {
+                streamAiReply(bbReceiveMessage, messages);
+            } else {
+                blockingAiReply(bbReceiveMessage, messages);
+            }
+        } finally {
+            AiCallContext.clearIdentity();
         }
     }
 
@@ -337,7 +353,7 @@ public class BbAiChatHandler {
     private void blockingAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
         String answer;
         try {
-            answer = aiChatService.chat(messages);
+            answer = aiChatService.chat(messages, modelRouter.classify(messages));
         } catch (AIException e) {
             log.error("AI provider call failed (type={}, status={}), skipping reply",
                     e.getErrorType(), e.getHttpStatus(), e);
@@ -355,6 +371,7 @@ public class BbAiChatHandler {
     private void streamAiReply(BbReceiveMessage msg, List<ChatMessage> messages) {
         BbSendMessage envelope = new BbSendMessage(msg);
         MessageStreamSession session = bbMessageApi.startStream(envelope);
+        ModelTier tier = modelRouter.classify(messages);
         aiChatService.chatStream(messages, new StreamHandler() {
             @Override
             public void onTextDelta(String delta) {
@@ -376,7 +393,7 @@ public class BbAiChatHandler {
                 log.error("ai 流式回复异常", err);
                 session.fail(err);
             }
-        });
+        }, tier);
     }
 
     // =========================================================================

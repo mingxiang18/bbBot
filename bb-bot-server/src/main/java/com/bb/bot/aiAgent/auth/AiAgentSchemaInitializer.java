@@ -133,6 +133,22 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_enabled (enabled)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 定时任务'",
 
+            "CREATE TABLE IF NOT EXISTS ai_token_usage (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) NOT NULL," +
+                    "  platform VARCHAR(32) DEFAULT NULL," +
+                    "  provider_name VARCHAR(32) NOT NULL," +
+                    "  model VARCHAR(64) NOT NULL," +
+                    "  model_role VARCHAR(16) DEFAULT NULL," +
+                    "  prompt_tokens INT DEFAULT 0," +
+                    "  completion_tokens INT DEFAULT 0," +
+                    "  total_tokens INT DEFAULT 0," +
+                    "  session_id VARCHAR(64) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_user_created (user_id, created_at)," +
+                    "  KEY idx_user_model (user_id, model)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 每用户每模型 token 用量'",
+
             "CREATE TABLE IF NOT EXISTS ai_skill (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  name VARCHAR(64) NOT NULL," +

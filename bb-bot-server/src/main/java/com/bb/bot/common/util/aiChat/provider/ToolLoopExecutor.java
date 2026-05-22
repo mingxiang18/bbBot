@@ -42,6 +42,9 @@ public class ToolLoopExecutor {
     @Autowired
     private ContextCompactor contextCompactor;
 
+    @Autowired
+    private VisionBridge visionBridge;
+
     /** 是否并行执行同一轮的多个工具调用。 */
     @Value("${aiAgent.toolParallel:true}")
     private boolean toolParallel;
@@ -84,14 +87,15 @@ public class ToolLoopExecutor {
                     StreamHandler outputHandler,
                     RunHandle handle) {
 
-        AIProvider provider = aiChatService.current();
+        AIProvider provider = aiChatService.resolveProvider(ModelTier.CHAT);
         if (provider == null || !provider.isConfigured()) {
             outputHandler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
                     "no configured AI provider"));
             return;
         }
 
-        List<ChatMessage> messages = new ArrayList<>(initialMessages);
+        // 主模型无视觉但消息带图时，先用视觉模型把图片转成文字描述注入上下文（描述带缓存）
+        List<ChatMessage> messages = new ArrayList<>(visionBridge.bridgeIfNeeded(initialMessages, provider));
         StringBuilder accumulatedText = new StringBuilder();
 
         for (int step = 1; step <= maxSteps; step++) {

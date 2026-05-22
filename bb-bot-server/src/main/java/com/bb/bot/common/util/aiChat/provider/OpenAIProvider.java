@@ -37,8 +37,8 @@ public class OpenAIProvider extends AbstractOpenAICompatibleProvider {
 
     @Override
     protected void preprocessImages(List<ChatMessage> messages) {
-        // moonshot 系列模型不接受网络图片 URL，必须先转 base64
-        String model = config().getModel();
+        // moonshot 系列模型不接受网络图片 URL，必须先转 base64（用 resolveModel 以兼容 per-call 覆写）
+        String model = resolveModel();
         if (model != null && model.contains("moonshot")) {
             convertNetImagesToBase64(messages);
         }

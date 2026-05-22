@@ -50,4 +50,9 @@ public interface AIProvider {
 
     /** 唯一名称，与 {@code ai.active-provider} 配置项匹配。 */
     String name();
+
+    /** 该 provider 当前配置的模型是否支持视觉（图片输入）。默认 false。 */
+    default boolean visionEnable() {
+        return false;
+    }
 }

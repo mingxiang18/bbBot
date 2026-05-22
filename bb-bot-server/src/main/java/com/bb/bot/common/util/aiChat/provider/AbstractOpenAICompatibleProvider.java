@@ -53,6 +53,9 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
     @Autowired
     protected AIProviderProperties properties;
 
+    @Autowired
+    protected TokenUsageRecorder tokenUsageRecorder;
+
     protected abstract AIProviderProperties.ProviderConfig config();
 
     /** 默认 baseUrl，用户未配置时回退。 */
@@ -67,6 +70,11 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
     @Override
     public boolean isConfigured() {
         return StringUtils.isNotBlank(config().getApiKey());
+    }
+
+    @Override
+    public boolean visionEnable() {
+        return config().isVisionEnable();
     }
 
     /** 流式 chat 共享 HttpClient（线程安全）。 */
@@ -144,9 +152,16 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                                StreamHandler handler) {
         String url = resolveBaseUrl() + "/chat/completions";
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("model", resolveModel());
+        String model = resolveModel();
+        body.put("model", model);
         body.put("messages", serializeMessages(messages));
         body.put("stream", true);
+        if (properties.getUsage().isStreamIncludeUsage()) {
+            // 让末帧带 usage（OpenAI 兼容协议：choices 为空、顶层带 usage）
+            Map<String, Object> streamOptions = new LinkedHashMap<>();
+            streamOptions.put("include_usage", true);
+            body.put("stream_options", streamOptions);
+        }
         if (tools != null && !tools.isEmpty()) {
             body.put("tools", serializeTools(tools));
             body.put("tool_choice", "auto");
@@ -169,6 +184,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         Map<Integer, ToolCall> pendingToolCalls = new LinkedHashMap<>();
         String finishReason = null;
         boolean anyByteReceived = false;
+        Usage lastUsage = null;
 
         try {
             HttpResponse<InputStream> resp = SHARED_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofInputStream());
@@ -186,6 +202,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                     anyByteReceived = true;
                     SseChunkParsed parsed = parseSseChunk(payload);
                     if (parsed == null) continue;
+                    if (parsed.usage != null) lastUsage = parsed.usage;
                     if (parsed.finishReason != null) finishReason = parsed.finishReason;
                     if (parsed.textDelta != null && !parsed.textDelta.isEmpty()) {
                         fullText.append(parsed.textDelta);
@@ -233,8 +250,21 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             try { handler.onToolCalls(new ArrayList<>(pendingToolCalls.values())); }
             catch (Exception cbErr) { log.warn("StreamHandler.onToolCalls 异常", cbErr); }
         }
+        recordUsage(model, lastUsage);
         try { handler.onComplete(fullText.toString(), finishReason); }
         catch (Exception cbErr) { log.warn("StreamHandler.onComplete 异常", cbErr); }
+    }
+
+    /** 把本次调用的 token 用量交给记录器异步落库。usage 为 null（网关没回）则跳过。 */
+    private void recordUsage(String model, Usage usage) {
+        if (usage == null) {
+            return;
+        }
+        try {
+            tokenUsageRecorder.record(name(), model, usage.prompt, usage.completion, usage.total);
+        } catch (Exception e) {
+            log.warn("token 用量记录失败（忽略）", e);
+        }
     }
 
     /** SSE 单 chunk 解析结果。 */
@@ -243,16 +273,34 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         String reasoningDelta;
         List<ToolCall> toolCallDeltas;
         String finishReason;
+        Usage usage;
+    }
+
+    /** token 用量。 */
+    private static class Usage {
+        int prompt;
+        int completion;
+        int total;
     }
 
     private SseChunkParsed parseSseChunk(String payload) {
         try {
             JSONObject root = JSON.parseObject(payload);
+            Usage usage = parseUsage(root);
             JSONArray choices = root.getJSONArray("choices");
-            if (choices == null || choices.isEmpty()) return null;
+            if (choices == null || choices.isEmpty()) {
+                // usage-only 末帧：无 choices 但带 usage
+                if (usage != null) {
+                    SseChunkParsed onlyUsage = new SseChunkParsed();
+                    onlyUsage.usage = usage;
+                    return onlyUsage;
+                }
+                return null;
+            }
             JSONObject choice = choices.getJSONObject(0);
             JSONObject delta = choice.getJSONObject("delta");
             SseChunkParsed out = new SseChunkParsed();
+            out.usage = usage;
             String finishReason = choice.getString("finish_reason");
             if (finishReason != null && !"null".equals(finishReason)) {
                 out.finishReason = finishReason;
@@ -283,6 +331,19 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
             log.debug("SSE chunk parse failed: {}", payload, e);
             return null;
         }
+    }
+
+    /** 从响应 JSON 顶层解析 usage（流式末帧 / 阻塞响应通用）。无则返回 null。 */
+    private Usage parseUsage(JSONObject root) {
+        JSONObject u = root.getJSONObject("usage");
+        if (u == null) {
+            return null;
+        }
+        Usage usage = new Usage();
+        usage.prompt = u.getIntValue("prompt_tokens");
+        usage.completion = u.getIntValue("completion_tokens");
+        usage.total = u.getIntValue("total_tokens");
+        return usage;
     }
 
     private void mergeToolCallDelta(Map<Integer, ToolCall> agg, ToolCall delta) {
@@ -370,6 +431,7 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
                 throw new AIException(AIException.ErrorType.FATAL,
                         "AI provider [" + name() + "] response has no choices: " + responseBody);
             }
+            recordUsage(resolveModel(), parseUsage(root));
             String content = choices.getJSONObject(0).getJSONObject("message").getString("content");
             return content == null ? "" : content;
         } catch (AIException e) {
@@ -527,7 +589,12 @@ public abstract class AbstractOpenAICompatibleProvider implements AIProvider {
         return StringUtils.isNotBlank(configured) ? configured : defaultBaseUrl();
     }
 
-    private String resolveModel() {
+    /** 本次调用实际使用的 model：优先 {@link AiCallContext} 的 per-call 覆写（多模型路由），否则 provider 配置 / 默认。 */
+    protected String resolveModel() {
+        String override = AiCallContext.modelOverride();
+        if (StringUtils.isNotBlank(override)) {
+            return override;
+        }
         String configured = config().getModel();
         return StringUtils.isNotBlank(configured) ? configured : defaultModel();
     }

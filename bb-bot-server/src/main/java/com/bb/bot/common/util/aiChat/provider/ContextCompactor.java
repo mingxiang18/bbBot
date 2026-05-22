@@ -98,7 +98,7 @@ public class ContextCompactor {
                 + "用简体中文，直接给摘要，不要寒暄。"));
         req.add(ChatMessage.user(rendered));
         try {
-            String summary = aiChatService.chat(req);
+            String summary = aiChatService.chat(req, ModelTier.LIGHT);
             if (StringUtils.isNotBlank(summary)) {
                 return summary;
             }
