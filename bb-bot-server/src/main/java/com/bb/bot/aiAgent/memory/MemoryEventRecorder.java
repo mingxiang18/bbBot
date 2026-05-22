@@ -68,6 +68,23 @@ public class MemoryEventRecorder {
         }
     }
 
+    /**
+     * 把已记录的 inbound 事件降级为命令（kind=command）。命中关键字命令的消息不是普通聊天，
+     * 降级后不再进入聊天上下文（loadChatContext 只取 chat / chat_reply），避免命令被当成待办重复处理。
+     */
+    public void markCommand(Long eventId) {
+        if (eventId == null) return;
+        try {
+            AiMemoryEvent e = eventService.getById(eventId);
+            if (e != null && "chat".equals(e.getKind())) {
+                e.setKind("command");
+                eventService.updateById(e);
+            }
+        } catch (Exception ex) {
+            log.warn("markCommand 失败（非致命）eventId={}", eventId, ex);
+        }
+    }
+
     /** Bot 出站消息（聊天 / agent / admin / cron 回复）→ 落库 */
     public Long recordOutbound(BbReceiveMessage sourceMsg, String kind, String text, String messageIdHint) {
         if (sourceMsg == null) return null;
