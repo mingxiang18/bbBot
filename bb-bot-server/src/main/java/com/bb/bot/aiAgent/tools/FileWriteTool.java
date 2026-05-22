@@ -52,6 +52,8 @@ public class FileWriteTool {
             Boolean append
     ) {
         Map<String, Object> result = new LinkedHashMap<>();
+        // 确保用户根目录 0777：与 bb-sandbox(uid 1000) 共享 hostPath，双方都要能写
+        fileSpace.ensureSharedUserDir(MemoryToolContext.getUserId());
         Path target;
         try {
             target = fileSpace.resolveForCurrentUser(path);

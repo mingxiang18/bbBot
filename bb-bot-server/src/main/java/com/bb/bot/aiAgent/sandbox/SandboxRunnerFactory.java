@@ -8,13 +8,16 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 
 /**
- * 启动期探测可用后端并暴露一个 {@link #current()}。优先级：bubblewrap > docker > noop。
+ * 启动期探测可用后端并暴露一个 {@link #current()}。优先级：remote > bubblewrap > docker > noop。
  *
  * <p>可用 {@code aiAgent.sandbox.preferred} 强制选择某个后端。</p>
  */
 @Slf4j
 @Component
 public class SandboxRunnerFactory {
+
+    @Autowired
+    private RemoteSandboxRunner remote;
 
     @Autowired
     private BubblewrapSandboxRunner bwrap;
@@ -38,6 +41,8 @@ public class SandboxRunnerFactory {
 
     private SandboxRunner select() {
         switch (preferred.toLowerCase()) {
+            case "remote":
+                return remote.available() ? remote : noop;
             case "bubblewrap":
                 return bwrap.available() ? bwrap : noop;
             case "docker":
@@ -45,6 +50,7 @@ public class SandboxRunnerFactory {
             case "noop":
                 return noop;
             default: // auto
+                if (remote.available()) return remote;
                 if (bwrap.available()) return bwrap;
                 if (docker.available()) return docker;
                 return noop;

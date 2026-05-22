@@ -191,10 +191,18 @@ aiAgent:
     serpApiKey:       # SerpAPI（Google 结果，付费）
   # 沙箱
   sandbox:
-    # auto / bubblewrap / docker / noop
+    # auto / remote / bubblewrap / docker / noop（auto 优先级：remote > bubblewrap > docker > noop）
     preferred: auto
     # docker 后端用什么镜像
     dockerImage: alpine:3.20
+    # remote 后端：把命令 HTTP 发给独立的 bb-sandbox pod 执行（prod 用，本地留空自动回退）
+    remote:
+      # bb-sandbox Service 地址，留空则本后端不可用
+      url:
+      # 可选调用方校验，与 bb-sandbox 的 SANDBOX_TOKEN 同值
+      authToken:
+      connectTimeoutMs: 3000
+      readTimeoutMs: 60000
   # 插件目录（jar 放进去即可）
   pluginDir: ./plugins
   # cron 派活时 LLM 的 system prompt（可覆盖）

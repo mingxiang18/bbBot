@@ -39,7 +39,9 @@ public class ShellExecTool {
             name = "shell_exec",
             description = "在隔离沙箱里执行一个 bash 命令。仅 owner 可调。" +
                     "默认无网络、15s 超时、stdout 上限 8KB。" +
-                    "用于：跑脚本、检查文件、运行小工具。绝不要用于持续运行的服务。",
+                    "工作目录就是你的文件空间：用户上传的文件、你写的产物都在这里（cwd 下可直接读写，" +
+                    "产物写到当前目录即可被 file_read 读到 / 回传给用户）。" +
+                    "用于：跑脚本、处理文件、运行小工具。绝不要用于持续运行的服务。",
             requiresOwner = true,
             requiresSandbox = true
     )

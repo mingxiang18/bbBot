@@ -52,8 +52,11 @@ jobs:
             --insecure --skip-tls-verify --insecure-pull --skip-tls-verify-pull
 
       # ---------- Deploy ----------
-      # envsubst 渲染 bb-bot.yaml（含 PV/PVC/Deployment/Service）后 apply。
+      # envsubst 渲染 bb-bot.yaml（static PV/PVC + agent-files hostPath、Deployment、Service）后 apply。
       # PV 是 cluster-scoped，runner SA 需 ClusterRole（见 arc/01-rbac.yaml）。
+      # 注意：bb-sandbox（独立沙箱 pod）不在 CI 部署 —— 其镜像需 apk 装 bash/bwrap，
+      # 而本 CI 的 Kaniko wrapper 会剥 apk，且镜像 tag 与 CI 的 SHA 对不上会 ImagePullBackOff。
+      # 沙箱由 scripts/deploy/release.sh --with-sandbox 单独构建+部署（buildx，apk 正常）。
       - name: Apply manifest & roll out
         env:
           TAG: ${{ steps.meta.outputs.tag }}

@@ -8,6 +8,11 @@
 #   scripts/deploy/release.sh --config       # 只下发 ConfigMap 并重启，不构建/发镜像
 #   scripts/deploy/release.sh --list-backups # 列出可回滚的备份时间戳
 #   scripts/deploy/release.sh --rollback <ts># 回滚到某次备份时间戳
+#   scripts/deploy/release.sh --with-sandbox # 额外构建并部署 bb-sandbox（沙箱执行 pod）
+#   scripts/deploy/release.sh --sandbox-only # 只构建并部署 bb-sandbox，不动 bb-bot
+#
+# bb-sandbox（独立沙箱 pod）镜像走 buildx（apk 正常）；CI Kaniko 会剥 apk 故不在 CI 构建。
+# 沙箱不常变，日常 bot 发布不必带 --with-sandbox。
 #
 # ConfigMap 与 Deployment 解耦：日常发布只覆盖 bb-bot.yaml（Deployment+Service），
 # 不动 ConfigMap；改了生产配置才用 --config 单独下发 bb-bot-config.yaml。
@@ -27,6 +32,11 @@ K8S_DIR="${ROOT_DIR}/scripts/deploy/k8s/bb-bot"
 SVC_NAME="bb-bot"
 SVC_MODULE="bb-bot-server"
 SVC_DOCKERFILE="Dockerfile"
+
+# bb-sandbox（独立沙箱 pod）
+SANDBOX_NAME="bb-sandbox"
+SANDBOX_CONTEXT="sandbox"
+SANDBOX_DOCKERFILE="Dockerfile"
 
 log() { local m; m="$(date '+%F %T') $*"; printf '\033[1;34m[release]\033[0m %s\n' "${m}"; echo "${m}" >>"${LOG_FILE}"; }
 err() { local m; m="$(date '+%F %T') ERROR $*"; printf '\033[1;31m[release]\033[0m %s\n' "${m}" >&2; echo "${m}" >>"${LOG_FILE}"; }
@@ -78,6 +88,37 @@ build_image() {
     docker buildx build --platform "${PLATFORMS}" -t "${image}" \
       "${SVC_MODULE}" -f "${SVC_MODULE}/${SVC_DOCKERFILE}"
   fi
+}
+
+# bb-sandbox 镜像：buildx（无需 maven），context=sandbox/
+build_sandbox_image() {
+  local push="$1" image="${REGISTRY_PUSH}/misuaa/${SANDBOX_NAME}:${TAG}"
+  log "沙箱镜像构建：${image}"
+  if [[ "${push}" == "1" ]]; then
+    docker buildx build --platform "${PLATFORMS}" -t "${image}" --push \
+      "${SANDBOX_CONTEXT}" -f "${SANDBOX_CONTEXT}/${SANDBOX_DOCKERFILE}"
+  else
+    docker buildx build --platform "${PLATFORMS}" -t "${image}" \
+      "${SANDBOX_CONTEXT}" -f "${SANDBOX_CONTEXT}/${SANDBOX_DOCKERFILE}"
+  fi
+}
+
+# 部署 bb-sandbox 清单（Deployment/Service/NetworkPolicy；文件共享走 hostPath /mnt/misu/sandbox）
+deploy_sandbox() {
+  local tmp
+  log "主节点：备份 + 渲染 ${SANDBOX_NAME}.yaml"
+  mssh "mkdir -p '${MASTER_BACKUP_DIR}/${TS}/k8s'"
+  mssh "cp -a '${MASTER_K8S_DIR}/${SANDBOX_NAME}.yaml' '${MASTER_BACKUP_DIR}/${TS}/k8s/' 2>/dev/null || true"
+  tmp="$(mktemp -d)"
+  export REGISTRY_PULL IMAGE_TAG="${TAG}"
+  envsubst '${REGISTRY_PULL} ${IMAGE_TAG}' \
+    <"${K8S_DIR}/${SANDBOX_NAME}.yaml" >"${tmp}/${SANDBOX_NAME}.yaml"
+  scp "${SSH_OPTS[@]}" "${tmp}/${SANDBOX_NAME}.yaml" "${MASTER_SSH}:${MASTER_K8S_DIR}/${SANDBOX_NAME}.yaml"
+  mssh "kubectl apply -f '${MASTER_K8S_DIR}/${SANDBOX_NAME}.yaml'"
+  rm -rf "${tmp}"
+  log "主节点：等待 ${SANDBOX_NAME} rollout..."
+  mssh "kubectl -n '${NAMESPACE}' rollout status 'deployment/${SANDBOX_NAME}' --timeout='${ROLLOUT_TIMEOUT}'" \
+    || err "${SANDBOX_NAME} rollout 未就绪（不影响 bot；沙箱调用会优雅失败）"
 }
 
 # ============================================================================
@@ -161,7 +202,7 @@ cmd_config() {
 # 主流程
 # ============================================================================
 main() {
-  local dry=0 skip_build=0 action="deploy" rb_ts=""
+  local dry=0 skip_build=0 action="deploy" rb_ts="" with_sandbox=0 sandbox_only=0
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --dry-run)      dry=1 ;;
@@ -169,6 +210,8 @@ main() {
       --config)       action="config" ;;
       --list-backups) action="list" ;;
       --rollback)     action="rollback"; rb_ts="${2:-}"; shift ;;
+      --with-sandbox) with_sandbox=1 ;;
+      --sandbox-only) sandbox_only=1 ;;
       *)              die "未知选项：$1（-h 看帮助）" ;;
     esac
     shift
@@ -182,12 +225,23 @@ main() {
   TS="$(date -u +%Y%m%dT%H%M%SZ)"
   local branch; branch="$(git rev-parse --abbrev-ref HEAD)"
   [[ "${branch}" == "master" ]] || err "当前分支是 ${branch}（非 master）—— 将按该 SHA 发布，请确认。"
-  log "发布目标：${SVC_NAME}  tag=${TAG}  ts=${TS}"
+  log "发布目标：${SVC_NAME}  tag=${TAG}  ts=${TS}  with_sandbox=${with_sandbox} sandbox_only=${sandbox_only}"
+
+  # 只发沙箱
+  if [[ "${sandbox_only}" -eq 1 ]]; then
+    [[ "${skip_build}" -eq 1 ]] || build_sandbox_image "$([[ "${dry}" -eq 1 ]] && echo 0 || echo 1)"
+    if [[ "${dry}" -eq 1 ]]; then log "[dry-run] 沙箱镜像构建完成、未推送。"; exit 0; fi
+    deploy_sandbox
+    prune_backups
+    log "沙箱发布成功：${TAG}"
+    exit 0
+  fi
 
   if [[ "${skip_build}" -eq 1 ]]; then
     log "跳过镜像构建（--skip-build）"
   else
     build_image "$([[ "${dry}" -eq 1 ]] && echo 0 || echo 1)"
+    [[ "${with_sandbox}" -eq 1 ]] && build_sandbox_image "$([[ "${dry}" -eq 1 ]] && echo 0 || echo 1)"
   fi
 
   if [[ "${dry}" -eq 1 ]]; then
@@ -196,6 +250,7 @@ main() {
   fi
 
   deploy_k8s
+  [[ "${with_sandbox}" -eq 1 ]] && deploy_sandbox
   prune_backups
   log "发布成功：${TAG} 已上线（备份时间戳 ${TS}）"
 }

@@ -49,6 +49,8 @@ public class AgentFileStore {
         if (contents == null || contents.isEmpty()) {
             return;
         }
+        // 确保用户根目录 0777：sandbox(uid 1000) 把它当 /work，要能写产物
+        fileSpace.ensureSharedUserDir(userId);
         Path inboundDir = fileSpace.userRoot(userId)
                 .resolve("inbound")
                 .resolve(AgentFileSpace.safe(messageId));

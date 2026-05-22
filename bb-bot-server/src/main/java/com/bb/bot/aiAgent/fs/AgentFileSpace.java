@@ -5,8 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
 
 /**
  * 每用户文件空间：解析「调用者自己的目录」并做越权校验。
@@ -28,6 +33,29 @@ public class AgentFileSpace {
     /** 指定用户的根目录，绝对化 + 正规化。 */
     public Path userRoot(String userId) {
         return Paths.get(userFileRoot, safe(userId)).toAbsolutePath().normalize();
+    }
+
+    /** 0777：bot 以 root 跑、bb-sandbox 以 uid 1000 跑，二者共享 hostPath，需同目录互相可写。 */
+    private static final Set<PosixFilePermission> SHARED_DIR_PERMS =
+            PosixFilePermissions.fromString("rwxrwxrwx");
+
+    /**
+     * 确保用户根目录存在且对共享卷上的另一 uid 可写（shell_exec 沙箱把该目录当 /work，
+     * 需要能在里面写产物）。bot 是 owner（root），chmod 0777 由它完成；非 POSIX 文件系统忽略。
+     */
+    public Path ensureSharedUserDir(String userId) {
+        Path root = userRoot(userId);
+        try {
+            Files.createDirectories(root);
+            try {
+                Files.setPosixFilePermissions(root, SHARED_DIR_PERMS);
+            } catch (UnsupportedOperationException ignore) {
+                // 非 POSIX FS（如本地 Windows 开发）：忽略
+            }
+        } catch (IOException e) {
+            log.warn("ensureSharedUserDir 失败 user={}", userId, e);
+        }
+        return root;
     }
 
     /**

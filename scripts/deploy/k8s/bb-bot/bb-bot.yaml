@@ -41,17 +41,11 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            # 不放控制面
-            - weight: 50
-              preference:
-                matchExpressions:
-                  - key: node-role.kubernetes.io/control-plane
-                    operator: DoesNotExist
-            # 偏好 misu-maco
-            - weight: 100
-              preference:
-                matchExpressions:
+          # 必须落在 misu-maco：与 bb-sandbox 共享的 hostPath /mnt/misu/sandbox 在该节点本地，
+          # 两者不同节点则文件不互通。
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
                   - key: kubernetes.io/hostname
                     operator: In
                     values: [misu-maco]
@@ -60,6 +54,8 @@ spec:
         - name: bb-bot
           image: ${REGISTRY_PULL}/misuaa/bb-bot:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
+          # bot 保持 root（要写 /bot/logs 等）。与 sandbox(uid 1000) 的 hostPath 共享靠 bot
+          # 把用户目录建成 0777（见 AgentFileSpace.ensureSharedUserDir），双方都能在 /work 写。
           ports:
             - { name: http,    containerPort: 8099 }
             - { name: ws,      containerPort: 8888 }
@@ -82,11 +78,15 @@ spec:
           volumeMounts:
             - { name: config, mountPath: /bot/application-prod.yaml, subPath: application-prod.yaml }
             - { name: static, mountPath: /bot/static }
+            # 与 bb-sandbox 共享的用户文件空间（hostPath，同在 misu-maco）。aiAgent.fs.userFileRoot 指向这里。
+            - { name: agentfiles, mountPath: /bot/agent-files }
       volumes:
         - name: config
           configMap: { name: bb-bot-config }
         - name: static
           persistentVolumeClaim: { claimName: bb-bot-static-pvc }
+        - name: agentfiles
+          hostPath: { path: /mnt/misu/sandbox, type: DirectoryOrCreate }
 ---
 apiVersion: v1
 kind: Service

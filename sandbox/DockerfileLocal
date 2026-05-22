@@ -1,0 +1,16 @@
+# bb-sandbox：私有 registry 变体（真 docker / buildx 构建，apk 正常执行）。
+# 注意：CI 的 Kaniko wrapper 会剥掉 apk RUN（Alpine3.20+kaniko bug），且没有 sandbox 的
+# 预装 base 变体，所以本镜像不走 CI Kaniko —— 由 scripts/deploy/release.sh --with-sandbox
+# 用 docker buildx 构建推送。
+FROM 192.168.50.227:30500/library/python:3-alpine
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN set -xe && apk --no-cache add bash bubblewrap coreutils
+
+RUN adduser -D -u 1000 sandbox
+
+COPY exec_server.py /app/exec_server.py
+WORKDIR /app
+USER 1000
+EXPOSE 8080
+ENTRYPOINT ["python3", "/app/exec_server.py"]
