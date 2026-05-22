@@ -41,9 +41,14 @@ template:
             value: "0"
           - name: HOME
             value: /home/runner
-          # 锁 maven local repo 到 PVC，绕开 root/HOME 改写导致的空 repo 重下
+          # bb-bot-sdk pom 有 maven-javadoc-plugin（attach-javadocs），需要 JAVA_HOME
+          # 才能定位 javadoc 命令。runner 镜像 JDK 在这个路径。
+          - name: JAVA_HOME
+            value: /usr/lib/jvm/java-17-openjdk-amd64
+          # 锁 maven local repo 到 PVC（绕开 root/HOME 改写）；
+          # 同时跳过 javadoc 生成 —— CI 部署不需要 javadoc jar，且省时间。
           - name: MAVEN_OPTS
-            value: "-Dmaven.repo.local=/home/runner/.m2/repository"
+            value: "-Dmaven.repo.local=/home/runner/.m2/repository -Dmaven.javadoc.skip=true"
         resources:
           requests:
             cpu: "500m"
