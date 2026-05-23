@@ -20,7 +20,9 @@ import java.util.Map;
  *
  * <p>设计选择：</p>
  * <ul>
- *   <li>仅 owner 可调（{@code requiresOwner=true}），策略表里也不应给普通角色开</li>
+ *   <li>已对所有用户开放（{@code requiresOwner=false} + ai_tool_policy 给 user 角色放行）；
+ *       安全依赖沙箱本身：禁网 + 超时 + 隔离文件系统。若当前无可用沙箱后端（noop），
+ *       工具直接返回 sandbox_unavailable 拒绝执行</li>
  *   <li>requires_sandbox=true 给 future-AiToolExecutor 拒绝裸机调用</li>
  *   <li>固定走 bash -c，避免参数注入路径分歧</li>
  *   <li>默认禁网络（spec.networkEnabled=false），AI 要走网络应用 http_fetch 工具</li>
@@ -37,7 +39,7 @@ public class ShellExecTool {
 
     @AiTool(
             name = "shell_exec",
-            description = "在隔离沙箱里执行一个 bash 命令。仅 owner 可调。" +
+            description = "在隔离沙箱里执行一个 bash 命令。" +
                     "默认无网络、15s 超时、stdout 上限 8KB。" +
                     "工作目录就是你的文件空间：用户上传的文件、你写的产物都在这里（cwd 下可直接读写，" +
                     "产物写到当前目录即可被 file_read 读到 / 用 send_file 回传给用户）。" +
@@ -49,7 +51,7 @@ public class ShellExecTool {
                     "其它=cryptography/orjson/regex/sympy/dateutil/pytz。" +
                     "沙箱禁网，不要 pip install 或联网下载（会失败）；缺的库就用已装的实现。" +
                     "用于：跑脚本、处理文件、运行小工具。绝不要用于持续运行的服务。",
-            requiresOwner = true,
+            requiresOwner = false,
             requiresSandbox = true
     )
     public Map<String, Object> exec(

@@ -40,7 +40,7 @@ public class FileWriteTool {
                     "只能写到你自己的用户目录：路径可写相对路径（相对你的用户目录），" +
                     "或写绝对路径但必须落在该目录内，否则拒绝。" +
                     "用户让你「写一个文件 / 保存这段内容」时调用。单次 ≤ 256KB。",
-            requiresOwner = true,
+            requiresOwner = false,
             requiresSandbox = false
     )
     public Map<String, Object> write(
