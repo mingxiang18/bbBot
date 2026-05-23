@@ -22,4 +22,22 @@ public interface AgentReplySink {
      * @param fileName 展示用文件名；null 则用 file 的名字
      */
     void sendFile(File file, String fileName);
+
+    /**
+     * 当前会话端是否支持接收内联图片。图片是 IM 基础内容类型，默认不支持仅因为部分
+     * 通道（如 cron 派活）没有可回传的会话。交互式会话的实现应覆盖为 true。
+     */
+    default boolean imageSupported() {
+        return false;
+    }
+
+    /**
+     * 把一个本地图片作为内联图片发回当前会话（区别于 {@link #sendFile}：图直接展示，
+     * 不走文件附件能力位）。供 splatoon 日程图等「工具产出图片」的场景用。
+     *
+     * @param image 本地图片文件
+     */
+    default void sendImage(File image) {
+        throw new UnsupportedOperationException("当前会话通道不支持发送图片");
+    }
 }

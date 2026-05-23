@@ -32,7 +32,7 @@ public class AiCronTask {
     /** 目标用户 id（群组则可选） */
     private String targetUserId;
 
-    /** Spring CronExpression 兼容格式（7 字段，秒 分 时 日 月 周 [年]） */
+    /** Spring CronExpression 格式（6 字段，秒 分 时 日 月 周；不支持年份字段） */
     private String cronExpr;
 
     /** 派给 LLM 的 prompt */

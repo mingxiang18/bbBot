@@ -228,16 +228,21 @@ public class AiAgentSchemaInitializer {
                     "  KEY idx_enabled (enabled)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent SKILL（DB 托管）'",
 
-            // 种子：内置工具的默认 user 策略（无副作用的原语都对普通用户开放）
+            // 种子：内置工具的默认 user 策略。
+            // file_write / shell_exec / send_file 也对普通用户开放：
+            // 写入与发送限本人文件空间、命令走隔离沙箱（禁网+超时）。
             "INSERT IGNORE INTO ai_tool_policy (tool_name, role, allowed) VALUES " +
                     "('server_time','user',1)," +
                     "('http_fetch','user',1)," +
                     "('file_read','user',1)," +
+                    "('file_write','user',1)," +
+                    "('send_file','user',1)," +
                     "('list_dir','user',1)," +
                     "('web_search','user',1)," +
                     "('grep_search','user',1)," +
+                    "('shell_exec','user',1)," +
                     "('load_skill','user',1)," +
-                    "('splatoon3_salmon_run','user',1)," +
+                    "('splatoon3_schedule','user',1)," +
                     "('search_memory','user',1)," +
                     "('recall_experience','user',1)," +
                     "('record_experience','user',1)"

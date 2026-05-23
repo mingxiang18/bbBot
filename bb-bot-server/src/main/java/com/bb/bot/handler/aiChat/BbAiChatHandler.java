@@ -314,13 +314,25 @@ public class BbAiChatHandler {
                 out.setMessageList(Collections.singletonList(content));
                 bbMessageApi.sendMessage(out);
             }
+            @Override
+            public boolean imageSupported() {
+                // 内联图片是 IM 基础内容类型，各平台 message API 均支持，无需能力位
+                return true;
+            }
+            @Override
+            public void sendImage(java.io.File image) {
+                BbSendMessage out = new BbSendMessage(msg);
+                out.setMessageList(Collections.singletonList(
+                        BbMessageContent.buildLocalImageMessageContent(image)));
+                bbMessageApi.sendMessage(out);
+            }
         };
 
         try {
             toolLoopExecutor.run(
                     messages,
                     tools,
-                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId, replySink),
+                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, msg.getGroupId(), sessionId, replySink),
                     maxSteps,
                     new StreamHandler() {
                         @Override

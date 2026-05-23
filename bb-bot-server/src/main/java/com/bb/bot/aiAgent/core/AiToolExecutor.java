@@ -6,6 +6,7 @@ import com.bb.bot.aiAgent.auth.AiAgentAuthService;
 import com.bb.bot.aiAgent.tools.AgentReplyContext;
 import com.bb.bot.aiAgent.tools.AgentReplySink;
 import com.bb.bot.aiAgent.tools.MemoryToolContext;
+import com.bb.bot.aiAgent.tools.ToolCallContext;
 import com.bb.bot.database.aiAgent.entity.AiToolInvocationLog;
 import com.bb.bot.database.aiAgent.service.IAiToolInvocationLogService;
 import lombok.extern.slf4j.Slf4j;
@@ -58,10 +59,19 @@ public class AiToolExecutor {
     }
 
     /**
-     * 兼容签名（无出站回传通道）。交互式会话应改用带 {@link AgentReplySink} 的 6 参版本。
+     * 兼容签名（无出站回传通道）。交互式会话应改用带 {@link AgentReplySink} 的版本。
      */
     public String invoke(String toolName, String argsJson, String callerUserId, String platform, String sessionId) {
-        return invoke(toolName, argsJson, callerUserId, platform, sessionId, null);
+        return invoke(toolName, argsJson, callerUserId, platform, null, sessionId, null);
+    }
+
+    /**
+     * 兼容签名（无来源群号）。需要把当前会话频道透传给工具时（如 cron_add 落到当前群），
+     * 改用带 {@code groupId} 的 7 参版本。
+     */
+    public String invoke(String toolName, String argsJson, String callerUserId, String platform,
+                         String sessionId, AgentReplySink replySink) {
+        return invoke(toolName, argsJson, callerUserId, platform, null, sessionId, replySink);
     }
 
     /**
@@ -73,11 +83,12 @@ public class AiToolExecutor {
      * @param argsJson     function calling arguments
      * @param callerUserId 调用者 user id
      * @param platform     平台标识（BotType 字符串），用于角色查询和审计
+     * @param groupId      当前会话的群组 id（私聊 / 非交互场景为 null），透传给工具用
      * @param sessionId    一次 agent 派活的串联 id（null 也行，落库时为空）
      * @param replySink    当前会话的出站回传通道（send_file 等用）；非交互场景传 null
      */
     public String invoke(String toolName, String argsJson, String callerUserId, String platform,
-                         String sessionId, AgentReplySink replySink) {
+                         String groupId, String sessionId, AgentReplySink replySink) {
         long start = System.currentTimeMillis();
         AiToolDescriptor desc = registry.get(toolName);
         if (desc == null) {
@@ -106,11 +117,13 @@ public class AiToolExecutor {
         Callable<Object> task = () -> {
             MemoryToolContext.setUserId(callerUserId);
             AgentReplyContext.set(replySink);
+            ToolCallContext.set(platform, groupId);
             try {
                 return desc.getMethod().invoke(desc.getBeanInstance(), args);
             } finally {
                 MemoryToolContext.clear();
                 AgentReplyContext.clear();
+                ToolCallContext.clear();
             }
         };
         Future<Object> future = toolPool.submit(task);
