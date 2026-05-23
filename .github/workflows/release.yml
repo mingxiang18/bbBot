@@ -33,11 +33,18 @@ jobs:
           echo "Tag: $TAG"
 
       # ---------- Maven ----------
-      # bb-bot-sdk 在同一 reactor 里随 -am 一起构建（不走外部仓库），不会有覆盖问题。
-      # MAVEN_OPTS（pod env 里）已锁 maven.repo.local 到 PVC。
-      - name: Build JAR
+      # 用 install（而非 package）：bb-bot-sdk 会随 reactor 一并装进本地 maven 仓库，
+      # 而该本地仓库 = PVC misu-ci-maven-repo（见 arc/02-values-runner.yaml，与 misu-server
+      # 共用的私有 maven 缓存）。所以每次 push master 都会把新版 bb-bot-sdk 发布到这个私有仓库，
+      # misu-server 后续构建即可解析到新版本（记得同步 misu-server 里的依赖版本号）。
+      # MAVEN_OPTS（pod env 里）已锁 maven.repo.local 到 PVC 并 skip javadoc。
+      # install 仍会产出 bb-bot-server 的 fat jar 供下面 Kaniko 使用。
+      # gpg.skip=true 必须带：bb-bot-sdk 的 maven-gpg-plugin 绑在 verify 阶段（install 会触发），
+      # 其 gpg executable 是开发机 Windows 路径、runner 上也无签名密钥 —— 不跳过会直接构建失败。
+      # 私有仓库（本地 .m2）不需要 GPG 签名，签名仅 Maven Central 发布时才需要。
+      - name: Build & install (publishes bb-bot-sdk to shared maven repo)
         run: |
-          mvn -B clean package -pl bb-bot-server -am -Dmaven.test.skip=true -P prod
+          mvn -B clean install -pl bb-bot-sdk,bb-bot-server -am -Dmaven.test.skip=true -Dgpg.skip=true -P prod
 
       # ---------- Kaniko ----------
       # runner 镜像里的 /kaniko/executor 是 wrapper：自动把 base image 换成 -fonts 变体
