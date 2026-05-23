@@ -229,12 +229,14 @@ public class AiAgentSchemaInitializer {
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent SKILL（DB 托管）'",
 
             // 种子：内置工具的默认 user 策略。
-            // file_write / shell_exec 也对普通用户开放：写入限本人文件空间、命令走隔离沙箱（禁网+超时）。
+            // file_write / shell_exec / send_file 也对普通用户开放：
+            // 写入与发送限本人文件空间、命令走隔离沙箱（禁网+超时）。
             "INSERT IGNORE INTO ai_tool_policy (tool_name, role, allowed) VALUES " +
                     "('server_time','user',1)," +
                     "('http_fetch','user',1)," +
                     "('file_read','user',1)," +
                     "('file_write','user',1)," +
+                    "('send_file','user',1)," +
                     "('list_dir','user',1)," +
                     "('web_search','user',1)," +
                     "('grep_search','user',1)," +

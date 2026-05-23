@@ -19,7 +19,8 @@ import java.util.Map;
  * 产物发回去。文件必须在你自己的用户目录内（{@link AgentFileSpace} 越权校验）。</p>
  *
  * <ul>
- *   <li>{@code requiresOwner=true}：与 file_read/write、shell_exec 一致，仅 owner 可调</li>
+ *   <li>{@code requiresOwner=false}：与 file_read/write、shell_exec 一致，已对所有用户开放
+ *       （文件限本人空间，≤20MB）</li>
  *   <li>出站通道经 {@link AgentReplyContext} 注入；非交互场景（cron）无通道 → 报错</li>
  *   <li>客户端未上报 file 能力时不硬发，返回提示让你改用文字告知</li>
  *   <li>上限 20MB（base64 走 WebSocket）</li>
@@ -39,7 +40,7 @@ public class SendFileTool {
             description = "把你文件空间里的一个文件作为附件发送给当前对话的用户。" +
                     "用户让你「把处理好的文件发给我 / 发我」时，先确保文件已在你的目录里" +
                     "（用 shell_exec 或 file_write 生成），再用本工具按相对路径发送。仅限你自己的目录，≤20MB。",
-            requiresOwner = true
+            requiresOwner = false
     )
     public Map<String, Object> send(
             @AiToolParam(name = "path", description = "要发送的文件路径（相对你的用户目录，或该目录内的绝对路径）")
