@@ -50,6 +50,8 @@ public class ShellExecTool {
                     "解析=bs4/lxml/markdown/html2text/yaml(PyYAML)/tabulate/chardet/charset_normalizer/jinja2，" +
                     "其它=cryptography/orjson/regex/sympy/dateutil/pytz。" +
                     "沙箱禁网，不要 pip install 或联网下载（会失败）；缺的库就用已装的实现。" +
+                    "如果生成了图片，先写成当前目录下的 png/jpg/webp/gif 文件，再调用 send_image 发送；" +
+                    "不要把沙箱文件路径当网络图片 URL 回复给用户。" +
                     "用于：跑脚本、处理文件、运行小工具。绝不要用于持续运行的服务。",
             requiresOwner = false,
             requiresSandbox = true
