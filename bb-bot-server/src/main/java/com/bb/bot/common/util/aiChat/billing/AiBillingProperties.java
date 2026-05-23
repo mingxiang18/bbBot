@@ -27,6 +27,12 @@ public class AiBillingProperties {
     /** 默认月度限额（元）。用户无 ai_user_quota 覆盖时用它。 */
     private BigDecimal defaultMonthlyLimitCny = new BigDecimal("10.00");
 
+    /**
+     * 用量查询 REST 接口的固定鉴权 token。请求头 {@code X-Api-Token} 须与此一致才放行。
+     * 留空则该接口一律拒绝（等于关闭），避免误开放。
+     */
+    private String queryApiToken;
+
     /** 是否启用月度限额硬阻断。关闭则只统计费用、不拦截。 */
     private boolean enforce = false;
 

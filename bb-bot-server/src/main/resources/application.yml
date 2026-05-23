@@ -226,6 +226,8 @@ aiAgent:
     enforce: false
     usdToCny: 7.2
     defaultMonthlyLimitCny: 10.00
+    # 用量查询 REST 接口(/api/ai/usage)的固定鉴权 token，请求头 X-Api-Token 须匹配；留空=关闭该接口
+    queryApiToken:
     # 全局每日 token 上限兜底（所有用户合计），>0 生效、独立于 enforce，防异常流量烧 token。0=关闭。
     globalDailyTokenLimit: 0
     pricing:
