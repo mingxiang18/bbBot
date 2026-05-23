@@ -237,7 +237,7 @@ public class AiAgentSchemaInitializer {
                     "('web_search','user',1)," +
                     "('grep_search','user',1)," +
                     "('load_skill','user',1)," +
-                    "('splatoon3_salmon_run','user',1)," +
+                    "('splatoon3_schedule','user',1)," +
                     "('search_memory','user',1)," +
                     "('recall_experience','user',1)," +
                     "('record_experience','user',1)"
