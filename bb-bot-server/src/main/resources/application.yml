@@ -156,6 +156,13 @@ ai:
       model: deepseek-chat
       kind: deepseek
       vision: false
+    # 官方 Anthropic（Messages API，x-api-key 鉴权，走 AnthropicProvider）。把 heavy 指过来即可启用：
+    # claude:
+    #   base-url: https://api.anthropic.com/v1
+    #   api-key:                       # console.anthropic.com 的 sk-ant-... 官方 key
+    #   model: claude-sonnet-4-6
+    #   kind: anthropic
+    #   vision: true
   roles:
     heavy: main
     light:           # 例：再加一个 ai.models.flash 后填 flash
