@@ -320,7 +320,7 @@ public class BbAiChatHandler {
             toolLoopExecutor.run(
                     messages,
                     tools,
-                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, sessionId, replySink),
+                    (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, msg.getGroupId(), sessionId, replySink),
                     maxSteps,
                     new StreamHandler() {
                         @Override
