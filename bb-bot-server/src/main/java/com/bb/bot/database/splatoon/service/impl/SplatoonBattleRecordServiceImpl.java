@@ -106,9 +106,9 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
 
         //时长(秒)
         splatoonBattleRecord.setDuration(battleDetail.getInteger("duration"));
-        //完胜KO(NEUTRAL/null 视为非KO)
+        //完胜KO:实测无KO返回 "NEITHER"(也防御 NEUTRAL/NONE),仅真 KO(WIN/LOSE)才记
         String knockout = battleDetail.getString("knockout");
-        if (knockout != null && !"NEUTRAL".equals(knockout)) {
+        if (knockout != null && !"NEITHER".equals(knockout) && !"NEUTRAL".equals(knockout) && !"NONE".equals(knockout)) {
             splatoonBattleRecord.setKnockout(knockout);
         }
         //双方比分(占地=涂地率%,真格=计数);取自 detail 的 myTeam / otherTeams[0]
