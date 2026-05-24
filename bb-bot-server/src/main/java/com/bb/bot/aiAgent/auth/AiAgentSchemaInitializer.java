@@ -243,6 +243,8 @@ public class AiAgentSchemaInitializer {
                     "('shell_exec','user',1)," +
                     "('load_skill','user',1)," +
                     "('splatoon3_schedule','user',1)," +
+                    "('splatoon_record_list','user',1)," +
+                    "('splatoon_record_detail','user',1)," +
                     "('search_memory','user',1)," +
                     "('recall_experience','user',1)," +
                     "('record_experience','user',1)"

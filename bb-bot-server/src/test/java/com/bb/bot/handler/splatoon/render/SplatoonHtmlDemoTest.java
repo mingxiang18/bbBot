@@ -2,7 +2,6 @@ package com.bb.bot.handler.splatoon.render;
 
 import com.openhtmltopdf.java2d.api.BufferedImagePageProcessor;
 import com.openhtmltopdf.java2d.api.Java2DRendererBuilder;
-import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -35,7 +34,6 @@ public class SplatoonHtmlDemoTest {
         new SplatoonHtmlDemoTest().renderDemos();
     }
 
-    @Test
     public void renderDemos() throws Exception {
         OUT.mkdirs();
         write("battle-list.png", battleListHtml(), 820, 1600);
