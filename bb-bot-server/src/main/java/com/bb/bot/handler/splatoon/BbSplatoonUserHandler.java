@@ -82,6 +82,15 @@ public class BbSplatoonUserHandler {
     @Autowired
     private com.bb.bot.handler.splatoon.render.SplatoonRecordRenderer splatoonRecordRenderer;
 
+    @Autowired
+    private com.bb.bot.handler.splatoon.render.SplatoonHtmlRenderer splatoonHtmlRenderer;
+
+    @Autowired
+    private com.bb.bot.database.splatoon.service.ISplatoonCoopWaveDetailService coopWaveDetailService;
+
+    @Autowired
+    private com.bb.bot.database.splatoon.service.ISplatoonCoopEnemyDetailService coopEnemyDetailService;
+
     /** 账号编号→Android dataUser 映射(账号1=主NSO user0, 账号2=应用双开user999...)。代码默认值,无需写 yml。 */
     @Value("${nso.accountMap:1:0,2:999}")
     private String accountMap;
@@ -400,8 +409,8 @@ public class BbSplatoonUserHandler {
 
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
-        //绘制图片
-        File imageFile = splatoonRecordRenderer.writeFullCoopRecord(recordList, userDetailList);
+        //绘制图片(HTML 渲染器)
+        File imageFile = splatoonHtmlRenderer.renderCoopList(recordList, userDetailList);
         //打印耗时日志
         log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -541,8 +550,8 @@ public class BbSplatoonUserHandler {
 
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
-        //绘制图片
-        File imageFile = splatoonRecordRenderer.writeFullBattleRecord(recordList, userDetailList);
+        //绘制图片(HTML 渲染器)
+        File imageFile = splatoonHtmlRenderer.renderBattleList(recordList, userDetailList);
         //打印耗时日志
         log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -555,6 +564,81 @@ public class BbSplatoonUserHandler {
         bbMessageApi.sendMessage(bbSendMessage);
     }
 
+
+    /**
+     * 对战详情:按序号(DB自增id)展示单场全队详情
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?对战详情"}, name = "对战详情")
+    public void getBattleDetail(BbReceiveMessage bbReceiveMessage) {
+        Matcher matcher = Pattern.compile("^/?对战详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
+        if (!matcher.find()) {
+            replyText(bbReceiveMessage, "格式：对战详情 <序号>，如：对战详情 128");
+            return;
+        }
+        Long id = Long.parseLong(matcher.group(1));
+        List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
+                .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
+        SplatoonBattleRecord record = battleRecordService.getOne(new LambdaQueryWrapper<SplatoonBattleRecord>()
+                .eq(SplatoonBattleRecord::getId, id).in(SplatoonBattleRecord::getUserId, accountIds));
+        if (record == null) {
+            replyText(bbReceiveMessage, "没找到这条对战记录(序号 " + id + ")");
+            return;
+        }
+        List<SplatoonBattleUserDetail> details = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
+                .eq(SplatoonBattleUserDetail::getBattleId, String.valueOf(id)));
+        File imageFile = splatoonHtmlRenderer.renderBattleDetail(record, details);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildLocalImageMessageContent(imageFile)));
+        bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * 打工详情:按序号(DB自增id)展示单场全队/全wave详情
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?打工详情"}, name = "打工详情")
+    public void getCoopDetail(BbReceiveMessage bbReceiveMessage) {
+        Matcher matcher = Pattern.compile("^/?打工详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
+        if (!matcher.find()) {
+            replyText(bbReceiveMessage, "格式：打工详情 <序号>，如：打工详情 56");
+            return;
+        }
+        Long id = Long.parseLong(matcher.group(1));
+        List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
+                .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
+        SplatoonCoopRecord record = coopRecordService.getOne(new LambdaQueryWrapper<SplatoonCoopRecord>()
+                .eq(SplatoonCoopRecord::getId, id).in(SplatoonCoopRecord::getUserId, accountIds));
+        if (record == null) {
+            replyText(bbReceiveMessage, "没找到这条打工记录(序号 " + id + ")");
+            return;
+        }
+        String coopId = String.valueOf(id);
+        List<SplatoonCoopUserDetail> userDetails = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
+                .eq(SplatoonCoopUserDetail::getCoopId, coopId));
+        List<com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail> waves = coopWaveDetailService.list(new LambdaQueryWrapper<com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail>()
+                .eq(com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail::getCoopId, coopId)
+                .orderByAsc(com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail::getWaveNumber));
+        List<com.bb.bot.database.splatoon.entity.SplatoonCoopEnemyDetail> enemies = coopEnemyDetailService.list(new LambdaQueryWrapper<com.bb.bot.database.splatoon.entity.SplatoonCoopEnemyDetail>()
+                .eq(com.bb.bot.database.splatoon.entity.SplatoonCoopEnemyDetail::getCoopId, coopId));
+        File imageFile = splatoonHtmlRenderer.renderCoopDetail(record, userDetails, waves, enemies);
+        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+        bbSendMessage.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildLocalImageMessageContent(imageFile)));
+        bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /** 发送一条 @+文本 回复。 */
+    private void replyText(BbReceiveMessage bbReceiveMessage, String text) {
+        BbSendMessage reply = new BbSendMessage(bbReceiveMessage);
+        reply.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildTextContent(text)));
+        bbMessageApi.sendMessage(reply);
+    }
 
     /**
      * 喷喷用户token实体类

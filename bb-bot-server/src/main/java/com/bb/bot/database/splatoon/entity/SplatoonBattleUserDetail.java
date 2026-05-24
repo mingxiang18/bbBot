@@ -95,4 +95,7 @@ public class SplatoonBattleUserDetail {
     @ApiModelProperty("特殊武器使用数")
     private Integer specialCount;
 
+    @ApiModelProperty("三件装备主技能概要,如 防御↑ 墨耗↓ 人速↑")
+    private String gearPowers;
+
 }

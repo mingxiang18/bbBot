@@ -106,9 +106,15 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
 
         //判断是否打了boss
         if (coopRecord.getJSONObject("bossResult") != null) {
-            splatoonCoopRecord.setBossId(coopRecord.getJSONObject("bossResult").getJSONObject("boss").getString("id"));
-            splatoonCoopRecord.setBossName(coopRecord.getJSONObject("bossResult").getJSONObject("boss").getString("name"));
+            JSONObject boss = coopRecord.getJSONObject("bossResult").getJSONObject("boss");
+            splatoonCoopRecord.setBossId(boss.getString("id"));
+            splatoonCoopRecord.setBossName(boss.getString("name"));
             splatoonCoopRecord.setBossDefeatFlag(coopRecord.getJSONObject("bossResult").getBoolean("hasDefeatBoss"));
+            //下载头目鲑鱼立绘(按 bossId),供详情/列表展示
+            if (boss.getJSONObject("image") != null && boss.getJSONObject("image").getString("url") != null) {
+                resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/boss/" + boss.getString("id") + ".png",
+                        boss.getJSONObject("image").getString("url"));
+            }
             //设置鳞片数量
             splatoonCoopRecord.setGoldScale(coopDetail.getJSONObject("scale").getInteger("gold"));
             splatoonCoopRecord.setSilverScale(coopDetail.getJSONObject("scale").getInteger("silver"));
@@ -136,6 +142,32 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
             splatoonCoopRecord.setWeapon4(weaponsArray.getJSONObject(3).getString("name"));
             resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon4() + ".png",
                     weaponsArray.getJSONObject(3).getJSONObject("image").getString("url"));
+        }
+
+        //得分 / 熊先生点数 / 气味计
+        splatoonCoopRecord.setJobScore(coopDetail.getInteger("jobScore"));
+        splatoonCoopRecord.setJobBonus(coopDetail.getInteger("jobBonus"));
+        splatoonCoopRecord.setSmellMeter(coopDetail.getInteger("smellMeter"));
+
+        //Wave 概要: "W1 28·W2 24·W3 31"(送金蛋数=teamDeliverCount)
+        JSONArray waveResults = coopRecord.getJSONArray("waveResults");
+        if (waveResults != null && !waveResults.isEmpty()) {
+            StringBuilder wave = new StringBuilder();
+            for (int i = 0; i < waveResults.size(); i++) {
+                JSONObject w = waveResults.getJSONObject(i);
+                Integer wn = w.getInteger("waveNumber");
+                Integer deliver = w.getInteger("teamDeliverCount");
+                if (wn == null) {
+                    continue;
+                }
+                if (wave.length() > 0) {
+                    wave.append("·");
+                }
+                wave.append("W").append(wn).append(" ").append(deliver == null ? "-" : deliver);
+            }
+            if (wave.length() > 0) {
+                splatoonCoopRecord.setWaveInfo(wave.toString());
+            }
         }
 
         splatoonCoopRecordsMapper.insert(splatoonCoopRecord);

@@ -69,4 +69,19 @@ public class SplatoonBattleRecord {
     @ApiModelProperty("游玩时间")
     private LocalDateTime playedTime;
 
+    @ApiModelProperty("对战时长(秒)")
+    private Integer duration;
+
+    @ApiModelProperty("完胜标识(KO):非空且非NEUTRAL表示KO")
+    private String knockout;
+
+    @ApiModelProperty("己方比分(占地为涂地率%、真格为计数)")
+    private String myScore;
+
+    @ApiModelProperty("敌方比分")
+    private String otherScore;
+
+    @ApiModelProperty("奖牌(逗号分隔)")
+    private String awards;
+
 }

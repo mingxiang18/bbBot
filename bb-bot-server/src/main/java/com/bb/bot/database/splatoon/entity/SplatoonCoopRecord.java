@@ -100,4 +100,16 @@ public class SplatoonCoopRecord
     @ApiModelProperty("武器4")
     private String weapon4;
 
+    @ApiModelProperty("打工得分")
+    private Integer jobScore;
+
+    @ApiModelProperty("熊先生点数(bonus)")
+    private Integer jobBonus;
+
+    @ApiModelProperty("头目鲑鱼气味计(0-5)")
+    private Integer smellMeter;
+
+    @ApiModelProperty("Wave概要,如 W1 28·W2 24·W3 31")
+    private String waveInfo;
+
 }

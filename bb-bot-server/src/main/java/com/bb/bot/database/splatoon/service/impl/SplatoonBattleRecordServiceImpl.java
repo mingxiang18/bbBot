@@ -104,6 +104,29 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         //设置对战时间
         splatoonBattleRecord.setPlayedTime(DateUtils.convertUTCTimeToCNLocalDateTime(battleDetail.getString("playedTime")));
 
+        //时长(秒)
+        splatoonBattleRecord.setDuration(battleDetail.getInteger("duration"));
+        //完胜KO(NEUTRAL/null 视为非KO)
+        String knockout = battleDetail.getString("knockout");
+        if (knockout != null && !"NEUTRAL".equals(knockout)) {
+            splatoonBattleRecord.setKnockout(knockout);
+        }
+        //双方比分(占地=涂地率%,真格=计数);取自 detail 的 myTeam / otherTeams[0]
+        if (battleDetail.getJSONObject("myTeam") != null) {
+            splatoonBattleRecord.setMyScore(teamScoreText(battleDetail.getJSONObject("myTeam").getJSONObject("result")));
+        }
+        if (battleDetail.getJSONArray("otherTeams") != null && !battleDetail.getJSONArray("otherTeams").isEmpty()) {
+            splatoonBattleRecord.setOtherScore(teamScoreText(battleDetail.getJSONArray("otherTeams").getJSONObject(0).getJSONObject("result")));
+        }
+        //奖牌(名称逗号分隔)
+        JSONArray awardsArray = battleDetail.getJSONArray("awards");
+        if (awardsArray != null && !awardsArray.isEmpty()) {
+            splatoonBattleRecord.setAwards(awardsArray.stream()
+                    .map(o -> ((JSONObject) o).getString("name"))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(",")));
+        }
+
         splatoonBattleRecordMapper.insert(splatoonBattleRecord);
         return splatoonBattleRecord;
     }
@@ -149,6 +172,32 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         }
 
         splatoonBattleUserDetailService.saveBatch(userDetailList);
+    }
+
+    /** 队伍比分显示文本:真格用 score 计数;占地用 paintRatio 百分比(一位小数)。 */
+    private String teamScoreText(JSONObject result) {
+        if (result == null) {
+            return null;
+        }
+        if (result.getInteger("score") != null) {
+            return String.valueOf(result.getInteger("score"));
+        }
+        if (result.getBigDecimal("paintRatio") != null) {
+            return result.getBigDecimal("paintRatio")
+                    .multiply(new java.math.BigDecimal("100"))
+                    .setScale(1, java.math.RoundingMode.HALF_UP)
+                    .toPlainString();
+        }
+        return null;
+    }
+
+    /** 取一件装备的主技能名;无则空串。 */
+    private String primaryGearPower(JSONObject gear) {
+        if (gear == null) {
+            return "";
+        }
+        JSONObject primary = gear.getJSONObject("primaryGearPower");
+        return primary != null && primary.getString("name") != null ? primary.getString("name") : "";
     }
 
     /**
@@ -207,6 +256,10 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         //保存图片
         resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerShoesGear() + ".png",
                 shoesGear.getJSONObject("originalImage").getString("url"));
+
+        //三件装备主技能概要(头/衣/鞋)
+        String gearPowers = (primaryGearPower(headGear) + " " + primaryGearPower(clothingGear) + " " + primaryGearPower(shoesGear)).trim();
+        splatoonBattleUserDetail.setGearPowers(gearPowers.isEmpty() ? null : gearPowers);
 
         //设置武器信息
         JSONObject weapon = playerDetail.getJSONObject("weapon");

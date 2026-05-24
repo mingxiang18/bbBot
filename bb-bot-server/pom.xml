@@ -203,6 +203,13 @@
             <artifactId>jsch</artifactId>
         </dependency>
 
+        <!-- HTML+CSS -> 图片渲染(喷喷战绩卡片/详情图),纯 Java 无需浏览器 -->
+        <dependency>
+            <groupId>com.openhtmltopdf</groupId>
+            <artifactId>openhtmltopdf-java2d</artifactId>
+            <version>1.0.10</version>
+        </dependency>
+
     </dependencies>
 
     <build>
