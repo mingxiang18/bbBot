@@ -43,6 +43,10 @@ public class SplatoonTokenManager {
     public static final String KEY_BULLET_TOKEN = "bulletToken";
     /** 该 bbBot 用户绑定的 Android NSO 实例(dataUser):0=主账号, 999=应用双开...,由 owner 绑定。 */
     public static final String KEY_DATA_USER = "dataUser";
+    /** SplatNet 返回文本语言:zh-CN 简中(经实测可用,武器/场地名等返回中文)。 */
+    public static final String LANGUAGE = "zh-CN";
+    /** na_country:中文玩家走 JP 区。只影响请求头 na_country/X-NACOUNTRY。 */
+    public static final String COUNTRY = "JP";
 
     @Autowired
     private IUserConfigValueService userConfigValueService;
@@ -68,10 +72,15 @@ public class SplatoonTokenManager {
             return refresh(userId);
         }
 
+        // 强制按当前语言/国家覆盖,避免 DB 里历史存的 en-US 影响返回文本语言
+        JSONObject userInfoJson = JSONObject.parseObject(userInfo.getValueName());
+        userInfoJson.put("language", LANGUAGE);
+        userInfoJson.put("country", COUNTRY);
+
         try {
             splatoon3ApiCaller.getTest(bulletToken.getValueName(),
                     webServiceToken.getValueName(),
-                    JSONObject.parseObject(userInfo.getValueName()));
+                    userInfoJson);
         } catch (Splatoon3ApiException e) {
             if (e.getErrorType() == Splatoon3ApiException.ErrorType.UNAUTHORIZED) {
                 log.info("Splatoon token unauthorized for user {}, refreshing", userId);
@@ -90,7 +99,7 @@ public class SplatoonTokenManager {
         return new SplatoonToken(
                 webServiceToken.getValueName(),
                 bulletToken.getValueName(),
-                JSONObject.parseObject(userInfo.getValueName()));
+                userInfoJson);
     }
 
     /**
@@ -144,8 +153,8 @@ public class SplatoonTokenManager {
     public SplatoonToken getTokenByDataUser(String dataUser) {
         JSONObject token = nsoTokenProvider.fetchToken(dataUser);
         JSONObject userInfo = new JSONObject();
-        userInfo.put("language", "en-US");
-        userInfo.put("country", "US");
+        userInfo.put("language", LANGUAGE);
+        userInfo.put("country", COUNTRY);
         userInfo.put("id", accountId(dataUser));
         return new SplatoonToken(token.getString("gtoken"), token.getString("bulletToken"), userInfo);
     }
