@@ -13,6 +13,7 @@ import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.ImageUtils;
 import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.common.util.nso.Splatoon3ApiCaller;
+import com.bb.bot.common.util.nso.NsoTokenProvider;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
@@ -79,6 +80,9 @@ public class BbSplatoonUserHandler {
 
     @Autowired
     private BbNsoHandler bbNsoHandler;
+
+    @Autowired
+    private NsoTokenProvider nsoTokenProvider;
 
     @Autowired
     private ResourcesUtils resourcesUtils;
@@ -1097,30 +1101,27 @@ public class BbSplatoonUserHandler {
      * 刷新喷喷用户token
      */
     private TokenInfo resetSplatoon3UserToken(String userId) {
-        //重新设置nso用户token
-        bbNsoHandler.resetUserToken(userId);
+        //cookie 方案:从 token-provider 直接拿 gtoken + bulletToken,
+        //替代 2024 年中失效的 imink f-API 链(getWebServiceToken/getLoginToken 会报 9403)。
+        //token-provider 读真机 NSO 的 WebView cookie,不注入进程、不触发 Pairip。
+        JSONObject token = nsoTokenProvider.fetchToken("0");
+        String webServiceToken = token.getString("gtoken");
+        String bulletToken = token.getString("bulletToken");
 
-        //数据库获取用户的userInfo和webAccessToken
-        JSONObject userInfo = JSONObject.parseObject(userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                        .eq(UserConfigValue::getUserId, userId)
-                        .eq(UserConfigValue::getType, "NSO")
-                        .eq(UserConfigValue::getKeyName, "userInfo"))
-                .getValueName());
-        String webAccessToken = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                        .eq(UserConfigValue::getUserId, userId)
-                        .eq(UserConfigValue::getType, "NSO")
-                        .eq(UserConfigValue::getKeyName, "webAccessToken"))
-                .getValueName();
-        String coralUserId = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                        .eq(UserConfigValue::getUserId, userId)
-                        .eq(UserConfigValue::getType, "NSO")
-                        .eq(UserConfigValue::getKeyName, "coralUserId"))
-                .getValueName();
+        //userInfo 仅用于查询请求头的 language/country,固定 en-US/US 即可(只影响返回文本语言)
+        JSONObject userInfo = new JSONObject();
+        userInfo.put("language", "en-US");
+        userInfo.put("country", "US");
 
-        //获取斯普拉顿3 web服务token
-        String webServiceToken = splatoon3ApiCaller.getWebServiceToken(userInfo, webAccessToken, coralUserId);
+        //数据库重新设置 userInfo
+        UserConfigValue userInfoConfig = new UserConfigValue();
+        userInfoConfig.setUserId(userId);
+        userInfoConfig.setType("NSO");
+        userInfoConfig.setKeyName("userInfo");
+        userInfoConfig.setValueName(userInfo.toJSONString());
+        userConfigValueService.resetUserConfigValue(userInfoConfig);
 
-        //数据库重新设置web服务token
+        //数据库重新设置 web服务token (gtoken)
         UserConfigValue webServiceTokenConfig = new UserConfigValue();
         webServiceTokenConfig.setUserId(userId);
         webServiceTokenConfig.setType("NSO");
@@ -1128,10 +1129,7 @@ public class BbSplatoonUserHandler {
         webServiceTokenConfig.setValueName(webServiceToken);
         userConfigValueService.resetUserConfigValue(webServiceTokenConfig);
 
-        //获取bulletToken
-        String bulletToken = splatoon3ApiCaller.getBulletToken(webServiceToken, userInfo);
-
-        //数据库重新设置bulletToken
+        //数据库重新设置 bulletToken
         UserConfigValue bulletTokenConfig = new UserConfigValue();
         bulletTokenConfig.setUserId(userId);
         bulletTokenConfig.setType("NSO");
@@ -1139,7 +1137,7 @@ public class BbSplatoonUserHandler {
         bulletTokenConfig.setValueName(bulletToken);
         userConfigValueService.resetUserConfigValue(bulletTokenConfig);
 
-        return new TokenInfo(webServiceTokenConfig.getValueName(), bulletTokenConfig.getValueName(), userInfo);
+        return new TokenInfo(webServiceToken, bulletToken, userInfo);
     }
 
 }

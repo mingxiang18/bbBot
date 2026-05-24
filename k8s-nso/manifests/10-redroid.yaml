@@ -27,7 +27,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: redroid
-          image: redroid/redroid:11.0.0-fixed
+          image: redroid/redroid:13.0.0-fixed
           imagePullPolicy: Never
           securityContext:
             privileged: true
