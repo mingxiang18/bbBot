@@ -36,6 +36,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -83,6 +84,14 @@ public class BbSplatoonUserHandler {
 
     @Autowired
     private NsoTokenProvider nsoTokenProvider;
+
+    //bot owner 的 userId,只有 owner 能绑定喷喷账号
+    @Value("${bot.owner:}")
+    private String ownerUserId;
+
+    //账号编号→Android dataUser 映射(账号1=主NSO user0, 账号2=应用双开user999...)
+    @Value("${nso.accountMap:1:0,2:999}")
+    private String accountMap;
 
     @Autowired
     private ResourcesUtils resourcesUtils;
@@ -159,6 +168,63 @@ public class BbSplatoonUserHandler {
             BbMessageContent.buildTextContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录"))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * owner 绑定 bbBot 用户到 NSO 账号(账号编号→Android dataUser)。
+     * cookie 方案下 token 来自 owner 的几个真机账号,绑定关系只能 owner 设置。
+     * 格式: 绑定喷喷账号 <账号编号> [@某人];不 @ 则绑发送者自己。
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?绑定喷喷账号"}, name = "绑定喷喷账号")
+    public void bindSplatoonAccount(BbReceiveMessage bbReceiveMessage) {
+        BbSendMessage reply = new BbSendMessage(bbReceiveMessage);
+        //owner 校验
+        if (ownerUserId == null || ownerUserId.isEmpty() || !ownerUserId.equals(bbReceiveMessage.getUserId())) {
+            reply.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("仅 owner 可绑定喷喷账号")));
+            bbMessageApi.sendMessage(reply);
+            return;
+        }
+        //解析账号编号
+        Matcher matcher = Pattern.compile("^/?绑定喷喷账号\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
+        if (!matcher.find()) {
+            reply.setMessageList(Arrays.asList(
+                    BbMessageContent.buildTextContent("格式：绑定喷喷账号 <账号编号> [@某人]，如：绑定喷喷账号 1")));
+            bbMessageApi.sendMessage(reply);
+            return;
+        }
+        String accountNo = matcher.group(1);
+        //账号编号→dataUser
+        String dataUser = null;
+        for (String pair : accountMap.split(",")) {
+            String[] kv = pair.split(":");
+            if (kv.length == 2 && kv[0].trim().equals(accountNo)) {
+                dataUser = kv[1].trim();
+                break;
+            }
+        }
+        if (dataUser == null) {
+            reply.setMessageList(Arrays.asList(
+                    BbMessageContent.buildTextContent("账号编号 " + accountNo + " 未配置(见 nso.accountMap)")));
+            bbMessageApi.sendMessage(reply);
+            return;
+        }
+        //被绑用户:@ 的优先,否则 owner 自己
+        String targetUserId = bbReceiveMessage.getAtUserList().isEmpty()
+                ? bbReceiveMessage.getUserId()
+                : bbReceiveMessage.getAtUserList().get(0).getUserId();
+        //存 dataUser 映射(checkAndGetSplatoon3UserToken 据此从对应账号取 token)
+        UserConfigValue cfg = new UserConfigValue();
+        cfg.setUserId(targetUserId);
+        cfg.setType("NSO");
+        cfg.setKeyName("dataUser");
+        cfg.setValueName(dataUser);
+        userConfigValueService.resetUserConfigValue(cfg);
+        reply.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildTextContent("已将用户 " + targetUserId + " 绑定到账号 " + accountNo)));
+        bbMessageApi.sendMessage(reply);
     }
 
     /**

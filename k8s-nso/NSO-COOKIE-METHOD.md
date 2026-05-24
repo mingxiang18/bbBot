@@ -82,10 +82,17 @@ systemd:
 ## bbBot 接入(你更新 bbBot 后即可)
 
 1. 部署本分支改好的 bbBot(NsoTokenProvider + BbSplatoonUserHandler)
-2. 配置 `application-local.yml`:`nso.tokenProviderUrl: http://192.168.50.227:18080/token`(已是默认值)
-3. **单号**:开箱即用(默认 dataUser=0=账号1)
-4. **多账号**:给每个 bbBot userId 在 UserConfigValue 配 `type=NSO, keyName=dataUser, valueName=<0|999|...>`,bbBot 据此从对应账号取 token
-5. 加更多号:MIUI 手机分身开新空间装 NSO → refresh-all.sh 的 USERS 加新 user id → bbBot 配 dataUser
+2. 配置 `application-local.yml`:
+   - `nso.tokenProviderUrl: http://192.168.50.227:18080/token`(已是默认值)
+   - `bot.owner: <owner 的 userId>`(只有 owner 能绑定账号)
+   - `nso.accountMap: 1:0,2:999`(账号编号→Android dataUser,默认值;加号在此加映射)
+3. **owner 绑定账号**(群里发,需 @bot):
+   - `绑定喷喷账号 1` → 把自己绑到账号1
+   - `绑定喷喷账号 2 @某人` → 把某人绑到账号2
+   - 绑定写入 UserConfigValue(userId, NSO, dataUser),`checkAndGetSplatoon3UserToken` 据此从对应账号取 token
+4. **查战绩**:绑定后,该 userId 发"对战记录"/"打工记录"等即用对应账号数据
+5. **自动上传战绩**(已自动适配):该 userId 发"自动上传喷喷记录"开启 → `SplatoonRecordsUploadSchedule`(每4h)对开启的用户跑 syncCoopRecords/syncBattleRecords,token 走 cookie 方案,无需改调度
+6. 加更多号:MIUI 手机分身开新空间装 NSO → `refresh-all.sh` 的 `USERS` 加新 user id → `nso.accountMap` 加 `3:<新user>` → owner `绑定喷喷账号 3`
 
 ## 下一步:bbBot 接入设计
 
