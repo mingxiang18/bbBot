@@ -1104,7 +1104,14 @@ public class BbSplatoonUserHandler {
         //cookie 方案:从 token-provider 直接拿 gtoken + bulletToken,
         //替代 2024 年中失效的 imink f-API 链(getWebServiceToken/getLoginToken 会报 9403)。
         //token-provider 读真机 NSO 的 WebView cookie,不注入进程、不触发 Pairip。
-        JSONObject token = nsoTokenProvider.fetchToken("0");
+        //多账号:每个 bbBot userId 对应一个 Android NSO 实例(dataUser),
+        //0=主账号,999=MIUI 应用双开,其它=手机分身空间;未配置默认主账号 0。
+        UserConfigValue dataUserConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, userId)
+                .eq(UserConfigValue::getType, "NSO")
+                .eq(UserConfigValue::getKeyName, "dataUser"));
+        String dataUser = dataUserConfig != null ? dataUserConfig.getValueName() : "0";
+        JSONObject token = nsoTokenProvider.fetchToken(dataUser);
         String webServiceToken = token.getString("gtoken");
         String bulletToken = token.getString("bulletToken");
 

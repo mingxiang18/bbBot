@@ -1,0 +1,31 @@
+[Unit]
+Description=NSO Token Server (reads phone NSO cookie, serves gtoken+bulletToken)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /root/k8s-nso-token/token-server.py 18080
+Restart=always
+RestartSec=5
+Environment=HOME=/root
+
+[Install]
+WantedBy=multi-user.target
+---
+[Unit]
+Description=Refresh NSO gtoken cookie (open SplatNet to trigger GetWebServiceToken)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /root/k8s-nso-token/refresh-all.sh
+---
+[Unit]
+Description=Periodic NSO gtoken refresh (every 90min, gtoken ~2h TTL)
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=90min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

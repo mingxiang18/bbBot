@@ -53,13 +53,39 @@ worker 上:`/root/k8s-nso-token/provider.sh`(本仓库副本 `scripts/nso-token-
 
 参数:`provider.sh [device_serial] [data_user]` —— data_user 用于多账号(不同 /data/user/{N})
 
-## 当前状态(2026-05 验证点)
+## 当前状态(全部完成,已端到端验证)
 
-- ✅ 单号 token 获取自动化:provider.sh 稳定产出 gtoken + bulletToken
-- ⏳ bbBot 接入:待做
-- ⏳ gtoken 自动刷新:gtoken ~2h 过期,需触发 NSO 重进 SplatNet 刷新 cookie(UI 自动化)
-- ⏳ 持久化 token 服务:provider.sh 包装成定时刷新 + HTTP 接口
-- ⏳ 多账号:每号一个独立 NSO 实例(MIUI 应用双开 / 手机分身 / 多用户),读各自 /data/user/{N},并行(NSO **不支持** app 内切账号)
+- ✅ token 获取自动化:provider.sh 读 cookie 产出 gtoken + bulletToken
+- ✅ 持久化 token 服务:`nso-token.service`(systemd 常驻 + Restart),`GET /token?dataUser=N`
+- ✅ gtoken 自动刷新:`nso-refresh.timer`(每 90min)跑 refresh-all.sh,adb 唤醒 NSO + 点鱿鱼圈3 触发 GetWebServiceToken 刷新 cookie(`su input` 绕过 MIUI INJECT_EVENTS 限制)
+- ✅ 多账号:user 0(账号1)+ user 999(账号2,MIUI 应用双开),provider/refresh 按 dataUser 区分,两账号 token 实测都有效
+- ✅ bbBot 接入:NsoTokenProvider + resetSplatoon3UserToken(按 userId→dataUser 映射),编译通过
+- ✅ 端到端:token 服务取 token → graphql 查到真实战绩(win/lose)
+
+NSO **不支持** app 内切账号(换号要登出登入),所以多账号靠每号一个独立 NSO 实例。
+
+## worker 常驻组件(misu-maco)
+
+```
+/root/k8s-nso-token/
+  provider.sh        # 读 /data/user/{N} cookie → gtoken → bulletToken,输出 JSON
+  token-server.py    # HTTP GET /token?dataUser=N(60s 缓存)
+  refresh-nso.sh     # 唤醒+进鱿鱼圈3刷新单个 user 的 gtoken
+  refresh-all.sh     # 刷新所有账号(USERS="0 999",加号在此加 user id)
+systemd:
+  nso-token.service  # 常驻 token 服务(enable,Restart=always)
+  nso-refresh.timer  # 每 90min 触发 nso-refresh.service → refresh-all.sh
+```
+
+依赖:worker clash 代理(127.0.0.1:7890,访问 Nintendo)+ 手机 USB adb(99e0fc6d)+ 手机 NSO 保持登录态。
+
+## bbBot 接入(你更新 bbBot 后即可)
+
+1. 部署本分支改好的 bbBot(NsoTokenProvider + BbSplatoonUserHandler)
+2. 配置 `application-local.yml`:`nso.tokenProviderUrl: http://192.168.50.227:18080/token`(已是默认值)
+3. **单号**:开箱即用(默认 dataUser=0=账号1)
+4. **多账号**:给每个 bbBot userId 在 UserConfigValue 配 `type=NSO, keyName=dataUser, valueName=<0|999|...>`,bbBot 据此从对应账号取 token
+5. 加更多号:MIUI 手机分身开新空间装 NSO → refresh-all.sh 的 USERS 加新 user id → bbBot 配 dataUser
 
 ## 下一步:bbBot 接入设计
 
