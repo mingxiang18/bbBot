@@ -1,5 +1,7 @@
 package com.bb.bot.api.qq;
 
+import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.QqConfig;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.MessageType;
@@ -121,6 +123,16 @@ public class QqToBbMessageApi {
 
         //调用qq接口发送消息
         qqApiCaller.sendChannelMessage(qqConfig, bbSendMessage.getGroupId(), channelMessage);
+    }
+
+    /**
+     * QQ 官方 Bot API 没有 edit 接口，且被动消息有 5 条上限。
+     * 强行 chunked-send 会被官方截断 + 体感差，所以 QQ 走 fallback：
+     * 累积所有 delta 到 buffer，complete() 时一次性 sendMessage。
+     * 等真正的流式接口（如有）出来再升级。
+     */
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
     }
 
 }

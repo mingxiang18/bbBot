@@ -1,0 +1,94 @@
+name: release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  # 新触发自动 cancel 同分支旧 run，避免卡 queue
+  cancel-in-progress: true
+
+env:
+  REGISTRY: 10.8.0.26:30500
+  NAMESPACE: bb-bot
+  ROLLOUT_TIMEOUT: 5m
+
+jobs:
+  release:
+    runs-on: bbbot-runners    # ARC scale set 名（见 scripts/deploy/arc/）
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      # 单服务，无需 paths-filter。只在 push 时跳过纯 docs 改动（可选，这里从简：总是 build）。
+      - name: Compute tag
+        id: meta
+        run: |
+          TAG=$(git rev-parse --short HEAD)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Tag: $TAG"
+
+      # ---------- Maven ----------
+      # 用 install（而非 package）：bb-bot-sdk 会随 reactor 一并装进本地 maven 仓库，
+      # 而该本地仓库 = PVC misu-ci-maven-repo（见 arc/02-values-runner.yaml，与 misu-server
+      # 共用的私有 maven 缓存）。所以每次 push master 都会把新版 bb-bot-sdk 发布到这个私有仓库，
+      # misu-server 后续构建即可解析到新版本（记得同步 misu-server 里的依赖版本号）。
+      # MAVEN_OPTS（pod env 里）已锁 maven.repo.local 到 PVC 并 skip javadoc。
+      # install 仍会产出 bb-bot-server 的 fat jar 供下面 Kaniko 使用。
+      # gpg.skip=true 必须带：bb-bot-sdk 的 maven-gpg-plugin 绑在 verify 阶段（install 会触发），
+      # 其 gpg executable 是开发机 Windows 路径、runner 上也无签名密钥 —— 不跳过会直接构建失败。
+      # 私有仓库（本地 .m2）不需要 GPG 签名，签名仅 Maven Central 发布时才需要。
+      - name: Build & install (publishes bb-bot-sdk to shared maven repo)
+        run: |
+          mvn -B clean install -pl bb-bot-sdk,bb-bot-server -am -Dmaven.test.skip=true -Dgpg.skip=true -P prod
+
+      # ---------- Kaniko ----------
+      # runner 镜像里的 /kaniko/executor 是 wrapper：自动把 base image 换成 -fonts 变体
+      # 并去掉 apk RUN（规避 Alpine 3.20 + kaniko 兼容 bug）。
+      - name: Build & push bb-bot image
+        run: |
+          /kaniko/executor \
+            --context="$(pwd)/bb-bot-server" \
+            --dockerfile="$(pwd)/bb-bot-server/DockerfileLocal" \
+            --destination="${REGISTRY}/misuaa/bb-bot:${{ steps.meta.outputs.tag }}" \
+            --destination="${REGISTRY}/misuaa/bb-bot:latest" \
+            --insecure --skip-tls-verify --insecure-pull --skip-tls-verify-pull
+
+      # ---------- Deploy ----------
+      # envsubst 渲染 bb-bot.yaml（static PV/PVC + agent-files hostPath、Deployment、Service）后 apply。
+      # PV 是 cluster-scoped，runner SA 需 ClusterRole（见 arc/01-rbac.yaml）。
+      # 注意：bb-sandbox（独立沙箱 pod）不在 CI 部署 —— 其镜像需 apk 装 bash/bwrap，
+      # 而本 CI 的 Kaniko wrapper 会剥 apk，且镜像 tag 与 CI 的 SHA 对不上会 ImagePullBackOff。
+      # 沙箱由 scripts/deploy/release.sh --with-sandbox 单独构建+部署（buildx，apk 正常）。
+      - name: Apply manifest & roll out
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+          REGISTRY_PULL: ${{ env.REGISTRY }}
+        run: |
+          export IMAGE_TAG="$TAG"
+          TMP=$(mktemp -d)
+          envsubst '${REGISTRY_PULL} ${IMAGE_TAG}' \
+            < scripts/deploy/k8s/bb-bot/bb-bot.yaml > "$TMP/bb-bot.yaml"
+          kubectl apply -f "$TMP/bb-bot.yaml"
+
+      - name: Wait for rollout
+        id: wait
+        run: |
+          set +e
+          kubectl -n "$NAMESPACE" rollout status deploy/bb-bot --timeout="$ROLLOUT_TIMEOUT"
+          rc=$?
+          if [[ $rc -ne 0 ]]; then
+            echo "rollback=1" >> "$GITHUB_OUTPUT"
+            echo "::error::bb-bot rollout failed"
+            exit 1
+          fi
+
+      - name: Roll back on failure
+        if: failure() && steps.wait.outputs.rollback == '1'
+        run: |
+          echo "Rolling back bb-bot"
+          kubectl -n "$NAMESPACE" rollout undo deploy/bb-bot || true

@@ -1,0 +1,26 @@
+# deploy.conf —— release.sh 的唯一本地配置文件。
+# 用法：`cp deploy.conf.example deploy.conf` 后按本机/服务器实际填写。
+# deploy.conf 已在 .gitignore 中（含 SSH key 路径与内网 IP），不要提交。
+
+# ---- SSH（开发机 → k8s 主节点）---------------------------------------------
+SSH_KEY=/path/to/your/ssh_ed25519        # 登录主节点用的私钥
+MASTER_SSH=root@10.8.0.1                 # 主节点：放 k8s 清单、跑 kubectl
+
+# ---- 镜像 registry ---------------------------------------------------------
+REGISTRY_PUSH=192.168.50.227:30500       # 开发机 docker push 用的地址
+REGISTRY_PULL=10.8.0.26:30500            # k8s 拉镜像用的地址（写进清单）
+
+# ---- 服务器路径 ------------------------------------------------------------
+MASTER_K8S_DIR=/root/k8s/bb-bot          # 主节点上 bb-bot 清单所在目录
+MASTER_BACKUP_DIR=/root/backups          # 主节点：旧清单备份到这里
+
+NAMESPACE=bb-bot                         # k8s namespace
+
+# ---- 开发机构建工具（本仓库 mvn 不在 PATH 上）------------------------------
+MVN=/path/to/apache-maven/bin/mvn
+MAVEN_REPO=/path/to/maven/repository
+PLATFORMS=linux/amd64                    # 镜像构建目标平台
+
+# ---- 其它 ------------------------------------------------------------------
+ROLLOUT_TIMEOUT=180s                     # deployment rollout 超时
+KEEP_BACKUPS=20                          # 保留最近多少份备份

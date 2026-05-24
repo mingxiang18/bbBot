@@ -2,12 +2,14 @@ package com.bb.bot.handler.horseRace.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 赛马小游戏的马属性实体
  * @author ren
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Horse {
     /**

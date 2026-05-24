@@ -12,8 +12,11 @@ import org.java_websocket.server.WebSocketServer;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,6 +31,15 @@ public class BbWebSocketServer extends WebSocketServer {
     private final ApplicationEventPublisher publisher;
     // 存储认证状态的 Map
     private static final Map<WebSocket, Boolean> authenticatedClients = new ConcurrentHashMap<>();
+    // 存储每个连接认证时上报的能力位（stream / file 等）
+    private static final Map<WebSocket, Set<String>> clientCapabilities = new ConcurrentHashMap<>();
+
+    /**
+     * 查询某连接认证时上报的能力位。老客户端未上报时返回空集合，调用方据此降级。
+     */
+    public static Set<String> getCapabilities(WebSocket webSocket) {
+        return clientCapabilities.getOrDefault(webSocket, Collections.emptySet());
+    }
 
     /**
      * 连接线程间隔
@@ -74,6 +86,10 @@ public class BbWebSocketServer extends WebSocketServer {
                 failedResponse.put("message", "认证成功");
                 webSocket.send(JSON.toJSONString(failedResponse));
                 authenticatedClients.put(webSocket, true);
+                clientCapabilities.put(webSocket, bbAuthMessage.getCapabilities() == null
+                        ? Collections.emptySet()
+                        : new HashSet<>(bbAuthMessage.getCapabilities()));
+                log.info("【" + name + "】客户端认证成功，能力位：" + getCapabilities(webSocket));
             }else {
                 Map<String, Object> failedResponse = new HashMap<>();
                 failedResponse.put("code", 403);
@@ -100,6 +116,7 @@ public class BbWebSocketServer extends WebSocketServer {
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         log.info("【" + name + "】WebSocket与客户端"  + webSocket.getRemoteSocketAddress() + "连接关闭:" + s);
         authenticatedClients.remove(webSocket);
+        clientCapabilities.remove(webSocket);
     }
 
     /**

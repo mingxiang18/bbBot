@@ -40,3 +40,4 @@ electron-dist/
 
 # Environment-local overrides
 *.local
+memory-workspace/

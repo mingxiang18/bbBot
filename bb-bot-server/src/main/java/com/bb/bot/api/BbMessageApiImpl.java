@@ -49,4 +49,21 @@ public class BbMessageApiImpl implements BbMessageApi{
             discordMessageApi.sendMessage(bbSendMessage);
         }
     };
+
+    @Override
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        if (BotType.QQ.equals(bbSendMessage.getBotType())) {
+            return qqToBbMessageApi.startStream(bbSendMessage);
+        } else if (BotType.ONEBOT.equals(bbSendMessage.getBotType())) {
+            return oneBotMessageApi.startStream(bbSendMessage);
+        } else if (BotType.BB.equals(bbSendMessage.getBotType())) {
+            return bbToBbMessageApi.startStream(bbSendMessage);
+        } else if (BotType.TELEGRAM.equals(bbSendMessage.getBotType())) {
+            return telegramMessageApi.startStream(bbSendMessage);
+        } else if (BotType.DISCORD.equals(bbSendMessage.getBotType())) {
+            return discordMessageApi.startStream(bbSendMessage);
+        }
+        // 未知平台：fallback 到 sendMessage
+        return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+    }
 }

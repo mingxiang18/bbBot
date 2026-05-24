@@ -1,6 +1,8 @@
 package com.bb.bot.api.oneBot;
 
 import com.alibaba.fastjson2.JSON;
+import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.MessageType;
 import com.bb.bot.entity.bb.BbMessageContent;
@@ -63,4 +65,13 @@ public class OneBotMessageApi {
         }
     }
 
+    /**
+     * OneBot 不支持改已发消息（标准协议无 edit），也没有「同一回复多次发文」的合理上限。
+     * 强行 chunked-send 体感差 + 容易触发实现端（NapCat / Lagrange 等）限速。
+     * 因此 OneBot 走 fallback：累积所有 delta 到 buffer，complete() 时一次性 sendMessage。
+     * 用户体感跟 streamEnabled=false 一致：等完整回复再发，但走的是同一套上层调用。
+     */
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+    }
 }

@@ -1,0 +1,109 @@
+# bb-sandbox：独立常驻沙箱 pod，负责跑 owner 的 shell_exec 代码。
+# bot 通过集群内 HTTP 把任务发到这里，sandbox pod 内部用 bubblewrap 隔离执行。
+# 安全削弱（AppArmor/seccomp）只发生在本 pod，bot pod 完全不动。
+# 镜像行由 release.sh 用 envsubst 渲染 ${REGISTRY_PULL} + ${IMAGE_TAG}。
+# 注意：bb-sandbox 镜像由 release.sh --with-sandbox 用 buildx 构建推送（CI Kaniko 会剥 apk，不适用）。
+# 文件共享用 hostPath /mnt/misu/sandbox（节点本地），故 bot 与 sandbox 必须同在 misu-maco。
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bb-sandbox
+  namespace: bb-bot
+  labels: { app: bb-sandbox }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: bb-sandbox }
+  template:
+    metadata:
+      labels: { app: bb-sandbox }
+    spec:
+      # 钉死 misu-maco：开了非特权 user-namespace 的节点，且 hostPath 卷在该节点本地。
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [misu-maco]
+      # sandbox 不需要访问 k8s API，关掉自动挂 token
+      automountServiceAccountToken: false
+      securityContext:
+        # bwrap 的 unshare(CLONE_NEWUSER)/mount/pivot_root 在 RuntimeDefault seccomp 下会 EPERM；
+        # containerd 默认 AppArmor profile 也会拦 mount —— 故对本 pod 都设 Unconfined（k8s 1.34 字段式）。
+        seccompProfile:
+          type: Unconfined
+        appArmorProfile:
+          type: Unconfined
+      terminationGracePeriodSeconds: 15
+      containers:
+        - name: sandbox
+          image: ${REGISTRY_PULL}/misuaa/bb-sandbox:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - { name: http, containerPort: 8080 }
+          env:
+            - { name: AGENT_FILES_ROOT, value: /agent-files }
+            # 调用方校验。本集群 CNI 是 flannel（不执行 NetworkPolicy），故 token 是 /exec 的主要防线。
+            # 与 bot 的 aiAgent.sandbox.remote.authToken 同值（见 secret bb-sandbox-secret）。
+            - { name: SANDBOX_TOKEN, valueFrom: { secretKeyRef: { name: bb-sandbox-secret, key: token } } }
+          securityContext:
+            # 非 root：bwrap 靠非特权 user-namespace（root+drop caps 反而无法 setup uid map）。
+            # uid 1000 与 bot 容器对齐（bot 也设 runAsUser 1000），共享 hostPath 文件属主一致。
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits:   { cpu: 1,    memory: 512Mi }
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            periodSeconds: 30
+            failureThreshold: 5
+          volumeMounts:
+            - { name: agentfiles, mountPath: /agent-files }
+      volumes:
+        - name: agentfiles
+          hostPath: { path: /mnt/misu/sandbox, type: DirectoryOrCreate }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bb-sandbox
+  namespace: bb-bot
+  labels: { app: bb-sandbox }
+spec:
+  type: ClusterIP
+  selector: { app: bb-sandbox }
+  ports:
+    - { name: http, port: 8080, targetPort: 8080 }
+---
+# /exec 是 RCE-by-design endpoint：只允许 bot pod 访问，egress 仅放 DNS。
+# 注意：当前集群 CNI 是 kube-flannel，不执行 NetworkPolicy —— 本策略当前是 no-op，
+# 实际防线是 SANDBOX_TOKEN（见上）。保留本策略：换 Calico/Cilium 后即生效，纵深防御。
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: bb-sandbox-allow-bot
+  namespace: bb-bot
+spec:
+  podSelector:
+    matchLabels: { app: bb-sandbox }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: { app: bbbot }
+      ports:
+        - { protocol: TCP, port: 8080 }
+  egress:
+    - ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }

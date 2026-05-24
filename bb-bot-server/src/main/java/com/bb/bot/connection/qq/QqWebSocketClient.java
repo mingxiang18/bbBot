@@ -33,6 +33,14 @@ public class QqWebSocketClient extends WebSocketClient {
      * 连接检查子线程
      */
     private static final long CONNECT_INTERVAL = 30 * 1000; // 30 seconds
+    /**
+     * 两次重连尝试之间的最小间隔，避免握手未完成时反复 reconnect 造成线程风暴。
+     */
+    private static final long MIN_RECONNECT_INTERVAL_MS = 10_000L;
+    /**
+     * 上一次发起连接/重连的时间戳，用于重连退避。
+     */
+    private volatile long lastConnectAttemptAt = 0L;
     private Thread connectThread;
 
     /**
@@ -47,6 +55,8 @@ public class QqWebSocketClient extends WebSocketClient {
         this.publisher = publisher;
         this.qqApiCaller = qqApiCaller;
         log.info("【" + name + "】WebSocket客户端初始化:" + serverUri.toString());
+        //记为首次连接尝试，避免守护线程在握手期间又触发一次 reconnect
+        lastConnectAttemptAt = System.currentTimeMillis();
         connect();
         startConnectThread();
     }
@@ -164,36 +174,60 @@ public class QqWebSocketClient extends WebSocketClient {
      * 子线程定时连接检查
      */
     private void startConnectThread() {
-        connectThread = new Thread(() -> {
-            while (true) {
-                try {
-                    if (this.getSocket() == null || this.getSocket().isClosed()) {
-                        //如果没有连接则重连
-                        reconnect();
-                    }else {
-                        //如果有连接
-                        //封装心跳消息
-                        QqCommonPayloadEntity qqCommonPayloadEntity = new QqCommonPayloadEntity();
-                        qqCommonPayloadEntity.setOp(1);
-                        qqCommonPayloadEntity.setD(LocalCacheUtils.getCacheObject("qq.seq"));
-
-                        //发送心跳消息
-                        String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
-                        log.debug("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
-                        send(sendMessage);
-                    }
-
-                } catch (Exception e) {
-                    log.error("【" + name + "】WebSocket客户端重连未知异常", e);
-                }
-                try {
-                    Thread.sleep(CONNECT_INTERVAL);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        if (connectThread != null && connectThread.isAlive()) {
+            return;
+        }
+        connectThread = new Thread(this::connectLoop, "qq-ws-reconnect-" + name);
+        connectThread.setDaemon(true);
         connectThread.start();
+    }
+
+    /**
+     * 长生命周期守护线程，必须永不退出（与 SDK BbWebSocketClient 同样的兜底逻辑）：
+     * 捕获 {@link Throwable} 防止 OOM 等 Error 打挂线程；中断不再向上抛；重连用退避，
+     * 避免握手期间反复 {@code reconnect()} 造成线程风暴。已连接时照常发心跳。
+     */
+    private void connectLoop() {
+        while (true) {
+            try {
+                if (isOpen()) {
+                    //已连接：封装并发送心跳消息
+                    QqCommonPayloadEntity qqCommonPayloadEntity = new QqCommonPayloadEntity();
+                    qqCommonPayloadEntity.setOp(1);
+                    qqCommonPayloadEntity.setD(LocalCacheUtils.getCacheObject("qq.seq"));
+
+                    String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
+                    log.debug("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
+                    send(sendMessage);
+                } else if (shouldReconnect()) {
+                    //未连接且已过退避间隔：重连
+                    lastConnectAttemptAt = System.currentTimeMillis();
+                    log.info("【" + name + "】WebSocket客户端检测到未连接(closing=" + isClosing()
+                            + ",closed=" + isClosed() + ")，触发重连");
+                    reconnect();
+                }
+            } catch (Throwable t) {
+                //捕获 Throwable（含 OutOfMemoryError 等），守护线程绝不能因此退出
+                log.error("【" + name + "】WebSocket客户端重连/心跳异常", t);
+            }
+            try {
+                Thread.sleep(CONNECT_INTERVAL);
+            } catch (InterruptedException e) {
+                //底层重连会中断相关线程；不能因中断而杀死本守护线程，清除标志后继续
+                Thread.interrupted();
+            }
+        }
+    }
+
+    /**
+     * 是否需要重连：正在关闭（CLOSING）时不重连，其余未连接状态用最小间隔退避，
+     * 防止握手期间被反复触发。
+     */
+    private boolean shouldReconnect() {
+        if (isClosing()) {
+            return false;
+        }
+        return System.currentTimeMillis() - lastConnectAttemptAt >= MIN_RECONNECT_INTERVAL_MS;
     }
 
 }

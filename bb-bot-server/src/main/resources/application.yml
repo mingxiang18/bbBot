@@ -87,6 +87,9 @@ spring:
   #配置文件
   profiles:
     active: local
+  #导入 prompt 配置文件，所有 prompt 见 prompts.yml
+  config:
+    import: optional:classpath:prompts.yml
   #mysql druid数据源相关配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -128,10 +131,114 @@ rest:
 aiChat:
   #如果为0则不回复，否则随机一个0-1之间的数，回复数值大于此数值则回复
   replyNum: 0.95d
+  #群聊未@时触发自动回复的阈值（>该值才回复）
+  autoReplyRate: 0.99d
+  #ai回复时携带的历史消息条数
+  chatHistoryNum: 10
+  #具有线索管理权限的用户ID列表
+  adminUserIds:
+  #直接对话（私聊/@机器人）时是否给模型挂载工具，使其能自行判断聊天还是干活；关闭则退化为纯聊天机器人
+  toolsEnabled: true
+  #启用 SSE 流式回复 + IM 端 edit/chunked 呈现。默认关闭以兼容现有部署
+  streamEnabled: false
 
-# chatGPT相关配置
-chatGPT:
-  apiKey:
+# AI 模型调用配置：命名模型 + 角色绑定
+# - ai.models.<名字>: 一个模型的接入参数（base-url / api-key / model / kind / vision）
+#     kind: 厂商种类，用于 API 兼容差异(moonshot 网络图转 base64) + 计费归属，取值 openai/deepseek/moonshot/anthropic
+# - ai.roles: 把 heavy(干活/复杂) / light(闲聊/简单/内部总结) / vision(识图) 角色指向某个命名模型
+#     heavy 必填；light 不配则与 heavy 同（不分流）；vision 不配则不启用识图桥接
+# 同一厂商可命名多个模型（如 deepseek 的 reasoner 当 heavy、chat 当 light）。
+ai:
+  models:
+    main:
+      base-url: https://api.deepseek.com/v1
+      api-key:
+      model: deepseek-chat
+      kind: deepseek
+      vision: false
+    # 官方 Anthropic（Messages API，x-api-key 鉴权，走 AnthropicProvider）。把 heavy 指过来即可启用：
+    # claude:
+    #   base-url: https://api.anthropic.com/v1
+    #   api-key:                       # console.anthropic.com 的 sk-ant-... 官方 key
+    #   model: claude-sonnet-4-6
+    #   kind: anthropic
+    #   vision: true
+  roles:
+    heavy: main
+    light:           # 例：再加一个 ai.models.flash 后填 flash
+    vision:          # 例：再加一个 ai.models.kimi-v(kind: moonshot, vision: true) 后填 kimi-v
+  retry:
+    max-attempts: 3
+    initial-interval-ms: 500
+    multiplier: 2.0
+    max-interval-ms: 4000
+  # token 用量统计：流式是否发 stream_options.include_usage 拿用量末帧（个别网关不认可关）
+  usage:
+    stream-include-usage: true
+
+# AI Agent（远程派活 + 工具调用 + cron + 插件）相关配置
+aiAgent:
+  # 拥有完全权限的用户 id，逗号分隔。仅这些用户能授予角色、跑 shell_exec、加 cron 等。
+  owners: 1105048721
+  # 工具调用循环硬上限，避免 LLM 跑飞
+  maxSteps: 10
+  # 一轮里多个无依赖的工具调用是否并发执行
+  toolParallel: true
+  # 会话内上下文压缩：工具循环上下文超过 thresholdChars 字符时，把早期内容蒸馏成摘要
+  compact:
+    thresholdChars: 40000
+    keepChars: 12000
+  # 启动时自动 CREATE TABLE IF NOT EXISTS ai_user_role / ai_tool_policy / ai_tool_invocation_log / ai_cron_task
+  autoCreateTables: true
+  # agent 文件空间：入站附件落盘 + 文件工具（file_read/write、list_dir、grep_search）的根目录。
+  # 每个用户独立子目录 {userFileRoot}/{userId}/，工具严格限定其中，杜绝跨用户越权访问。
+  fs:
+    userFileRoot: ./agent-files
+  # 联网搜索后端：优先级 brave > tavily > serpapi > duckduckgo（免 key 兜底）。
+  # 配了哪个 key 就启用哪个；都不配则退化到 DuckDuckGo（已不稳定，生产建议配 Brave/Tavily）。
+  webSearch:
+    braveApiKey:      # Brave Search API（推荐主后端：独立索引，免费 2000 次/月）
+    tavilyApiKey:     # Tavily（agent 友好：结果自带正文，免费 1000 次/月）
+    serpApiKey:       # SerpAPI（Google 结果，付费）
+  # 沙箱
+  sandbox:
+    # auto / remote / bubblewrap / docker / noop（auto 优先级：remote > bubblewrap > docker > noop）
+    preferred: auto
+    # docker 后端用什么镜像
+    dockerImage: alpine:3.20
+    # remote 后端：把命令 HTTP 发给独立的 bb-sandbox pod 执行（prod 用，本地留空自动回退）
+    remote:
+      # bb-sandbox Service 地址，留空则本后端不可用
+      url:
+      # 可选调用方校验，与 bb-sandbox 的 SANDBOX_TOKEN 同值
+      authToken:
+      connectTimeoutMs: 3000
+      readTimeoutMs: 60000
+  # 插件目录（jar 放进去即可）
+  pluginDir: ./plugins
+  # cron 派活时 LLM 的 system prompt（可覆盖）
+  cron:
+    maxSteps: 10
+  # 计费 / 月度限额。enforce 默认 false：只统计费用、不拦截（要开限额改 true）。
+  # 模型单价存 ai_model_pricing（按百万 token），seed 预置 deepseek/kimi 的 CNY 官方价（需核对），
+  # USD 厂商由定时任务从 LiteLLM 价格表刷新，按 usdToCny 折算成人民币结算。
+  billing:
+    enforce: false
+    usdToCny: 7.2
+    defaultMonthlyLimitCny: 10.00
+    # 用量查询 REST 接口(/api/ai/usage)的固定鉴权 token，请求头 X-Api-Token 须匹配；留空=关闭该接口
+    queryApiToken:
+    # 全局每日 token 上限兜底（所有用户合计），>0 生效、独立于 enforce，防异常流量烧 token。0=关闭。
+    globalDailyTokenLimit: 0
+    pricing:
+      refreshEnabled: true
+      litellmUrl: https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json
+      refreshCron: 0 30 4 * * *
+
+# 总结聊天记录拉取的历史长度
+chatHistory:
+  summary:
+    chatHistoryNum: 100
 
 tencent:
   #腾讯云对象存储配置

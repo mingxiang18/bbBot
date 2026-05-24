@@ -1,0 +1,103 @@
+# bb-bot Deployment + Service + 存储（PV/PVC）。ConfigMap 见 bb-bot-config.yaml。
+# 镜像行由 release.sh 用 envsubst 渲染 ${REGISTRY_PULL} + ${IMAGE_TAG}。
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bb-bot-static-pv
+  labels: { app: bbbot }
+spec:
+  capacity: { storage: 1Gi }
+  accessModes: [ReadWriteMany]
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 10.8.0.1
+    path: /bb-bot/static
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bb-bot-static-pvc
+  namespace: bb-bot
+spec:
+  accessModes: [ReadWriteMany]
+  resources: { requests: { storage: 1Gi } }
+  selector:
+    matchLabels: { app: bbbot }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bb-bot
+  namespace: bb-bot
+  labels: { app: bbbot }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: bbbot }
+  template:
+    metadata:
+      labels: { app: bbbot }
+    spec:
+      affinity:
+        nodeAffinity:
+          # 必须落在 misu-maco：与 bb-sandbox 共享的 hostPath /mnt/misu/sandbox 在该节点本地，
+          # 两者不同节点则文件不互通。
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [misu-maco]
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: bb-bot
+          image: ${REGISTRY_PULL}/misuaa/bb-bot:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          # bot 保持 root（要写 /bot/logs 等）。与 sandbox(uid 1000) 的 hostPath 共享靠 bot
+          # 把用户目录建成 0777（见 AgentFileSpace.ensureSharedUserDir），双方都能在 /work 写。
+          ports:
+            - { name: http,    containerPort: 8099 }
+            - { name: ws,      containerPort: 8888 }
+            - { name: bbserver, containerPort: 30210 }
+          resources:
+            requests: { cpu: 100m, memory: 384Mi }
+            limits:   { cpu: 2,    memory: 1Gi }
+          startupProbe:
+            tcpSocket: { port: 8099 }
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket: { port: 8099 }
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            tcpSocket: { port: 8099 }
+            periodSeconds: 10
+          volumeMounts:
+            - { name: config, mountPath: /bot/application-prod.yaml, subPath: application-prod.yaml }
+            - { name: static, mountPath: /bot/static }
+            # 与 bb-sandbox 共享的用户文件空间（hostPath，同在 misu-maco）。aiAgent.fs.userFileRoot 指向这里。
+            - { name: agentfiles, mountPath: /bot/agent-files }
+      volumes:
+        - name: config
+          configMap: { name: bb-bot-config }
+        - name: static
+          persistentVolumeClaim: { claimName: bb-bot-static-pvc }
+        - name: agentfiles
+          hostPath: { path: /mnt/misu/sandbox, type: DirectoryOrCreate }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bb-bot
+  namespace: bb-bot
+  labels: { app: bbbot }
+spec:
+  type: NodePort
+  selector: { app: bbbot }
+  ports:
+    - { name: tcp,              port: 8099,  nodePort: 8099 }
+    - { name: websocket-server, port: 8888,  nodePort: 8888 }
+    - { name: bb-server,        port: 30210, nodePort: 30210 }

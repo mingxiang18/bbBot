@@ -41,6 +41,18 @@ public class BbSendMessage {
      */
     private int messageSeq = 1;
 
+    /**
+     * 流式回复 id：同一逻辑回复的多帧共享同一值；非流式消息为 null。
+     */
+    private String streamId;
+
+    /**
+     * 流式帧状态：start / delta / end；非流式消息为 null。
+     *
+     * @see com.bb.bot.constant.BbStreamState
+     */
+    private String streamState;
+
 
     /**
      * webSocket连接

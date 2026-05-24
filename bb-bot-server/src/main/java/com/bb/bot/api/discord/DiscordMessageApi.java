@@ -1,10 +1,14 @@
 package com.bb.bot.api.discord;
 
+import com.bb.bot.api.AbstractMessageStreamSession;
+import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.DiscordConfig;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -43,7 +47,79 @@ public class DiscordMessageApi {
         }
 
         sendTextMessages(channel, collectTextContent(bbSendMessage));
-        sendImageMessages(channel, bbSendMessage.getMessageList());
+        sendFileMessages(channel, bbSendMessage.getMessageList());
+    }
+
+    public MessageStreamSession startStream(BbSendMessage bbSendMessage) {
+        DiscordConfig discordConfig = (DiscordConfig) bbSendMessage.getConfig();
+        if (discordConfig == null || discordConfig.getJda() == null) {
+            log.warn("discord 流式回复未初始化，降级 sendMessage");
+            return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+        }
+        MessageChannel channel = getMessageChannel(discordConfig, bbSendMessage);
+        if (channel == null) {
+            return new FallbackMessageStreamSession(bbSendMessage, this::sendMessage);
+        }
+        return new DiscordStreamSession(channel);
+    }
+
+    /**
+     * Discord 流式呈现：首次 sendMessage().complete() 拿到 Message id，
+     * 后续 editMessageById 覆盖；超过 2000 字符上限时新开一条消息接着写。
+     */
+    private static class DiscordStreamSession extends AbstractMessageStreamSession {
+        private final MessageChannel channel;
+        private String messageId;
+        /** Discord 单条消息字符上限 2000，预留 10 字符做截断标记。 */
+        private static final int CHUNK_LIMIT = 1990;
+
+        DiscordStreamSession(MessageChannel channel) {
+            this.channel = channel;
+            // Discord rate limit: 5 edits / 5s per message，节流 1.2s + 80 字符
+            this.minFlushIntervalMs = 1200L;
+            this.minFlushChars = 80;
+        }
+
+        @Override
+        protected void flush(boolean isFinal) {
+            String text = buffer.toString();
+            if (text.isEmpty()) {
+                return;
+            }
+            // 超出单条上限：把当前消息收尾，重置缓冲开启新消息
+            if (text.length() > CHUNK_LIMIT) {
+                String head = text.substring(0, CHUNK_LIMIT);
+                if (messageId == null) {
+                    Message sent = channel.sendMessage(head)
+                            .setAllowedMentions(Collections.emptyList())
+                            .complete();
+                    messageId = sent.getId();
+                } else {
+                    channel.editMessageById(messageId, head)
+                            .queue(null, e -> log.warn("discord edit 失败（流式非致命）", e));
+                }
+                // 余下文本作为新消息开始
+                buffer.setLength(0);
+                buffer.append(text.substring(CHUNK_LIMIT));
+                pendingChunk.setLength(0);
+                messageId = null;
+                return;
+            }
+            try {
+                if (messageId == null) {
+                    Message sent = channel.sendMessage(text)
+                            .setAllowedMentions(Collections.emptyList())
+                            .complete();
+                    messageId = sent.getId();
+                } else {
+                    channel.editMessageById(messageId, text)
+                            .queue(null, e -> log.warn("discord edit 失败（流式非致命）", e));
+                }
+                pendingChunk.setLength(0);
+            } catch (Exception e) {
+                log.warn("discord 流式 flush 异常", e);
+            }
+        }
     }
 
     private MessageChannel getMessageChannel(DiscordConfig discordConfig, BbSendMessage bbSendMessage) {
@@ -106,23 +182,28 @@ public class DiscordMessageApi {
         return result;
     }
 
-    private void sendImageMessages(MessageChannel channel, List<BbMessageContent> messageList) {
+    /** 本地图片 / 本地文件都用 JDA sendFiles 上传（Discord 不区分图片与普通附件）。 */
+    private void sendFileMessages(MessageChannel channel, List<BbMessageContent> messageList) {
         for (BbMessageContent bbMessageContent : messageList) {
-            if (!BbSendMessageType.LOCAL_IMAGE.equals(bbMessageContent.getType())) {
+            String type = bbMessageContent.getType();
+            if (!BbSendMessageType.LOCAL_IMAGE.equals(type) && !BbSendMessageType.LOCAL_FILE.equals(type)) {
                 continue;
             }
             if (!(bbMessageContent.getData() instanceof File)) {
-                log.error("discord本地图片发送失败，消息内容不是File类型：{}", bbMessageContent.getData());
+                log.error("discord本地附件发送失败，消息内容不是File类型：{}", bbMessageContent.getData());
                 continue;
             }
-            File imageFile = (File) bbMessageContent.getData();
-            if (!imageFile.exists() || !imageFile.isFile()) {
-                log.error("discord本地图片发送失败，文件不存在：{}", imageFile.getAbsolutePath());
+            File file = (File) bbMessageContent.getData();
+            if (!file.exists() || !file.isFile()) {
+                log.error("discord本地附件发送失败，文件不存在：{}", file.getAbsolutePath());
                 continue;
             }
-            channel.sendFiles(FileUpload.fromData(imageFile))
-                    .queue(null, e -> log.error("discord本地图片发送失败，channelId：{}，file：{}",
-                            channel.getId(), imageFile.getAbsolutePath(), e));
+            // 优先用消息里指定的展示文件名，否则用文件本身的名字
+            String displayName = StringUtils.isNotBlank(bbMessageContent.getFileName())
+                    ? bbMessageContent.getFileName() : file.getName();
+            channel.sendFiles(FileUpload.fromData(file, displayName))
+                    .queue(null, e -> log.error("discord本地附件发送失败，channelId：{}，file：{}",
+                            channel.getId(), file.getAbsolutePath(), e));
         }
     }
 }

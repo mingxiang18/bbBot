@@ -38,17 +38,14 @@ import java.util.regex.Pattern;
 @Slf4j
 @Component
 public class NsoApiCaller {
-    /** s3s 工具自身版本号；imink f-API 用此识别调用方 */
-    private static final String S3S_VERSION = "0.7.0";
-
-    /** NSO app 版本兜底；当数据库未配置且 App Store 抓取失败时使用 */
-    private static final String NSOAPP_VER_FALLBACK = "2.10.1";
-
     @Autowired
     private RestUtils restUtils;
 
     @Autowired
     private IUserConfigValueService userConfigValueService;
+
+    @Autowired
+    private NsoRetryExecutor nsoRetryExecutor;
 
     @Value("${nso.fGenerationApi:https://api.imink.app/f}")
     private String fGenerationApi;
@@ -71,18 +68,12 @@ public class NsoApiCaller {
         String nsoAppVersion = LocalCacheUtils.getCacheObject("nso_app_version");
 
         if (StringUtils.isBlank(nsoAppVersion)) {
-            try {
-                //如果为空，调用接口获取
-                String response = restUtils.get("https://apps.apple.com/us/app/nintendo-switch-online/id1234806557", String.class);
-                Document document = Jsoup.parse(response);
-                Elements elementsByClass = document.getElementsByClass("whats-new__latest__version");
-                nsoAppVersion = elementsByClass.get(0).text().replaceAll("Version ", "");
-                log.info("获取到nso的app版本: " + nsoAppVersion);
-            } catch (Exception e) {
-                //App Store 页面结构变化或网络异常时使用兜底版本，避免整个 NSO 流程崩溃
-                log.warn("从 App Store 抓取 NSO app 版本失败，使用兜底版本 {}", NSOAPP_VER_FALLBACK, e);
-                nsoAppVersion = NSOAPP_VER_FALLBACK;
-            }
+            //如果为空，调用接口获取
+            String response = restUtils.get("https://apps.apple.com/us/app/nintendo-switch-online/id1234806557", String.class);
+            Document document = Jsoup.parse(response);
+            Elements elementsByClass = document.getElementsByClass("whats-new__latest__version");
+            nsoAppVersion = elementsByClass.get(0).text().replaceAll("Version ", "");
+            log.info("获取到nso的app版本: " + nsoAppVersion);
 
             //设置为缓存
             LocalCacheUtils.setCacheObject("nso_app_version", nsoAppVersion, 1, ChronoUnit.DAYS);
@@ -127,7 +118,7 @@ public class NsoApiCaller {
      */
     public HttpHeaders getAccessTokenHead(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "com.nintendo.znca/" + getNsoAppVersion() + "(Android/14)");
+        headers.set("User-Agent", "com.nintendo.znca/" + getNsoAppVersion() + " (Android/7.1.2)");
         headers.set("Accept-Encoding", "gzip");
         headers.set("Accept", "application/json");
         headers.set("Connection", "Keep-Alive");
@@ -150,7 +141,7 @@ public class NsoApiCaller {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Host", "api-lp1.znc.srv.nintendo.net");
-        headers.set("User-Agent", "com.nintendo.znca/" + getNsoAppVersion() + "(Android/14)");
+        headers.set("User-Agent", "com.nintendo.znca/" + getNsoAppVersion() + " (Android/7.1.2)");
         headers.set("X-Platform", "Android");
         headers.set("X-ProductVersion", getNsoAppVersion());
         headers.set("Content-Type", "application/json; charset=utf-8");
@@ -175,11 +166,11 @@ public class NsoApiCaller {
     }
 
     /**
-     * 获取f码
+     * 获取f码。带分类异常 + 退避重试。
      */
     public JSONObject callNsoFApi(String token, Integer step, String userId, String coralUserId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "s3s/" + S3S_VERSION);
+        headers.set("User-Agent", "s3s/" + getNsoAppVersion());
         headers.set("Content-Type", "application/json; charset=utf-8");
         headers.set("X-znca-Platform", "Android");
         headers.set("X-znca-Version", getNsoAppVersion());
@@ -193,7 +184,8 @@ public class NsoApiCaller {
             paramMap.put("coral_user_id", coralUserId);
         }
 
-        return restUtils.post(fGenerationApi, headers, paramMap, JSONObject.class);
+        return nsoRetryExecutor.execute("nso.f-api",
+                () -> restUtils.post(fGenerationApi, headers, paramMap, JSONObject.class));
     }
 
     /**

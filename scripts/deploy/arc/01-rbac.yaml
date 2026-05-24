@@ -1,0 +1,66 @@
+# 给现有的 runner ServiceAccount（arc-runners/misu-deployer，misu-server ARC 时建的）
+# 追加 bb-bot namespace 的部署权限 + PV（cluster-scoped）权限。
+# 复用同一个 SA：两个 scale set 都用 misu-deployer，省得多管一套凭据。
+#
+# 前提：arc-runners namespace 和 misu-deployer SA 已存在（misu-server ARC 装过）。
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: bbbot-deployer
+  namespace: bb-bot
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale"]
+    verbs: ["get", "list", "watch", "create", "patch", "update"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch", "patch", "update", "delete"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "create", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "events"]
+    verbs: ["get", "list", "watch"]
+  # bb-sandbox.yaml 含 NetworkPolicy，apply 时需要这些权限
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["get", "list", "watch", "create", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bbbot-deployer
+  namespace: bb-bot
+subjects:
+  - kind: ServiceAccount
+    name: misu-deployer
+    namespace: arc-runners
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: bbbot-deployer
+---
+# bb-bot.yaml 里有 PersistentVolume（cluster-scoped），kubectl apply 时要能 get/patch。
+# PV 是 NFS + Retain，建一次后基本不变，但 apply 仍会 GET 它做 3-way merge。
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: bbbot-pv-manager
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: bbbot-pv-manager
+subjects:
+  - kind: ServiceAccount
+    name: misu-deployer
+    namespace: arc-runners
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: bbbot-pv-manager

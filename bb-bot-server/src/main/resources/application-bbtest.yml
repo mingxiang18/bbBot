@@ -1,0 +1,75 @@
+# 本地 BB 协议端到端测试 profile。
+# 启动方式：mvn ... -Dspring.profiles.active=bbtest
+# 或在 IDE Run Configuration 里把 Active profile 设成 bbtest。
+#
+# 复用 misu-server 的 MySQL（已在端口 3316 上跑，root/root），数据库 bb_bot_local
+# 由 scripts/dev/sql/01-init-bb-bot-local.sql 创建。
+
+mysql:
+  # 数据库由 scripts/dev/sql/01-init-bb-bot-local.sql 预先建好（bb-dev.sh init-db 跑）
+  address: localhost:3316/bb_bot_local
+  username: root
+  password: root
+
+file:
+  path: /tmp/bb-bot-test/static/
+
+server:
+  port: 18199
+
+bot:
+  bb:
+    bb1:
+      enable: true
+      port: 18765
+      appId: bb-test
+      secret: bb-test-secret
+
+# AI 模型配置：命名模型 + 角色，全部指向 mock-openai-server.mjs。
+# main=mock-gpt-4(重)、flash=mock-light(轻)、vis=mock-vision(视觉)。
+ai:
+  models:
+    main:
+      base-url: ${AI_OPENAI_BASE_URL:http://localhost:18800/v1}
+      api-key: ${AI_OPENAI_API_KEY:sk-mock-localtest}
+      model: ${AI_OPENAI_MODEL:mock-gpt-4}
+      kind: openai
+      vision: false
+    flash:
+      base-url: http://localhost:18800/v1
+      api-key: sk-mock-localtest
+      model: mock-light
+      kind: openai
+      vision: false
+    vis:
+      base-url: http://localhost:18800/v1
+      api-key: sk-mock-localtest
+      model: mock-vision
+      kind: deepseek
+      vision: true
+  roles:
+    heavy: main
+    light: flash
+    vision: vis
+  usage:
+    stream-include-usage: true
+
+aiChat:
+  streamEnabled: true
+  # 直接对话挂载工具（统一 handler，无需 agent 前缀）
+  toolsEnabled: true
+
+aiAgent:
+  owners: tester-owner
+  maxSteps: 10
+  autoCreateTables: true
+  # 工具并行执行 + 会话内上下文压缩（压缩阈值调低，便于测试触发）
+  toolParallel: true
+  compact:
+    thresholdChars: 40000
+    keepChars: 12000
+  sandbox:
+    preferred: noop
+  pluginDir: /tmp/bb-bot-test/plugins
+  fs:
+    userFileRoot: /tmp/bb-bot-test/agent-files

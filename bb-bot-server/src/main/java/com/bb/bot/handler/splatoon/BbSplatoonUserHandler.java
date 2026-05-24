@@ -1,6 +1,5 @@
 package com.bb.bot.handler.splatoon;
 
-import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,11 +8,7 @@ import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
-import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.common.util.ImageUtils;
-import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.common.util.nso.Splatoon3ApiCaller;
-import com.bb.bot.common.util.nso.NsoTokenProvider;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
@@ -28,23 +23,15 @@ import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.handler.nso.BbNsoHandler;
-import com.bb.bot.common.util.FileUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,56 +67,13 @@ public class BbSplatoonUserHandler {
     private ISplatoonBattleUserDetailService battleUserDetailService;
 
     @Autowired
-    private BbNsoHandler bbNsoHandler;
+    private com.bb.bot.common.util.nso.SplatoonTokenManager splatoonTokenManager;
 
     @Autowired
-    private NsoTokenProvider nsoTokenProvider;
-
-    //bot owner 的 userId,只有 owner 能绑定喷喷账号
-    @Value("${bot.owner:}")
-    private String ownerUserId;
-
-    //账号编号→Android dataUser 映射(账号1=主NSO user0, 账号2=应用双开user999...)
-    @Value("${nso.accountMap:1:0,2:999}")
-    private String accountMap;
+    private com.bb.bot.handler.splatoon.render.CoopPointRenderer coopPointRenderer;
 
     @Autowired
-    private ResourcesUtils resourcesUtils;
-
-    public static Map<String, String> pointDiffMap = new HashMap<String, String>() {{
-        put("UP", "↑");
-        put("DOWN", "↓");
-        put("KEEP", "→");
-    }};
-
-    public static Map<String, String> ruleMap = new HashMap<String, String>() {{
-        put("REGULAR", "普通打工");
-        put("TEAM_CONTEST", "团队工");
-        put("BIG_RUN", "大型跑");
-    }};
-
-    public static Map<String, String> battleRuleMap = new HashMap<String, String>() {{
-        put("VnNSdWxlLTI=", "nso_splatoon/battle/rule/ta.png");
-        put("VnNSdWxlLTE=", "nso_splatoon/battle/rule/quyu.png");
-        put("VnNSdWxlLTM=", "nso_splatoon/battle/rule/yuhu.png");
-        put("VnNSdWxlLTQ=", "nso_splatoon/battle/rule/geli.png");
-    }};
-
-    public static Map<String, ModeStyle> modeStyleMap = new HashMap<String, ModeStyle>() {{
-        put("VnNNb2RlLTE=", new ModeStyle("VnNNb2RlLTE=", "占地比赛", new Color(95, 255, 26), "nso_splatoon/battle/mode/regular.png"));
-        put("VnNNb2RlLTUx", new ModeStyle("VnNNb2RlLTUx", "蛮颓比赛(开放)", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
-        put("VnNNb2RlLTI=", new ModeStyle("VnNNb2RlLTI=", "蛮颓比赛(挑战)", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
-        put("VnNNb2RlLTQ=", new ModeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
-        put("VnNNb2RlLTU=", new ModeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
-        put("VnNNb2RlLTM=", new ModeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
-        put("VnNNb2RlLTY=", new ModeStyle("VnNNb2RlLTY=", "祭典比赛", new Color(34, 220, 255, 255), "nso_splatoon/battle/mode/fest.png"));
-        put("VnNNb2RlLTg=", new ModeStyle("VnNNb2RlLTg=", "三色夺宝比赛", new Color(34, 255, 248, 255), "nso_splatoon/battle/mode/fest.png"));
-    }};
-
-    public static Map<String, TeamStyle> teamStyleMap = new HashMap<String, TeamStyle>() {{
-        put("team1", new TeamStyle(new Color(89, 181, 170), "nso_splatoon/battle/icon/kill.png", "nso_splatoon/battle/icon/death.png"));
-        put("team2", new TeamStyle(new Color(180, 65, 106), "nso_splatoon/battle/icon/kill2.png", "nso_splatoon/battle/icon/death2.png"));
-    }};
+    private com.bb.bot.handler.splatoon.render.SplatoonRecordRenderer splatoonRecordRenderer;
 
     /**
      * 自动上传喷喷记录
@@ -168,63 +112,6 @@ public class BbSplatoonUserHandler {
             BbMessageContent.buildTextContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录"))
         );
         bbMessageApi.sendMessage(bbSendMessage);
-    }
-
-    /**
-     * owner 绑定 bbBot 用户到 NSO 账号(账号编号→Android dataUser)。
-     * cookie 方案下 token 来自 owner 的几个真机账号,绑定关系只能 owner 设置。
-     * 格式: 绑定喷喷账号 <账号编号> [@某人];不 @ 则绑发送者自己。
-     */
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?绑定喷喷账号"}, name = "绑定喷喷账号")
-    public void bindSplatoonAccount(BbReceiveMessage bbReceiveMessage) {
-        BbSendMessage reply = new BbSendMessage(bbReceiveMessage);
-        //owner 校验
-        if (ownerUserId == null || ownerUserId.isEmpty() || !ownerUserId.equals(bbReceiveMessage.getUserId())) {
-            reply.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("仅 owner 可绑定喷喷账号")));
-            bbMessageApi.sendMessage(reply);
-            return;
-        }
-        //解析账号编号
-        Matcher matcher = Pattern.compile("^/?绑定喷喷账号\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
-        if (!matcher.find()) {
-            reply.setMessageList(Arrays.asList(
-                    BbMessageContent.buildTextContent("格式：绑定喷喷账号 <账号编号> [@某人]，如：绑定喷喷账号 1")));
-            bbMessageApi.sendMessage(reply);
-            return;
-        }
-        String accountNo = matcher.group(1);
-        //账号编号→dataUser
-        String dataUser = null;
-        for (String pair : accountMap.split(",")) {
-            String[] kv = pair.split(":");
-            if (kv.length == 2 && kv[0].trim().equals(accountNo)) {
-                dataUser = kv[1].trim();
-                break;
-            }
-        }
-        if (dataUser == null) {
-            reply.setMessageList(Arrays.asList(
-                    BbMessageContent.buildTextContent("账号编号 " + accountNo + " 未配置(见 nso.accountMap)")));
-            bbMessageApi.sendMessage(reply);
-            return;
-        }
-        //被绑用户:@ 的优先,否则 owner 自己
-        String targetUserId = bbReceiveMessage.getAtUserList().isEmpty()
-                ? bbReceiveMessage.getUserId()
-                : bbReceiveMessage.getAtUserList().get(0).getUserId();
-        //存 dataUser 映射(checkAndGetSplatoon3UserToken 据此从对应账号取 token)
-        UserConfigValue cfg = new UserConfigValue();
-        cfg.setUserId(targetUserId);
-        cfg.setType("NSO");
-        cfg.setKeyName("dataUser");
-        cfg.setValueName(dataUser);
-        userConfigValueService.resetUserConfigValue(cfg);
-        reply.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("已将用户 " + targetUserId + " 绑定到账号 " + accountNo)));
-        bbMessageApi.sendMessage(reply);
     }
 
     /**
@@ -290,124 +177,12 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"打工点数", "/打工点数"}, name = "打工点数")
     public void getCoopPoint(BbReceiveMessage bbReceiveMessage) {
-        //获取token
         TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
-        //调用接口获取数据
         JSONObject userCoopData = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
 
-        //获取背景图片
-        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good2.jpg");
-        //生成临时图片文件
-        File imageFile = FileUtils.buildTmpFile();
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 360, 460);
-        //从临时图片创建默认g2d对象
-        BufferedImage image = ImageIO.read(imageFile);
-        Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
         JSONObject coopResult = userCoopData.getJSONObject("data").getJSONObject("coopResult");
-        JSONObject pointCard = coopResult.getJSONObject("pointCard");
-        JSONObject scaleData = coopResult.getJSONObject("scale");
+        File imageFile = coopPointRenderer.render(coopResult);
 
-        //绘制标题
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 28, new Color(255, 48, 20),
-                "熊先生点数卡",
-                30, 40,
-                200, 30,
-                0);
-
-        //绘制半透明底色
-        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 24, 60, 312, 380, 0.5f);
-
-
-        //绘制半透明底色
-        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 218, 0), 28, 70, 300, 28, 0.3f);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                "累计点数: " + pointCard.getInteger("totalPoint"),
-                30, 90,
-                200, 30,
-                0);
-
-        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 28, 102, 340, 160, 0.1f);
-        Color wordColor = new Color(223, 223, 223, 255);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
-                "打工次数: " + pointCard.getInteger("playCount"),
-                30, 120,
-                400, 30,
-                0);
-
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
-                "已收集的金鲑鱼卵: " + pointCard.getInteger("goldenDeliverCount"),
-                30, 150,
-                400, 30,
-                0);
-
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
-                "已收集的鲑鱼卵: " + pointCard.getInteger("deliverCount"),
-                30, 180,
-                400, 30,
-                0);
-
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
-                "已击倒的头目鲑鱼: " + pointCard.getInteger("defeatBossCount"),
-                30, 210,
-                400, 30,
-                0);
-
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, wordColor,
-                "救援次数: " + pointCard.getInteger("rescueCount"),
-                30, 240,
-                400, 30,
-                0);
-
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 26, Color.GREEN,
-                "鳞片",
-                30, 290,
-                400, 30,
-                0);
-
-        //铜鳞片绘制
-        File bronzeScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/bronze_scale.png");
-        ImageUtils.mergeImageToOtherImage(g2d, bronzeScale, 50, 310, 60, 60);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                "x" + scaleData.getInteger("bronze"),
-                60, 390,
-                200, 30,
-                0);
-
-        //银鳞片绘制
-        File sliverScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/sliver_scale.png");
-        ImageUtils.mergeImageToOtherImage(g2d, sliverScale, 146, 310, 60, 60);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                "x" + scaleData.getInteger("silver"),
-                156, 390,
-                200, 30,
-                0);
-
-        //金鳞片绘制
-        File goldScale = resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold_scale.png");
-        ImageUtils.mergeImageToOtherImage(g2d, goldScale, 240, 310, 60, 60);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                "x" + scaleData.getInteger("gold"),
-                250, 390,
-                200, 30,
-                0);
-
-        //将绘制完成的临时图片写入文件
-        ImageUtils.writeG2dToFile(g2d, image, imageFile);
-
-        //发送消息
         BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
         bbSendMessage.setMessageList(Arrays.asList(
             BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
@@ -529,7 +304,7 @@ public class BbSplatoonUserHandler {
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
         //绘制图片
-        File imageFile = writeFullCoopRecord(recordList, userDetailList);
+        File imageFile = splatoonRecordRenderer.writeFullCoopRecord(recordList, userDetailList);
         //打印耗时日志
         log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -654,7 +429,7 @@ public class BbSplatoonUserHandler {
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
         //绘制图片
-        File imageFile = writeFullBattleRecord(recordList, userDetailList);
+        File imageFile = splatoonRecordRenderer.writeFullBattleRecord(recordList, userDetailList);
         //打印耗时日志
         log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
@@ -667,447 +442,6 @@ public class BbSplatoonUserHandler {
         bbMessageApi.sendMessage(bbSendMessage);
     }
 
-    /**
-     * 绘制完整打工记录图片
-     */
-    @SneakyThrows
-    private File writeFullCoopRecord(List<SplatoonCoopRecord> recordList, List<SplatoonCoopUserDetail> userDetailList) {
-        //打工记录按每五条进行分段
-        List<List<SplatoonCoopRecord>> recordListPartition = ListUtil.partition(recordList, 5);
-
-        //数据库用户详细记录按对战id分组
-        Map<String, List<SplatoonCoopUserDetail>> userDetailListMap = userDetailList.stream()
-                .collect(Collectors.groupingBy(SplatoonCoopUserDetail::getCoopId));
-
-        //获取背景图片
-        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
-        //生成临时图片文件
-        File imageFile = FileUtils.buildTmpFile();
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
-
-        //生成的图片列表
-        List<BufferedImage> imageList = new ArrayList<>();
-
-        for (List<SplatoonCoopRecord> fiveCoopRecordList : recordListPartition) {
-            //从临时图片创建默认g2d对象
-            BufferedImage image = ImageIO.read(imageFile);
-            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
-            int startY = 20;
-            for (SplatoonCoopRecord record : fiveCoopRecordList) {
-                //根据打工记录id获取对应用户打工详细记录
-                List<SplatoonCoopUserDetail> coopUserDetailList = userDetailListMap.get(record.getId().toString());
-
-                //绘制当前打工记录
-                writeOneCoopRecord(g2d, record, coopUserDetailList, startY);
-
-                startY += 140;
-            }
-
-            imageList.add(image);
-        }
-
-        BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
-        //将绘制完成的临时图片写入文件
-        ImageIO.write(mergedImage, "png", imageFile);
-        return imageFile;
-    }
-
-    /**
-     * 绘制一条打工记录
-     */
-    @SneakyThrows
-    private void writeOneCoopRecord(Graphics2D g2d, SplatoonCoopRecord record, List<SplatoonCoopUserDetail> userDetailList, int startY) {
-        //绘制半透明底色
-        ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 15, startY, 690, 130, 0.3f);
-
-        //绘制记录序号
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
-                "序号：" + record.getId().toString(),
-                20, startY + 20,
-                200, 30,
-                0);
-
-        //绘制打工时间
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
-                record.getPlayedTime().format(DateUtils.normalTimePattern),
-                20, startY + 40,
-                200, 30,
-                0);
-
-        //绘制地图名称
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                record.getCoopStageName(),
-                120, startY + 30,
-                200, 30,
-                0);
-
-        //武器1绘制
-        File weapon1 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 35, 35);
-        //武器2绘制
-        File weapon2 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 35, 35);
-        //武器3绘制
-        File weapon3 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 35, 35);
-        //武器4绘制
-        File weapon4 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
-
-        //绘制危险度底色
-        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 560, startY + 3, 70, 38, 0.3f);
-
-        //绘制危险度
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.YELLOW,
-                "危险度：" + record.getDangerRate() + "%",
-                560, startY + 25,
-                200, 30,
-                0);
-
-        //绘制团队蛋数底色
-        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 3, 60, 38, 0.3f);
-
-        //绘制金蛋数
-        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"), 640, startY + 2, 18, 18);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
-                String.valueOf(record.getTeamGlodenCount()),
-                660, startY + 15,
-                200, 30,
-                0);
-
-        //绘制红蛋数
-        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"), 640, startY + 22, 18, 18);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
-                String.valueOf(record.getTeamRedCount()),
-                660, startY + 35,
-                200, 30,
-                0);
-
-        if (StringUtils.isNoneBlank(record.getAfterGradeId())) {
-            String pointDiff = pointDiffMap.get(record.getGradePointDiff());
-            //绘制分数
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
-                    record.getAfterGradeName() + " " + record. getAfterGradePoint() + " " + pointDiff,
-                    20, startY + 90,
-                    200, 30,
-                    0);
-        }else {
-            String ruleName = ruleMap.get(record.getRule());
-            //如果没有分数，绘制模式名称
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 15, Color.YELLOW,
-                    "模式：" + ruleName,
-                    20, startY + 90,
-                    200, 30,
-                    0);
-        }
-
-        int userX = 120;
-        Color color = Color.WHITE;
-        for (SplatoonCoopUserDetail splatoonCoopUserDetail : userDetailList) {
-            //绘制用户数据底色
-            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 135, 80 , 0.4f);
-
-            //绘制名称
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "名称：" + splatoonCoopUserDetail.getPlayerName(),
-                    userX, startY + 60,
-                    200, 30,
-                    0);
-            //绘制击倒数
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "击倒数：" + splatoonCoopUserDetail.getDefeatEnemyCount(),
-                    userX, startY + 80,
-                    200, 30,
-                    0);
-            //绘制运蛋数
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"),
-                    userX, startY + 86, 18, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"),
-                    userX + 60, startY + 86, 18, 18);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getDeliverGlodenCount() + "             " + splatoonCoopUserDetail.getDeliverRedCount(),
-                    userX + 20, startY + 100,
-                    200, 30,
-                    0);
-            //绘制救援数
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescue.png"),
-                    userX, startY + 106, 36, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescued.png"),
-                    userX + 60, startY + 106, 36, 18);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getRescueCount() + "             " + splatoonCoopUserDetail.getRescuedCount(),
-                    userX + 40, startY + 120,
-                    200, 30,
-                    0);
-
-            userX += 150;
-        }
-    }
-
-    /**
-     * 绘制完整对战记录图片
-     */
-    @SneakyThrows
-    private File writeFullBattleRecord(List<SplatoonBattleRecord> recordList, List<SplatoonBattleUserDetail> userDetailList) {
-        //对战记录按每五条进行分段
-        List<List<SplatoonBattleRecord>> recordListPartition = ListUtil.partition(recordList, 5);
-
-        //数据库用户详细记录按对战id分组
-        Map<String, List<SplatoonBattleUserDetail>> userDetailListMap = userDetailList.stream()
-                .collect(Collectors.groupingBy(SplatoonBattleUserDetail::getBattleId));
-
-        //获取背景图片
-        File backgroundImage = resourcesUtils.getStaticResource("splatoon/background/bg_good.jpg");
-        //生成临时图片文件
-        File imageFile = FileUtils.buildTmpFile();
-        //裁剪部分底边
-        ImageUtils.cropImage(backgroundImage, imageFile, 0, 0, 720, 720);
-
-        //生成的图片列表
-        List<BufferedImage> imageList = new ArrayList<>();
-
-        for (List<SplatoonBattleRecord> fiveBattleRecordList : recordListPartition) {
-            //从临时图片创建默认g2d对象
-            BufferedImage image = ImageIO.read(imageFile);
-            Graphics2D g2d = ImageUtils.createDefaultG2dFromFile(image);
-
-            int startY = 15;
-            for (SplatoonBattleRecord record : fiveBattleRecordList) {
-                //根据对战记录id获取对应用户对战详细记录
-                List<SplatoonBattleUserDetail> battleUserDetailList = userDetailListMap.get(record.getId().toString());
-
-                //绘制当前对战记录
-                writeOneBattleRecord(g2d, record, battleUserDetailList, startY);
-
-                startY += 140;
-            }
-
-            imageList.add(image);
-        }
-
-        BufferedImage mergedImage = ImageUtils.mergeImagesVertically(imageList);
-        //将绘制完成的临时图片写入文件
-        ImageIO.write(mergedImage, "png", imageFile);
-        return imageFile;
-    }
-
-    /**
-     * 绘制一条对战记录
-     */
-    @SneakyThrows
-    private void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
-        ModeStyle modeStyle = BbSplatoonUserHandler.modeStyleMap.get(record.getVsModeId());
-        //绘制半透明底色
-        ImageUtils.createRoundRectOnImage(g2d, modeStyle.getColor(), 15, startY, 700, 132, 0.3f);
-
-        //绘制记录序号
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 12, Color.WHITE,
-                "序号：" + record.getId().toString(),
-                20, startY + 20,
-                200, 30,
-                0);
-
-        //绘制对战时间
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 10, Color.WHITE,
-                record.getPlayedTime().format(DateUtils.normalTimePattern),
-                20, startY + 40,
-                200, 30,
-                0);
-
-        //绘制模式标志
-        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(modeStyle.getModeImgPath()),
-                120, startY + 8, 30, 30);
-
-        //绘制规则标志,涂地模式没有标志，是不绘制的
-        String ruleImgPath = BbSplatoonUserHandler.battleRuleMap.get(record.getVsRuleId());
-        if (StringUtils.isNoneBlank(ruleImgPath)) {
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(ruleImgPath),
-                    150, startY + 8, 30, 30);
-        }
-
-        //绘制地图
-        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/battle/stage/" + record.getVsStageId() + ".png"),
-                190, startY + 8, 0.2, 1f);
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 22, Color.YELLOW,
-                record.getVsStageName(),
-                360, startY + 30,
-                200, 30,
-                0);
-
-        //绘制胜负
-        Color judgeColor = Color.WHITE;
-        Boolean isWin = false;
-        if ("WIN".equals(record.getJudgement())) {
-            judgeColor = Color.YELLOW;
-            isWin = true;
-        }else if ("LOSE".equals(record.getJudgement())) {
-            judgeColor = Color.WHITE;
-        }
-        ImageUtils.writeWordInImage(g2d,
-                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 20, judgeColor,
-                record.getJudgement(),
-                40, startY + 90,
-                200, 30,
-                0);
-
-        //绘制分数变化
-        if (record.getPointChange() != null) {
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
-                    (record.getPointChange() > 0 ? "+" + record.getPointChange() : record.getPointChange()) + "p",
-                    560, startY + 25,
-                    200, 30,
-                    0);
-        }
-
-        //绘制xp数
-        if (record.getPower() != null) {
-            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 640, startY + 7, 60, 30 , 0.3f);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 16, judgeColor,
-                    "xp" + record.getPower(),
-                    650, startY + 25,
-                    200, 30,
-                    0);
-        }
-
-        int userX = 120;
-
-        //获取用户本人的队伍
-        int meTeam = 0;
-        for (SplatoonBattleUserDetail splatoonBattleUserDetail : userDetailList) {
-            if (splatoonBattleUserDetail.getMeFlag() == 1) {
-                meTeam = splatoonBattleUserDetail.getTeamOrder();
-            }
-        }
-        //排序用户顺序, 规则：用户本人在第一位，用户本人队伍在前，其他队伍在后
-        int finalMeTeam = meTeam;
-        userDetailList = userDetailList.stream().sorted(new Comparator<SplatoonBattleUserDetail>() {
-            @Override
-            public int compare(SplatoonBattleUserDetail o1, SplatoonBattleUserDetail o2) {
-                if (o1.getMeFlag() == 1) {
-                    return -1;
-                }else if (o2.getMeFlag() == 1) {
-                    return 1;
-                }else if (o1.getTeamOrder() == null){
-                    return 1;
-                }else if (o2.getTeamOrder() == null){
-                    return -1;
-                }else if (o1.getTeamOrder() == finalMeTeam){
-                    return -1;
-                }else if (o2.getTeamOrder() == finalMeTeam){
-                    return 1;
-                }else {
-                    return o1.getTeamOrder().compareTo(o2.getTeamOrder());
-                }
-            }
-        }).collect(Collectors.toList());
-
-        TeamStyle teamStyle = teamStyleMap.get("team1");
-        for (int i = 0; i < userDetailList.size(); i++) {
-            SplatoonBattleUserDetail splatoonBattleUserDetail = userDetailList.get(i);
-            //绘制用户数据底色
-            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 146, 40 , 0.6f);
-
-            //绘制队伍标识
-            ImageUtils.createRoundRectOnImage(g2d, teamStyle.getTeamColor(), userX - 2, startY + 48, 5, 5, 1f);
-
-            //绘制武器图片
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/weapon/" + splatoonBattleUserDetail.getWeaponId() + ".png"),
-                    userX - 2, startY + 50, 27, 27);
-            //绘制用户名称
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, isWin ? Color.YELLOW : Color.GRAY,
-                    splatoonBattleUserDetail.getPlayerName(),
-                    userX + 26, startY + 60,
-                    200, 30,
-                    0);
-            //绘制击倒数
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(teamStyle.getTeamKillImg()),
-                    userX + 21, startY + 65, 30, 15);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
-                    splatoonBattleUserDetail.getKillCount() == null ? "null" : splatoonBattleUserDetail.getKillCount() + "(" + splatoonBattleUserDetail.getAssistCount() + ")",
-                    userX + 50, startY + 76,
-                    200, 30,
-                    0);
-
-            //绘制死亡数
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource(teamStyle.getTeamDeathImg()),
-                    userX + 73, startY + 65, 30, 15);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
-                    splatoonBattleUserDetail.getDeathCount() == null ? "null" : splatoonBattleUserDetail.getDeathCount().toString(),
-                    userX + 100, startY + 76,
-                    200, 30,
-                    0);
-            //绘制大招数
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/specialWeapon/" + splatoonBattleUserDetail.getWeaponSpecialId() + ".png"),
-                    userX + 113, startY + 65, 15, 15);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 11, Color.WHITE,
-                    splatoonBattleUserDetail.getSpecialCount() == null ? "null" : splatoonBattleUserDetail.getSpecialCount().toString(),
-                    userX + 128, startY + 76,
-                    200, 30,
-                    0);
-
-            //按照以下顺序切换xy坐标
-            //1 3 5 7
-            //2 4 6 8
-            if (i % 2 == 0) {
-                startY = startY + 44;
-            }else if (i % 2 != 0) {
-                userX = userX + 150;
-                startY = startY - 44;
-            }
-
-            //切换小队颜色和图片
-            if (i == 3) {
-                teamStyle = BbSplatoonUserHandler.teamStyleMap.get("team2");
-                isWin = !isWin;
-            }
-        }
-    }
-
-    /**
-     * 喷喷模式绘制配置实体类
-     */
-    @Data
-    @AllArgsConstructor
-    public static class ModeStyle {
-        private String modeId;
-        private String modeName;
-        private Color color;
-        private String modeImgPath;
-    }
-
-    /**
-     * 喷喷对战小队样式配置实体类
-     */
-    @Data
-    @AllArgsConstructor
-    public static class TeamStyle {
-        private Color teamColor;
-        private String teamKillImg;
-        private String teamDeathImg;
-    }
 
     /**
      * 喷喷用户token实体类
@@ -1126,91 +460,13 @@ public class BbSplatoonUserHandler {
     }
 
     /**
-     * 检查喷喷用户token是否过期并获取token
+     * 获取可用 token。原本散布在这里的 4 + 4 次 DB 查询和字符串匹配 401 的逻辑
+     * 已经迁移到 {@link com.bb.bot.common.util.nso.SplatoonTokenManager}。
      */
     public TokenInfo checkAndGetSplatoon3UserToken(String userId) {
-        //数据库获取用户的userInfo和webAccessToken
-        UserConfigValue userInfoConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getUserId, userId)
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "userInfo"));
-        UserConfigValue webServiceTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getUserId, userId)
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "webServiceToken"));
-        UserConfigValue bulletTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getUserId, userId)
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "bulletToken"));
-
-        //如果其中一个token为空，重新设置token
-        if (userInfoConfig == null || webServiceTokenConfig == null || bulletTokenConfig == null) {
-            return resetSplatoon3UserToken(userId);
-        }
-
-        try {
-            splatoon3ApiCaller.getTest(bulletTokenConfig.getValueName(), webServiceTokenConfig.getValueName(), JSONObject.parseObject(userInfoConfig.getValueName()));
-        }catch (Exception e) {
-            //如果token过期，刷新token并获取结果
-            if (e.getMessage().contains("401")) {
-                return  resetSplatoon3UserToken(userId);
-            }else {
-                log.error("调用斯普拉遁3接口出错", e);
-            }
-
-        }
-
-        return new TokenInfo(webServiceTokenConfig.getValueName(), bulletTokenConfig.getValueName(), JSONObject.parseObject(userInfoConfig.getValueName()));
-    }
-
-    /**
-     * 刷新喷喷用户token
-     */
-    private TokenInfo resetSplatoon3UserToken(String userId) {
-        //cookie 方案:从 token-provider 直接拿 gtoken + bulletToken,
-        //替代 2024 年中失效的 imink f-API 链(getWebServiceToken/getLoginToken 会报 9403)。
-        //token-provider 读真机 NSO 的 WebView cookie,不注入进程、不触发 Pairip。
-        //多账号:每个 bbBot userId 对应一个 Android NSO 实例(dataUser),
-        //0=主账号,999=MIUI 应用双开,其它=手机分身空间;未配置默认主账号 0。
-        UserConfigValue dataUserConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getUserId, userId)
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "dataUser"));
-        String dataUser = dataUserConfig != null ? dataUserConfig.getValueName() : "0";
-        JSONObject token = nsoTokenProvider.fetchToken(dataUser);
-        String webServiceToken = token.getString("gtoken");
-        String bulletToken = token.getString("bulletToken");
-
-        //userInfo 仅用于查询请求头的 language/country,固定 en-US/US 即可(只影响返回文本语言)
-        JSONObject userInfo = new JSONObject();
-        userInfo.put("language", "en-US");
-        userInfo.put("country", "US");
-
-        //数据库重新设置 userInfo
-        UserConfigValue userInfoConfig = new UserConfigValue();
-        userInfoConfig.setUserId(userId);
-        userInfoConfig.setType("NSO");
-        userInfoConfig.setKeyName("userInfo");
-        userInfoConfig.setValueName(userInfo.toJSONString());
-        userConfigValueService.resetUserConfigValue(userInfoConfig);
-
-        //数据库重新设置 web服务token (gtoken)
-        UserConfigValue webServiceTokenConfig = new UserConfigValue();
-        webServiceTokenConfig.setUserId(userId);
-        webServiceTokenConfig.setType("NSO");
-        webServiceTokenConfig.setKeyName("webServiceToken");
-        webServiceTokenConfig.setValueName(webServiceToken);
-        userConfigValueService.resetUserConfigValue(webServiceTokenConfig);
-
-        //数据库重新设置 bulletToken
-        UserConfigValue bulletTokenConfig = new UserConfigValue();
-        bulletTokenConfig.setUserId(userId);
-        bulletTokenConfig.setType("NSO");
-        bulletTokenConfig.setKeyName("bulletToken");
-        bulletTokenConfig.setValueName(bulletToken);
-        userConfigValueService.resetUserConfigValue(bulletTokenConfig);
-
-        return new TokenInfo(webServiceToken, bulletToken, userInfo);
+        com.bb.bot.common.util.nso.SplatoonTokenManager.SplatoonToken token =
+                splatoonTokenManager.getValid(userId);
+        return new TokenInfo(token.webServiceToken(), token.bulletToken(), token.userInfo());
     }
 
 }

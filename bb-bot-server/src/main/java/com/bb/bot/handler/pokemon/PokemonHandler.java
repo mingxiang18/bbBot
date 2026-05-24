@@ -1,7 +1,5 @@
 package com.bb.bot.handler.pokemon;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
@@ -12,20 +10,27 @@ import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
-import com.bb.bot.handler.pokemon.entity.PokemonData;
+import com.bb.bot.handler.pokemon.engine.PokemonCollectionStore;
+import com.bb.bot.handler.pokemon.engine.PokemonEngine;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
- * 宝可梦事件处理器
+ * 宝可梦 handler：抓取 / 杂交 走 {@link PokemonEngine}，玩家收藏持久化在 {@link PokemonCollectionStore}。
+ * handler 只负责消息构造与文件路径计算。
+ *
  * @author ren
  */
+@Slf4j
 @BootEventHandler(botType = BotType.BB, name = "宝可梦")
 public class PokemonHandler {
+
+    private static final int MAX_OWNED = 2;
 
     @Autowired
     private BbMessageApi bbMessageApi;
@@ -33,66 +38,75 @@ public class PokemonHandler {
     @Autowired
     private ResourcesUtils resourcesUtils;
 
-    private Map<String, List<Integer>> userPokemonMap = new HashMap<>();
+    @Autowired
+    private PokemonEngine engine;
+
+    @Autowired
+    private PokemonCollectionStore collectionStore;
+
+    private final Random random = new Random();
 
     @SneakyThrows
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?捕捉宝可梦"}, name = "捕捉宝可梦")
-    public void getPokemonHandle(BbReceiveMessage bbReceiveMessage) {
-        String pokemonJson = new String(resourcesUtils.getStaticResourceToByte("pokemon/pokemon_data.json"), StandardCharsets.UTF_8);
-        List<PokemonData> pokemonDataList = JSON.parseObject(pokemonJson, new TypeReference<List<PokemonData>>() {});
-
-        Random random = new Random();
-        int index = random.nextInt(pokemonDataList.size());
-
-        List<Integer> pokemonList = userPokemonMap.getOrDefault(bbReceiveMessage.getUserId(), new ArrayList<>());
-        pokemonList.add(index);
-        if (pokemonList.size() > 2) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("最多只能捕捉到两只宝可梦哟，继续捕捉请先杂交")));
-            bbMessageApi.sendMessage(bbSendMessage);
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?捕捉宝可梦"}, name = "捕捉宝可梦")
+    public void capture(BbReceiveMessage msg) {
+        if (!engine.isAvailable()) {
+            sendAtText(msg, "宝可梦数据未就绪");
             return;
         }
-        userPokemonMap.put(bbReceiveMessage.getUserId(), pokemonList);
+        List<Integer> collection = collectionStore.load(msg.getUserId());
+        PokemonEngine.Outcome outcome = engine.capture(collection, MAX_OWNED, random);
 
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("捕捉到宝可梦：" + pokemonDataList.get(index).getName()),
-                BbMessageContent.buildLocalImageMessageContent(resourcesUtils.getStaticResource("pokemon/origin/" + pokemonDataList.get(index).getId() + ".png"))));
-        bbMessageApi.sendMessage(bbSendMessage);
+        switch (outcome.getType()) {
+            case FULL -> sendAtText(msg, "最多只能捕捉到两只宝可梦哟，继续捕捉请先杂交");
+            case CAPTURED -> {
+                collectionStore.save(msg.getUserId(), outcome.getUpdatedCollection());
+                BbSendMessage out = new BbSendMessage(msg);
+                out.setMessageList(Arrays.asList(
+                        BbMessageContent.buildAtMessageContent(msg.getUserId()),
+                        BbMessageContent.buildTextContent("捕捉到宝可梦：" + outcome.getCaptured().getName()),
+                        BbMessageContent.buildLocalImageMessageContent(
+                                resourcesUtils.getStaticResource("pokemon/origin/" + outcome.getCaptured().getId() + ".png"))));
+                bbMessageApi.sendMessage(out);
+            }
+            default -> sendAtText(msg, "捕捉失败");
+        }
     }
 
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?杂交宝可梦"}, name = "杂交宝可梦")
     @SneakyThrows
-    public void combinePokemonHandle(BbReceiveMessage bbReceiveMessage) {
-        List<Integer> pokemonList = userPokemonMap.get(bbReceiveMessage.getUserId());
-        if (CollectionUtils.isEmpty(pokemonList) || pokemonList.size() != 2) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("捕捉的宝可梦未满两只，无法杂交")));
-            bbMessageApi.sendMessage(bbSendMessage);
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?杂交宝可梦"}, name = "杂交宝可梦")
+    public void breed(BbReceiveMessage msg) {
+        if (!engine.isAvailable()) {
+            sendAtText(msg, "宝可梦数据未就绪");
             return;
         }
+        List<Integer> collection = collectionStore.load(msg.getUserId());
+        PokemonEngine.Outcome outcome = engine.breed(collection);
 
-        userPokemonMap.put(bbReceiveMessage.getUserId(), new ArrayList<>());
+        switch (outcome.getType()) {
+            case NOT_ENOUGH, UNAVAILABLE -> sendAtText(msg, "捕捉的宝可梦未满两只，无法杂交");
+            case BRED -> {
+                collectionStore.save(msg.getUserId(), outcome.getUpdatedCollection());
+                String combinedName = outcome.getBreedFrom().getName() + outcome.getBreedTo().getName();
+                String imagePath = "pokemon/combine/" + outcome.getBreedTo().getId() + "-"
+                        + outcome.getBreedFrom().getId() + ".png";
+                BbSendMessage out = new BbSendMessage(msg);
+                out.setMessageList(Arrays.asList(
+                        BbMessageContent.buildAtMessageContent(msg.getUserId()),
+                        BbMessageContent.buildTextContent("恭喜你，杂交出新宝可梦【" + combinedName + "】！！"),
+                        BbMessageContent.buildLocalImageMessageContent(resourcesUtils.getStaticResource(imagePath))));
+                bbMessageApi.sendMessage(out);
+            }
+            default -> sendAtText(msg, "杂交失败");
+        }
+    }
 
-        String beforeNameJson = new String(resourcesUtils.getStaticResourceToByte("pokemon/before_name.json"), StandardCharsets.UTF_8);
-        List<PokemonData> beforeNameList = JSON.parseObject(beforeNameJson, new TypeReference<List<PokemonData>>() {});
-
-        String afterNameJson = new String(resourcesUtils.getStaticResourceToByte("pokemon/after_name.json"), StandardCharsets.UTF_8);
-        List<PokemonData> afterNameList = JSON.parseObject(afterNameJson, new TypeReference<List<PokemonData>>() {});
-
-        Integer id = pokemonList.get(0);
-        Integer id2 = pokemonList.get(1);
-
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("恭喜你，杂交出新宝可梦【" + beforeNameList.get(id).getName() + afterNameList.get(id2).getName() + "】！！"),
-                BbMessageContent.buildLocalImageMessageContent(resourcesUtils.getStaticResource("pokemon/combine/" + afterNameList.get(id2).getId() + "-" + beforeNameList.get(id).getId() + ".png"))));
-        bbMessageApi.sendMessage(bbSendMessage);
+    private void sendAtText(BbReceiveMessage source, String text) {
+        BbSendMessage out = new BbSendMessage(source);
+        out.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(source.getUserId()),
+                BbMessageContent.buildTextContent(text)));
+        bbMessageApi.sendMessage(out);
     }
 }

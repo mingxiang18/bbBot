@@ -27,4 +27,12 @@ public class BbSendMessageType {
      * 回复消息
      */
     public static final String REPLY = "reply";
+    /**
+     * 本地文件（非图片附件，data 为 File，发送时转 base64）
+     */
+    public static final String LOCAL_FILE = "localFile";
+    /**
+     * 网络文件（非图片附件，data 为下载 URL）
+     */
+    public static final String NET_FILE = "netFile";
 }

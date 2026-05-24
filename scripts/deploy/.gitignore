@@ -1,0 +1,4 @@
+deploy.conf
+deploy.log
+# 含生产密钥（DB 密码 / API key / bot token），不入库；首次从集群现有 ConfigMap 取一份
+k8s/bb-bot/bb-bot-config.yaml
