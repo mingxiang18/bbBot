@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
-import com.bb.bot.handler.nso.BbNsoHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,9 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 集中管理 Splatoon3 登录所需的四把 token（userInfo / webAccessToken / coralUserId /
- * webServiceToken / bulletToken），把原本散布在 {@code BbSplatoonUserHandler} 里
- * 1063-1143 行的 4 + 4 次 DB 查询 + 字符串匹配 401 的逻辑收敛到一个地方。
+ * 集中管理 Splatoon3 查询所需的 token（userInfo / webServiceToken / bulletToken）。
+ * cookie 方案下 token 来自 worker 的 token-provider（读真机 NSO 的 WebView cookie），
+ * 按 Android dataUser 区分账号；一个 bbBot 用户可绑定多个账号，查战绩时逐个聚合。
  *
  * <p>典型用法：
  * <pre>{@code
@@ -40,10 +39,10 @@ public class SplatoonTokenManager {
 
     public static final String TYPE_NSO = "NSO";
     public static final String KEY_USER_INFO = "userInfo";
-    public static final String KEY_WEB_ACCESS_TOKEN = "webAccessToken";
-    public static final String KEY_CORAL_USER_ID = "coralUserId";
     public static final String KEY_WEB_SERVICE_TOKEN = "webServiceToken";
     public static final String KEY_BULLET_TOKEN = "bulletToken";
+    /** 该 bbBot 用户绑定的 Android NSO 实例(dataUser):0=主账号, 999=应用双开...,由 owner 绑定。 */
+    public static final String KEY_DATA_USER = "dataUser";
 
     @Autowired
     private IUserConfigValueService userConfigValueService;
@@ -52,7 +51,7 @@ public class SplatoonTokenManager {
     private Splatoon3ApiCaller splatoon3ApiCaller;
 
     @Autowired
-    private BbNsoHandler bbNsoHandler;
+    private NsoTokenProvider nsoTokenProvider;
 
     /**
      * 拿到一对可用 token。如果 DB 里缺 webService/bulletToken 或调用 ping 接口返回 401，
@@ -94,31 +93,71 @@ public class SplatoonTokenManager {
                 JSONObject.parseObject(userInfo.getValueName()));
     }
 
-    /** 强制刷新一遍。失败抛 {@link Splatoon3ApiException}（FATAL）。 */
+    /**
+     * 强制刷新一遍 token。
+     *
+     * <p>cookie 方案:从 worker 上的 token-provider 拿 gtoken + bulletToken,替代 2024 年中
+     * 失效的 imink f-API 链(Pairip 封了模拟器/注入)。token-provider 读真机 NSO 的 WebView
+     * cookie,按 dataUser 区分账号。详见 k8s-nso/NSO-COOKIE-METHOD.md。
+     */
     public SplatoonToken refresh(String userId) {
-        bbNsoHandler.resetUserToken(userId);
+        // 单账号路径:取该用户绑定的第一个账号(多账号查询走 getTokenByDataUser 逐个取)
+        String dataUser = getDataUsers(userId).get(0);
 
-        Map<String, UserConfigValue> rows = loadAll(userId);
-        UserConfigValue userInfoRow = required(rows, KEY_USER_INFO, userId);
-        UserConfigValue webAccess = required(rows, KEY_WEB_ACCESS_TOKEN, userId);
-        UserConfigValue coral = required(rows, KEY_CORAL_USER_ID, userId);
+        SplatoonToken token = getTokenByDataUser(dataUser);
 
-        JSONObject userInfo = JSONObject.parseObject(userInfoRow.getValueName());
+        upsert(userId, KEY_USER_INFO, token.userInfo().toJSONString());
+        upsert(userId, KEY_WEB_SERVICE_TOKEN, token.webServiceToken());
+        upsert(userId, KEY_BULLET_TOKEN, token.bulletToken());
 
-        String webService = splatoon3ApiCaller.getWebServiceToken(
-                userInfo, webAccess.getValueName(), coral.getValueName());
-        upsert(userId, KEY_WEB_SERVICE_TOKEN, webService);
+        return token;
+    }
 
-        String bullet = splatoon3ApiCaller.getBulletToken(webService, userInfo);
-        upsert(userId, KEY_BULLET_TOKEN, bullet);
+    /**
+     * 该 bbBot 用户绑定的全部 Android NSO 账号(dataUser,逗号分隔),未绑定默认 ["0"]。
+     * owner 可把一个 userId 绑到多个账号,查战绩时逐个聚合。
+     */
+    public java.util.List<String> getDataUsers(String userId) {
+        UserConfigValue dataUserRow = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, userId)
+                .eq(UserConfigValue::getType, TYPE_NSO)
+                .eq(UserConfigValue::getKeyName, KEY_DATA_USER)
+                .last("limit 1"));
+        if (dataUserRow == null || dataUserRow.getValueName() == null || dataUserRow.getValueName().isBlank()) {
+            return java.util.List.of("0");
+        }
+        java.util.List<String> list = new java.util.ArrayList<>();
+        for (String s : dataUserRow.getValueName().split(",")) {
+            String v = s.trim();
+            if (!v.isEmpty()) {
+                list.add(v);
+            }
+        }
+        return list.isEmpty() ? java.util.List.of("0") : list;
+    }
 
-        return new SplatoonToken(webService, bullet, userInfo);
+    /**
+     * 直接按 Android dataUser 从 cookie token-provider 取一把 token(不走 per-userId DB 缓存,
+     * token-provider 自身 60s 缓存,多账号场景逐个取很轻)。userInfo.id 置为 {@link #accountId}
+     * 作为该账号战绩入库的稳定主键(cookie 方案下没有真实 Nintendo id)。
+     */
+    public SplatoonToken getTokenByDataUser(String dataUser) {
+        JSONObject token = nsoTokenProvider.fetchToken(dataUser);
+        JSONObject userInfo = new JSONObject();
+        userInfo.put("language", "en-US");
+        userInfo.put("country", "US");
+        userInfo.put("id", accountId(dataUser));
+        return new SplatoonToken(token.getString("gtoken"), token.getString("bulletToken"), userInfo);
+    }
+
+    /** 战绩入库的稳定账号主键。cookie 方案下用 Android dataUser 区分账号。 */
+    public static String accountId(String dataUser) {
+        return "nso-" + dataUser;
     }
 
     private Map<String, UserConfigValue> loadAll(String userId) {
         Map<String, UserConfigValue> map = new HashMap<>();
-        for (String key : new String[]{KEY_USER_INFO, KEY_WEB_ACCESS_TOKEN, KEY_CORAL_USER_ID,
-                KEY_WEB_SERVICE_TOKEN, KEY_BULLET_TOKEN}) {
+        for (String key : new String[]{KEY_USER_INFO, KEY_WEB_SERVICE_TOKEN, KEY_BULLET_TOKEN}) {
             UserConfigValue row = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                     .eq(UserConfigValue::getUserId, userId)
                     .eq(UserConfigValue::getType, TYPE_NSO)
@@ -129,15 +168,6 @@ public class SplatoonTokenManager {
             }
         }
         return map;
-    }
-
-    private UserConfigValue required(Map<String, UserConfigValue> rows, String key, String userId) {
-        UserConfigValue row = rows.get(key);
-        if (row == null) {
-            throw new Splatoon3ApiException(Splatoon3ApiException.ErrorType.FATAL,
-                    -1, "Missing NSO config [" + key + "] for user " + userId, null);
-        }
-        return row;
     }
 
     private void upsert(String userId, String key, String value) {

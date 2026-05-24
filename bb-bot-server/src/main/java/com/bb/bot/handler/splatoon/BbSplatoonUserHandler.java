@@ -20,6 +20,8 @@ import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
+import com.bb.bot.aiAgent.auth.AiAgentAuthService;
+import com.bb.bot.common.util.nso.SplatoonTokenManager;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
@@ -27,10 +29,12 @@ import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -67,13 +71,20 @@ public class BbSplatoonUserHandler {
     private ISplatoonBattleUserDetailService battleUserDetailService;
 
     @Autowired
-    private com.bb.bot.common.util.nso.SplatoonTokenManager splatoonTokenManager;
+    private SplatoonTokenManager splatoonTokenManager;
+
+    @Autowired
+    private AiAgentAuthService aiAgentAuthService;
 
     @Autowired
     private com.bb.bot.handler.splatoon.render.CoopPointRenderer coopPointRenderer;
 
     @Autowired
     private com.bb.bot.handler.splatoon.render.SplatoonRecordRenderer splatoonRecordRenderer;
+
+    /** 账号编号→Android dataUser 映射(账号1=主NSO user0, 账号2=应用双开user999...)。代码默认值,无需写 yml。 */
+    @Value("${nso.accountMap:1:0,2:999}")
+    private String accountMap;
 
     /**
      * 自动上传喷喷记录
@@ -112,6 +123,76 @@ public class BbSplatoonUserHandler {
             BbMessageContent.buildTextContent("已" + ("1".equals(openFlag) ? "开启" : "关闭") + "自动上传记录"))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * owner 绑定 bbBot 用户到一个或多个 NSO 账号(账号编号→Android dataUser)。
+     * cookie 方案下 token 来自 owner 的几台真机账号,绑定关系只能 owner 设置。
+     * 格式: 绑定喷喷账号 <编号...> [@某人];可绑多个,如"绑定喷喷账号 1 2";不 @ 则绑发送者自己。
+     */
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?绑定喷喷账号"}, name = "绑定喷喷账号")
+    public void bindSplatoonAccount(BbReceiveMessage bbReceiveMessage) {
+        BbSendMessage reply = new BbSendMessage(bbReceiveMessage);
+        //owner 校验(复用 aiAgent.owners 配置)
+        if (!aiAgentAuthService.isOwner(bbReceiveMessage.getUserId())) {
+            reply.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("仅 owner 可绑定喷喷账号")));
+            bbMessageApi.sendMessage(reply);
+            return;
+        }
+        //取关键词后的前导纯数字 token 作为账号编号(遇到非数字如 @某人 即停止,避免误吞 at 的 id)
+        String rest = bbReceiveMessage.getMessage().replaceFirst(".*?绑定喷喷账号", "").trim();
+        List<String> accountNos = new ArrayList<>();
+        for (String tok : rest.split("\\s+")) {
+            if (tok.matches("\\d+")) {
+                accountNos.add(tok);
+            } else {
+                break;
+            }
+        }
+        if (accountNos.isEmpty()) {
+            reply.setMessageList(Arrays.asList(
+                    BbMessageContent.buildTextContent("格式：绑定喷喷账号 <编号...> [@某人]，如：绑定喷喷账号 1 或 绑定喷喷账号 1 2")));
+            bbMessageApi.sendMessage(reply);
+            return;
+        }
+        //账号编号→dataUser
+        List<String> dataUsers = new ArrayList<>();
+        for (String accountNo : accountNos) {
+            String dataUser = null;
+            for (String pair : accountMap.split(",")) {
+                String[] kv = pair.split(":");
+                if (kv.length == 2 && kv[0].trim().equals(accountNo)) {
+                    dataUser = kv[1].trim();
+                    break;
+                }
+            }
+            if (dataUser == null) {
+                reply.setMessageList(Arrays.asList(
+                        BbMessageContent.buildTextContent("账号编号 " + accountNo + " 未配置(见 nso.accountMap)")));
+                bbMessageApi.sendMessage(reply);
+                return;
+            }
+            if (!dataUsers.contains(dataUser)) {
+                dataUsers.add(dataUser);
+            }
+        }
+        //被绑用户:@ 的优先,否则 owner 自己
+        String targetUserId = bbReceiveMessage.getAtUserList().isEmpty()
+                ? bbReceiveMessage.getUserId()
+                : bbReceiveMessage.getAtUserList().get(0).getUserId();
+        //存 dataUser 映射(逗号分隔多账号),checkAndGetSplatoon3UserToken / 查战绩据此取对应账号 token
+        UserConfigValue cfg = new UserConfigValue();
+        cfg.setUserId(targetUserId);
+        cfg.setType("NSO");
+        cfg.setKeyName("dataUser");
+        cfg.setValueName(String.join(",", dataUsers));
+        userConfigValueService.resetUserConfigValue(cfg);
+        reply.setMessageList(Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildTextContent("已将用户 " + targetUserId + " 绑定到账号 " + String.join("、", accountNos))));
+        bbMessageApi.sendMessage(reply);
     }
 
     /**
@@ -209,11 +290,19 @@ public class BbSplatoonUserHandler {
     }
 
     /**
-     * 上传打工记录
+     * 上传打工记录:遍历该用户绑定的每个账号,逐个上传到各自账号名下。
      */
     public void syncCoopRecords(String userId) {
-        //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(userId);
+        for (String dataUser : splatoonTokenManager.getDataUsers(userId)) {
+            SplatoonTokenManager.SplatoonToken token = splatoonTokenManager.getTokenByDataUser(dataUser);
+            syncCoopRecordsForAccount(new TokenInfo(token.webServiceToken(), token.bulletToken(), token.userInfo()));
+        }
+    }
+
+    /**
+     * 上传单个账号的打工记录。
+     */
+    private void syncCoopRecordsForAccount(TokenInfo tokenInfo) {
         //调用接口获取数据
         JSONObject coops = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
         //获取用户账户信息的id
@@ -286,14 +375,13 @@ public class BbSplatoonUserHandler {
             return;
         }
 
-        //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
-        //获取用户账户信息的id
-        String userAccountId = tokenInfo.getUserInfo().getString("id");
+        //该用户绑定的全部账号(查战绩跨账号聚合)
+        List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
+                .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
 
         //查询数据库记录
         List<SplatoonCoopRecord> recordList = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
-                .eq(SplatoonCoopRecord::getUserId, userAccountId)
+                .in(SplatoonCoopRecord::getUserId, accountIds)
                 .orderByDesc(SplatoonCoopRecord::getPlayedTime)
                 .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
         //查询数据库用户详细记录
@@ -335,11 +423,19 @@ public class BbSplatoonUserHandler {
     }
 
     /**
-     * 上传对战记录
+     * 上传对战记录:遍历该用户绑定的每个账号,逐个上传到各自账号名下。
      */
     public void syncBattleRecords(String userId) {
-        //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(userId);
+        for (String dataUser : splatoonTokenManager.getDataUsers(userId)) {
+            SplatoonTokenManager.SplatoonToken token = splatoonTokenManager.getTokenByDataUser(dataUser);
+            syncBattleRecordsForAccount(new TokenInfo(token.webServiceToken(), token.bulletToken(), token.userInfo()));
+        }
+    }
+
+    /**
+     * 上传单个账号的对战记录。
+     */
+    private void syncBattleRecordsForAccount(TokenInfo tokenInfo) {
         //调用接口获取数据
         JSONObject battles = splatoon3ApiCaller.getRecentBattles(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
         //获取用户账户信息的id
@@ -412,14 +508,13 @@ public class BbSplatoonUserHandler {
             return;
         }
 
-        //获取token
-        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
-        //获取用户账户信息的id
-        String userAccountId = tokenInfo.getUserInfo().getString("id");
+        //该用户绑定的全部账号(查战绩跨账号聚合)
+        List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
+                .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
 
         //查询数据库记录
         List<SplatoonBattleRecord> recordList = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
-                .eq(SplatoonBattleRecord::getUserId, userAccountId)
+                .in(SplatoonBattleRecord::getUserId, accountIds)
                 .orderByDesc(SplatoonBattleRecord::getPlayedTime)
                 .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
         //查询数据库用户详细记录
