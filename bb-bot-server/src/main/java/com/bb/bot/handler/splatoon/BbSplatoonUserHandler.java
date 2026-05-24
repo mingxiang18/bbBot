@@ -384,6 +384,15 @@ public class BbSplatoonUserHandler {
                 .in(SplatoonCoopRecord::getUserId, accountIds)
                 .orderByDesc(SplatoonCoopRecord::getPlayedTime)
                 .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
+        //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
+        if (recordList.isEmpty()) {
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("还没有打工记录，先发【上传打工记录】或等自动上传跑过一轮")));
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
+        }
         //查询数据库用户详细记录
         List<SplatoonCoopUserDetail> userDetailList = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
                 .in(SplatoonCoopUserDetail::getCoopId, recordList.stream().map(splatoonCoopRecord -> splatoonCoopRecord.getId().toString()).collect(Collectors.toList())));
@@ -517,6 +526,15 @@ public class BbSplatoonUserHandler {
                 .in(SplatoonBattleRecord::getUserId, accountIds)
                 .orderByDesc(SplatoonBattleRecord::getPlayedTime)
                 .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
+        //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
+        if (recordList.isEmpty()) {
+            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
+            bbSendMessage.setMessageList(Arrays.asList(
+                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                    BbMessageContent.buildTextContent("还没有对战记录，先发【上传对战记录】或等自动上传跑过一轮")));
+            bbMessageApi.sendMessage(bbSendMessage);
+            return;
+        }
         //查询数据库用户详细记录
         List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
                 .in(SplatoonBattleUserDetail::getBattleId, recordList.stream().map(splatoonBattleRecord -> splatoonBattleRecord.getId().toString()).collect(Collectors.toList())));
