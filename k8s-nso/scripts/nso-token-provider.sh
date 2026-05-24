@@ -3,9 +3,10 @@
 # 按需刷新:bulletToken 拿不到(gtoken 过期)时自动 refresh 进鱿鱼圈3 重拿。
 set -uo pipefail
 ADB_BIN=/root/platform-tools/adb
-DEV="${1:-99e0fc6d}"; DUSER="${2:-0}"
+DEV="${1:-${NSO_DEVICE:-99e0fc6d}}"; DUSER="${2:-0}"
 ADB="$ADB_BIN -s $DEV"
-export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890
+PROXY="${NSO_PROXY:-http://127.0.0.1:7890}"
+export https_proxy="$PROXY" http_proxy="$PROXY"
 CK="/data/user/$DUSER/com.nintendo.znca/app_webview/Default/Cookies"
 TMP=/tmp/nso-ck-$DUSER.db
 read_gt(){

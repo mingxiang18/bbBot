@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # NSO token HTTP 服务: GET /token?dataUser=0 -> 跑 provider.sh 返回 {gtoken,bulletToken,webViewVer,language,country}
 # 带缓存(默认 60s),避免每次请求都重读 cookie + curl
-import json, subprocess, time, sys
+import json, subprocess, time, sys, os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
 CACHE = {}          # dataUser -> (ts, json_str)
 CACHE_TTL = 60      # 秒;bbBot 频繁查时复用,gtoken 本身 ~2h
+DEVICE = os.environ.get('NSO_DEVICE', '99e0fc6d')   # 手机 adb serial,deploy 时由 systemd Environment 注入
 
 def get_token(data_user):
     now = time.time()
     if data_user in CACHE and now - CACHE[data_user][0] < CACHE_TTL:
         return CACHE[data_user][1]
-    out = subprocess.run(['bash','/root/k8s-nso-token/provider.sh','99e0fc6d',data_user],
+    out = subprocess.run(['bash','/root/k8s-nso-token/provider.sh',DEVICE,data_user],
                          capture_output=True, text=True, timeout=90)
     js = out.stdout.strip() or '{"error":"empty"}'
     try:
