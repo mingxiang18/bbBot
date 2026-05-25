@@ -36,13 +36,14 @@ enter_squid(){   # 唤醒解锁 + 启动 NSO + 处理双开窗 + 点鱿鱼圈3
 BASE=$(gt_ctime)
 enter_squid
 ok=0
-# 轮询最多 ~45s,看 gtoken 是否真的刷新;中途疑似灰屏则强杀重进
-for i in $(seq 1 15); do
-  sleep 3
+# 轮询看 gtoken 是否真刷新(每轮 sleep4 + 读cookie≈3s ≈ 7s);鱿鱼圈3 经加速器加载常要 30~48s,
+# 所以给足耐心;只有久久不更新(疑似真卡死灰屏)才强杀重进,避免误伤慢加载。
+for i in $(seq 1 14); do
+  sleep 4
   NOW=$(gt_ctime)
   if [ "${NOW:-0}" -gt "${BASE:-0}" ] 2>/dev/null; then ok=1; break; fi
-  if [ "$i" = "7" ]; then   # ~21s 还没刷新,疑似灰屏 -> 强杀 NSO 重进
-    echo "grey suspected, force-restart NSO (user=$AUSER)"
+  if [ "$i" = "9" ]; then   # ~60s 仍未刷新,才判定卡死 -> 强杀 NSO 重进
+    echo "grey suspected (>60s no refresh), force-restart NSO (user=$AUSER)"
     S "am force-stop --user $AUSER com.nintendo.znca"
     sleep 2
     enter_squid
