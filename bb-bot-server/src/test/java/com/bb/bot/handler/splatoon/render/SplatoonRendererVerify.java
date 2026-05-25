@@ -171,16 +171,17 @@ public class SplatoonRendererVerify {
 
     static List<SplatoonCoopWaveDetail> waves(long coopId) {
         List<SplatoonCoopWaveDetail> ws = new ArrayList<>();
-        ws.add(wave(coopId, 1, 1, null, 27, 41, "弹跳声呐"));
+        // 本地大招图按中文名命名,verify 里把 id 设成本地存在的名字以便图标解析
+        ws.add(wave(coopId, 1, 1, null, 27, 41, "彈跳聲納"));
         ws.add(wave(coopId, 2, 2, "巨型海带", 30, 38, null));
-        ws.add(wave(coopId, 3, 0, "雾", 25, 33, "鲸鲨炮,护盾"));
+        ws.add(wave(coopId, 3, 0, "雾", 25, 33, "鯊魚坐騎,螃蟹坦克"));
         return ws;
     }
 
-    static SplatoonCoopWaveDetail wave(long coopId, int num, int water, String event, int norm, int deliver, String sp) {
+    static SplatoonCoopWaveDetail wave(long coopId, int num, int water, String event, int norm, int deliver, String spIds) {
         SplatoonCoopWaveDetail w = new SplatoonCoopWaveDetail();
         w.setCoopId(String.valueOf(coopId)); w.setWaveNumber(num); w.setWaterLevel(water);
-        w.setEventWaveName(event); w.setDeliverNorm(norm); w.setTeamDeliverCount(deliver); w.setSpecialWeaponNames(sp);
+        w.setEventWaveName(event); w.setDeliverNorm(norm); w.setTeamDeliverCount(deliver); w.setSpecialWeaponIds(spIds);
         return w;
     }
 

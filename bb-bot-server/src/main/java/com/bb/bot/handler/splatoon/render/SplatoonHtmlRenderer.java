@@ -85,7 +85,8 @@ public class SplatoonHtmlRenderer {
             b.useFont(font, "spl");
         }
         b.withHtmlContent(html, fileBase());
-        BufferedImagePageProcessor proc = new BufferedImagePageProcessor(BufferedImage.TYPE_INT_RGB, 2.0);
+        // 3x 渲染 → 图标/文字更清晰(2x 偏糊)
+        BufferedImagePageProcessor proc = new BufferedImagePageProcessor(BufferedImage.TYPE_INT_RGB, 3.0);
         b.toSinglePage(proc);
         b.runFirstPage();
         BufferedImage img = trimBottom(proc.getPageImages().get(0), 0x0d1020);
@@ -250,12 +251,12 @@ public class SplatoonHtmlRenderer {
                     String kc = win ? WIN : INK;
                     String ka = n(p.getKillCount()) + (p.getAssistCount() != null && p.getAssistCount() > 0 ? "(" + p.getAssistCount() + ")" : "");
                     sb.append("<table><tr>")
-                            .append("<td style='width:32px;'>").append(img("nso_splatoon/weapon/" + p.getWeaponId() + ".png", 26, 26)).append("</td>")
+                            .append("<td style='width:32px;'>").append(img("nso_splatoon/weapon/" + p.getWeaponId() + ".png", 28, 28)).append("</td>")
                             .append("<td><div style='font-size:11px;'>").append(esc(p.getPlayerName())).append("</div>")
                             .append("<table style='margin-top:1px;'><tr>")
-                            .append("<td style='width:40%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/" + killIcon, 17, 10)).append(" ").append(ka).append("</td>")
-                            .append("<td style='width:28%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/" + deathIcon, 17, 10)).append(" ").append(n(p.getDeathCount())).append("</td>")
-                            .append("<td style='width:32%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/specialWeapon/" + p.getWeaponSpecialId() + ".png", 13, 13)).append(" ").append(n(p.getSpecialCount())).append("</td>")
+                            .append("<td style='width:40%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/" + killIcon, 19, 11)).append(" ").append(ka).append("</td>")
+                            .append("<td style='width:28%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/" + deathIcon, 19, 11)).append(" ").append(n(p.getDeathCount())).append("</td>")
+                            .append("<td style='width:32%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/specialWeapon/" + p.getWeaponSpecialId() + ".png", 15, 15)).append(" ").append(n(p.getSpecialCount())).append("</td>")
                             .append("</tr></table></td></tr></table>");
                 }
                 sb.append("</td>");
@@ -324,10 +325,10 @@ public class SplatoonHtmlRenderer {
             String ka = n(p.getKillCount()) + (p.getAssistCount() != null && p.getAssistCount() > 0 ? "(" + p.getAssistCount() + ")" : "");
             String gear = StringUtils.isNotBlank(p.getGearPowers()) ? " / " + esc(p.getGearPowers()) : "";
             sb.append("<table style='background:").append(CARD2).append(";border-radius:10px;margin-bottom:5px;'><tr>")
-                    .append("<td style='width:46px;padding:6px;'>").append(img("nso_splatoon/weapon/" + p.getWeaponId() + ".png", 36, 36)).append("</td>")
+                    .append("<td style='width:46px;padding:6px;'>").append(img("nso_splatoon/weapon/" + p.getWeaponId() + ".png", 40, 40)).append("</td>")
                     .append("<td><div style='font-size:13px;'>").append(esc(p.getPlayerName())).append("</div><div class='sub'>").append(esc(p.getWeaponName())).append(gear).append("</div></td>")
                     .append(col("涂地", n(p.getPaintCount()), INK)).append(col("K(A)", ka, jc)).append(col("D", n(p.getDeathCount()), INK))
-                    .append("<td style='width:54px;text-align:center;'>").append(img("nso_splatoon/specialWeapon/" + p.getWeaponSpecialId() + ".png", 20, 20)).append(" ").append(n(p.getSpecialCount())).append("</td>")
+                    .append("<td style='width:54px;text-align:center;'>").append(img("nso_splatoon/specialWeapon/" + p.getWeaponSpecialId() + ".png", 24, 24)).append(" ").append(n(p.getSpecialCount())).append("</td>")
                     .append("</tr></table>");
         }
         return sb.append("</div>").toString();
@@ -372,7 +373,7 @@ public class SplatoonHtmlRenderer {
         sb.append("<td style='width:150px;'><table style='width:auto;'><tr>");
         for (String w : new String[]{r.getWeapon1(), r.getWeapon2(), r.getWeapon3(), r.getWeapon4()}) {
             if (StringUtils.isNotBlank(w)) {
-                sb.append("<td style='width:36px;text-align:center;'>").append(img("nso_splatoon/coop/weapon/" + w + ".png", 28, 28)).append("</td>");
+                sb.append("<td style='width:36px;text-align:center;'>").append(img("nso_splatoon/coop/weapon/" + w + ".png", 30, 30)).append("</td>");
             }
         }
         sb.append("</tr></table></td>");
@@ -380,14 +381,14 @@ public class SplatoonHtmlRenderer {
                 .append(StringUtils.isNotBlank(r.getWaveInfo()) ? "&#160;&#160;<span class='sub'>" + esc(r.getWaveInfo()) + "</span>" : "").append("</td>");
         sb.append("<td style='text-align:right;white-space:nowrap;'>");
         if (StringUtils.isNotBlank(r.getBossName())) {
-            sb.append(img("nso_splatoon/coop/boss/" + r.getBossId() + ".png", 26, 26)).append(" <span style='font-size:12px;color:").append(WIN).append(";'>").append(esc(r.getBossName()))
+            sb.append(img("nso_splatoon/coop/boss/" + r.getBossId() + ".png", 30, 30)).append(" <span style='font-size:12px;color:").append(WIN).append(";'>").append(esc(r.getBossName()))
                     .append(Boolean.TRUE.equals(r.getBossDefeatFlag()) ? " ✓" : "").append("</span> ")
-                    .append(img("nso_splatoon/coop/icon/gold_scale.png", 15, 15)).append(n(r.getGoldScale())).append(" ")
-                    .append(img("nso_splatoon/coop/icon/sliver_scale.png", 15, 15)).append(n(r.getSilverScale())).append(" ")
-                    .append(img("nso_splatoon/coop/icon/bronze_scale.png", 15, 15)).append(n(r.getBronzeScale())).append("&#160;&#160;&#160;");
+                    .append(img("nso_splatoon/coop/icon/gold_scale.png", 17, 17)).append(n(r.getGoldScale())).append(" ")
+                    .append(img("nso_splatoon/coop/icon/sliver_scale.png", 17, 17)).append(n(r.getSilverScale())).append(" ")
+                    .append(img("nso_splatoon/coop/icon/bronze_scale.png", 17, 17)).append(n(r.getBronzeScale())).append("&#160;&#160;&#160;");
         }
-        sb.append(img("nso_splatoon/coop/icon/gold.png", 18, 18)).append(" ").append(n(r.getTeamGlodenCount())).append("&#160;&#160;")
-                .append(img("nso_splatoon/coop/icon/red.png", 18, 18)).append(" ").append(n(r.getTeamRedCount()));
+        sb.append(img("nso_splatoon/coop/icon/gold.png", 20, 20)).append(" ").append(n(r.getTeamGlodenCount())).append("&#160;&#160;")
+                .append(img("nso_splatoon/coop/icon/red.png", 20, 20)).append(" ").append(n(r.getTeamRedCount()));
         sb.append("</td></tr></table></div>");
         // 队员
         sb.append("<div style='padding:2px 12px 8px;'><table><tr>");
@@ -397,12 +398,12 @@ public class SplatoonHtmlRenderer {
             sb.append("<td style='width:25%;vertical-align:top;padding:0 3px;'>")
                     .append("<div style='background:").append(pbg).append(";border-radius:8px;padding:5px 9px;'>")
                     .append("<table><tr><td style='font-size:12px;white-space:nowrap;overflow:hidden;'>").append(esc(p.getPlayerName())).append("</td>")
-                    .append("<td style='text-align:right;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/kill.png", 16, 10)).append(" ").append(n(p.getDefeatEnemyCount())).append("</td></tr></table>")
+                    .append("<td style='text-align:right;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/kill.png", 18, 11)).append(" ").append(n(p.getDefeatEnemyCount())).append("</td></tr></table>")
                     .append("<table style='margin-top:3px;'>")
-                    .append("<tr><td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/gold.png", 15, 15)).append(" ").append(goldAssist).append("</td>")
-                    .append("<td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/red.png", 15, 15)).append(" ").append(n(p.getDeliverRedCount())).append("</td></tr>")
-                    .append("<tr><td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescue.png", 16, 12)).append(" ").append(n(p.getRescueCount())).append("</td>")
-                    .append("<td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescued.png", 16, 12)).append(" ").append(n(p.getRescuedCount())).append("</td></tr>")
+                    .append("<tr><td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/gold.png", 17, 17)).append(" ").append(goldAssist).append("</td>")
+                    .append("<td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/red.png", 17, 17)).append(" ").append(n(p.getDeliverRedCount())).append("</td></tr>")
+                    .append("<tr><td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescue.png", 18, 13)).append(" ").append(n(p.getRescueCount())).append("</td>")
+                    .append("<td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescued.png", 18, 13)).append(" ").append(n(p.getRescuedCount())).append("</td></tr>")
                     .append("</table></div></td>");
         }
         sb.append("</tr></table></div></div>");
@@ -446,23 +447,32 @@ public class SplatoonHtmlRenderer {
         if (waves != null) {
             for (SplatoonCoopWaveDetail w : waves) {
                 String ev = StringUtils.isNotBlank(w.getEventWaveName()) ? esc(w.getEventWaveName()) : waterLevelText(w.getWaterLevel());
-                String sp = StringUtils.isNotBlank(w.getSpecialWeaponNames()) ? "<span class='sub'>大招 " + esc(w.getSpecialWeaponNames()) + "</span>" : "";
+                // 大招用图标(按 id),不再用文字
+                StringBuilder sp = new StringBuilder();
+                if (StringUtils.isNotBlank(w.getSpecialWeaponIds())) {
+                    sp.append("<span class='sub'>大招</span> ");
+                    for (String sid : w.getSpecialWeaponIds().split(",")) {
+                        if (StringUtils.isNotBlank(sid)) {
+                            sp.append(img("nso_splatoon/coop/specialWeapon/" + sid.trim() + ".png", 24, 24)).append("&#160;");
+                        }
+                    }
+                }
                 sb.append("<table style='background:").append(CARD2).append(";border-radius:10px;margin-bottom:5px;'><tr>")
                         .append("<td style='width:48px;text-align:center;font-size:15px;color:").append(WIN).append(";'>W").append(n(w.getWaveNumber())).append("</td>")
                         .append("<td style='width:120px;' class='sub'>").append(ev).append("</td>")
                         .append("<td><span class='sub'>达标</span> ").append(n(w.getDeliverNorm())).append("&#160;&#160;<span class='sub'>送蛋</span> ").append(n(w.getTeamDeliverCount())).append("</td>")
-                        .append("<td style='text-align:right;padding-right:10px;'>").append(sp).append("</td></tr></table>");
+                        .append("<td style='text-align:right;padding-right:10px;white-space:nowrap;'>").append(sp).append("</td></tr></table>");
             }
         }
         // EX 头目鲑鱼(打了 boss 才显示)
         if (StringUtils.isNotBlank(r.getBossName())) {
             sb.append("<table style='background:#2c365e;border-radius:10px;margin-bottom:5px;'><tr>")
-                    .append("<td style='width:64px;text-align:center;padding:4px;'>").append(img("nso_splatoon/coop/boss/" + r.getBossId() + ".png", 48, 48)).append("</td>")
+                    .append("<td style='width:64px;text-align:center;padding:4px;'>").append(img("nso_splatoon/coop/boss/" + r.getBossId() + ".png", 54, 54)).append("</td>")
                     .append("<td><div style='font-size:15px;color:").append(WIN).append(";'>EX · ").append(esc(r.getBossName())).append(" <span style='font-size:12px;color:#fff;'>").append(Boolean.TRUE.equals(r.getBossDefeatFlag()) ? "讨伐成功" : "讨伐失败").append("</span></div></td>")
                     .append("<td style='text-align:right;padding-right:10px;white-space:nowrap;'>")
-                    .append(img("nso_splatoon/coop/icon/gold_scale.png", 20, 20)).append(" ").append(n(r.getGoldScale())).append("&#160;&#160;")
-                    .append(img("nso_splatoon/coop/icon/sliver_scale.png", 20, 20)).append(" ").append(n(r.getSilverScale())).append("&#160;&#160;")
-                    .append(img("nso_splatoon/coop/icon/bronze_scale.png", 20, 20)).append(" ").append(n(r.getBronzeScale())).append("</td></tr></table>");
+                    .append(img("nso_splatoon/coop/icon/gold_scale.png", 22, 22)).append(" ").append(n(r.getGoldScale())).append("&#160;&#160;")
+                    .append(img("nso_splatoon/coop/icon/sliver_scale.png", 22, 22)).append(" ").append(n(r.getSilverScale())).append("&#160;&#160;")
+                    .append(img("nso_splatoon/coop/icon/bronze_scale.png", 22, 22)).append(" ").append(n(r.getBronzeScale())).append("</td></tr></table>");
         }
         sb.append("</div>");
         // 队员

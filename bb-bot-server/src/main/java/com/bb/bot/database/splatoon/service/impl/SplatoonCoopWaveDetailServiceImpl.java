@@ -2,6 +2,7 @@ package com.bb.bot.database.splatoon.service.impl;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopWaveDetail;
 import com.bb.bot.database.splatoon.mapper.SplatoonCoopWaveDetailMapper;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopWaveDetailService;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 public class SplatoonCoopWaveDetailServiceImpl extends ServiceImpl<SplatoonCoopWaveDetailMapper, SplatoonCoopWaveDetail> implements ISplatoonCoopWaveDetailService {
     @Autowired
     private SplatoonCoopWaveDetailMapper splatoonCoopWaveDetailMapper;
+
+    @Autowired
+    private ResourcesUtils resourcesUtils;
 
     @Override
     public void saveSplatoonCoopWaveDetail(String coopId, JSONObject coopRecord, JSONObject coopDetail) {
@@ -57,6 +61,16 @@ public class SplatoonCoopWaveDetailServiceImpl extends ServiceImpl<SplatoonCoopW
                         return  ((JSONObject) weapon).getString("name");
                     })
                     .collect(Collectors.joining(",")));
+
+            //下载大招图标(按 id,语言无关),供详情页用图标展示
+            for (Object weapon : waveResultObject.getJSONArray("specialWeapons")) {
+                JSONObject sw = (JSONObject) weapon;
+                if (sw.getString("id") != null && sw.getJSONObject("image") != null
+                        && sw.getJSONObject("image").getString("url") != null) {
+                    resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/specialWeapon/" + sw.getString("id") + ".png",
+                            sw.getJSONObject("image").getString("url"));
+                }
+            }
 
             //添加到列表
             waveDetailList.add(splatoonCoopWaveDetail);
