@@ -34,8 +34,15 @@ import sys,re;t=sys.stdin.read();m=re.search(r'([0-9a-f]{40})[\s\S]{0,300}?revis
 GT=$(read_gt); BT=""
 [ -n "$GT" ] && BT=$(get_bullet "$GT" "$NSOVER")
 if [ -z "$BT" ]; then
+  # gtoken 过期/缺失:刷新(refresh 内部已轮询确认 gtoken 真更新),再多试几次读 cookie+换 bullet
+  # (灰屏/慢加载时 cookie 落地与 bullet 服务端生效都可能略有延迟,单次易踩空)
   bash /root/k8s-nso-token/refresh-nso.sh "$DEV" 286 1076 "$DUSER" >/dev/null 2>&1
-  GT=$(read_gt); [ -n "$GT" ] && BT=$(get_bullet "$GT" "$NSOVER")
+  for try in 1 2 3; do
+    GT=$(read_gt)
+    [ -n "$GT" ] && BT=$(get_bullet "$GT" "$NSOVER")
+    [ -n "$BT" ] && break
+    sleep 5
+  done
 fi
 if [ -z "$GT" ] || [ -z "$BT" ]; then echo "{\"error\":\"token_unavailable\",\"dataUser\":\"$DUSER\"}"; exit 1; fi
 python3 -c "import json;print(json.dumps({'gtoken':'$GT','bulletToken':'$BT','webViewVer':'$NSOVER','device':'$DEV','dataUser':'$DUSER'}))"
