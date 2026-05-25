@@ -27,6 +27,7 @@ import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -61,7 +62,8 @@ public class SplatoonRecordTool {
             name = "splatoon_record_list",
             description = "查询并发送 Splatoon3(喷喷)对战/打工【记录列表】图(一屏多场)。"
                     + "type: battle=对战, coop=打工。count: 场数,默认5(1-10)。"
-                    + "mode(仅对战,可选): 真格/anarchy、占地/turf、x、活动/event、祭典/fest、私房/private;不传=全部。"
+                    + "mode(仅对战,可选): 真格/anarchy、占地/turf、x、活动/event、祭典/fest、私房/private。"
+                    + "result(可选): 对战=胜/负(win/lose),打工=通关/失败(clear/fail)。"
                     + "bossOnly(仅打工,可选): true=只看打出头目鲑鱼(boss)的场次。"
                     + "refresh(可选): true=先上传拉取最新再查(用户说『最新』时用)。"
                     + "图直接发到会话,你拿到 ok 后只需简短附一句,不要复述图片内容。"
@@ -70,6 +72,7 @@ public class SplatoonRecordTool {
             @AiToolParam(name = "type", description = "battle=对战 / coop=打工") String type,
             @AiToolParam(name = "count", description = "场数,默认5", required = false) Integer count,
             @AiToolParam(name = "mode", description = "对战模式过滤:真格/占地/x/活动/祭典/私房", required = false) String mode,
+            @AiToolParam(name = "result", description = "胜负过滤:对战 胜/负;打工 通关/失败", required = false) String result,
             @AiToolParam(name = "bossOnly", description = "打工:仅出boss场次", required = false) Boolean bossOnly,
             @AiToolParam(name = "refresh", description = "先上传最新再查", required = false) Boolean refresh) {
         Map<String, Object> r = new LinkedHashMap<>();
@@ -88,12 +91,15 @@ public class SplatoonRecordTool {
         try {
             File image;
             if (coop) {
+                Boolean clear = coopClear(result);
                 List<SplatoonCoopRecord> recs = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
                         .in(SplatoonCoopRecord::getUserId, accountIds)
                         .isNotNull(Boolean.TRUE.equals(bossOnly), SplatoonCoopRecord::getBossName)
+                        .eq(Boolean.TRUE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
+                        .gt(Boolean.FALSE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
                         .orderByDesc(SplatoonCoopRecord::getPlayedTime).last("limit " + n));
                 if (recs.isEmpty()) {
-                    return notFound(r, "没有符合条件的打工记录" + (Boolean.TRUE.equals(bossOnly) ? "(出boss)" : "") + ",可先『上传打工记录』");
+                    return notFound(r, "没有符合条件的打工记录" + coopDesc(bossOnly, clear) + ",可先『上传打工记录』");
                 }
                 List<SplatoonCoopUserDetail> details = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
                         .in(SplatoonCoopUserDetail::getCoopId, idStrings(recs.stream().map(SplatoonCoopRecord::getId).collect(Collectors.toList()))));
@@ -101,12 +107,14 @@ public class SplatoonRecordTool {
                 r.put("count", recs.size());
             } else {
                 List<String> modeIds = modeVsIds(mode);
+                String judgement = battleJudgement(result);
                 List<SplatoonBattleRecord> recs = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
                         .in(SplatoonBattleRecord::getUserId, accountIds)
                         .in(!modeIds.isEmpty(), SplatoonBattleRecord::getVsModeId, modeIds)
+                        .eq(judgement != null, SplatoonBattleRecord::getJudgement, judgement)
                         .orderByDesc(SplatoonBattleRecord::getPlayedTime).last("limit " + n));
                 if (recs.isEmpty()) {
-                    return notFound(r, "没有符合条件的对战记录" + (modeIds.isEmpty() ? "" : "(" + mode + ")") + ",可先『上传对战记录』");
+                    return notFound(r, "没有符合条件的对战记录" + battleDesc(mode, judgement) + ",可先『上传对战记录』");
                 }
                 List<SplatoonBattleUserDetail> details = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
                         .in(SplatoonBattleUserDetail::getBattleId, idStrings(recs.stream().map(SplatoonBattleRecord::getId).collect(Collectors.toList()))));
@@ -129,17 +137,20 @@ public class SplatoonRecordTool {
             name = "splatoon_record_detail",
             description = "查询并发送 Splatoon3(喷喷)对战/打工【单场详情】图(全队/全wave)。"
                     + "type: battle=对战, coop=打工。"
-                    + "index: 最近第几场(1=最近一场),与 mode/bossOnly 过滤后计数;默认1。"
-                    + "mode(仅对战,可选): 真格/占地/x/活动/祭典/私房。bossOnly(仅打工,可选)。"
-                    + "aroundTime(可选): 形如 18:50,表示找今天该时间点附近的那场(给了它就忽略 index)。"
+                    + "index: 最近第几场(1=最近一场),与 mode/result/bossOnly 过滤后计数;默认1。"
+                    + "mode(仅对战,可选): 真格/占地/x/活动/祭典/私房。"
+                    + "result(可选): 对战 胜/负;打工 通关/失败。bossOnly(仅打工,可选)。"
+                    + "time(可选): 时间点,可含日期,如 18:50 / 昨天19:00 / 前天20:10 / 2026-05-24 18:50;"
+                    + "给了 time 就按最接近这个时刻找(忽略 index),不限当天。"
                     + "refresh(可选): true=先上传最新再查。图直接发到会话,拿到 ok 简短附一句即可。"
     )
     public Map<String, Object> recordDetail(
             @AiToolParam(name = "type", description = "battle=对战 / coop=打工") String type,
             @AiToolParam(name = "index", description = "最近第几场,1=最近,默认1", required = false) Integer index,
             @AiToolParam(name = "mode", description = "对战模式过滤", required = false) String mode,
+            @AiToolParam(name = "result", description = "胜负过滤:对战 胜/负;打工 通关/失败", required = false) String result,
             @AiToolParam(name = "bossOnly", description = "打工:仅出boss场次", required = false) Boolean bossOnly,
-            @AiToolParam(name = "aroundTime", description = "今天某时间点附近,如 18:50", required = false) String aroundTime,
+            @AiToolParam(name = "time", description = "时间点(可含日期),如 18:50 / 昨天19:00 / 2026-05-24 18:50", required = false) String time,
             @AiToolParam(name = "refresh", description = "先上传最新再查", required = false) Boolean refresh) {
         Map<String, Object> r = new LinkedHashMap<>();
         AgentReplySink sink = requireImageSink(r);
@@ -152,15 +163,18 @@ public class SplatoonRecordTool {
         if (Boolean.TRUE.equals(refresh)) {
             doRefresh(userId, coop, r);
         }
-        LocalTime target = parseTime(aroundTime);
+        LocalDateTime target = parseDateTime(time);
         int idx = clamp(index == null ? 1 : index, 1, 200);
 
         try {
             File image;
             if (coop) {
+                Boolean clear = coopClear(result);
                 List<SplatoonCoopRecord> recs = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
                         .in(SplatoonCoopRecord::getUserId, accountIds)
                         .isNotNull(Boolean.TRUE.equals(bossOnly), SplatoonCoopRecord::getBossName)
+                        .eq(Boolean.TRUE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
+                        .gt(Boolean.FALSE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
                         .orderByDesc(SplatoonCoopRecord::getPlayedTime).last("limit 200"));
                 SplatoonCoopRecord rec = target != null
                         ? pickClosest(recs, SplatoonCoopRecord::getPlayedTime, target)
@@ -177,9 +191,11 @@ public class SplatoonRecordTool {
                 r.put("recordId", rec.getId());
             } else {
                 List<String> modeIds = modeVsIds(mode);
+                String judgement = battleJudgement(result);
                 List<SplatoonBattleRecord> recs = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
                         .in(SplatoonBattleRecord::getUserId, accountIds)
                         .in(!modeIds.isEmpty(), SplatoonBattleRecord::getVsModeId, modeIds)
+                        .eq(judgement != null, SplatoonBattleRecord::getJudgement, judgement)
                         .orderByDesc(SplatoonBattleRecord::getPlayedTime).last("limit 200"));
                 SplatoonBattleRecord rec = target != null
                         ? pickClosest(recs, SplatoonBattleRecord::getPlayedTime, target)
@@ -197,7 +213,7 @@ public class SplatoonRecordTool {
             r.put("note", (coop ? "打工" : "对战") + "详情图已发送");
             return r;
         } catch (Exception e) {
-            log.warn("splatoon_record_detail 失败 type={} idx={} time={}", type, idx, aroundTime, e);
+            log.warn("splatoon_record_detail 失败 type={} idx={} time={}", type, idx, time, e);
             return fail(r, e);
         }
     }
@@ -231,23 +247,90 @@ public class SplatoonRecordTool {
         return Collections.emptyList();
     }
 
-    /** "18:50" / "今天18点50" → LocalTime;无则 null。 */
-    static LocalTime parseTime(String s) {
+    /** 对战胜负过滤 → judgement;无则 null(不过滤)。 */
+    static String battleJudgement(String result) {
+        if (StringUtils.isBlank(result)) {
+            return null;
+        }
+        String k = result.trim().toLowerCase();
+        if (k.contains("win") || k.contains("胜") || k.contains("赢")) {
+            return "WIN";
+        }
+        if (k.contains("lose") || k.contains("负") || k.contains("输") || k.contains("败")) {
+            return "LOSE";
+        }
+        return null;
+    }
+
+    /** 打工成败过滤 → TRUE=通关 / FALSE=失败 / null=不过滤。 */
+    static Boolean coopClear(String result) {
+        if (StringUtils.isBlank(result)) {
+            return null;
+        }
+        String k = result.trim().toLowerCase();
+        if (k.contains("clear") || k.contains("通关") || k.contains("成功") || k.contains("胜") || k.contains("win") || k.contains("全清")) {
+            return Boolean.TRUE;
+        }
+        if (k.contains("fail") || k.contains("失败") || k.contains("输") || k.contains("败") || k.contains("没过") || k.contains("没通")) {
+            return Boolean.FALSE;
+        }
+        return null;
+    }
+
+    /**
+     * 解析「日期+时间」为目标时刻,支持:纯时间(18:50/18点50/18点)=今天;
+     * 相对日(今天/昨天/前天/大前天/N天前);绝对日(YYYY-MM-DD、MM-DD、M月D日)。
+     * 只给日期不给时间 → 当天 12:00。完全无法解析 → null。
+     */
+    static LocalDateTime parseDateTime(String s) {
         if (StringUtils.isBlank(s)) {
             return null;
         }
-        Matcher m = Pattern.compile("(\\d{1,2})[:：点](\\d{1,2})").matcher(s);
-        if (!m.find()) {
-            Matcher h = Pattern.compile("(\\d{1,2})\\s*点").matcher(s);
-            if (h.find()) {
-                int hh = Integer.parseInt(h.group(1));
-                return hh < 24 ? LocalTime.of(hh, 0) : null;
-            }
+        java.time.LocalDate date = parseRelativeOrAbsoluteDate(s);
+        LocalTime time = parseTimeOnly(s);
+        if (date == null && time == null) {
             return null;
         }
-        int hh = Integer.parseInt(m.group(1));
-        int mm = Integer.parseInt(m.group(2));
-        return (hh < 24 && mm < 60) ? LocalTime.of(hh, mm) : null;
+        if (date == null) {
+            date = LocalDateTime.now().toLocalDate();
+        }
+        if (time == null) {
+            time = LocalTime.NOON;
+        }
+        return LocalDateTime.of(date, time);
+    }
+
+    static LocalTime parseTimeOnly(String s) {
+        Matcher m = Pattern.compile("(\\d{1,2})\\s*[:：点]\\s*(\\d{1,2})").matcher(s);
+        if (m.find()) {
+            int hh = Integer.parseInt(m.group(1)), mm = Integer.parseInt(m.group(2));
+            return (hh < 24 && mm < 60) ? LocalTime.of(hh, mm) : null;
+        }
+        Matcher h = Pattern.compile("(\\d{1,2})\\s*点").matcher(s);
+        if (h.find()) {
+            int hh = Integer.parseInt(h.group(1));
+            return hh < 24 ? LocalTime.of(hh, 0) : null;
+        }
+        return null;
+    }
+
+    static java.time.LocalDate parseRelativeOrAbsoluteDate(String s) {
+        java.time.LocalDate today = LocalDateTime.now().toLocalDate();
+        if (s.contains("大前天")) return today.minusDays(3);
+        if (s.contains("前天")) return today.minusDays(2);
+        if (s.contains("昨天") || s.contains("昨日")) return today.minusDays(1);
+        if (s.contains("今天") || s.contains("今日")) return today;
+        Matcher nAgo = Pattern.compile("(\\d+)\\s*天前").matcher(s);
+        if (nAgo.find()) return today.minusDays(Integer.parseInt(nAgo.group(1)));
+        Matcher ymd = Pattern.compile("(\\d{4})[-/年](\\d{1,2})[-/月](\\d{1,2})").matcher(s);
+        if (ymd.find()) {
+            try { return java.time.LocalDate.of(Integer.parseInt(ymd.group(1)), Integer.parseInt(ymd.group(2)), Integer.parseInt(ymd.group(3))); } catch (Exception ignore) {}
+        }
+        Matcher md = Pattern.compile("(\\d{1,2})[-/月](\\d{1,2})[日号]?").matcher(s);
+        if (md.find()) {
+            try { return java.time.LocalDate.of(today.getYear(), Integer.parseInt(md.group(1)), Integer.parseInt(md.group(2))); } catch (Exception ignore) {}
+        }
+        return null;
     }
 
     /** 已按时间降序的列表里取第 index(1基) 个。 */
@@ -256,9 +339,8 @@ public class SplatoonRecordTool {
         return (i >= 0 && i < orderedDesc.size()) ? orderedDesc.get(i) : null;
     }
 
-    /** 取 playedTime 最接近「今天某 time」的一条。 */
-    static <T> T pickClosest(List<T> list, java.util.function.Function<T, LocalDateTime> timeGetter, LocalTime time) {
-        LocalDateTime targetToday = LocalDateTime.of(LocalDateTime.now().toLocalDate(), time);
+    /** 取 playedTime 最接近目标时刻的一条(任意日期/时间,非限当天)。 */
+    static <T> T pickClosest(List<T> list, java.util.function.Function<T, LocalDateTime> timeGetter, LocalDateTime target) {
         T best = null;
         long bestDiff = Long.MAX_VALUE;
         for (T t : list) {
@@ -266,7 +348,7 @@ public class SplatoonRecordTool {
             if (pt == null) {
                 continue;
             }
-            long diff = Math.abs(Duration.between(pt, targetToday).toMinutes());
+            long diff = Math.abs(Duration.between(pt, target).toMinutes());
             if (diff < bestDiff) {
                 bestDiff = diff;
                 best = t;
@@ -332,10 +414,10 @@ public class SplatoonRecordTool {
         return r;
     }
 
-    private String selectorDesc(int idx, LocalTime time, Boolean bossOnly, String mode) {
+    private String selectorDesc(int idx, LocalDateTime time, Boolean bossOnly, String mode) {
         List<String> parts = new ArrayList<>();
         if (time != null) {
-            parts.add("约 " + time);
+            parts.add("约 " + time.format(TF));
         } else {
             parts.add("第" + idx + "场");
         }
@@ -346,6 +428,24 @@ public class SplatoonRecordTool {
             parts.add(mode);
         }
         return "(" + String.join("/", parts) + ")";
+    }
+
+    private static final DateTimeFormatter TF = DateTimeFormatter.ofPattern("MM-dd HH:mm");
+
+    private String coopDesc(Boolean bossOnly, Boolean clear) {
+        List<String> p = new ArrayList<>();
+        if (Boolean.TRUE.equals(bossOnly)) p.add("出boss");
+        if (Boolean.TRUE.equals(clear)) p.add("通关");
+        else if (Boolean.FALSE.equals(clear)) p.add("失败");
+        return p.isEmpty() ? "" : "(" + String.join("/", p) + ")";
+    }
+
+    private String battleDesc(String mode, String judgement) {
+        List<String> p = new ArrayList<>();
+        if (StringUtils.isNotBlank(mode)) p.add(mode);
+        if ("WIN".equals(judgement)) p.add("胜");
+        else if ("LOSE".equals(judgement)) p.add("负");
+        return p.isEmpty() ? "" : "(" + String.join("/", p) + ")";
     }
 
     private int clamp(int v, int lo, int hi) {
