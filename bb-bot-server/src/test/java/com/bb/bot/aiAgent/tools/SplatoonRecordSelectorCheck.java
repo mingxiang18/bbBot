@@ -40,6 +40,10 @@ public class SplatoonRecordSelectorCheck {
         eq("coopClear(成功)", SplatoonRecordTool.coopClear("成功"), Boolean.TRUE);
         eq("coopClear(失败)", SplatoonRecordTool.coopClear("失败"), Boolean.FALSE);
         eq("coopClear(null)", SplatoonRecordTool.coopClear(null), null);
+        eq("scaleKey(金鳞片)", SplatoonRecordTool.scaleKey("我只要出了金鳞片的"), "gold");
+        eq("scaleKey(银)", SplatoonRecordTool.scaleKey("银鳞片"), "silver");
+        eq("scaleKey(gold)", SplatoonRecordTool.scaleKey("gold"), "gold");
+        eq("scaleKey(null)", SplatoonRecordTool.scaleKey(null), null);
 
         // 场景1: 最近第四场 → index 4 取第4个(已降序)
         List<String> recs = new ArrayList<>();

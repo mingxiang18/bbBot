@@ -65,6 +65,7 @@ public class SplatoonRecordTool {
                     + "mode(仅对战,可选): 真格/anarchy、占地/turf、x、活动/event、祭典/fest、私房/private。"
                     + "result(可选): 对战=胜/负(win/lose),打工=通关/失败(clear/fail)。"
                     + "bossOnly(仅打工,可选): true=只看打出头目鲑鱼(boss)的场次。"
+                    + "scale(仅打工,可选): 金/银/铜(gold/silver/bronze)=只看出了该色鳞片的场次。"
                     + "refresh(可选): true=先上传拉取最新再查(用户说『最新』时用)。"
                     + "图直接发到会话,你拿到 ok 后只需简短附一句,不要复述图片内容。"
     )
@@ -74,6 +75,7 @@ public class SplatoonRecordTool {
             @AiToolParam(name = "mode", description = "对战模式过滤:真格/占地/x/活动/祭典/私房", required = false) String mode,
             @AiToolParam(name = "result", description = "胜负过滤:对战 胜/负;打工 通关/失败", required = false) String result,
             @AiToolParam(name = "bossOnly", description = "打工:仅出boss场次", required = false) Boolean bossOnly,
+            @AiToolParam(name = "scale", description = "打工:仅出了 金/银/铜 鳞片的场次", required = false) String scale,
             @AiToolParam(name = "refresh", description = "先上传最新再查", required = false) Boolean refresh) {
         Map<String, Object> r = new LinkedHashMap<>();
         AgentReplySink sink = requireImageSink(r);
@@ -92,14 +94,18 @@ public class SplatoonRecordTool {
             File image;
             if (coop) {
                 Boolean clear = coopClear(result);
+                String sc = scaleKey(scale);
                 List<SplatoonCoopRecord> recs = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
                         .in(SplatoonCoopRecord::getUserId, accountIds)
                         .isNotNull(Boolean.TRUE.equals(bossOnly), SplatoonCoopRecord::getBossName)
                         .eq(Boolean.TRUE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
                         .gt(Boolean.FALSE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
+                        .gt("gold".equals(sc), SplatoonCoopRecord::getGoldScale, 0)
+                        .gt("silver".equals(sc), SplatoonCoopRecord::getSilverScale, 0)
+                        .gt("bronze".equals(sc), SplatoonCoopRecord::getBronzeScale, 0)
                         .orderByDesc(SplatoonCoopRecord::getPlayedTime).last("limit " + n));
                 if (recs.isEmpty()) {
-                    return notFound(r, "没有符合条件的打工记录" + coopDesc(bossOnly, clear) + ",可先『上传打工记录』");
+                    return notFound(r, "没有符合条件的打工记录" + coopDesc(bossOnly, clear, sc) + ",可先『上传打工记录』");
                 }
                 List<SplatoonCoopUserDetail> details = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
                         .in(SplatoonCoopUserDetail::getCoopId, idStrings(recs.stream().map(SplatoonCoopRecord::getId).collect(Collectors.toList()))));
@@ -140,6 +146,7 @@ public class SplatoonRecordTool {
                     + "index: 最近第几场(1=最近一场),与 mode/result/bossOnly 过滤后计数;默认1。"
                     + "mode(仅对战,可选): 真格/占地/x/活动/祭典/私房。"
                     + "result(可选): 对战 胜/负;打工 通关/失败。bossOnly(仅打工,可选)。"
+                    + "scale(仅打工,可选): 金/银/铜=只看出了该色鳞片的场次。"
                     + "time(可选): 时间点,可含日期,如 18:50 / 昨天19:00 / 前天20:10 / 2026-05-24 18:50;"
                     + "给了 time 就按最接近这个时刻找(忽略 index),不限当天。"
                     + "refresh(可选): true=先上传最新再查。图直接发到会话,拿到 ok 简短附一句即可。"
@@ -150,6 +157,7 @@ public class SplatoonRecordTool {
             @AiToolParam(name = "mode", description = "对战模式过滤", required = false) String mode,
             @AiToolParam(name = "result", description = "胜负过滤:对战 胜/负;打工 通关/失败", required = false) String result,
             @AiToolParam(name = "bossOnly", description = "打工:仅出boss场次", required = false) Boolean bossOnly,
+            @AiToolParam(name = "scale", description = "打工:仅出了 金/银/铜 鳞片的场次", required = false) String scale,
             @AiToolParam(name = "time", description = "时间点(可含日期),如 18:50 / 昨天19:00 / 2026-05-24 18:50", required = false) String time,
             @AiToolParam(name = "refresh", description = "先上传最新再查", required = false) Boolean refresh) {
         Map<String, Object> r = new LinkedHashMap<>();
@@ -170,17 +178,21 @@ public class SplatoonRecordTool {
             File image;
             if (coop) {
                 Boolean clear = coopClear(result);
+                String sc = scaleKey(scale);
                 List<SplatoonCoopRecord> recs = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
                         .in(SplatoonCoopRecord::getUserId, accountIds)
                         .isNotNull(Boolean.TRUE.equals(bossOnly), SplatoonCoopRecord::getBossName)
                         .eq(Boolean.TRUE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
                         .gt(Boolean.FALSE.equals(clear), SplatoonCoopRecord::getResultWave, 0)
+                        .gt("gold".equals(sc), SplatoonCoopRecord::getGoldScale, 0)
+                        .gt("silver".equals(sc), SplatoonCoopRecord::getSilverScale, 0)
+                        .gt("bronze".equals(sc), SplatoonCoopRecord::getBronzeScale, 0)
                         .orderByDesc(SplatoonCoopRecord::getPlayedTime).last("limit 200"));
                 SplatoonCoopRecord rec = target != null
                         ? pickClosest(recs, SplatoonCoopRecord::getPlayedTime, target)
                         : pickByIndex(recs, idx);
                 if (rec == null) {
-                    return notFound(r, "没找到符合条件的打工记录" + selectorDesc(idx, target, bossOnly, null));
+                    return notFound(r, "没找到符合条件的打工记录" + coopDesc(bossOnly, clear, sc));
                 }
                 String cid = String.valueOf(rec.getId());
                 List<SplatoonCoopUserDetail> ud = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>().eq(SplatoonCoopUserDetail::getCoopId, cid));
@@ -273,6 +285,24 @@ public class SplatoonRecordTool {
         }
         if (k.contains("fail") || k.contains("失败") || k.contains("输") || k.contains("败") || k.contains("没过") || k.contains("没通")) {
             return Boolean.FALSE;
+        }
+        return null;
+    }
+
+    /** 鳞片筛选关键词 → gold/silver/bronze;无则 null(不过滤)。出了该色鳞片(数量>0)。 */
+    static String scaleKey(String scale) {
+        if (StringUtils.isBlank(scale)) {
+            return null;
+        }
+        String k = scale.trim().toLowerCase();
+        if (k.contains("金") || k.contains("gold")) {
+            return "gold";
+        }
+        if (k.contains("银") || k.contains("silver")) {
+            return "silver";
+        }
+        if (k.contains("铜") || k.contains("bronze")) {
+            return "bronze";
         }
         return null;
     }
@@ -432,11 +462,14 @@ public class SplatoonRecordTool {
 
     private static final DateTimeFormatter TF = DateTimeFormatter.ofPattern("MM-dd HH:mm");
 
-    private String coopDesc(Boolean bossOnly, Boolean clear) {
+    private String coopDesc(Boolean bossOnly, Boolean clear, String scaleKey) {
         List<String> p = new ArrayList<>();
         if (Boolean.TRUE.equals(bossOnly)) p.add("出boss");
         if (Boolean.TRUE.equals(clear)) p.add("通关");
         else if (Boolean.FALSE.equals(clear)) p.add("失败");
+        if ("gold".equals(scaleKey)) p.add("出金鳞片");
+        else if ("silver".equals(scaleKey)) p.add("出银鳞片");
+        else if ("bronze".equals(scaleKey)) p.add("出铜鳞片");
         return p.isEmpty() ? "" : "(" + String.join("/", p) + ")";
     }
 
