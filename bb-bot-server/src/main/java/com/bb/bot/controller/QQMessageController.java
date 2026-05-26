@@ -69,6 +69,14 @@ public class QQMessageController {
                 BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromChannel(qqCommonPayloadEntity, qqConfig);
                 //通过spring事件机制发布消息
                 publisher.publishEvent(bbReceiveMessage);
+            }else if ("C2C_MESSAGE_CREATE".equals(qqCommonPayloadEntity.getT())) {
+                BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromC2C(qqCommonPayloadEntity, qqConfig);
+                //通过spring事件机制发布消息
+                publisher.publishEvent(bbReceiveMessage);
+            }else if ("DIRECT_MESSAGE_CREATE".equals(qqCommonPayloadEntity.getT())) {
+                BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromDirect(qqCommonPayloadEntity, qqConfig);
+                //通过spring事件机制发布消息
+                publisher.publishEvent(bbReceiveMessage);
             }
 
             QqCommonPayloadEntity response = new QqCommonPayloadEntity();

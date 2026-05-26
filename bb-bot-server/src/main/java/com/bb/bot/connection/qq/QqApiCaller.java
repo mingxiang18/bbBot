@@ -45,8 +45,17 @@ public class QqApiCaller {
     @Value("${qq.sendChannelMessageUrl:/channels/{channel_id}/messages}")
     private String sendChannelMessageUrl;
 
+    @Value("${qq.sendC2CMessageUrl:/v2/users/{openid}/messages}")
+    private String sendC2CMessageUrl;
+
+    @Value("${qq.sendDirectMessageUrl:/dms/{guild_id}/messages}")
+    private String sendDirectMessageUrl;
+
     @Value("${qq.uploadGroupMediaUrl:/v2/groups/{group_openid}/files}")
     private String uploadGroupMediaUrl;
+
+    @Value("${qq.uploadC2CMediaUrl:/v2/users/{openid}/files}")
+    private String uploadC2CMediaUrl;
 
     /**
      * 获取token
@@ -96,10 +105,34 @@ public class QqApiCaller {
     }
 
     /**
+     * 发送单聊（C2C 普通私聊）消息
+     */
+    public void sendC2CMessage(QqConfig qqConfig, String userOpenId, GroupMessage groupMessage) {
+        postForQQ(qqConfig, baseUrl + sendC2CMessageUrl.replace("{openid}", userOpenId),
+                groupMessage, String.class);
+    }
+
+    /**
+     * 发送频道私信消息
+     */
+    public void sendDirectMessage(QqConfig qqConfig, String guildId, ChannelMessage channelMessage) {
+        postForQQ(qqConfig, baseUrl + sendDirectMessageUrl.replace("{guild_id}", guildId),
+                channelMessage, String.class);
+    }
+
+    /**
      * 上传群组富媒体消息
      */
     public UploadMediaResponse uploadGroupMedia(QqConfig qqConfig, String groupOpenId, UploadMediaRequest uploadMediaRequest) {
         return postForQQ(qqConfig, baseUrl + uploadGroupMediaUrl.replace("{group_openid}", groupOpenId),
+                uploadMediaRequest, UploadMediaResponse.class);
+    }
+
+    /**
+     * 上传单聊（C2C）富媒体消息
+     */
+    public UploadMediaResponse uploadC2CMedia(QqConfig qqConfig, String userOpenId, UploadMediaRequest uploadMediaRequest) {
+        return postForQQ(qqConfig, baseUrl + uploadC2CMediaUrl.replace("{openid}", userOpenId),
                 uploadMediaRequest, UploadMediaResponse.class);
     }
 
