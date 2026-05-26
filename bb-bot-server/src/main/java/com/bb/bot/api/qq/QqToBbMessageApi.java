@@ -13,6 +13,8 @@ import com.bb.bot.common.util.fileClient.FileClientApi;
 import com.bb.bot.entity.qq.GroupMessage;
 import com.bb.bot.entity.qq.UploadMediaRequest;
 import com.bb.bot.entity.qq.UploadMediaResponse;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,8 @@ import org.springframework.util.CollectionUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class QqToBbMessageApi {
@@ -30,6 +34,26 @@ public class QqToBbMessageApi {
 
     @Autowired
     private FileClientApi fileClientApi;
+
+    /**
+     * 群/单聊被动回复的 msg_seq 自增器，按被动消息的 msg_id 隔离。
+     * QQ 对同一 msg_id 的多条被动回复按 (msg_id, msg_seq) 去重，msg_seq 重复会报 40054005，
+     * 而一条 AI 回复常拆成「文本流 + 图片」多次发送，故由本侧按 msg_id 自增分配，保证唯一。
+     * 被动回复窗口最长 60 分钟，10 分钟过期足够回收。
+     */
+    private static final Cache<String, AtomicInteger> MSG_SEQ_CACHE = Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(10))
+            .build();
+
+    /**
+     * 取指定被动消息 msg_id 的下一个 msg_seq（从 1 开始递增）。msg_id 为空时退回 1。
+     */
+    private int nextMsgSeq(String msgId) {
+        if (StringUtils.isBlank(msgId)) {
+            return 1;
+        }
+        return MSG_SEQ_CACHE.get(msgId, k -> new AtomicInteger(0)).incrementAndGet();
+    }
 
     public void sendMessage(BbSendMessage bbSendMessage) {
         if (CollectionUtils.isEmpty(bbSendMessage.getMessageList())) {
@@ -88,7 +112,7 @@ public class QqToBbMessageApi {
 
         //设置回复的原消息id
         groupMessage.setMsgId(bbSendMessage.getReceiveMessageId());
-        groupMessage.setMsgSeq(String.valueOf(bbSendMessage.getMessageSeq()));
+        groupMessage.setMsgSeq(String.valueOf(nextMsgSeq(bbSendMessage.getReceiveMessageId())));
         //设置消息内容
         groupMessage.setContent(messageContent.toString());
 
@@ -169,7 +193,7 @@ public class QqToBbMessageApi {
 
         //设置回复的原消息id
         groupMessage.setMsgId(bbSendMessage.getReceiveMessageId());
-        groupMessage.setMsgSeq(String.valueOf(bbSendMessage.getMessageSeq()));
+        groupMessage.setMsgSeq(String.valueOf(nextMsgSeq(bbSendMessage.getReceiveMessageId())));
         //设置消息内容
         groupMessage.setContent(messageContent.toString());
 
