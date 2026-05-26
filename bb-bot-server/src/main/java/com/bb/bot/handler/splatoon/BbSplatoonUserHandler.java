@@ -100,6 +100,7 @@ public class BbSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"自动上传喷喷记录", "/自动上传喷喷记录", "关闭自动上传喷喷记录", "/关闭自动上传喷喷记录"}, name = "自动上传喷喷记录")
     public void autoUploadRecordsConfig(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         //获取用户配置
         UserConfigValue userConfigValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
@@ -209,6 +210,7 @@ public class BbSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^喷喷好友", "^/喷喷好友"}, name = "获取喷喷好友列表")
     public void getSplatoon3FriendList(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("喷喷好友(\\d+)");
         Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
@@ -267,6 +269,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"打工点数", "/打工点数"}, name = "打工点数")
     public void getCoopPoint(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
         JSONObject userCoopData = splatoon3ApiCaller.getCoops(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
 
@@ -286,6 +289,7 @@ public class BbSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传打工记录", "/上传打工记录"}, name = "上传打工记录")
     public void syncCoopRecords(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         //开始上传打工记录
         syncCoopRecords(bbReceiveMessage.getUserId());
 
@@ -353,6 +357,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?打工记录(\\d*)-?(\\d*)"}, name = "打工记录")
     public void getCoopRecords(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("^/?打工记录(\\d*)-?(\\d*)");
         Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
@@ -428,6 +433,7 @@ public class BbSplatoonUserHandler {
      */
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"上传对战记录", "/上传对战记录"}, name = "上传对战记录")
     public void syncBattleRecords(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         //开始上传对战记录
         syncBattleRecords(bbReceiveMessage.getUserId());
 
@@ -495,6 +501,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?对战记录(\\d*)-?(\\d*)"}, name = "对战记录")
     public void getBattleRecords(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         // 定义正则表达式模式
         Pattern pattern = Pattern.compile("^/?对战记录(\\d*)-?(\\d*)");
         Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
@@ -571,6 +578,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?对战详情"}, name = "对战详情")
     public void getBattleDetail(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         Matcher matcher = Pattern.compile("^/?对战详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
         if (!matcher.find()) {
             replyText(bbReceiveMessage, "格式：对战详情 <序号>，如：对战详情 128");
@@ -601,6 +609,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?打工详情"}, name = "打工详情")
     public void getCoopDetail(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
         Matcher matcher = Pattern.compile("^/?打工详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
         if (!matcher.find()) {
             replyText(bbReceiveMessage, "格式：打工详情 <序号>，如：打工详情 56");
@@ -629,6 +638,15 @@ public class BbSplatoonUserHandler {
                 BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
                 BbMessageContent.buildLocalImageMessageContent(imageFile)));
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /** 仅绑定用户可用喷喷战绩功能;未绑定则回提示并返回 false。 */
+    private boolean requireBound(BbReceiveMessage bbReceiveMessage) {
+        if (splatoonTokenManager.isBound(bbReceiveMessage.getUserId())) {
+            return true;
+        }
+        replyText(bbReceiveMessage, "你还没绑定喷喷账号，无法使用喷喷战绩功能。请联系管理员用「绑定喷喷账号」给你绑定后再用。");
+        return false;
     }
 
     /** 发送一条 @+文本 回复。 */

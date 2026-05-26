@@ -27,6 +27,9 @@ public class SplatoonRecordsUploadSchedule {
     @Autowired
     private BbSplatoonUserHandler bbSplatoonUserHandler;
 
+    @Autowired
+    private com.bb.bot.common.util.nso.SplatoonTokenManager splatoonTokenManager;
+
     /**
      * 每4小时进行一次记录上传
      */
@@ -40,6 +43,11 @@ public class SplatoonRecordsUploadSchedule {
         for (UserConfigValue userConfigValue : list) {
             //获取配置的用户id
             String userId = userConfigValue.getUserId();
+
+            //未绑定喷喷账号的用户跳过(防止默认账号被误传)
+            if (!splatoonTokenManager.isBound(userId)) {
+                continue;
+            }
 
             log.info("开始上传用户：{}，的斯普拉遁记录", userId);
 
