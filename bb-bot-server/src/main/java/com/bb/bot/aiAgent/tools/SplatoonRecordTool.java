@@ -83,6 +83,11 @@ public class SplatoonRecordTool {
             return r;
         }
         String userId = MemoryToolContext.getUserId();
+        if (!splatoonTokenManager.isBound(userId)) {
+            r.put("error", "not_bound");
+            r.put("hint", "该用户未绑定喷喷账号,无法查询战绩。请管理员先用「绑定喷喷账号」给TA绑定。");
+            return r;
+        }
         List<String> accountIds = accountIds(userId);
         boolean coop = isCoop(type);
         int n = clamp(count == null ? 5 : count, 1, 10);
@@ -166,6 +171,11 @@ public class SplatoonRecordTool {
             return r;
         }
         String userId = MemoryToolContext.getUserId();
+        if (!splatoonTokenManager.isBound(userId)) {
+            r.put("error", "not_bound");
+            r.put("hint", "该用户未绑定喷喷账号,无法查询战绩。请管理员先用「绑定喷喷账号」给TA绑定。");
+            return r;
+        }
         List<String> accountIds = accountIds(userId);
         boolean coop = isCoop(type);
         if (Boolean.TRUE.equals(refresh)) {

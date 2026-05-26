@@ -126,6 +126,18 @@ public class SplatoonTokenManager {
      * 该 bbBot 用户绑定的全部 Android NSO 账号(dataUser,逗号分隔),未绑定默认 ["0"]。
      * owner 可把一个 userId 绑到多个账号,查战绩时逐个聚合。
      */
+    /** 该 bbBot 用户是否已被 owner 绑定喷喷账号(存在 dataUser 配置)。未绑定者禁止使用喷喷战绩功能。 */
+    public boolean isBound(String userId) {
+        if (userId == null) {
+            return false;
+        }
+        return userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
+                .eq(UserConfigValue::getUserId, userId)
+                .eq(UserConfigValue::getType, TYPE_NSO)
+                .eq(UserConfigValue::getKeyName, KEY_DATA_USER)
+                .last("limit 1")) != null;
+    }
+
     public java.util.List<String> getDataUsers(String userId) {
         UserConfigValue dataUserRow = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, userId)
