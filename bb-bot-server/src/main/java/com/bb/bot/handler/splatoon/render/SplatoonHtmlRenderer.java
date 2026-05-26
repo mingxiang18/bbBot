@@ -364,10 +364,15 @@ public class SplatoonHtmlRenderer {
         sb.append("<td style='vertical-align:middle;'><span style='font-size:18px;'>").append(esc(r.getCoopStageName())).append("</span>")
                 .append(" <span class='sub'>").append(esc(coopRuleName(r.getRule()))).append(" · ").append(r.getPlayedTime() == null ? "" : r.getPlayedTime().format(TF)).append("</span></td>");
         sb.append("<td style='width:140px;text-align:center;vertical-align:middle;'>").append(img("nso_splatoon/coop/stage/" + r.getCoopStageName() + ".png", 124, 23)).append("</td>");
-        sb.append("<td style='text-align:right;vertical-align:middle;width:200px;white-space:nowrap;'>")
-                .append("<span style='font-size:17px;color:").append(clear ? WIN : LOSE).append(";'>").append(clear ? "Clear" : "Fail").append(" ").append(waveText).append("</span>")
-                .append(grade.isEmpty() ? "" : " <span style='font-size:12px;color:" + GRADE + ";'>" + grade + "</span>")
-                .append("</td></tr></table></div>");
+        sb.append("<td style='text-align:right;vertical-align:middle;width:210px;white-space:nowrap;'>")
+                .append("<div style='font-size:18px;color:").append(clear ? WIN : LOSE).append(";'>").append(clear ? "Clear" : "Fail").append(" ").append(waveText).append("</div>");
+        if (r.getJobScore() != null) {
+            sb.append("<div style='font-size:12px;color:").append(INK).append(";margin-top:4px;'>得分 ").append(r.getJobScore()).append("</div>");
+        }
+        if (!grade.isEmpty()) {
+            sb.append("<div style='font-size:12px;color:").append(GRADE).append(";margin-top:3px;'>").append(grade).append("</div>");
+        }
+        sb.append("</td></tr></table></div>");
         // 配枪 + 危险度 + Wave + boss + 金红蛋
         sb.append("<div style='padding:0 14px 5px;'><table><tr>");
         sb.append("<td style='width:150px;'><table style='width:auto;'><tr>");
@@ -397,13 +402,14 @@ public class SplatoonHtmlRenderer {
             String goldAssist = n(p.getDeliverGlodenCount()) + (p.getAssistGlodenCount() != null && p.getAssistGlodenCount() > 0 ? "<span class='sub'>(" + p.getAssistGlodenCount() + ")</span>" : "");
             sb.append("<td style='width:25%;vertical-align:top;padding:0 3px;'>")
                     .append("<div style='background:").append(pbg).append(";border-radius:8px;padding:5px 9px;'>")
-                    .append("<table><tr><td style='font-size:12px;white-space:nowrap;overflow:hidden;'>").append(esc(p.getPlayerName())).append("</td>")
-                    .append("<td style='text-align:right;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/kill.png", 18, 11)).append(" ").append(n(p.getDefeatEnemyCount())).append("</td></tr></table>")
+                    // 名字独占一行(击倒移到下面金红蛋之后)
+                    .append("<div style='font-size:12px;white-space:nowrap;overflow:hidden;'>").append(esc(p.getPlayerName())).append("</div>")
                     .append("<table style='margin-top:3px;'>")
                     .append("<tr><td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/gold.png", 17, 17)).append(" ").append(goldAssist).append("</td>")
                     .append("<td style='width:50%;font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/red.png", 17, 17)).append(" ").append(n(p.getDeliverRedCount())).append("</td></tr>")
-                    .append("<tr><td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescue.png", 18, 13)).append(" ").append(n(p.getRescueCount())).append("</td>")
-                    .append("<td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescued.png", 18, 13)).append(" ").append(n(p.getRescuedCount())).append("</td></tr>")
+                    // 金红蛋之后:击倒 | 救援/被救
+                    .append("<tr><td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/battle/icon/kill.png", 18, 11)).append(" ").append(n(p.getDefeatEnemyCount())).append("</td>")
+                    .append("<td style='font-size:11px;white-space:nowrap;'>").append(img("nso_splatoon/coop/icon/rescue.png", 18, 13)).append(" ").append(n(p.getRescueCount())).append(" ").append(img("nso_splatoon/coop/icon/rescued.png", 18, 13)).append(" ").append(n(p.getRescuedCount())).append("</td></tr>")
                     .append("</table></div></td>");
         }
         sb.append("</tr></table></div></div>");
