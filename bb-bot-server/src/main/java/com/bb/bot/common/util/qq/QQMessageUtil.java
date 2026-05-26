@@ -7,6 +7,7 @@ import com.bb.bot.constant.MessageType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.MessageUser;
+import com.bb.bot.entity.qq.QqC2CMessage;
 import com.bb.bot.entity.qq.QqChannelMessage;
 import com.bb.bot.entity.qq.QqCommonPayloadEntity;
 import com.bb.bot.entity.qq.QqGroupMessage;
@@ -82,6 +83,49 @@ public class QQMessageUtil {
                 return messageUser;
             }).collect(Collectors.toList()));
         }
+        return bbReceiveMessage;
+    }
+
+    /**
+     * 将qq官方机器人单聊（C2C 普通私聊）消息转换为bb消息格式。
+     * 私聊无群组概念，groupId 留空，发送侧据此回到 /v2/users/{openid}。
+     */
+    public static BbReceiveMessage formatBbReceiveMessageFromC2C(QqCommonPayloadEntity message, QqConfig qqConfig) {
+        //将qq消息Json转为实体
+        QqC2CMessage qqC2CMessage = JSON.parseObject(JSON.toJSONString(message.getD()), QqC2CMessage.class);
+        //封装为bb协议的消息实体
+        BbReceiveMessage bbReceiveMessage = new BbReceiveMessage();
+        bbReceiveMessage.setBotType(BotType.QQ);
+        bbReceiveMessage.setMessageType(MessageType.PRIVATE);
+        bbReceiveMessage.setUserId(qqC2CMessage.getAuthor().getUserOpenId());
+        bbReceiveMessage.setSender(new MessageUser(qqC2CMessage.getAuthor().getUserOpenId(), qqC2CMessage.getAuthor().getUserOpenId()));
+        bbReceiveMessage.setMessageId(qqC2CMessage.getId());
+        bbReceiveMessage.setMessage(qqC2CMessage.getContent());
+        bbReceiveMessage.setMessageContentList(Collections.singletonList(BbMessageContent.buildTextContent(qqC2CMessage.getContent())));
+        bbReceiveMessage.setConfig(qqConfig);
+        return bbReceiveMessage;
+    }
+
+    /**
+     * 将qq官方机器人频道私信消息转换为bb消息格式。
+     * 频道私信回复需要 guild_id，存入 groupId，发送侧据此回到 /dms/{guild_id}。
+     */
+    public static BbReceiveMessage formatBbReceiveMessageFromDirect(QqCommonPayloadEntity message, QqConfig qqConfig) {
+        //频道私信报文结构与子频道消息一致，复用频道消息实体
+        QqChannelMessage qqChannelMessage = JSON.parseObject(JSON.toJSONString(message.getD()), QqChannelMessage.class);
+        //封装为bb协议的消息实体
+        BbReceiveMessage bbReceiveMessage = new BbReceiveMessage();
+        bbReceiveMessage.setBotType(BotType.QQ);
+        bbReceiveMessage.setMessageType(MessageType.PRIVATE);
+        bbReceiveMessage.setUserId(qqChannelMessage.getAuthor().getId());
+        bbReceiveMessage.setSender(new MessageUser(qqChannelMessage.getAuthor().getId(), qqChannelMessage.getAuthor().getUsername()));
+        bbReceiveMessage.setGroupId(qqChannelMessage.getGuildId());
+        bbReceiveMessage.setMessageId(qqChannelMessage.getId());
+        bbReceiveMessage.setConfig(qqConfig);
+
+        //设置消息内容，去掉@的cq码
+        bbReceiveMessage.setMessage(qqChannelMessage.getContent().replaceAll(AT_COMPILE_REG, ""));
+        bbReceiveMessage.setMessageContentList(Collections.singletonList(BbMessageContent.buildTextContent(qqChannelMessage.getContent())));
         return bbReceiveMessage;
     }
 }

@@ -115,7 +115,8 @@ public class QqWebSocketClient extends WebSocketClient {
             //如果收到10 hello消息，进行登录鉴权
             Map<String, Object> request = new HashMap<>();
             request.put("token", qqApiCaller.getToken(qqConfig));
-            request.put("intents", 1 << 30 | 1 << 25);
+            //1<<30 频道@消息，1<<25 群/单聊事件(含C2C私聊)，1<<12 频道私信
+            request.put("intents", 1 << 30 | 1 << 25 | 1 << 12);
             //没有分片，传默认值
             request.put("shard", new Integer[]{0, 1});
 
@@ -163,6 +164,14 @@ public class QqWebSocketClient extends WebSocketClient {
                 publisher.publishEvent(bbReceiveMessage);
             }else if ("AT_MESSAGE_CREATE".equals(message.getT())) {
                 BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromChannel(message, qqConfig);
+                //通过spring事件机制发布消息
+                publisher.publishEvent(bbReceiveMessage);
+            }else if ("C2C_MESSAGE_CREATE".equals(message.getT())) {
+                BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromC2C(message, qqConfig);
+                //通过spring事件机制发布消息
+                publisher.publishEvent(bbReceiveMessage);
+            }else if ("DIRECT_MESSAGE_CREATE".equals(message.getT())) {
+                BbReceiveMessage bbReceiveMessage = QQMessageUtil.formatBbReceiveMessageFromDirect(message, qqConfig);
                 //通过spring事件机制发布消息
                 publisher.publishEvent(bbReceiveMessage);
             }
