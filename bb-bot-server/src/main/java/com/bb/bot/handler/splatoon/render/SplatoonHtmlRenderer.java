@@ -355,8 +355,13 @@ public class SplatoonHtmlRenderer {
         boolean clear = r.getResultWave() != null && r.getResultWave() == 0;
         int totalWaves = r.getWaveInfo() != null ? r.getWaveInfo().split("·").length : 3;
         String waveText = clear ? ("W" + totalWaves) : ("W" + (r.getResultWave() == null ? "?" : r.getResultWave()));
-        String grade = StringUtils.isNotBlank(r.getAfterGradeName())
-                ? esc(r.getAfterGradeName()) + " " + DIFF.getOrDefault(r.getGradePointDiff(), "") : "";
+        // 段位 + 评价点数(传说 130) + 升降箭头,一行显示
+        String grade = "";
+        if (StringUtils.isNotBlank(r.getAfterGradeName())) {
+            grade = esc(r.getAfterGradeName())
+                    + (r.getAfterGradePoint() != null ? " " + r.getAfterGradePoint() : "")
+                    + (DIFF.containsKey(r.getGradePointDiff()) ? " " + DIFF.get(r.getGradePointDiff()) : "");
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("<div class='card' style='border-left:7px solid ").append(COOP).append(";'>");
         // 头部
@@ -364,15 +369,10 @@ public class SplatoonHtmlRenderer {
         sb.append("<td style='vertical-align:middle;'><span style='font-size:18px;'>").append(esc(r.getCoopStageName())).append("</span>")
                 .append(" <span class='sub'>").append(esc(coopRuleName(r.getRule()))).append(" · ").append(r.getPlayedTime() == null ? "" : r.getPlayedTime().format(TF)).append("</span></td>");
         sb.append("<td style='width:140px;text-align:center;vertical-align:middle;'>").append(img("nso_splatoon/coop/stage/" + r.getCoopStageName() + ".png", 124, 23)).append("</td>");
-        sb.append("<td style='text-align:right;vertical-align:middle;width:210px;white-space:nowrap;'>")
-                .append("<div style='font-size:18px;color:").append(clear ? WIN : LOSE).append(";'>").append(clear ? "Clear" : "Fail").append(" ").append(waveText).append("</div>");
-        if (r.getJobScore() != null) {
-            sb.append("<div style='font-size:12px;color:").append(INK).append(";margin-top:4px;'>得分 ").append(r.getJobScore()).append("</div>");
-        }
-        if (!grade.isEmpty()) {
-            sb.append("<div style='font-size:12px;color:").append(GRADE).append(";margin-top:3px;'>").append(grade).append("</div>");
-        }
-        sb.append("</td></tr></table></div>");
+        sb.append("<td style='text-align:right;vertical-align:middle;width:230px;white-space:nowrap;'>")
+                .append("<span style='font-size:17px;color:").append(clear ? WIN : LOSE).append(";'>").append(clear ? "Clear" : "Fail").append(" ").append(waveText).append("</span>")
+                .append(grade.isEmpty() ? "" : " &#160;<span style='font-size:13px;color:" + GRADE + ";'>" + grade + "</span>")
+                .append("</td></tr></table></div>");
         // 配枪 + 危险度 + Wave + boss + 金红蛋
         sb.append("<div style='padding:0 14px 5px;'><table><tr>");
         sb.append("<td style='width:150px;'><table style='width:auto;'><tr>");
@@ -423,8 +423,13 @@ public class SplatoonHtmlRenderer {
         boolean clear = r.getResultWave() != null && r.getResultWave() == 0;
         int totalWaves = waves != null ? waves.size() : 3;
         String waveText = clear ? ("W" + totalWaves) : ("W" + (r.getResultWave() == null ? "?" : r.getResultWave()));
-        String grade = StringUtils.isNotBlank(r.getAfterGradeName())
-                ? esc(r.getAfterGradeName()) + " " + DIFF.getOrDefault(r.getGradePointDiff(), "") : "";
+        // 段位 + 评价点数(传说 130) + 升降箭头,一行显示
+        String grade = "";
+        if (StringUtils.isNotBlank(r.getAfterGradeName())) {
+            grade = esc(r.getAfterGradeName())
+                    + (r.getAfterGradePoint() != null ? " " + r.getAfterGradePoint() : "")
+                    + (DIFF.containsKey(r.getGradePointDiff()) ? " " + DIFF.get(r.getGradePointDiff()) : "");
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(title("打工详情", "#" + r.getId()));
         sb.append("<div class='card'>");

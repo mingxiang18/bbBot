@@ -134,6 +134,7 @@ public class SplatoonRendererVerify {
         SplatoonCoopRecord r = new SplatoonCoopRecord();
         r.setId(id); r.setCoopStageName(stage); r.setRule(rule); r.setDangerRate(danger);
         r.setAfterGradeName(grade); r.setGradePointDiff(diff); r.setResultWave(resultWave);
+        r.setAfterGradePoint(grade.contains("传说") ? 130 : grade.contains("达人") ? 40 : 25);
         r.setTeamGlodenCount(teamGold); r.setTeamRedCount(teamRed);
         r.setBossId(bossId); r.setBossName(bossName); r.setBossDefeatFlag(bossDefeat);
         r.setGoldScale(g); r.setSilverScale(s); r.setBronzeScale(b);
