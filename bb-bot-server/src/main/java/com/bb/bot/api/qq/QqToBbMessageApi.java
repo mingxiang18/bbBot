@@ -1,11 +1,10 @@
 package com.bb.bot.api.qq;
 
 import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageContentVisitor;
 import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.QqConfig;
-import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.MessageType;
-import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.entity.qq.ChannelMessage;
 import com.bb.bot.connection.qq.QqApiCaller;
@@ -85,30 +84,31 @@ public class QqToBbMessageApi {
         //消息内容
         StringBuilder messageContent = new StringBuilder();
 
-        for (BbMessageContent bbMessageContent : bbSendMessage.getMessageList()) {
-            if (bbMessageContent.getType().equals(BbSendMessageType.TEXT)) {
+        MessageContentVisitor.forEachContent(bbSendMessage,
                 //封装文本消息
-                messageContent.append(bbMessageContent.getData().toString());
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.LOCAL_IMAGE)) {
-                try (FileInputStream inputStream = new FileInputStream((File) bbMessageContent.getData())) {
-                    //本地图片上传后获取临时网络地址
-                    UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(fileClientApi.uploadTmpFile(inputStream));
+                messageContent::append,
+                localImage -> {
+                    try (FileInputStream inputStream = new FileInputStream(localImage)) {
+                        //本地图片上传后获取临时网络地址
+                        UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(fileClientApi.uploadTmpFile(inputStream));
+                        UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadGroupMedia(qqConfig, bbSendMessage.getGroupId(), imageRequest);
+
+                        groupMessage.setMsgType(7);
+                        groupMessage.setMedia(uploadMediaResponse);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                //群消息不处理 AT
+                null,
+                netImageUrl -> {
+                    //封装网络图片地址
+                    UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(netImageUrl);
                     UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadGroupMedia(qqConfig, bbSendMessage.getGroupId(), imageRequest);
 
                     groupMessage.setMsgType(7);
                     groupMessage.setMedia(uploadMediaResponse);
-                }catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.NET_IMAGE)) {
-                //封装网络图片地址
-                UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(bbMessageContent.getData().toString());
-                UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadGroupMedia(qqConfig, bbSendMessage.getGroupId(), imageRequest);
-
-                groupMessage.setMsgType(7);
-                groupMessage.setMedia(uploadMediaResponse);
-            }
-        }
+                });
 
         //设置回复的原消息id
         groupMessage.setMsgId(bbSendMessage.getReceiveMessageId());
@@ -127,25 +127,21 @@ public class QqToBbMessageApi {
         //消息内容
         StringBuilder messageContent = new StringBuilder();
 
-        for (BbMessageContent bbMessageContent : bbSendMessage.getMessageList()) {
-            if (bbMessageContent.getType().equals(BbSendMessageType.AT)) {
-                //封装at消息
-                messageContent.append(ChannelMessage.buildAtMessage(bbMessageContent.getData().toString()));
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.TEXT)) {
+        MessageContentVisitor.forEachContent(bbSendMessage,
                 //封装文本消息
-                messageContent.append(bbMessageContent.getData().toString());
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.LOCAL_IMAGE)) {
-                try (FileInputStream inputStream = new FileInputStream((File) bbMessageContent.getData())) {
-                    //本地图片上传后获取临时网络地址
-                    channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
-                }catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.NET_IMAGE)) {
+                messageContent::append,
+                localImage -> {
+                    try (FileInputStream inputStream = new FileInputStream(localImage)) {
+                        //本地图片上传后获取临时网络地址
+                        channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                //封装at消息
+                userId -> messageContent.append(ChannelMessage.buildAtMessage(userId)),
                 //封装网络图片地址
-                channelMessage.setImage(bbMessageContent.getData().toString());
-            }
-        }
+                channelMessage::setImage);
 
         //设置回复的原消息id
         channelMessage.setMsgId(bbSendMessage.getReceiveMessageId());
@@ -166,30 +162,31 @@ public class QqToBbMessageApi {
         //消息内容
         StringBuilder messageContent = new StringBuilder();
 
-        for (BbMessageContent bbMessageContent : bbSendMessage.getMessageList()) {
-            if (bbMessageContent.getType().equals(BbSendMessageType.TEXT)) {
+        MessageContentVisitor.forEachContent(bbSendMessage,
                 //封装文本消息
-                messageContent.append(bbMessageContent.getData().toString());
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.LOCAL_IMAGE)) {
-                try (FileInputStream inputStream = new FileInputStream((File) bbMessageContent.getData())) {
-                    //本地图片上传后获取临时网络地址
-                    UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(fileClientApi.uploadTmpFile(inputStream));
+                messageContent::append,
+                localImage -> {
+                    try (FileInputStream inputStream = new FileInputStream(localImage)) {
+                        //本地图片上传后获取临时网络地址
+                        UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(fileClientApi.uploadTmpFile(inputStream));
+                        UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadC2CMedia(qqConfig, bbSendMessage.getUserId(), imageRequest);
+
+                        groupMessage.setMsgType(7);
+                        groupMessage.setMedia(uploadMediaResponse);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                //单聊不处理 AT
+                null,
+                netImageUrl -> {
+                    //封装网络图片地址
+                    UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(netImageUrl);
                     UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadC2CMedia(qqConfig, bbSendMessage.getUserId(), imageRequest);
 
                     groupMessage.setMsgType(7);
                     groupMessage.setMedia(uploadMediaResponse);
-                }catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.NET_IMAGE)) {
-                //封装网络图片地址
-                UploadMediaRequest imageRequest = UploadMediaRequest.buildImageRequest(bbMessageContent.getData().toString());
-                UploadMediaResponse uploadMediaResponse = qqApiCaller.uploadC2CMedia(qqConfig, bbSendMessage.getUserId(), imageRequest);
-
-                groupMessage.setMsgType(7);
-                groupMessage.setMedia(uploadMediaResponse);
-            }
-        }
+                });
 
         //设置回复的原消息id
         groupMessage.setMsgId(bbSendMessage.getReceiveMessageId());
@@ -210,25 +207,21 @@ public class QqToBbMessageApi {
         //消息内容
         StringBuilder messageContent = new StringBuilder();
 
-        for (BbMessageContent bbMessageContent : bbSendMessage.getMessageList()) {
-            if (bbMessageContent.getType().equals(BbSendMessageType.AT)) {
-                //封装at消息
-                messageContent.append(ChannelMessage.buildAtMessage(bbMessageContent.getData().toString()));
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.TEXT)) {
+        MessageContentVisitor.forEachContent(bbSendMessage,
                 //封装文本消息
-                messageContent.append(bbMessageContent.getData().toString());
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.LOCAL_IMAGE)) {
-                try (FileInputStream inputStream = new FileInputStream((File) bbMessageContent.getData())) {
-                    //本地图片上传后获取临时网络地址
-                    channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
-                }catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }else if (bbMessageContent.getType().equals(BbSendMessageType.NET_IMAGE)) {
+                messageContent::append,
+                localImage -> {
+                    try (FileInputStream inputStream = new FileInputStream(localImage)) {
+                        //本地图片上传后获取临时网络地址
+                        channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                //封装at消息
+                userId -> messageContent.append(ChannelMessage.buildAtMessage(userId)),
                 //封装网络图片地址
-                channelMessage.setImage(bbMessageContent.getData().toString());
-            }
-        }
+                channelMessage::setImage);
 
         //设置回复的原消息id
         channelMessage.setMsgId(bbSendMessage.getReceiveMessageId());
