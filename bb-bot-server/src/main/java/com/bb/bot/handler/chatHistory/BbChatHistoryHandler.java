@@ -3,11 +3,11 @@ package com.bb.bot.handler.chatHistory;
 import com.alibaba.fastjson2.JSON;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.common.util.aiChat.provider.AIException;
@@ -16,9 +16,7 @@ import com.bb.bot.common.util.aiChat.provider.ChatMessage;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
-import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,8 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +48,7 @@ import java.util.stream.Collectors;
 public class BbChatHistoryHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies bbReplies;
 
     @Autowired
     private AiChatService aiChatService;
@@ -93,13 +89,13 @@ public class BbChatHistoryHandler {
                             String unsupportedMsg,
                             String emptyHistoryMsg) {
         if (!aiChatService.isConfigured()) {
-            sendAtText(source, unsupportedMsg);
+            bbReplies.atText(source, unsupportedMsg);
             return;
         }
 
         List<ChatHistory> history = loadHistoryFromMemory(source);
         if (CollectionUtils.isEmpty(history)) {
-            sendAtText(source, emptyHistoryMsg);
+            bbReplies.atText(source, emptyHistoryMsg);
             return;
         }
 
@@ -110,7 +106,7 @@ public class BbChatHistoryHandler {
             answer = aiChatService.chat(messages, com.bb.bot.common.util.aiChat.provider.ModelTier.LIGHT);
         } catch (AIException e) {
             log.error("AI summary failed (type={}, status={})", e.getErrorType(), e.getHttpStatus(), e);
-            sendAtText(source, "AI 调用失败，请稍后再试");
+            bbReplies.atText(source, "AI 调用失败，请稍后再试");
             return;
         }
         if (StringUtils.isBlank(answer)) {
@@ -120,7 +116,7 @@ public class BbChatHistoryHandler {
         // M8.3 cutover：bot 回复进 ai_memory_event(kind=chat_reply)，不再写 chat_history
         memoryEventRecorder.recordOutbound(source, "chat_reply", answer, IdWorker.getIdStr());
 
-        sendAtText(source, "\n" + answer);
+        bbReplies.atText(source, "\n" + answer);
     }
 
     /**
@@ -149,13 +145,5 @@ public class BbChatHistoryHandler {
         }
         ch.setCreateTime(e.getCreatedAt());
         return ch;
-    }
-
-    private void sendAtText(BbReceiveMessage source, String text) {
-        BbSendMessage out = new BbSendMessage(source);
-        out.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(source.getUserId()),
-                BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(out);
     }
 }
