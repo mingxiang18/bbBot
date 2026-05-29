@@ -3,19 +3,17 @@ package com.bb.bot.handler.nso;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.DateUtils;
 import com.bb.bot.common.util.nso.NsoApiCaller;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
-import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.common.util.LocalCacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +33,7 @@ import java.util.regex.Pattern;
 public class BbNsoHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies bbReplies;
 
     @Autowired
     private NsoApiCaller nsoApiCaller;
@@ -81,12 +78,7 @@ public class BbNsoHandler {
         //获取登录url
         String userLoginInUrl = nsoApiCaller.getUserLoginInUrl(authState, authCodeChallenge);
 
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-            BbMessageContent.buildTextContent("请点击以下连接进行nso登录：" + userLoginInUrl))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        bbReplies.atText(bbReceiveMessage, "请点击以下连接进行nso登录：" + userLoginInUrl);
     }
 
     /**
@@ -112,21 +104,11 @@ public class BbNsoHandler {
             //重新设置账户token
             resetUserToken(bbReceiveMessage.getUserId());
 
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("已完成设置"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
+            bbReplies.atText(bbReceiveMessage, "已完成设置");
         }catch (Exception e) {
             log.error("登录nso失败", e);
 
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("设置出现异常，请尝试重新设置"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
+            bbReplies.atText(bbReceiveMessage, "设置出现异常，请尝试重新设置");
         }
     }
 
@@ -141,12 +123,7 @@ public class BbNsoHandler {
                 .eq(UserConfigValue::getType, "NSO")
                 .eq(UserConfigValue::getKeyName, "webAccessToken"));
         if(webAccessTokenConfig == null) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("当前用户未设置nso登录码"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
+            bbReplies.atText(bbReceiveMessage, "当前用户未设置nso登录码");
         }
 
         JSONObject accountInfo = nsoApiCaller.getNsAccountInfo(webAccessTokenConfig.getValueName());
@@ -164,12 +141,7 @@ public class BbNsoHandler {
 
         String swCode = "SW-" + accountInfo.getJSONObject("result").getJSONObject("links").getJSONObject("friendCode").getString("id");
 
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-            BbMessageContent.buildTextContent(swCode))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        bbReplies.atText(bbReceiveMessage, swCode);
     }
 
     /**
@@ -196,12 +168,7 @@ public class BbNsoHandler {
                 .eq(UserConfigValue::getKeyName, "webAccessToken"));
         //如果为空，告诉用户未设置nso登录码
         if(webAccessTokenConfig == null) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent("当前用户未设置nso登录码"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
+            bbReplies.atText(bbReceiveMessage, "当前用户未设置nso登录码");
         }
 
         StringBuilder returnMessage = new StringBuilder();
@@ -237,12 +204,7 @@ public class BbNsoHandler {
                     "（" + state + "）\n");
         }
 
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-            BbMessageContent.buildTextContent(returnMessage.toString()))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        bbReplies.atText(bbReceiveMessage, returnMessage.toString());
     }
 
     /**
