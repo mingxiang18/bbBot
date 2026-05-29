@@ -19,6 +19,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -188,11 +189,15 @@ public class BbEventDispatcher {
     /**
      * 通用的事件执行方法
      */
-    private void handlerExecute(Method method, Object instance, Object event) {
+    void handlerExecute(Method method, Object instance, Object event) {
+        String handlerName = instance.getClass().getSimpleName() + "." + method.getName();
         try {
             method.invoke(instance, event);
+        } catch (InvocationTargetException e) {
+            //反射调用 handler 抛出的业务异常会被包装为 InvocationTargetException，记录原始异常
+            log.error("机器人事件处理者: " + handlerName + ", 处理出现异常", e.getCause());
         } catch (Exception e) {
-            log.error("机器人事件处理者: " + method.getClass().getName() + "." + method.getName() + ", 处理出现异常", e);
+            log.error("机器人事件处理者: " + handlerName + ", 处理出现异常", e);
         }
     }
 
