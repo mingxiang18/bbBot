@@ -21,6 +21,17 @@ import lombok.SneakyThrows;
 public class ImageUtils{
 
     /**
+     * 从文件名中提取扩展名（不含点）。
+     * 等价于 {@code name.substring(name.lastIndexOf(".") + 1)}：
+     * 含点返回最后一个点之后的内容；无点返回原串；末尾为点或空串返回空串。
+     * @param name 文件名
+     * @return 扩展名（不含点）
+     */
+    public static String getExtension(String name) {
+        return name.substring(name.lastIndexOf(".") + 1);
+    }
+
+    /**
      * 对图片裁剪，并把裁剪新图片保存
      * @param srcFile 读取源图片路径
      * @param toFile	写入图片路径
@@ -37,7 +48,7 @@ public class ImageUtils{
         try{
             //读取图片文件
             fis = new FileInputStream(srcFile);
-            Iterator it = ImageIO.getImageReadersByFormatName(srcFile.getName().substring(srcFile.getName().lastIndexOf(".") + 1));
+            Iterator it = ImageIO.getImageReadersByFormatName(getExtension(srcFile.getName()));
             ImageReader reader = (ImageReader) it.next();
             //获取图片流
             iis = ImageIO.createImageInputStream(fis);
@@ -49,7 +60,7 @@ public class ImageUtils{
             param.setSourceRegion(rect);
             BufferedImage bi = reader.read(0,param);
             //保存新图片
-            ImageIO.write(bi, toFile.getName().substring(toFile.getName().lastIndexOf(".") + 1), toFile);
+            ImageIO.write(bi, getExtension(toFile.getName()), toFile);
         }finally{
             if(fis!=null) {
                 fis.close();
@@ -90,7 +101,7 @@ public class ImageUtils{
             g.drawImage(src, 0, 0, afterWidth, afterHeight, null);
             File out = new File(toImagePath);
             //保存新图片
-            ImageIO.write(tag, out.getName().substring(out.getName().lastIndexOf(".") + 1), out);
+            ImageIO.write(tag, getExtension(out.getName()), out);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -182,7 +193,7 @@ public class ImageUtils{
             tag.getGraphics().drawImage(src, 0, 0, width, height, null);
             File out = new File(toImagePath);
             //保存新图片
-            ImageIO.write(tag, out.getName().substring(out.getName().lastIndexOf(".") + 1), out);
+            ImageIO.write(tag, getExtension(out.getName()), out);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -540,7 +551,7 @@ public class ImageUtils{
             g.drawImage(image2, x, y,null);
 
             //保存新图片
-            ImageIO.write(image, mergeFile.getName().substring(mergeFile.getName().lastIndexOf(".") + 1), mergeFile);
+            ImageIO.write(image, getExtension(mergeFile.getName()), mergeFile);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -655,7 +666,7 @@ public class ImageUtils{
             }
             g2d.dispose();
             fos=new FileOutputStream(toPath);
-            ImageIO.write(image, imageFile.getName().substring(imageFile.getName().lastIndexOf(".") + 1), fos);
+            ImageIO.write(image, getExtension(imageFile.getName()), fos);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -688,7 +699,7 @@ public class ImageUtils{
         try {
             g2d.dispose();
             fos=new FileOutputStream(imageFile);
-            ImageIO.write(image, imageFile.getName().substring(imageFile.getName().lastIndexOf(".") + 1), fos);
+            ImageIO.write(image, getExtension(imageFile.getName()), fos);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
