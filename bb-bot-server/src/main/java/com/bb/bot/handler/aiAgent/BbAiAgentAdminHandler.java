@@ -2,25 +2,23 @@ package com.bb.bot.handler.aiAgent;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.aiAgent.auth.AiAgentAuthService;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.database.aiAgent.entity.AiToolInvocationLog;
 import com.bb.bot.database.aiAgent.entity.AiUserRole;
 import com.bb.bot.database.aiAgent.service.IAiToolInvocationLogService;
 import com.bb.bot.database.aiAgent.service.IAiUserRoleService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.constant.BotType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +40,7 @@ import java.util.regex.Pattern;
 public class BbAiAgentAdminHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies replies;
 
     @Autowired
     private AiAgentAuthService authService;
@@ -64,7 +62,7 @@ public class BbAiAgentAdminHandler {
         if (denyIfNotOwner(msg)) return;
         Matcher m = GRANT_RE.matcher(textOf(msg).trim());
         if (!m.find()) {
-            reply(msg, "用法: /aiAgent.role.grant <userId> <role>");
+            replies.text(msg, "用法: /aiAgent.role.grant <userId> <role>");
             return;
         }
         String userId = m.group(1);
@@ -74,7 +72,7 @@ public class BbAiAgentAdminHandler {
                 .eq(AiUserRole::getPlatform, defaultIfBlank(msg.getBotType()))
                 .eq(AiUserRole::getRole, role));
         if (existing != null) {
-            reply(msg, "用户 " + userId + " 已具备 " + role + " 角色");
+            replies.text(msg, "用户 " + userId + " 已具备 " + role + " 角色");
             return;
         }
         AiUserRole row = new AiUserRole();
@@ -84,7 +82,7 @@ public class BbAiAgentAdminHandler {
         row.setGrantedBy(msg.getUserId());
         row.setGrantedAt(LocalDateTime.now());
         userRoleService.save(row);
-        reply(msg, "已授予 " + userId + " 角色 " + role);
+        replies.text(msg, "已授予 " + userId + " 角色 " + role);
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -93,7 +91,7 @@ public class BbAiAgentAdminHandler {
         if (denyIfNotOwner(msg)) return;
         Matcher m = REVOKE_RE.matcher(textOf(msg).trim());
         if (!m.find()) {
-            reply(msg, "用法: /aiAgent.role.revoke <userId> <role>");
+            replies.text(msg, "用法: /aiAgent.role.revoke <userId> <role>");
             return;
         }
         String userId = m.group(1);
@@ -102,7 +100,7 @@ public class BbAiAgentAdminHandler {
                 .eq(AiUserRole::getUserId, userId)
                 .eq(AiUserRole::getPlatform, defaultIfBlank(msg.getBotType()))
                 .eq(AiUserRole::getRole, role));
-        reply(msg, removed ? ("已撤销 " + userId + " 的 " + role) : "无此角色记录");
+        replies.text(msg, removed ? ("已撤销 " + userId + " 的 " + role) : "无此角色记录");
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -111,14 +109,14 @@ public class BbAiAgentAdminHandler {
         if (denyIfNotOwner(msg)) return;
         Matcher m = LIST_RE.matcher(textOf(msg).trim());
         if (!m.find()) {
-            reply(msg, "用法: /aiAgent.role.list <userId>");
+            replies.text(msg, "用法: /aiAgent.role.list <userId>");
             return;
         }
         String userId = m.group(1);
         List<AiUserRole> rows = userRoleService.list(new LambdaQueryWrapper<AiUserRole>()
                 .eq(AiUserRole::getUserId, userId));
         if (rows.isEmpty()) {
-            reply(msg, userId + " 暂无角色（默认 user）");
+            replies.text(msg, userId + " 暂无角色（默认 user）");
             return;
         }
         StringBuilder sb = new StringBuilder(userId).append(" 的角色：\n");
@@ -127,7 +125,7 @@ public class BbAiAgentAdminHandler {
                     .append(StringUtils.defaultIfBlank(r.getPlatform(), "*"))
                     .append(" by ").append(r.getGrantedBy()).append("\n");
         }
-        reply(msg, sb.toString().trim());
+        replies.text(msg, sb.toString().trim());
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -136,7 +134,7 @@ public class BbAiAgentAdminHandler {
         if (denyIfNotOwner(msg)) return;
         Matcher m = AUDIT_RE.matcher(textOf(msg).trim());
         if (!m.find()) {
-            reply(msg, "用法: /aiAgent.audit <userId> [days=7]");
+            replies.text(msg, "用法: /aiAgent.audit <userId> [days=7]");
             return;
         }
         String userId = m.group(1);
@@ -148,7 +146,7 @@ public class BbAiAgentAdminHandler {
                 .orderByDesc(AiToolInvocationLog::getCreatedAt)
                 .last("limit 30"));
         if (rows.isEmpty()) {
-            reply(msg, userId + " 近 " + days + " 天无工具调用记录");
+            replies.text(msg, userId + " 近 " + days + " 天无工具调用记录");
             return;
         }
         StringBuilder sb = new StringBuilder(userId).append(" 近 ").append(days).append(" 天工具调用（最多 30 条）：\n");
@@ -158,12 +156,12 @@ public class BbAiAgentAdminHandler {
                     .append(r.getLatencyMs() == null ? "?" : r.getLatencyMs()).append("ms / ")
                     .append(r.getCreatedAt()).append("\n");
         }
-        reply(msg, sb.toString().trim());
+        replies.text(msg, sb.toString().trim());
     }
 
     private boolean denyIfNotOwner(BbReceiveMessage msg) {
         if (authService.isOwner(msg.getUserId())) return false;
-        reply(msg, "无权限（仅 owner 可执行）");
+        replies.text(msg, "无权限（仅 owner 可执行）");
         return true;
     }
 
@@ -177,11 +175,5 @@ public class BbAiAgentAdminHandler {
 
     private String defaultIfBlank(String s) {
         return StringUtils.isBlank(s) ? "" : s;
-    }
-
-    private void reply(BbReceiveMessage msg, String text) {
-        BbSendMessage send = new BbSendMessage(msg);
-        send.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(send);
     }
 }
