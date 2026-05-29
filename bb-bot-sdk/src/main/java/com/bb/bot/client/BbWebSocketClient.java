@@ -5,7 +5,6 @@ import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.entity.bb.BbAuthMessage;
 import com.bb.bot.entity.bb.BbSocketServerMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -28,7 +27,7 @@ import java.util.List;
  * @author ren
  */
 @Slf4j
-public class BbWebSocketClient extends WebSocketClient {
+public class BbWebSocketClient extends AbstractWebSocketGuard {
 
     private final String name;
 
@@ -70,8 +69,6 @@ public class BbWebSocketClient extends WebSocketClient {
      */
     private volatile long lastConnectAttemptAt = 0L;
 
-    private Thread connectThread;
-
     /**
      * 认证通过标识。volatile：onMessage 在读线程置位，onClose 在重连/关闭时清零，
      * 跨线程可见性必须保证，否则重连后可能用到过期的认证状态。
@@ -100,7 +97,7 @@ public class BbWebSocketClient extends WebSocketClient {
                              URI serverUri,
                              BbClientMessageHandler bbClientMessageHandler,
                              List<String> capabilities) {
-        super(serverUri);
+        super(serverUri, "bb-ws-reconnect-");
         this.name = name;
         this.appId = appId;
         this.secret = secret;
@@ -115,7 +112,23 @@ public class BbWebSocketClient extends WebSocketClient {
         //记为首次连接尝试，避免守护线程在握手期间又触发一次 reconnect
         lastConnectAttemptAt = System.currentTimeMillis();
         connect();
-        startConnectThread();
+        startGuard();
+    }
+
+    /**
+     * 守护线程名后缀，用机器人名便于 jstack 定位（保留原 {@code "bb-ws-reconnect-" + name} 线程名）。
+     */
+    @Override
+    protected String threadNameSuffix() {
+        return name;
+    }
+
+    /**
+     * 守护线程一个周期的间隔，沿用构造传入的 {@link #connectInterval}。
+     */
+    @Override
+    protected long interval() {
+        return connectInterval;
     }
 
     /**
@@ -205,63 +218,21 @@ public class BbWebSocketClient extends WebSocketClient {
     }
 
     /**
-     * 子线程定时连接检查。
+     * 守护线程的一次周期：检测到未连接（且超过最小重连间隔）时触发 {@code reconnect()}。
      *
-     * <p>这是一个长生命周期的守护线程，必须保证它<strong>永不退出</strong>：底层
-     * java-websocket 每次 {@code reconnect()} 都会新建读/写线程，历史上出现过
-     * 重连风暴导致 {@code OutOfMemoryError: unable to create new native thread}
-     * （属于 {@link Error} 而非 {@link Exception}）或中断异常把本守护线程打挂、
-     * 之后再也不重连的问题。因此这里：</p>
-     * <ul>
-     *   <li>用 {@link Throwable} 兜底，任何异常/错误都只记录、不退出；</li>
-     *   <li>{@link InterruptedException} 不再向上抛，仅清除中断标志后继续守护；</li>
-     *   <li>用 {@link #shouldReconnect()} + {@link #MIN_RECONNECT_INTERVAL_MS} 退避，
-     *       避免握手未完成期间重复 {@code reconnect()} 引发线程风暴。</li>
-     * </ul>
+     * <p>守护线程的“永不退出 + 吞 {@link Throwable}/吞中断”由基类
+     * {@link AbstractWebSocketGuard} 统一保证；本方法只表达 BB 客户端自身的重连判断，
+     * 复用基类 {@link #shouldReconnect(long, long)} + 本类的 {@link #MIN_RECONNECT_INTERVAL_MS} 退避阈值，
+     * 避免握手未完成期间重复 {@code reconnect()} 引发线程风暴。</p>
      */
-    private void startConnectThread() {
-        if (connectThread != null && connectThread.isAlive()) {
-            return;
+    @Override
+    protected void handleTick() {
+        if (shouldReconnect(lastConnectAttemptAt, MIN_RECONNECT_INTERVAL_MS)) {
+            lastConnectAttemptAt = System.currentTimeMillis();
+            log.info("【" + name + "】WebSocket客户端检测到未连接(open=" + isOpen()
+                    + ",closing=" + isClosing() + ",closed=" + isClosed() + ")，触发重连");
+            reconnect();
         }
-        connectThread = new Thread(this::connectLoop, "bb-ws-reconnect-" + name);
-        connectThread.setDaemon(true);
-        connectThread.start();
-    }
-
-    private void connectLoop() {
-        while (true) {
-            try {
-                if (shouldReconnect()) {
-                    lastConnectAttemptAt = System.currentTimeMillis();
-                    log.info("【" + name + "】WebSocket客户端检测到未连接(open=" + isOpen()
-                            + ",closing=" + isClosing() + ",closed=" + isClosed() + ")，触发重连");
-                    reconnect();
-                }
-            } catch (Throwable t) {
-                //捕获 Throwable（含 OutOfMemoryError 等），守护线程绝不能因此退出
-                log.error("【" + name + "】WebSocket客户端重连检查异常", t);
-            }
-            try {
-                Thread.sleep(connectInterval);
-            } catch (InterruptedException e) {
-                //底层重连会中断相关线程；不能因中断而杀死本守护线程，清除标志后继续
-                Thread.interrupted();
-            }
-        }
-    }
-
-    /**
-     * 是否需要发起重连。
-     *
-     * <p>已连接（OPEN）或正在关闭（CLOSING）时不重连；其余状态
-     * （NOT_YET_CONNECTED / CLOSED）可能是“正在握手”，用最小间隔兜底，
-     * 防止在连接建立期间被反复触发。</p>
-     */
-    private boolean shouldReconnect() {
-        if (isOpen() || isClosing()) {
-            return false;
-        }
-        return System.currentTimeMillis() - lastConnectAttemptAt >= MIN_RECONNECT_INTERVAL_MS;
     }
 
 }
