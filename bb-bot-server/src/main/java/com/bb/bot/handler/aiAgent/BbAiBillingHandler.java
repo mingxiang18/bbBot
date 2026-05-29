@@ -2,11 +2,11 @@ package com.bb.bot.handler.aiAgent;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.aiAgent.auth.AiAgentAuthService;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.aiChat.billing.ModelPricingRefreshJob;
 import com.bb.bot.common.util.aiChat.billing.ModelPricingService;
 import com.bb.bot.common.util.aiChat.billing.QuotaGuard;
@@ -21,14 +21,12 @@ import com.bb.bot.database.aiAgent.service.IAiUserQuotaService;
 import com.bb.bot.database.aiAgent.vo.UserModelUsage;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,7 +48,7 @@ import java.util.regex.Pattern;
 public class BbAiBillingHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies bbReplies;
     @Autowired
     private AiAgentAuthService authService;
     @Autowired
@@ -329,8 +327,6 @@ public class BbAiBillingHandler {
     }
 
     private void reply(BbReceiveMessage msg, String text) {
-        BbSendMessage send = new BbSendMessage(msg);
-        send.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(send);
+        bbReplies.text(msg, text);
     }
 }
