@@ -110,13 +110,14 @@ public class QqWebSocketClient extends WebSocketClient {
     private void handleMessage(String s) {
         QqCommonPayloadEntity message = JSON.parseObject(s, QqCommonPayloadEntity.class);
 
-        if (10 == message.getOp()) {
+        if (QqOpcode.HELLO.matches(message.getOp())) {
             log.info("【" + name + "】WebSocket客户端接收到hello消息: " + s);
             //如果收到10 hello消息，进行登录鉴权
             Map<String, Object> request = new HashMap<>();
             request.put("token", qqApiCaller.getToken(qqConfig));
             //1<<30 频道@消息，1<<25 群/单聊事件(含C2C私聊)，1<<12 频道私信
-            request.put("intents", 1 << 30 | 1 << 25 | 1 << 12);
+            request.put("intents", QqIntent.combine(
+                    QqIntent.CHANNEL_AT_MESSAGE, QqIntent.GROUP_AND_C2C_EVENT, QqIntent.DIRECT_MESSAGE));
             //没有分片，传默认值
             request.put("shard", new Integer[]{0, 1});
 
@@ -129,7 +130,7 @@ public class QqWebSocketClient extends WebSocketClient {
             String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
             log.info("【" + name + "】WebSocket客户端发送鉴权消息: " + sendMessage);
             this.send(sendMessage);
-        }else if (0 == message.getOp() && "READY".equals(message.getT())) {
+        }else if (QqOpcode.DISPATCH.matches(message.getOp()) && "READY".equals(message.getT())) {
             log.info("【" + name + "】WebSocket客户端接收到鉴权答复消息: " + s);
             //收到鉴权答复
             LocalCacheUtils.setCacheObject("qq.session_id", ((JSONObject) message.getD()).getString("session_id"));
@@ -142,10 +143,10 @@ public class QqWebSocketClient extends WebSocketClient {
             String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
             log.info("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
             this.send(sendMessage);
-        }else if(11 == message.getOp()){
+        }else if(QqOpcode.HEARTBEAT_ACK.matches(message.getOp())){
             //心跳答复，可以不用管
 
-        }else if(7 == message.getOp()){
+        }else if(QqOpcode.RECONNECT.matches(message.getOp())){
             //服务端通知客户端重新连接
             log.info("【" + name + "】WebSocket客户端接收到重新连接通知: " + s);
             //删除缓存
