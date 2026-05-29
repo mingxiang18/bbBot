@@ -3,20 +3,17 @@ package com.bb.bot.handler.aiAgent;
 import com.bb.bot.aiAgent.auth.AiAgentAuthService;
 import com.bb.bot.aiAgent.skills.SkillManifest;
 import com.bb.bot.aiAgent.skills.SkillRegistry;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.constant.BotType;
-import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +32,7 @@ import java.util.List;
 public class BbAiSkillHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies replies;
 
     @Autowired
     private AiAgentAuthService authService;
@@ -49,7 +46,7 @@ public class BbAiSkillHandler {
         if (denyIfNotOwner(msg)) return;
         Collection<SkillManifest> all = skillRegistry.all();
         if (all.isEmpty()) {
-            reply(msg, "当前未注册任何 SKILL");
+            replies.text(msg, "当前未注册任何 SKILL");
             return;
         }
         StringBuilder sb = new StringBuilder("已注册 SKILL ").append(all.size()).append(" 个：\n");
@@ -58,7 +55,7 @@ public class BbAiSkillHandler {
                     .append(": ").append(s.getDescription())
                     .append("\n");
         }
-        reply(msg, sb.toString().trim());
+        replies.text(msg, sb.toString().trim());
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
@@ -67,22 +64,16 @@ public class BbAiSkillHandler {
         if (denyIfNotOwner(msg)) return;
         try {
             List<String> names = skillRegistry.reload();
-            reply(msg, "SKILL 从 ai_skill 表重载完成，共 " + names.size() + " 个：" + names);
+            replies.text(msg, "SKILL 从 ai_skill 表重载完成，共 " + names.size() + " 个：" + names);
         } catch (Exception e) {
             log.warn("SKILL 重载失败", e);
-            reply(msg, "SKILL 重载失败：" + e.getMessage());
+            replies.text(msg, "SKILL 重载失败：" + e.getMessage());
         }
     }
 
     private boolean denyIfNotOwner(BbReceiveMessage msg) {
         if (authService.isOwner(msg.getUserId())) return false;
-        reply(msg, "无权限（仅 owner 可执行）");
+        replies.text(msg, "无权限（仅 owner 可执行）");
         return true;
-    }
-
-    private void reply(BbReceiveMessage msg, String text) {
-        BbSendMessage send = new BbSendMessage(msg);
-        send.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(send);
     }
 }
