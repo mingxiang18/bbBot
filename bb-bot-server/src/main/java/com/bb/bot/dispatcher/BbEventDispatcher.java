@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -56,6 +57,12 @@ public class BbEventDispatcher {
     private Map<Method, Object> occupationHandlerMap = new LinkedHashMap<>();
 
     /**
+     * REGEX 规则关键字 -> 预编译 {@link Pattern} 缓存。
+     * 在 handler 注册时预编译一次，避免在每条消息匹配路径上重复 {@link Pattern#compile}。
+     */
+    private final RegexPatternCache regexPatternCache = new RegexPatternCache();
+
+    /**
      * 机器人事件分发者构造函数
      */
     public BbEventDispatcher() {
@@ -77,6 +84,13 @@ public class BbEventDispatcher {
                 Rule annotation = AnnotationUtils.findAnnotation(declaredMethod, Rule.class);
                 if (annotation == null) {
                     continue;
+                }
+
+                //如果是正则规则，注册时预编译关键字并缓存，避免每条消息重复编译
+                if (RuleType.REGEX.equals(annotation.ruleType()) && annotation.keyword() != null) {
+                    for (String keyword : annotation.keyword()) {
+                        regexPatternCache.compile(keyword);
+                    }
                 }
 
                 if (RuleType.DEFAULT.equals(annotation.ruleType())) {
@@ -185,7 +199,7 @@ public class BbEventDispatcher {
     /**
      * 判断消息是否匹配规则
      */
-    private boolean messageRuleMatch(BbReceiveMessage bbReceiveMessage, Rule rule) {
+    boolean messageRuleMatch(BbReceiveMessage bbReceiveMessage, Rule rule) {
         //判断规则类型
         //如果是群组消息，且规则配置需要@自己，判断消息体中是否有@机器人的参数
         if ((MessageType.GROUP.equals(bbReceiveMessage.getMessageType()) || MessageType.CHANNEL.equals(bbReceiveMessage.getMessageType()))
@@ -218,14 +232,58 @@ public class BbEventDispatcher {
             }
         } else if (RuleType.REGEX.equals(rule.ruleType())) {
             for (String keyword : rule.keyword()) {
-                Pattern compile = Pattern.compile(keyword);
+                //使用注册时预编译并缓存的 Pattern，避免每条消息重复编译
+                Pattern compile = regexPatternCache.compile(keyword);
                 Matcher matcher = compile.matcher(message);
-                while (matcher.find()) {
+                if (matcher.find()) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    /**
+     * 暴露给测试，校验某个正则关键字是否已被预编译缓存。
+     */
+    RegexPatternCache getRegexPatternCache() {
+        return regexPatternCache;
+    }
+
+    /**
+     * REGEX 规则关键字的预编译 {@link Pattern} 缓存。
+     * <p>同一关键字只会编译一次（{@link #compile(String)} 幂等），后续命中直接返回缓存实例。
+     * 内置编译计数器，便于单测验证"同规则多次匹配只编译一次"。
+     */
+    static final class RegexPatternCache {
+
+        private final Map<String, Pattern> cache = new ConcurrentHashMap<>();
+
+        /**
+         * 编译计数器，仅在真正发生 {@link Pattern#compile} 时自增。
+         */
+        private int compileCount = 0;
+
+        /**
+         * 返回关键字对应的已编译 {@link Pattern}；缓存未命中时编译一次并缓存。
+         */
+        Pattern compile(String keyword) {
+            Pattern cached = cache.get(keyword);
+            if (cached != null) {
+                return cached;
+            }
+            return cache.computeIfAbsent(keyword, k -> {
+                compileCount++;
+                return Pattern.compile(k);
+            });
+        }
+
+        /**
+         * 实际执行 {@link Pattern#compile} 的次数（测试用）。
+         */
+        int getCompileCount() {
+            return compileCount;
+        }
     }
 }
