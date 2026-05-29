@@ -53,6 +53,9 @@ public class BbSplatoonUserHandler {
     private BbMessageApi bbMessageApi;
 
     @Autowired
+    private com.bb.bot.common.util.BbReplies bbReplies;
+
+    @Autowired
     private Splatoon3ApiCaller splatoon3ApiCaller;
 
     @Autowired
@@ -581,7 +584,7 @@ public class BbSplatoonUserHandler {
         if (!requireBound(bbReceiveMessage)) { return; }
         Matcher matcher = Pattern.compile("^/?对战详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
         if (!matcher.find()) {
-            replyText(bbReceiveMessage, "格式：对战详情 <序号>，如：对战详情 128");
+            bbReplies.atText(bbReceiveMessage, "格式：对战详情 <序号>，如：对战详情 128");
             return;
         }
         Long id = Long.parseLong(matcher.group(1));
@@ -590,7 +593,7 @@ public class BbSplatoonUserHandler {
         SplatoonBattleRecord record = battleRecordService.getOne(new LambdaQueryWrapper<SplatoonBattleRecord>()
                 .eq(SplatoonBattleRecord::getId, id).in(SplatoonBattleRecord::getUserId, accountIds));
         if (record == null) {
-            replyText(bbReceiveMessage, "没找到这条对战记录(序号 " + id + ")");
+            bbReplies.atText(bbReceiveMessage, "没找到这条对战记录(序号 " + id + ")");
             return;
         }
         List<SplatoonBattleUserDetail> details = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
@@ -612,7 +615,7 @@ public class BbSplatoonUserHandler {
         if (!requireBound(bbReceiveMessage)) { return; }
         Matcher matcher = Pattern.compile("^/?打工详情\\s*(\\d+)").matcher(bbReceiveMessage.getMessage());
         if (!matcher.find()) {
-            replyText(bbReceiveMessage, "格式：打工详情 <序号>，如：打工详情 56");
+            bbReplies.atText(bbReceiveMessage, "格式：打工详情 <序号>，如：打工详情 56");
             return;
         }
         Long id = Long.parseLong(matcher.group(1));
@@ -621,7 +624,7 @@ public class BbSplatoonUserHandler {
         SplatoonCoopRecord record = coopRecordService.getOne(new LambdaQueryWrapper<SplatoonCoopRecord>()
                 .eq(SplatoonCoopRecord::getId, id).in(SplatoonCoopRecord::getUserId, accountIds));
         if (record == null) {
-            replyText(bbReceiveMessage, "没找到这条打工记录(序号 " + id + ")");
+            bbReplies.atText(bbReceiveMessage, "没找到这条打工记录(序号 " + id + ")");
             return;
         }
         String coopId = String.valueOf(id);
@@ -645,17 +648,8 @@ public class BbSplatoonUserHandler {
         if (splatoonTokenManager.isBound(bbReceiveMessage.getUserId())) {
             return true;
         }
-        replyText(bbReceiveMessage, "你还没绑定喷喷账号，无法使用喷喷战绩功能。请联系管理员用「绑定喷喷账号」给你绑定后再用。");
+        bbReplies.atText(bbReceiveMessage, "你还没绑定喷喷账号，无法使用喷喷战绩功能。请联系管理员用「绑定喷喷账号」给你绑定后再用。");
         return false;
-    }
-
-    /** 发送一条 @+文本 回复。 */
-    private void replyText(BbReceiveMessage bbReceiveMessage, String text) {
-        BbSendMessage reply = new BbSendMessage(bbReceiveMessage);
-        reply.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(reply);
     }
 
     /**
