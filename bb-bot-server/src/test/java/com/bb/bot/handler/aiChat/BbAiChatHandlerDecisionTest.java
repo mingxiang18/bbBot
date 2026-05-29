@@ -131,8 +131,16 @@ class BbAiChatHandlerDecisionTest {
 
     @Test
     void composePersonality_noClues_returnsBaseOnly() {
+        // 无 clues、无长期记忆(memoryCompiler 未 mock，ensureCompiledMemory 触发的 NPE 被 catch 吞掉，
+        // 不注入记忆段) → personality 应为 BASE 本体，不含任何 clue 后缀；
+        // 末尾的【对话边界】引导是无条件追加的生产行为（见 BbAiChatHandler#composePersonality）。
         String personality = handler.composePersonality("user-1", Collections.emptyList());
-        assertEquals("BASE", personality);
+        assertTrue(personality.startsWith("BASE"), "应以 BASE 人格本体开头");
+        assertFalse(personality.contains("clues="), "无 clues 时不应注入 clue 后缀");
+        assertFalse(personality.contains("长期记忆"), "未提供长期记忆时不应注入记忆段");
+        // 除 BASE 本体外仅追加了【对话边界】引导，无其它内容
+        assertEquals("BASE\n\n", personality.substring(0, personality.indexOf("【对话边界】")),
+                "BASE 与边界引导之间不应有额外内容");
     }
 
     @Test

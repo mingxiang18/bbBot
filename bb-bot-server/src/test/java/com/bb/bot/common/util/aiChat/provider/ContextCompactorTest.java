@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,7 +54,7 @@ class ContextCompactorTest {
 
     @Test
     void overThreshold_compacts_keepsSystemHead_injectsSummary_andSuffixNotStartingWithTool() {
-        when(aiChatService.chat(anyList())).thenReturn("SUMMARY-TEXT");
+        when(aiChatService.chat(anyList(), any())).thenReturn("SUMMARY-TEXT");
 
         List<ChatMessage> input = buildLongConversationWithToolCalls();
         List<ChatMessage> result = compactor.compactIfNeeded(input);
@@ -69,7 +70,7 @@ class ContextCompactorTest {
                 "suffix 不能以孤立 TOOL 消息开头");
         // 整个结果里任何 TOOL 消息前面都应能找到带 toolCalls 的 assistant
         assertNoOrphanToolMessages(result);
-        verify(aiChatService).chat(anyList());
+        verify(aiChatService).chat(anyList(), any());
     }
 
     /** 构造一段超过阈值、含多组 assistant(tool_calls)+tool 的对话。 */
