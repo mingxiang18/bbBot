@@ -5,11 +5,11 @@ import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.config.QqConfig;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.qq.QqCommonPayloadEntity;
+import com.bb.bot.client.AbstractWebSocketGuard;
 import com.bb.bot.common.util.LocalCacheUtils;
 import com.bb.bot.common.util.qq.QQMessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -21,7 +21,7 @@ import java.util.*;
  * @author ren
  */
 @Slf4j
-public class QqWebSocketClient extends WebSocketClient {
+public class QqWebSocketClient extends AbstractWebSocketGuard {
     @Getter
     private final String name;
     @Getter
@@ -41,7 +41,6 @@ public class QqWebSocketClient extends WebSocketClient {
      * 上一次发起连接/重连的时间戳，用于重连退避。
      */
     private volatile long lastConnectAttemptAt = 0L;
-    private Thread connectThread;
 
     /**
      * 构造方法
@@ -49,7 +48,7 @@ public class QqWebSocketClient extends WebSocketClient {
      * @param serverUri
      */
     public QqWebSocketClient(String name, QqConfig qqConfig, ApplicationEventPublisher publisher, QqApiCaller qqApiCaller, URI serverUri) {
-        super(serverUri);
+        super(serverUri, "qq-ws-reconnect-");
         this.name = name;
         this.qqConfig = qqConfig;
         this.publisher = publisher;
@@ -58,7 +57,23 @@ public class QqWebSocketClient extends WebSocketClient {
         //记为首次连接尝试，避免守护线程在握手期间又触发一次 reconnect
         lastConnectAttemptAt = System.currentTimeMillis();
         connect();
-        startConnectThread();
+        startGuard();
+    }
+
+    /**
+     * 守护线程名后缀，用机器人名便于 jstack 定位（保留原 {@code "qq-ws-reconnect-" + name} 线程名）。
+     */
+    @Override
+    protected String threadNameSuffix() {
+        return name;
+    }
+
+    /**
+     * 守护线程一个周期的间隔，沿用原 {@link #CONNECT_INTERVAL}（30 秒）。
+     */
+    @Override
+    protected long interval() {
+        return CONNECT_INTERVAL;
     }
 
     /**
@@ -181,63 +196,32 @@ public class QqWebSocketClient extends WebSocketClient {
     }
 
     /**
-     * 子线程定时连接检查
+     * 守护线程的一次周期：QQ 版差异——已连接时照常发心跳（带最新 seq）；
+     * 未连接且超过最小重连间隔时触发 {@code reconnect()}。
+     *
+     * <p>守护线程的“永不退出 + 吞 {@link Throwable}/吞中断”由基类
+     * {@link AbstractWebSocketGuard} 统一保证；本方法只表达 QQ 客户端自身的心跳/重连判断，
+     * 复用基类 {@link #shouldReconnect(long, long)} + 本类的 {@link #MIN_RECONNECT_INTERVAL_MS} 退避阈值，
+     * 避免握手未完成期间重复 {@code reconnect()} 引发线程风暴。</p>
      */
-    private void startConnectThread() {
-        if (connectThread != null && connectThread.isAlive()) {
-            return;
-        }
-        connectThread = new Thread(this::connectLoop, "qq-ws-reconnect-" + name);
-        connectThread.setDaemon(true);
-        connectThread.start();
-    }
+    @Override
+    protected void handleTick() {
+        if (isOpen()) {
+            //已连接：封装并发送心跳消息
+            QqCommonPayloadEntity qqCommonPayloadEntity = new QqCommonPayloadEntity();
+            qqCommonPayloadEntity.setOp(1);
+            qqCommonPayloadEntity.setD(LocalCacheUtils.getCacheObject("qq.seq"));
 
-    /**
-     * 长生命周期守护线程，必须永不退出（与 SDK BbWebSocketClient 同样的兜底逻辑）：
-     * 捕获 {@link Throwable} 防止 OOM 等 Error 打挂线程；中断不再向上抛；重连用退避，
-     * 避免握手期间反复 {@code reconnect()} 造成线程风暴。已连接时照常发心跳。
-     */
-    private void connectLoop() {
-        while (true) {
-            try {
-                if (isOpen()) {
-                    //已连接：封装并发送心跳消息
-                    QqCommonPayloadEntity qqCommonPayloadEntity = new QqCommonPayloadEntity();
-                    qqCommonPayloadEntity.setOp(1);
-                    qqCommonPayloadEntity.setD(LocalCacheUtils.getCacheObject("qq.seq"));
-
-                    String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
-                    log.debug("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
-                    send(sendMessage);
-                } else if (shouldReconnect()) {
-                    //未连接且已过退避间隔：重连
-                    lastConnectAttemptAt = System.currentTimeMillis();
-                    log.info("【" + name + "】WebSocket客户端检测到未连接(closing=" + isClosing()
-                            + ",closed=" + isClosed() + ")，触发重连");
-                    reconnect();
-                }
-            } catch (Throwable t) {
-                //捕获 Throwable（含 OutOfMemoryError 等），守护线程绝不能因此退出
-                log.error("【" + name + "】WebSocket客户端重连/心跳异常", t);
-            }
-            try {
-                Thread.sleep(CONNECT_INTERVAL);
-            } catch (InterruptedException e) {
-                //底层重连会中断相关线程；不能因中断而杀死本守护线程，清除标志后继续
-                Thread.interrupted();
-            }
+            String sendMessage = JSON.toJSONString(qqCommonPayloadEntity);
+            log.debug("【" + name + "】WebSocket客户端发送心跳消息: " + sendMessage);
+            send(sendMessage);
+        } else if (shouldReconnect(lastConnectAttemptAt, MIN_RECONNECT_INTERVAL_MS)) {
+            //未连接且已过退避间隔：重连
+            lastConnectAttemptAt = System.currentTimeMillis();
+            log.info("【" + name + "】WebSocket客户端检测到未连接(closing=" + isClosing()
+                    + ",closed=" + isClosed() + ")，触发重连");
+            reconnect();
         }
-    }
-
-    /**
-     * 是否需要重连：正在关闭（CLOSING）时不重连，其余未连接状态用最小间隔退避，
-     * 防止握手期间被反复触发。
-     */
-    private boolean shouldReconnect() {
-        if (isClosing()) {
-            return false;
-        }
-        return System.currentTimeMillis() - lastConnectAttemptAt >= MIN_RECONNECT_INTERVAL_MS;
     }
 
 }
