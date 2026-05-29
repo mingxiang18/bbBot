@@ -4,17 +4,16 @@ import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.ImageUtils;
 import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.common.util.FileUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 public class BbFortuneHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies bbReplies;
 
     @Autowired
     private ResourcesUtils resourcesUtils;
@@ -81,11 +80,9 @@ public class BbFortuneHandler {
                 imageFile.getAbsolutePath());
 
         //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
+        bbReplies.send(bbReceiveMessage, Arrays.asList(
             BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
             BbMessageContent.buildLocalImageMessageContent(imageFile))
         );
-        bbMessageApi.sendMessage(bbSendMessage);
     }
 }
