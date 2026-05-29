@@ -32,6 +32,25 @@ public class ImageUtils{
     }
 
     /**
+     * 创建一张支持透明（TRANSLUCENT）的画布。
+     * 用于解决「png 透明图片缩放/拼接后变黑」的问题：先建一张 TYPE_INT_RGB 临时图，
+     * 借其 {@link java.awt.GraphicsConfiguration} 创建兼容的 TRANSLUCENT 图像并返回。
+     * 等价于此前散落在多处的两行透明初始化逻辑。
+     * @param width  画布宽度
+     * @param height 画布高度
+     * @return 支持透明的 {@link BufferedImage}
+     */
+    public static BufferedImage createTranslucentCanvas(int width, int height) {
+        BufferedImage tag = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        // 借助 RGB 临时图的 GraphicsConfiguration 创建兼容的透明图像
+        Graphics2D g = tag.createGraphics();
+        BufferedImage translucent = g.getDeviceConfiguration()
+                .createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
+        g.dispose();
+        return translucent;
+    }
+
+    /**
      * 对图片裁剪，并把裁剪新图片保存
      * @param srcFile 读取源图片路径
      * @param toFile	写入图片路径
@@ -89,14 +108,10 @@ public class ImageUtils{
 
             int afterWidth = (int) (width * ratio);
             int afterHeight = (int) (height * ratio);
-            // 放大边长
-            BufferedImage tag = new BufferedImage(afterWidth, afterHeight, BufferedImage.TYPE_INT_RGB);
+            // 放大边长（创建透明画布，解决 png 透明图片会变黑的问题）
+            BufferedImage tag = createTranslucentCanvas(afterWidth, afterHeight);
             //绘制放大后的图片
             Graphics2D g = tag.createGraphics();
-
-            // 下面两行解决png透明图片会变黑的问题
-            tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
-            g = tag.createGraphics();
 
             g.drawImage(src, 0, 0, afterWidth, afterHeight, null);
             File out = new File(toImagePath);
@@ -155,14 +170,10 @@ public class ImageUtils{
 
             int afterWidth = (int) (width * ratio);
             int afterHeight = (int) (height * ratio);
-            // 放大边长
-            BufferedImage tag = new BufferedImage(afterWidth, afterHeight, BufferedImage.TYPE_INT_RGB);
+            // 放大边长（创建透明画布，解决 png 透明图片会变黑的问题）
+            BufferedImage tag = createTranslucentCanvas(afterWidth, afterHeight);
             //绘制放大后的图片
             Graphics2D g = tag.createGraphics();
-
-            // 下面两行解决png透明图片会变黑的问题
-            tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
-            g = tag.createGraphics();
             // 设置透明度
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
@@ -212,14 +223,10 @@ public class ImageUtils{
             // 构造Image对象
             BufferedImage src = ImageIO.read(file);
 
-            // 放大边长
-            BufferedImage tag = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            // 放大边长（创建透明画布，解决 png 透明图片会变黑的问题）
+            BufferedImage tag = createTranslucentCanvas(width, height);
             //绘制放大后的图片
             Graphics2D g = tag.createGraphics();
-
-            // 下面两行解决png透明图片会变黑的问题
-            tag = g.getDeviceConfiguration().createCompatibleImage(tag.getWidth(null), tag.getHeight(null), Transparency.TRANSLUCENT);
-            g = tag.createGraphics();
 
             g.drawImage(src, 0, 0, width, height, null);
             return tag;
