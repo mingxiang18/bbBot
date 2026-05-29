@@ -79,6 +79,13 @@
             <version>1.5.6</version>
         </dependency>
 
+        <!--测试栈：JUnit5 + Mockito + AssertJ（版本由父 pom 引入的 spring-boot-dependencies BOM 管理）-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <profiles>
