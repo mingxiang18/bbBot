@@ -240,6 +240,31 @@ public class SplatoonRecordTool {
         }
     }
 
+    /* ===================== 模式 ID 常量 ===================== */
+
+    /** Splatoon3 对战模式 ID(GraphQL Base64 vsModeId),供 {@link #modeVsIds} 引用。 */
+    static final class SplatoonModes {
+        /** 涂地/普通比赛。 */
+        static final String TURF = "VnNNb2RlLTE=";
+        /** 真格(蛮颓挑战)。 */
+        static final String ANARCHY_CHALLENGE = "VnNNb2RlLTI=";
+        /** 真格(蛮颓开放)。 */
+        static final String ANARCHY_OPEN = "VnNNb2RlLTUx";
+        /** X 比赛。 */
+        static final String X = "VnNNb2RlLTM=";
+        /** 活动比赛。 */
+        static final String EVENT = "VnNNb2RlLTQ=";
+        /** 私房。 */
+        static final String PRIVATE = "VnNNb2RlLTU=";
+        /** 祭典(开放)。 */
+        static final String FEST_OPEN = "VnNNb2RlLTY=";
+        /** 祭典(挑战)。 */
+        static final String FEST_CHALLENGE = "VnNNb2RlLTg=";
+
+        private SplatoonModes() {
+        }
+    }
+
     /* ===================== 选择逻辑(纯,便于单测) ===================== */
 
     /** 模式关键词 → vsModeId 列表;空 = 不过滤。 */
@@ -249,22 +274,22 @@ public class SplatoonRecordTool {
         }
         String k = mode.trim().toLowerCase();
         if (k.contains("真格") || k.contains("蛮颓") || k.contains("anarchy") || k.contains("bankara") || k.contains("挑战") || k.contains("开放")) {
-            return java.util.Arrays.asList("VnNNb2RlLTUx", "VnNNb2RlLTI=");
+            return java.util.Arrays.asList(SplatoonModes.ANARCHY_OPEN, SplatoonModes.ANARCHY_CHALLENGE);
         }
         if (k.contains("占地") || k.contains("涂地") || k.contains("turf") || k.contains("regular") || k.contains("普通")) {
-            return Collections.singletonList("VnNNb2RlLTE=");
+            return Collections.singletonList(SplatoonModes.TURF);
         }
         if (k.equals("x") || k.contains("x比赛") || k.contains("xmatch")) {
-            return Collections.singletonList("VnNNb2RlLTM=");
+            return Collections.singletonList(SplatoonModes.X);
         }
         if (k.contains("活动") || k.contains("event")) {
-            return Collections.singletonList("VnNNb2RlLTQ=");
+            return Collections.singletonList(SplatoonModes.EVENT);
         }
         if (k.contains("祭典") || k.contains("fest")) {
-            return java.util.Arrays.asList("VnNNb2RlLTY=", "VnNNb2RlLTg=");
+            return java.util.Arrays.asList(SplatoonModes.FEST_OPEN, SplatoonModes.FEST_CHALLENGE);
         }
         if (k.contains("私") || k.contains("private")) {
-            return Collections.singletonList("VnNNb2RlLTU=");
+            return Collections.singletonList(SplatoonModes.PRIVATE);
         }
         return Collections.emptyList();
     }
