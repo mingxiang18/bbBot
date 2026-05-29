@@ -17,6 +17,7 @@ import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopUserDetailService;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopWaveDetailService;
 import com.bb.bot.handler.splatoon.BbSplatoonUserHandler;
+import com.bb.bot.handler.splatoon.RecordType;
 import com.bb.bot.handler.splatoon.render.SplatoonHtmlRenderer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -82,14 +83,13 @@ public class SplatoonRecordTool {
         if (sink == null) {
             return r;
         }
-        String userId = MemoryToolContext.getUserId();
-        if (!splatoonTokenManager.isBound(userId)) {
-            r.put("error", "not_bound");
-            r.put("hint", "该用户未绑定喷喷账号,无法查询战绩。请管理员先用「绑定喷喷账号」给TA绑定。");
+        String userId = requireBoundUser(r);
+        if (userId == null) {
             return r;
         }
         List<String> accountIds = accountIds(userId);
-        boolean coop = isCoop(type);
+        RecordType recordType = recordType(type);
+        boolean coop = recordType == RecordType.COOP;
         int n = clamp(count == null ? 5 : count, 1, 10);
 
         if (Boolean.TRUE.equals(refresh)) {
@@ -170,14 +170,13 @@ public class SplatoonRecordTool {
         if (sink == null) {
             return r;
         }
-        String userId = MemoryToolContext.getUserId();
-        if (!splatoonTokenManager.isBound(userId)) {
-            r.put("error", "not_bound");
-            r.put("hint", "该用户未绑定喷喷账号,无法查询战绩。请管理员先用「绑定喷喷账号」给TA绑定。");
+        String userId = requireBoundUser(r);
+        if (userId == null) {
             return r;
         }
         List<String> accountIds = accountIds(userId);
-        boolean coop = isCoop(type);
+        RecordType recordType = recordType(type);
+        boolean coop = recordType == RecordType.COOP;
         if (Boolean.TRUE.equals(refresh)) {
             doRefresh(userId, coop, r);
         }
@@ -426,6 +425,25 @@ public class SplatoonRecordTool {
     private boolean isCoop(String type) {
         String t = type == null ? "" : type.trim().toLowerCase();
         return t.contains("coop") || t.contains("打工") || t.contains("salmon") || t.contains("鲑");
+    }
+
+    /** type 关键字 → 记录类型；命中打工别名(coop/打工/salmon/鲑)为 COOP，否则 BATTLE(与重构前默认对战分支等价)。 */
+    RecordType recordType(String type) {
+        return isCoop(type) ? RecordType.COOP : RecordType.BATTLE;
+    }
+
+    /**
+     * 校验当前 caller 已绑定喷喷账号：未绑定时把 not_bound 错误写入 {@code r} 并返回 null，
+     * 已绑定返回 userId。文案与重构前两方法内联分支逐一等价。
+     */
+    private String requireBoundUser(Map<String, Object> r) {
+        String userId = MemoryToolContext.getUserId();
+        if (!splatoonTokenManager.isBound(userId)) {
+            r.put("error", "not_bound");
+            r.put("hint", "该用户未绑定喷喷账号,无法查询战绩。请管理员先用「绑定喷喷账号」给TA绑定。");
+            return null;
+        }
+        return userId;
     }
 
     private List<String> accountIds(String userId) {
