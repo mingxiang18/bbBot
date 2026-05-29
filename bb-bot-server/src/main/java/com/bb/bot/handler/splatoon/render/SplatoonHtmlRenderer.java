@@ -177,13 +177,23 @@ public class SplatoonHtmlRenderer {
     private String battleCard(SplatoonBattleRecord r, List<SplatoonBattleUserDetail> ps, boolean detail) {
         String[] mode = MODE.getOrDefault(r.getVsModeId(), new String[]{r.getVsModeName(), "#888", ""});
         boolean win = "WIN".equals(r.getJudgement());
+        StringBuilder sb = new StringBuilder();
+        sb.append("<div class='card' style='border-left:7px solid ").append(mode[1]).append(";'>");
+        sb.append(battleCardHeader(r, mode, win));
+        sb.append(battleCardTeams(ps, win));
+        sb.append("</div>");
+        return sb.toString();
+    }
+
+    /** 列表卡头部：模式/规则/地图名 + 地图缩略图 + 胜负/比分/meta 一行。 */
+    private String battleCardHeader(SplatoonBattleRecord r, String[] mode, boolean win) {
         boolean ko = StringUtils.isNotBlank(r.getKnockout());
         String score = (r.getMyScore() != null || r.getOtherScore() != null)
                 ? (n(r.getMyScore()) + " : " + n(r.getOtherScore())) : (win ? "胜利" : "败北");
         String meta = battleMeta(r);
+        String jc = win ? WIN : LOSE;
+        String koChip = ko ? " <span style='font-size:10px;background:" + WIN + ";color:#111;padding:0 5px;border-radius:5px;'>KO</span>" : "";
         StringBuilder sb = new StringBuilder();
-        sb.append("<div class='card' style='border-left:7px solid ").append(mode[1]).append(";'>");
-        // 头部
         sb.append("<div style='padding:9px 14px 7px;'><table><tr>");
         sb.append("<td style='vertical-align:middle;'>")
                 .append("<span style='font-size:17px;'>").append(img(mode[2], 20, 20))
@@ -192,19 +202,20 @@ public class SplatoonHtmlRenderer {
                 .append(" <span class='sub'>").append(esc(mode[0])).append(" · ").append(esc(r.getVsRuleName())).append("</span></td>");
         sb.append("<td style='width:140px;text-align:center;vertical-align:middle;'>")
                 .append(img("nso_splatoon/battle/stage/" + r.getVsStageId() + ".png", 124, 23)).append("</td>");
-        String jc = win ? WIN : LOSE;
-        String koChip = ko ? " <span style='font-size:10px;background:" + WIN + ";color:#111;padding:0 5px;border-radius:5px;'>KO</span>" : "";
         sb.append("<td style='text-align:right;vertical-align:middle;width:215px;white-space:nowrap;'>")
                 .append("<span style='font-size:18px;color:").append(jc).append(";'>").append(win ? "WIN" : "LOSE").append(koChip).append("</span>")
                 .append(" <span style='font-size:14px;color:").append(jc).append(";'>").append(esc(score)).append("</span>")
                 .append(meta.isEmpty() ? "" : " <span class='sub'>" + esc(meta) + "</span>")
                 .append("</td></tr></table></div>");
-        // 4v4 两块
-        sb.append("<div style='padding:0 12px 9px;'><table><tr>")
-                .append("<td style='width:50%;vertical-align:top;padding-right:5px;'>").append(teamBlock("#15323a", C_MY, "kill.png", "death.png", team(ps, 1), win)).append("</td>")
-                .append("<td style='width:50%;vertical-align:top;padding-left:5px;'>").append(teamBlock("#3a2030", C_EN, "kill2.png", "death2.png", team(ps, 2), !win)).append("</td>")
-                .append("</tr></table></div></div>");
         return sb.toString();
+    }
+
+    /** 列表卡 4v4 两块（左己方右敌方），各 2×2。 */
+    private String battleCardTeams(List<SplatoonBattleUserDetail> ps, boolean win) {
+        return "<div style='padding:0 12px 9px;'><table><tr>"
+                + "<td style='width:50%;vertical-align:top;padding-right:5px;'>" + teamBlock("#15323a", C_MY, "kill.png", "death.png", team(ps, 1), win) + "</td>"
+                + "<td style='width:50%;vertical-align:top;padding-left:5px;'>" + teamBlock("#3a2030", C_EN, "kill2.png", "death2.png", team(ps, 2), !win) + "</td>"
+                + "</tr></table></div>";
     }
 
     private String battleMeta(SplatoonBattleRecord r) {
