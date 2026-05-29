@@ -3,7 +3,6 @@ package com.bb.bot.database.splatoon.service.impl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonCoopRecord;
 import com.bb.bot.database.splatoon.mapper.SplatoonCoopRecordsMapper;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopEnemyDetailService;
@@ -12,7 +11,6 @@ import com.bb.bot.database.splatoon.service.ISplatoonCoopWaveDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bb.bot.database.splatoon.service.ISplatoonCoopRecordsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -24,7 +22,7 @@ import java.math.BigDecimal;
  * @since 2024-02-01
  */
 @Service
-public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopRecordsMapper, SplatoonCoopRecord> implements ISplatoonCoopRecordsService {
+public class SplatoonCoopRecordsServiceImpl extends AbstractSplatoonRecordServiceImpl<SplatoonCoopRecordsMapper, SplatoonCoopRecord> implements ISplatoonCoopRecordsService {
     @Autowired
     private SplatoonCoopRecordsMapper splatoonCoopRecordsMapper;
 
@@ -36,9 +34,6 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
 
     @Autowired
     private ISplatoonCoopEnemyDetailService coopEnemyDetailService;
-
-    @Autowired
-    private ResourcesUtils resourcesUtils;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -179,12 +174,9 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
     /**
      * 保存一把打工武器的图片资源到本地静态目录。
      * 路径 nso_splatoon/coop/weapon/{weaponName}.png,图源取自 weapon.image.url。
+     * 委托基类同构骨架 {@link #saveResourceFromImage}（武器图在 image 键下）。
      */
     private void saveWeaponResource(String weaponName, JSONObject weapon) {
-        if (weapon == null) {
-            return;
-        }
-        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + weaponName + ".png",
-                weapon.getJSONObject("image").getString("url"));
+        saveResourceFromImage("coop/weapon", weaponName, weapon, "image");
     }
 }

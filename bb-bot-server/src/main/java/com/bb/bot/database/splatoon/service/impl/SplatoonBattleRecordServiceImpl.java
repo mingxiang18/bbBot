@@ -3,7 +3,6 @@ package com.bb.bot.database.splatoon.service.impl;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.common.util.DateUtils;
-import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleUserDetail;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.bb.bot.database.splatoon.mapper.SplatoonBattleRecordMapper;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
 import com.bb.bot.database.splatoon.service.ISplatoonBattleRecordService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -26,15 +24,12 @@ import java.util.stream.Collectors;
  * @since 2024-04-02
  */
 @Service
-public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleRecordMapper,SplatoonBattleRecord> implements ISplatoonBattleRecordService {
+public class SplatoonBattleRecordServiceImpl extends AbstractSplatoonRecordServiceImpl<SplatoonBattleRecordMapper, SplatoonBattleRecord> implements ISplatoonBattleRecordService {
     @Autowired
     private SplatoonBattleRecordMapper splatoonBattleRecordMapper;
 
     @Autowired
     private ISplatoonBattleUserDetailService splatoonBattleUserDetailService;
-
-    @Autowired
-    private ResourcesUtils resourcesUtils;
 
 
     @Override
@@ -200,13 +195,10 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
     /**
      * 保存一件装备(头/衣/鞋)的图片资源到本地静态目录。
      * 路径 nso_splatoon/user/gear/{gearName}.png,图源取自 gear.originalImage.url。
+     * 委托基类同构骨架 {@link #saveResourceFromImage}（装备图在 originalImage 键下）。
      */
     private void saveGearResource(String gearName, JSONObject gear) {
-        if (gear == null) {
-            return;
-        }
-        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + gearName + ".png",
-                gear.getJSONObject("originalImage").getString("url"));
+        saveResourceFromImage("user/gear", gearName, gear, "originalImage");
     }
 
     /** 取一件装备的主技能名;无则空串。 */
