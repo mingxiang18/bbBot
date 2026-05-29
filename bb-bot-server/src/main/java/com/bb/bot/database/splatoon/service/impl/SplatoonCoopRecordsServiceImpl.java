@@ -66,24 +66,27 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
         splatoonCoopRecord.setPlayedTime(DateUtils.convertUTCTimeToCNLocalDateTime(coopDetail.getString("playedTime")));
 
         //设置地图数据
-        splatoonCoopRecord.setCoopStageId(coopDetail.getJSONObject("coopStage").getString("id"));
-        splatoonCoopRecord.setCoopStageName(coopDetail.getJSONObject("coopStage").getString("name"));
+        JSONObject coopStage = coopDetail.getJSONObject("coopStage");
+        splatoonCoopRecord.setCoopStageId(coopStage.getString("id"));
+        splatoonCoopRecord.setCoopStageName(coopStage.getString("name"));
         resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/stage/" + splatoonCoopRecord.getCoopStageName() + ".png",
-                coopDetail.getJSONObject("coopStage").getJSONObject("image").getString("url"));
+                coopStage.getJSONObject("image").getString("url"));
 
         splatoonCoopRecord.setDangerRate(String.valueOf(coopDetail.getBigDecimal("dangerRate").multiply(new BigDecimal(100)).intValue()));
-        if(coopDetail.getJSONObject("afterGrade") != null) {
-            splatoonCoopRecord.setAfterGradeId(coopDetail.getJSONObject("afterGrade").getString("id"));
-            splatoonCoopRecord.setAfterGradeName(coopDetail.getJSONObject("afterGrade").getString("name"));
+        JSONObject afterGrade = coopDetail.getJSONObject("afterGrade");
+        if(afterGrade != null) {
+            splatoonCoopRecord.setAfterGradeId(afterGrade.getString("id"));
+            splatoonCoopRecord.setAfterGradeName(afterGrade.getString("name"));
         }
         splatoonCoopRecord.setAfterGradePoint(coopDetail.getInteger("afterGradePoint"));
         splatoonCoopRecord.setGradePointDiff(coopRecord.getString("gradePointDiff"));
         splatoonCoopRecord.setResultWave(coopDetail.getInteger("resultWave"));
 
         //计算运蛋数
-        if (coopRecord.getJSONObject("myResult") != null) {
+        JSONObject myResult = coopRecord.getJSONObject("myResult");
+        if (myResult != null) {
             //计算红蛋数
-            int countRed = coopRecord.getJSONObject("myResult").getInteger("deliverCount");
+            int countRed = myResult.getInteger("deliverCount");
             for (Object memberResult : coopRecord.getJSONArray("memberResults")) {
                 Integer deliverCount = ((JSONObject) memberResult).getInteger("deliverCount");
                 if (deliverCount != null) {
@@ -93,9 +96,10 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
             splatoonCoopRecord.setTeamRedCount(countRed);
         }
         //计算金蛋运蛋数
-        if (coopRecord.getJSONArray("waveResults").size() > 0) {
+        JSONArray waveResults = coopRecord.getJSONArray("waveResults");
+        if (waveResults.size() > 0) {
             int countGloden = 0;
-            for (Object waveResult : coopRecord.getJSONArray("waveResults")) {
+            for (Object waveResult : waveResults) {
                 Integer teamDeliverCount = ((JSONObject) waveResult).getInteger("teamDeliverCount");
                 if (teamDeliverCount != null) {
                     countGloden += teamDeliverCount;
@@ -105,43 +109,42 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
         }
 
         //判断是否打了boss
-        if (coopRecord.getJSONObject("bossResult") != null) {
-            JSONObject boss = coopRecord.getJSONObject("bossResult").getJSONObject("boss");
+        JSONObject bossResult = coopRecord.getJSONObject("bossResult");
+        if (bossResult != null) {
+            JSONObject boss = bossResult.getJSONObject("boss");
             splatoonCoopRecord.setBossId(boss.getString("id"));
             splatoonCoopRecord.setBossName(boss.getString("name"));
-            splatoonCoopRecord.setBossDefeatFlag(coopRecord.getJSONObject("bossResult").getBoolean("hasDefeatBoss"));
+            splatoonCoopRecord.setBossDefeatFlag(bossResult.getBoolean("hasDefeatBoss"));
             //下载头目鲑鱼立绘(按 bossId),供详情/列表展示
-            if (boss.getJSONObject("image") != null && boss.getJSONObject("image").getString("url") != null) {
+            JSONObject bossImage = boss.getJSONObject("image");
+            if (bossImage != null && bossImage.getString("url") != null) {
                 resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/boss/" + boss.getString("id") + ".png",
-                        boss.getJSONObject("image").getString("url"));
+                        bossImage.getString("url"));
             }
             //设置鳞片数量
-            splatoonCoopRecord.setGoldScale(coopDetail.getJSONObject("scale").getInteger("gold"));
-            splatoonCoopRecord.setSilverScale(coopDetail.getJSONObject("scale").getInteger("silver"));
-            splatoonCoopRecord.setBronzeScale(coopDetail.getJSONObject("scale").getInteger("bronze"));
+            JSONObject scale = coopDetail.getJSONObject("scale");
+            splatoonCoopRecord.setGoldScale(scale.getInteger("gold"));
+            splatoonCoopRecord.setSilverScale(scale.getInteger("silver"));
+            splatoonCoopRecord.setBronzeScale(scale.getInteger("bronze"));
         }
 
         //设置武器名
         JSONArray weaponsArray = coopRecord.getJSONArray("weapons");
         if (weaponsArray.size() > 0) {
             splatoonCoopRecord.setWeapon1(weaponsArray.getJSONObject(0).getString("name"));
-            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon1() + ".png",
-                    weaponsArray.getJSONObject(0).getJSONObject("image").getString("url"));
+            saveWeaponResource(splatoonCoopRecord.getWeapon1(), weaponsArray.getJSONObject(0));
         }
         if (weaponsArray.size() > 1) {
             splatoonCoopRecord.setWeapon2(weaponsArray.getJSONObject(1).getString("name"));
-            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon2() + ".png",
-                    weaponsArray.getJSONObject(1).getJSONObject("image").getString("url"));
+            saveWeaponResource(splatoonCoopRecord.getWeapon2(), weaponsArray.getJSONObject(1));
         }
         if (weaponsArray.size() > 2) {
             splatoonCoopRecord.setWeapon3(weaponsArray.getJSONObject(2).getString("name"));
-            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon3() + ".png",
-                    weaponsArray.getJSONObject(2).getJSONObject("image").getString("url"));
+            saveWeaponResource(splatoonCoopRecord.getWeapon3(), weaponsArray.getJSONObject(2));
         }
         if (weaponsArray.size() > 3) {
             splatoonCoopRecord.setWeapon4(weaponsArray.getJSONObject(3).getString("name"));
-            resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + splatoonCoopRecord.getWeapon4() + ".png",
-                    weaponsArray.getJSONObject(3).getJSONObject("image").getString("url"));
+            saveWeaponResource(splatoonCoopRecord.getWeapon4(), weaponsArray.getJSONObject(3));
         }
 
         //得分 / 熊先生点数 / 气味计
@@ -150,7 +153,6 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
         splatoonCoopRecord.setSmellMeter(coopDetail.getInteger("smellMeter"));
 
         //Wave 概要: "W1 28·W2 24·W3 31"(送金蛋数=teamDeliverCount)
-        JSONArray waveResults = coopRecord.getJSONArray("waveResults");
         if (waveResults != null && !waveResults.isEmpty()) {
             StringBuilder wave = new StringBuilder();
             for (int i = 0; i < waveResults.size(); i++) {
@@ -172,5 +174,17 @@ public class SplatoonCoopRecordsServiceImpl extends ServiceImpl<SplatoonCoopReco
 
         splatoonCoopRecordsMapper.insert(splatoonCoopRecord);
         return splatoonCoopRecord;
+    }
+
+    /**
+     * 保存一把打工武器的图片资源到本地静态目录。
+     * 路径 nso_splatoon/coop/weapon/{weaponName}.png,图源取自 weapon.image.url。
+     */
+    private void saveWeaponResource(String weaponName, JSONObject weapon) {
+        if (weapon == null) {
+            return;
+        }
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/coop/weapon/" + weaponName + ".png",
+                weapon.getJSONObject("image").getString("url"));
     }
 }
