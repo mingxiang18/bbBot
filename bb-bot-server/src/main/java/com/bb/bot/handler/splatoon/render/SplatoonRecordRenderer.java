@@ -44,35 +44,19 @@ public class SplatoonRecordRenderer {
     @Autowired
     private ResourcesUtils resourcesUtils;
 
-    public static final Map<String, String> pointDiffMap = new HashMap<String, String>() {{
-        put("UP", "↑");
-        put("DOWN", "↓");
-        put("KEEP", "→");
-    }};
+    /** 段位升降箭头、规则图标、模式样式三张表收敛至 {@link SplatoonStyleConfig}（两渲染器共用）。 */
+    public static final Map<String, String> pointDiffMap = SplatoonStyleConfig.POINT_DIFF;
 
+    /** 打工规则中文名表：文案与 HTML 渲染器不同，属本渲染器独有，不在共享范围内。 */
     public static final Map<String, String> ruleMap = new HashMap<String, String>() {{
         put("REGULAR", "普通打工");
         put("TEAM_CONTEST", "团队工");
         put("BIG_RUN", "大型跑");
     }};
 
-    public static final Map<String, String> battleRuleMap = new HashMap<String, String>() {{
-        put("VnNSdWxlLTI=", "nso_splatoon/battle/rule/ta.png");
-        put("VnNSdWxlLTE=", "nso_splatoon/battle/rule/quyu.png");
-        put("VnNSdWxlLTM=", "nso_splatoon/battle/rule/yuhu.png");
-        put("VnNSdWxlLTQ=", "nso_splatoon/battle/rule/geli.png");
-    }};
+    public static final Map<String, String> battleRuleMap = SplatoonStyleConfig.RULE_ICON;
 
-    public static final Map<String, ModeStyle> modeStyleMap = new HashMap<String, ModeStyle>() {{
-        put("VnNNb2RlLTE=", new ModeStyle("VnNNb2RlLTE=", "占地比赛", new Color(95, 255, 26), "nso_splatoon/battle/mode/regular.png"));
-        put("VnNNb2RlLTUx", new ModeStyle("VnNNb2RlLTUx", "蛮颓比赛(开放)", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
-        put("VnNNb2RlLTI=", new ModeStyle("VnNNb2RlLTI=", "蛮颓比赛(挑战)", new Color(255, 60, 26), "nso_splatoon/battle/mode/rank.png"));
-        put("VnNNb2RlLTQ=", new ModeStyle("VnNNb2RlLTQ=", "活动比赛", new Color(255, 0, 98), "nso_splatoon/battle/mode/event.png"));
-        put("VnNNb2RlLTU=", new ModeStyle("VnNNb2RlLTU=", "私人比赛", new Color(149, 0, 255), "nso_splatoon/battle/mode/private.png"));
-        put("VnNNb2RlLTM=", new ModeStyle("VnNNb2RlLTM=", "X比赛", new Color(0, 131, 98), "nso_splatoon/battle/mode/x.png"));
-        put("VnNNb2RlLTY=", new ModeStyle("VnNNb2RlLTY=", "祭典比赛", new Color(34, 220, 255, 255), "nso_splatoon/battle/mode/fest.png"));
-        put("VnNNb2RlLTg=", new ModeStyle("VnNNb2RlLTg=", "三色夺宝比赛", new Color(34, 255, 248, 255), "nso_splatoon/battle/mode/fest.png"));
-    }};
+    public static final Map<String, SplatoonStyleConfig.ModeStyle> modeStyleMap = SplatoonStyleConfig.MODE_STYLE;
 
     public static final Map<String, TeamStyle> teamStyleMap = new HashMap<String, TeamStyle>() {{
         put("team1", new TeamStyle(new Color(89, 181, 170), "nso_splatoon/battle/icon/kill.png", "nso_splatoon/battle/icon/death.png"));
@@ -270,7 +254,7 @@ public class SplatoonRecordRenderer {
     /** 绘制一条对战记录 */
     @SneakyThrows
     public void writeOneBattleRecord(Graphics2D g2d, SplatoonBattleRecord record, List<SplatoonBattleUserDetail> userDetailList, int startY) {
-        ModeStyle modeStyle = modeStyleMap.get(record.getVsModeId());
+        SplatoonStyleConfig.ModeStyle modeStyle = modeStyleMap.get(record.getVsModeId());
         ImageUtils.createRoundRectOnImage(g2d, modeStyle.getColor(), 15, startY, 700, 132, 0.3f);
 
         ImageUtils.writeWordInImage(g2d,
@@ -422,16 +406,6 @@ public class SplatoonRecordRenderer {
                 isWin = !isWin;
             }
         }
-    }
-
-    /** 喷喷模式绘制配置实体类 */
-    @Data
-    @AllArgsConstructor
-    public static class ModeStyle {
-        private String modeId;
-        private String modeName;
-        private Color color;
-        private String modeImgPath;
     }
 
     /** 喷喷对战小队样式配置实体类 */

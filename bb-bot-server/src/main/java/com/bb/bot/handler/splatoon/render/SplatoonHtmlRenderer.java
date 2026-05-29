@@ -49,28 +49,15 @@ public class SplatoonHtmlRenderer {
     private static final String WIN = "#eaff3a", LOSE = "#aeb4c8", INK = "#e8ebf5", SUB = "#8b91a8";
     private static final String C_MY = "#39c6b4", C_EN = "#e85a8a", COOP = "#e07b00", GRADE = "#ffcf3f";
 
-    /** 模式 id → {中文名, 左条颜色, 模式图标}。挑战/开放已按不同 id 区分。 */
+    /** 模式 id → {中文名, 左条颜色, 模式图标}；规则图标表、升降箭头表均收敛至 {@link SplatoonStyleConfig}。 */
     private static final Map<String, String[]> MODE = new HashMap<>();
-    /** 规则 id → 规则图标路径。 */
-    private static final Map<String, String> RULE_ICON = new HashMap<>();
-    private static final Map<String, String> DIFF = new HashMap<>();
+    private static final Map<String, String> RULE_ICON = SplatoonStyleConfig.RULE_ICON;
+    private static final Map<String, String> DIFF = SplatoonStyleConfig.POINT_DIFF;
 
     static {
-        MODE.put("VnNNb2RlLTE=", new String[]{"占地比赛", "#5fff1a", "nso_splatoon/battle/mode/regular.png"});
-        MODE.put("VnNNb2RlLTUx", new String[]{"蛮颓比赛(开放)", "#ff3c1a", "nso_splatoon/battle/mode/rank.png"});
-        MODE.put("VnNNb2RlLTI=", new String[]{"蛮颓比赛(挑战)", "#ff3c1a", "nso_splatoon/battle/mode/rank.png"});
-        MODE.put("VnNNb2RlLTQ=", new String[]{"活动比赛", "#ff0062", "nso_splatoon/battle/mode/event.png"});
-        MODE.put("VnNNb2RlLTU=", new String[]{"私人比赛", "#9500ff", "nso_splatoon/battle/mode/private.png"});
-        MODE.put("VnNNb2RlLTM=", new String[]{"X比赛", "#008362", "nso_splatoon/battle/mode/x.png"});
-        MODE.put("VnNNb2RlLTY=", new String[]{"祭典比赛", "#22dcff", "nso_splatoon/battle/mode/fest.png"});
-        MODE.put("VnNNb2RlLTg=", new String[]{"三色夺宝比赛", "#22fff8", "nso_splatoon/battle/mode/fest.png"});
-        RULE_ICON.put("VnNSdWxlLTI=", "nso_splatoon/battle/rule/ta.png");
-        RULE_ICON.put("VnNSdWxlLTE=", "nso_splatoon/battle/rule/quyu.png");
-        RULE_ICON.put("VnNSdWxlLTM=", "nso_splatoon/battle/rule/yuhu.png");
-        RULE_ICON.put("VnNSdWxlLTQ=", "nso_splatoon/battle/rule/geli.png");
-        DIFF.put("UP", "↑");
-        DIFF.put("DOWN", "↓");
-        DIFF.put("KEEP", "→");
+        for (String modeId : SplatoonStyleConfig.MODE_STYLE.keySet()) {
+            MODE.put(modeId, SplatoonStyleConfig.htmlMode(modeId));
+        }
     }
 
     /* ============================ 渲染管线 ============================ */
