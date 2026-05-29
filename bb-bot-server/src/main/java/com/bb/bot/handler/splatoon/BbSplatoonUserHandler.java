@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
+import com.bb.bot.common.constant.ConfigKeys;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.nso.Splatoon3ApiCaller;
@@ -107,8 +108,8 @@ public class BbSplatoonUserHandler {
         //获取用户配置
         UserConfigValue userConfigValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "autoUploadRecords"));
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.AUTO_UPLOAD));
 
         //判断是开启还是关闭
         String openFlag = "0";
@@ -120,8 +121,8 @@ public class BbSplatoonUserHandler {
         if (userConfigValue == null) {
             userConfigValue = new UserConfigValue();
             userConfigValue.setUserId(bbReceiveMessage.getUserId());
-            userConfigValue.setType("NSO");
-            userConfigValue.setKeyName("autoUploadRecords");
+            userConfigValue.setType(ConfigKeys.NSO_TYPE);
+            userConfigValue.setKeyName(ConfigKeys.AUTO_UPLOAD);
             userConfigValue.setValueName(openFlag);
             userConfigValueService.save(userConfigValue);
         }else {
@@ -198,8 +199,8 @@ public class BbSplatoonUserHandler {
         //存 dataUser 映射(逗号分隔多账号),checkAndGetSplatoon3UserToken / 查战绩据此取对应账号 token
         UserConfigValue cfg = new UserConfigValue();
         cfg.setUserId(targetUserId);
-        cfg.setType("NSO");
-        cfg.setKeyName("dataUser");
+        cfg.setType(ConfigKeys.NSO_TYPE);
+        cfg.setKeyName(ConfigKeys.DATA_USER);
         cfg.setValueName(String.join(",", dataUsers));
         userConfigValueService.resetUserConfigValue(cfg);
         reply.setMessageList(Arrays.asList(

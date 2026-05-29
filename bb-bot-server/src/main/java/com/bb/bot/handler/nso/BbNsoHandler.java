@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
+import com.bb.bot.common.constant.ConfigKeys;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.BbReplies;
@@ -96,8 +97,8 @@ public class BbNsoHandler {
             //重新设置session_token
             UserConfigValue userConfigValue = new UserConfigValue();
             userConfigValue.setUserId(bbReceiveMessage.getUserId());
-            userConfigValue.setType("NSO");
-            userConfigValue.setKeyName("session_token");
+            userConfigValue.setType(ConfigKeys.NSO_TYPE);
+            userConfigValue.setKeyName(ConfigKeys.SESSION_TOKEN);
             userConfigValue.setValueName(sessionToken);
             userConfigValueService.resetUserConfigValue(userConfigValue);
 
@@ -120,8 +121,8 @@ public class BbNsoHandler {
         //获取用户的accessToken
         UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "webAccessToken"));
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.WEB_ACCESS_TOKEN));
         if(webAccessTokenConfig == null) {
             bbReplies.atText(bbReceiveMessage, "当前用户未设置nso登录码");
         }
@@ -134,8 +135,8 @@ public class BbNsoHandler {
             //获取token
             webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                     .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
-                    .eq(UserConfigValue::getType, "NSO")
-                    .eq(UserConfigValue::getKeyName, "webAccessToken"));
+                    .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                    .eq(UserConfigValue::getKeyName, ConfigKeys.WEB_ACCESS_TOKEN));
             accountInfo = nsoApiCaller.getNsAccountInfo(webAccessTokenConfig.getValueName());
         }
 
@@ -164,8 +165,8 @@ public class BbNsoHandler {
         //获取用户的accessToken
         UserConfigValue webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "webAccessToken"));
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.WEB_ACCESS_TOKEN));
         //如果为空，告诉用户未设置nso登录码
         if(webAccessTokenConfig == null) {
             bbReplies.atText(bbReceiveMessage, "当前用户未设置nso登录码");
@@ -180,8 +181,8 @@ public class BbNsoHandler {
             //获取token
             webAccessTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                     .eq(UserConfigValue::getUserId, bbReceiveMessage.getUserId())
-                    .eq(UserConfigValue::getType, "NSO")
-                    .eq(UserConfigValue::getKeyName, "webAccessToken"));
+                    .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                    .eq(UserConfigValue::getKeyName, ConfigKeys.WEB_ACCESS_TOKEN));
             nsFriendList = nsoApiCaller.getNsFriendList(webAccessTokenConfig.getValueName());
         }
 
@@ -214,8 +215,8 @@ public class BbNsoHandler {
         //如果accessToken不存在，获取用户的sessionToken
         UserConfigValue sessionTokenConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, userId)
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "session_token"));
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.SESSION_TOKEN));
         if (sessionTokenConfig == null) {
             throw new RuntimeException("未设置nso登录码，无法获取信息");
         }
@@ -232,8 +233,8 @@ public class BbNsoHandler {
         //重新设置用户账号信息
         UserConfigValue userInfoConfig = new UserConfigValue();
         userInfoConfig.setUserId(userId);
-        userInfoConfig.setType("NSO");
-        userInfoConfig.setKeyName("userInfo");
+        userInfoConfig.setType(ConfigKeys.NSO_TYPE);
+        userInfoConfig.setKeyName(ConfigKeys.USER_INFO);
         userInfoConfig.setValueName(userInfo.toJSONString());
         userConfigValueService.resetUserConfigValue(userInfoConfig);
 
@@ -245,15 +246,15 @@ public class BbNsoHandler {
         //重新设置token信息
         UserConfigValue accessTokenConfig = new UserConfigValue();
         accessTokenConfig.setUserId(userId);
-        accessTokenConfig.setType("NSO");
-        accessTokenConfig.setKeyName("webAccessToken");
+        accessTokenConfig.setType(ConfigKeys.NSO_TYPE);
+        accessTokenConfig.setKeyName(ConfigKeys.WEB_ACCESS_TOKEN);
         accessTokenConfig.setValueName(webAccessToken);
         userConfigValueService.resetUserConfigValue(accessTokenConfig);
         //重新设置coralUserId信息
         UserConfigValue coralUserIdConfig = new UserConfigValue();
         coralUserIdConfig.setUserId(userId);
-        coralUserIdConfig.setType("NSO");
-        coralUserIdConfig.setKeyName("coralUserId");
+        coralUserIdConfig.setType(ConfigKeys.NSO_TYPE);
+        coralUserIdConfig.setKeyName(ConfigKeys.CORAL_USER_ID);
         coralUserIdConfig.setValueName(coralUserId);
         userConfigValueService.resetUserConfigValue(coralUserIdConfig);
     }

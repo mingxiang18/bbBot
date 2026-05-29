@@ -3,6 +3,7 @@ package com.bb.bot.common.util.nso;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.bot.common.constant.ConfigKeys;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.common.util.LocalCacheUtils;
@@ -58,8 +59,8 @@ public class NsoApiCaller {
         //nso的app更新有可能修改token规则，导致获取webAccessToken出现9403: Invalid token.，此时可以通过数据库配置旧版版本号来暂时解决，等待s3s更新后修改token校验代码
         UserConfigValue configValue = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
                 .eq(UserConfigValue::getUserId, "system")
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "nsoAppVersion"));
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.NSO_APP_VERSION));
         if (configValue != null) {
             return configValue.getValueName();
         }

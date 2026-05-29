@@ -1,6 +1,7 @@
 package com.bb.bot.schedule;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.bot.common.constant.ConfigKeys;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.handler.splatoon.BbSplatoonUserHandler;
@@ -36,8 +37,8 @@ public class SplatoonRecordsUploadSchedule {
     @Scheduled(cron = "${splaoon.recordsUpload.cron:0 0 0/4 * * *}")
     public void recordsUpload() {
         List<UserConfigValue> list = userConfigValueService.list(new LambdaQueryWrapper<UserConfigValue>()
-                .eq(UserConfigValue::getType, "NSO")
-                .eq(UserConfigValue::getKeyName, "autoUploadRecords")
+                .eq(UserConfigValue::getType, ConfigKeys.NSO_TYPE)
+                .eq(UserConfigValue::getKeyName, ConfigKeys.AUTO_UPLOAD)
                 .eq(UserConfigValue::getValueName, "1"));
 
         for (UserConfigValue userConfigValue : list) {
