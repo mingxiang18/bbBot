@@ -1,6 +1,9 @@
 package com.bb.bot.handler.aiChat;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.bb.bot.common.util.BbReplies;
+import com.bb.bot.common.util.aiChat.billing.GlobalUsageGuard;
+import com.bb.bot.common.util.aiChat.billing.QuotaGuard;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.constant.MessageType;
 import com.bb.bot.database.aiKeywordAndClue.service.IAiClueService;
@@ -16,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -43,6 +48,15 @@ class BbAiChatHandlerDecisionTest {
 
     @Mock
     IUserConfigValueService userConfigValueService;
+
+    @Mock
+    GlobalUsageGuard globalUsageGuard;
+
+    @Mock
+    QuotaGuard quotaGuard;
+
+    @Mock
+    BbReplies bbReplies;
 
     @InjectMocks
     BbAiChatHandler handler;
@@ -149,6 +163,65 @@ class BbAiChatHandlerDecisionTest {
         assertTrue(personality.contains("BASE"));
         assertTrue(personality.contains("c1-c2"));
         assertFalse(personality.contains("{clues}"), "placeholder should be replaced");
+    }
+
+    // =====================================================================
+    // passesUsageGuards：早返各分支（超日限 / 超配额 / 直接触发与否）
+    // =====================================================================
+
+    @Test
+    void passesUsageGuards_underAllLimits_returnsTrue() {
+        BbReceiveMessage msg = newMessage(MessageType.PRIVATE);
+        when(globalUsageGuard.isOverDailyLimit()).thenReturn(false);
+        when(quotaGuard.isOverLimit(anyString(), any())).thenReturn(false);
+
+        assertTrue(handler.passesUsageGuards(msg, ReplyDecision.replyDirect(Collections.emptyList())));
+        verifyNoInteractions(bbReplies);
+    }
+
+    @Test
+    void passesUsageGuards_overDailyLimit_directTrigger_repliesAndBlocks() {
+        BbReceiveMessage msg = newMessage(MessageType.PRIVATE);
+        when(globalUsageGuard.isOverDailyLimit()).thenReturn(true);
+
+        assertFalse(handler.passesUsageGuards(msg, ReplyDecision.replyDirect(Collections.emptyList())));
+        verify(bbReplies).atText(eq(msg), anyString());
+        // 月度配额检查不应再触达（已在日限处早返）
+        verifyNoInteractions(quotaGuard);
+    }
+
+    @Test
+    void passesUsageGuards_overDailyLimit_autoReply_silentBlock() {
+        BbReceiveMessage msg = newMessage(MessageType.GROUP);
+        when(globalUsageGuard.isOverDailyLimit()).thenReturn(true);
+
+        // 概率自动回复（非 directTrigger）：静默跳过，不回提示，避免刷屏
+        assertFalse(handler.passesUsageGuards(msg, ReplyDecision.reply(Collections.emptyList())));
+        verifyNoInteractions(bbReplies);
+        verifyNoInteractions(quotaGuard);
+    }
+
+    @Test
+    void passesUsageGuards_overQuota_directTrigger_repliesAndBlocks() {
+        BbReceiveMessage msg = newMessage(MessageType.PRIVATE);
+        when(globalUsageGuard.isOverDailyLimit()).thenReturn(false);
+        when(quotaGuard.isOverLimit(anyString(), any())).thenReturn(true);
+        when(quotaGuard.status(anyString(), any()))
+                .thenReturn(new QuotaGuard.QuotaStatus("2026-05", new BigDecimal("10"), new BigDecimal("10")));
+
+        assertFalse(handler.passesUsageGuards(msg, ReplyDecision.replyDirect(Collections.emptyList())));
+        verify(bbReplies).atText(eq(msg), anyString());
+    }
+
+    @Test
+    void passesUsageGuards_overQuota_autoReply_silentBlock() {
+        BbReceiveMessage msg = newMessage(MessageType.GROUP);
+        when(globalUsageGuard.isOverDailyLimit()).thenReturn(false);
+        when(quotaGuard.isOverLimit(anyString(), any())).thenReturn(true);
+
+        // 群里概率自动回复超配额：静默跳过，不读 status、不回提示
+        assertFalse(handler.passesUsageGuards(msg, ReplyDecision.reply(Collections.emptyList())));
+        verifyNoInteractions(bbReplies);
     }
 
     private static BbReceiveMessage newMessage(String type) {

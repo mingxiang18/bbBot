@@ -199,27 +199,7 @@ public class BbAiChatHandler {
         if (!decision.isShouldReply()) {
             return;
         }
-
-        // 全局每日 token 兜底：达上限暂停所有 AI 回复，防止异常流量烧 token（直接对话才提示，避免刷屏）。
-        if (globalUsageGuard.isOverDailyLimit()) {
-            log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
-                    globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), bbReceiveMessage.getUserId());
-            if (decision.isDirectTrigger()) {
-                bbReplies.atText(bbReceiveMessage, "今日 AI 调用量已达系统上限，请明天再试。");
-            }
-            return;
-        }
-
-        // 月度限额：超额硬阻断（所有人含 owner）。命令类 handler 不经此入口，申请/审批不受影响。
-        if (quotaGuard.isOverLimit(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType())) {
-            // 仅直接对话（私聊 / @我）才回提示，群里概率自动回复直接静默跳过，避免刷屏
-            if (decision.isDirectTrigger()) {
-                com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
-                        quotaGuard.status(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType());
-                bbReplies.atText(bbReceiveMessage, String.format(
-                        "本月 AI 额度已用完（已用 ¥%s / 额度 ¥%s）。发『/额度申请 理由』可请求管理员重置。",
-                        st.getSpent().toPlainString(), st.getLimit().toPlainString()));
-            }
+        if (!passesUsageGuards(bbReceiveMessage, decision)) {
             return;
         }
 
@@ -267,6 +247,35 @@ public class BbAiChatHandler {
         } finally {
             AiCallContext.clearIdentity();
         }
+    }
+
+    /**
+     * 用量兜底守卫：全局每日 token 上限 + 月度限额。任一触发返回 {@code false}（调用方据此 early-return）。
+     * 仅直接对话（私聊 / @我）才回提示，群里概率自动回复静默跳过，避免刷屏。
+     */
+    boolean passesUsageGuards(BbReceiveMessage msg, ReplyDecision decision) {
+        // 全局每日 token 兜底：达上限暂停所有 AI 回复，防止异常流量烧 token。
+        if (globalUsageGuard.isOverDailyLimit()) {
+            log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
+                    globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), msg.getUserId());
+            if (decision.isDirectTrigger()) {
+                bbReplies.atText(msg, "今日 AI 调用量已达系统上限，请明天再试。");
+            }
+            return false;
+        }
+
+        // 月度限额：超额硬阻断（所有人含 owner）。命令类 handler 不经此入口，申请/审批不受影响。
+        if (quotaGuard.isOverLimit(msg.getUserId(), msg.getBotType())) {
+            if (decision.isDirectTrigger()) {
+                com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
+                        quotaGuard.status(msg.getUserId(), msg.getBotType());
+                bbReplies.atText(msg, String.format(
+                        "本月 AI 额度已用完（已用 ¥%s / 额度 ¥%s）。发『/额度申请 理由』可请求管理员重置。",
+                        st.getSpent().toPlainString(), st.getLimit().toPlainString()));
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -459,7 +468,7 @@ public class BbAiChatHandler {
         String text = answerMessage.stream()
                 .filter(c -> c.getData() != null)
                 .map(c -> c.getData().toString())
-                .reduce("", (a, b) -> a + b);
+                .collect(Collectors.joining());
         memoryEventRecorder.recordOutbound(msg, "chat_reply", text, IdWorker.getIdStr());
     }
 
