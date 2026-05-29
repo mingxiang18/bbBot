@@ -35,6 +35,38 @@ import java.util.zip.GZIPInputStream;
 @Component
 public class RestUtils {
 
+    /**
+     * 默认 User-Agent，对外请求统一使用。
+     */
+    static final String DEFAULT_USER_AGENT = "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)";
+
+    /**
+     * 仅含默认 User-Agent 的请求头。
+     */
+    static HttpHeaders buildDefaultHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.USER_AGENT, DEFAULT_USER_AGENT);
+        return httpHeaders;
+    }
+
+    /**
+     * 默认 User-Agent + JSON Content-Type 的请求头。
+     */
+    static HttpHeaders buildJsonHeaders() {
+        HttpHeaders httpHeaders = buildDefaultHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return httpHeaders;
+    }
+
+    /**
+     * 默认 User-Agent + multipart/form-data Content-Type 的请求头。
+     */
+    static HttpHeaders buildFormHeaders() {
+        HttpHeaders httpHeaders = buildDefaultHeaders();
+        httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        return httpHeaders;
+    }
+
     @Autowired
     private RestClient restClient;
 
@@ -46,7 +78,7 @@ public class RestUtils {
     @SneakyThrows
     public <T> T get(String url, HttpHeaders httpHeaders, Class<T> clazz) {
         if (!httpHeaders.containsKey(HttpHeaders.USER_AGENT)) {
-            httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+            httpHeaders.set(HttpHeaders.USER_AGENT, DEFAULT_USER_AGENT);
         }
 
         log.info("向外部接口发起GET请求，url：{}", url);
@@ -87,19 +119,11 @@ public class RestUtils {
 
     @SneakyThrows
     public <T> T post(String url, Object params, Class<T> clazz) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-        return post(url, httpHeaders, params, clazz);
+        return post(url, buildJsonHeaders(), params, clazz);
     }
 
     public <T> T postForForm(String url, Object params, Class<T> clazz) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        //头部类型
-        httpHeaders.set("Content-Type", "multipart/form-data");
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        return postForForm(url, httpHeaders, params, clazz);
+        return postForForm(url, buildFormHeaders(), params, clazz);
     }
 
     @SneakyThrows
@@ -123,9 +147,7 @@ public class RestUtils {
     public <T> T put(String url, Object params, Class<T> clazz) {
         String jsonParams = JSON.toJSONString(params);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        HttpHeaders httpHeaders = buildJsonHeaders();
 
         log.info("向外部接口发起PUT请求，url：{}，请求报文：{}", url, jsonParams);
         String resultString = restClient.put()
@@ -143,9 +165,7 @@ public class RestUtils {
     @SneakyThrows
     public <T> T delete(String url, Class<T> clazz) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        HttpHeaders httpHeaders = buildJsonHeaders();
 
         log.info("向外部接口发起DELETE请求，url：{}", url);
         String resultString = restClient.delete()
@@ -163,9 +183,7 @@ public class RestUtils {
      * 读取网络文件
      */
     public InputStream getFileInputStream(String url) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        return getFileInputStream(url, httpHeaders);
+        return getFileInputStream(url, buildDefaultHeaders());
     }
 
     /**
