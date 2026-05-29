@@ -361,75 +361,7 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?打工记录(\\d*)-?(\\d*)"}, name = "打工记录")
     public void getCoopRecords(BbReceiveMessage bbReceiveMessage) {
-        if (!requireBound(bbReceiveMessage)) { return; }
-        // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("^/?打工记录(\\d*)-?(\\d*)");
-        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        int recordStart = 1;
-        int recordEnd = 5;
-        // 如果找到匹配项
-        if (matcher.matches()) {
-            // 提取前后数字并处理默认值
-            recordStart = matcher.group(1).isEmpty() ? recordStart : Integer.parseInt(matcher.group(1));
-            recordEnd = matcher.group(2).isEmpty() ? recordEnd : Integer.parseInt(matcher.group(2));
-        } else {
-            //返回格式不匹配
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("格式不正确，参考格式：【打工记录】、【打工记录2-11】"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-        if (recordEnd - recordStart + 1 > 20) {
-            //查询记录太多时返回
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("查询记录超过20条了，太多啦"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-
-        //该用户绑定的全部账号(查战绩跨账号聚合)
-        List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
-                .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
-
-        //查询数据库记录
-        List<SplatoonCoopRecord> recordList = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
-                .in(SplatoonCoopRecord::getUserId, accountIds)
-                .orderByDesc(SplatoonCoopRecord::getPlayedTime)
-                .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
-        //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
-        if (recordList.isEmpty()) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("还没有打工记录，先发【上传打工记录】或等自动上传跑过一轮")));
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-        //查询数据库用户详细记录
-        List<SplatoonCoopUserDetail> userDetailList = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
-                .in(SplatoonCoopUserDetail::getCoopId, recordList.stream().map(splatoonCoopRecord -> splatoonCoopRecord.getId().toString()).collect(Collectors.toList())));
-
-
-        //记录图片绘制时间
-        LocalDateTime startTime = LocalDateTime.now();
-        //绘制图片(HTML 渲染器)
-        File imageFile = splatoonHtmlRenderer.renderCoopList(recordList, userDetailList);
-        //打印耗时日志
-        log.info("打工记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
-
-        //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-            BbMessageContent.buildLocalImageMessageContent(imageFile))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        sendRecordList(bbReceiveMessage, RecordType.COOP);
     }
 
     /**
@@ -505,74 +437,82 @@ public class BbSplatoonUserHandler {
     @SneakyThrows
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?对战记录(\\d*)-?(\\d*)"}, name = "对战记录")
     public void getBattleRecords(BbReceiveMessage bbReceiveMessage) {
+        sendRecordList(bbReceiveMessage, RecordType.BATTLE);
+    }
+
+    /**
+     * 打工/对战记录列表的统一主流程（合并自原 {@code getCoopRecords}/{@code getBattleRecords} 两份同构逻辑）。
+     *
+     * <p>流程：绑定校验 → 区间解析（{@link RecordRangeParser}）与分支回复 → 跨账号聚合查询 → HTML 渲染图回复。
+     * 区间口径沿用重构前：默认 1-5、跨度上限 20；min/max 取 1..1000（足够大，对正常使用等价于不裁剪）。
+     * 打工/对战仅在查询表、用户详情查询与渲染器调用三处不同，由 {@link RecordType} 分支承载，
+     * 文本与渲染图与重构前逐一等价。
+     */
+    private void sendRecordList(BbReceiveMessage bbReceiveMessage, RecordType type) {
         if (!requireBound(bbReceiveMessage)) { return; }
-        // 定义正则表达式模式
-        Pattern pattern = Pattern.compile("^/?对战记录(\\d*)-?(\\d*)");
-        Matcher matcher = pattern.matcher(bbReceiveMessage.getMessage());
-        int recordStart = 1;
-        int recordEnd = 5;
-        // 如果找到匹配项
-        if (matcher.matches()) {
-            // 提取前后数字并处理默认值
-            recordStart = matcher.group(1).isEmpty() ? recordStart : Integer.parseInt(matcher.group(1));
-            recordEnd = matcher.group(2).isEmpty() ? recordEnd : Integer.parseInt(matcher.group(2));
-        } else {
-            //返回格式不匹配
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("格式不正确，参考格式：【对战记录】、【对战记录2-11】"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
+
+        // 区间解析（默认 1-5、跨度上限 20，min/max=1..1000）
+        RecordRangeParser.Result range = RecordRangeParser.parse(
+                bbReceiveMessage.getMessage(), type, 1, 5, 1, 1000, 20);
+        if (!range.isValid()) {
+            // 失败分支：格式错误 / 超上限，文案与重构前一致
+            String hint = range.getError() == RecordRangeParser.Error.SPAN_EXCEEDED
+                    ? "查询记录超过" + range.getMaxSpan() + "条了，太多啦"
+                    : type.getFormatErrorHint();
+            bbReplies.atText(bbReceiveMessage, hint);
             return;
         }
-        if (recordEnd - recordStart + 1 > 20) {
-            //查询记录太多时返回
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("查询记录超过20条了，太多啦"))
-            );
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
+        int recordStart = range.getStart();
+        int recordEnd = range.getEnd();
 
         //该用户绑定的全部账号(查战绩跨账号聚合)
         List<String> accountIds = splatoonTokenManager.getDataUsers(bbReceiveMessage.getUserId()).stream()
                 .map(SplatoonTokenManager::accountId).collect(Collectors.toList());
 
-        //查询数据库记录
-        List<SplatoonBattleRecord> recordList = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
-                .in(SplatoonBattleRecord::getUserId, accountIds)
-                .orderByDesc(SplatoonBattleRecord::getPlayedTime)
-                .last("limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1)));
-        //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
-        if (recordList.isEmpty()) {
-            BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-            bbSendMessage.setMessageList(Arrays.asList(
-                    BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-                    BbMessageContent.buildTextContent("还没有对战记录，先发【上传对战记录】或等自动上传跑过一轮")));
-            bbMessageApi.sendMessage(bbSendMessage);
-            return;
-        }
-        //查询数据库用户详细记录
-        List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
-                .in(SplatoonBattleUserDetail::getBattleId, recordList.stream().map(splatoonBattleRecord -> splatoonBattleRecord.getId().toString()).collect(Collectors.toList())));
+        String limit = "limit " + (recordStart - 1) + "," + (recordEnd - recordStart + 1);
 
         //记录图片绘制时间
         LocalDateTime startTime = LocalDateTime.now();
-        //绘制图片(HTML 渲染器)
-        File imageFile = splatoonHtmlRenderer.renderBattleList(recordList, userDetailList);
+        //绘制图片(HTML 渲染器)，按类型分支查询 + 渲染；无记录时回提示并返回
+        File imageFile;
+        if (type == RecordType.COOP) {
+            //查询数据库记录
+            List<SplatoonCoopRecord> recordList = coopRecordService.list(new LambdaQueryWrapper<SplatoonCoopRecord>()
+                    .in(SplatoonCoopRecord::getUserId, accountIds)
+                    .orderByDesc(SplatoonCoopRecord::getPlayedTime)
+                    .last(limit));
+            //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
+            if (recordList.isEmpty()) {
+                bbReplies.atText(bbReceiveMessage, type.getEmptyHint());
+                return;
+            }
+            //查询数据库用户详细记录
+            List<SplatoonCoopUserDetail> userDetailList = coopUserDetailService.list(new LambdaQueryWrapper<SplatoonCoopUserDetail>()
+                    .in(SplatoonCoopUserDetail::getCoopId, recordList.stream().map(splatoonCoopRecord -> splatoonCoopRecord.getId().toString()).collect(Collectors.toList())));
+            imageFile = splatoonHtmlRenderer.renderCoopList(recordList, userDetailList);
+        } else {
+            //查询数据库记录
+            List<SplatoonBattleRecord> recordList = battleRecordService.list(new LambdaQueryWrapper<SplatoonBattleRecord>()
+                    .in(SplatoonBattleRecord::getUserId, accountIds)
+                    .orderByDesc(SplatoonBattleRecord::getPlayedTime)
+                    .last(limit));
+            //无记录时直接提示(否则下面的 in 空列表会拼出非法 SQL)
+            if (recordList.isEmpty()) {
+                bbReplies.atText(bbReceiveMessage, type.getEmptyHint());
+                return;
+            }
+            //查询数据库用户详细记录
+            List<SplatoonBattleUserDetail> userDetailList = battleUserDetailService.list(new LambdaQueryWrapper<SplatoonBattleUserDetail>()
+                    .in(SplatoonBattleUserDetail::getBattleId, recordList.stream().map(splatoonBattleRecord -> splatoonBattleRecord.getId().toString()).collect(Collectors.toList())));
+            imageFile = splatoonHtmlRenderer.renderBattleList(recordList, userDetailList);
+        }
         //打印耗时日志
-        log.info("对战记录图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
+        log.info(type.getKeyword() + "图片绘制耗时：" + startTime.until(LocalDateTime.now(), ChronoUnit.SECONDS) + "秒");
 
         //发送消息
-        BbSendMessage bbSendMessage = new BbSendMessage(bbReceiveMessage);
-        bbSendMessage.setMessageList(Arrays.asList(
-            BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
-            BbMessageContent.buildLocalImageMessageContent(imageFile))
-        );
-        bbMessageApi.sendMessage(bbSendMessage);
+        bbReplies.send(bbReceiveMessage, Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildLocalImageMessageContent(imageFile)));
     }
 
 
