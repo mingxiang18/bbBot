@@ -1,14 +1,13 @@
 package com.bb.bot.handler.splatoon;
 
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.handler.splatoon.render.ScheduleMapRenderer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ import java.util.Arrays;
 public class BbSplatoonHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies bbReplies;
 
     @Autowired
     private SplatoonScheduleService splatoonScheduleService;
@@ -78,10 +77,8 @@ public class BbSplatoonHandler {
     }
 
     private void sendImage(BbReceiveMessage source, File imageFile) {
-        BbSendMessage out = new BbSendMessage(source);
-        out.setMessageList(Arrays.asList(
+        bbReplies.send(source, Arrays.asList(
                 BbMessageContent.buildAtMessageContent(source.getUserId()),
                 BbMessageContent.buildLocalImageMessageContent(imageFile)));
-        bbMessageApi.sendMessage(out);
     }
 }
