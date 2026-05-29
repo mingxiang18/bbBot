@@ -2,6 +2,7 @@ package com.bb.bot.api.discord;
 
 import com.bb.bot.api.AbstractMessageStreamSession;
 import com.bb.bot.api.FallbackMessageStreamSession;
+import com.bb.bot.api.MessageContentVisitor;
 import com.bb.bot.api.MessageStreamSession;
 import com.bb.bot.config.DiscordConfig;
 import com.bb.bot.constant.BbSendMessageType;
@@ -146,15 +147,15 @@ public class DiscordMessageApi {
 
     private String collectTextContent(BbSendMessage bbSendMessage) {
         StringBuilder textContent = new StringBuilder();
-        for (BbMessageContent bbMessageContent : bbSendMessage.getMessageList()) {
-            if (BbSendMessageType.TEXT.equals(bbMessageContent.getType()) && bbMessageContent.getData() != null) {
-                textContent.append(bbMessageContent.getData());
-            } else if (BbSendMessageType.AT.equals(bbMessageContent.getType()) && bbMessageContent.getData() != null) {
-                textContent.append("<@").append(bbMessageContent.getData()).append("> ");
-            } else if (BbSendMessageType.NET_IMAGE.equals(bbMessageContent.getType()) && bbMessageContent.getData() != null) {
-                textContent.append("\n").append(bbMessageContent.getData());
-            }
-        }
+        MessageContentVisitor.forEachContent(bbSendMessage,
+                //文本直接拼接
+                textContent::append,
+                //本地图片走 sendFileMessages 上传，不进文本
+                null,
+                //@用户拼成 Discord mention
+                userId -> textContent.append("<@").append(userId).append("> "),
+                //网络图片以换行 + URL 形式附在文本里
+                netImageUrl -> textContent.append("\n").append(netImageUrl));
         return textContent.toString();
     }
 
