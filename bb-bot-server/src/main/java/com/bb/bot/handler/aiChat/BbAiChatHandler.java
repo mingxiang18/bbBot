@@ -17,6 +17,7 @@ import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
 import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
@@ -55,7 +56,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +91,10 @@ public class BbAiChatHandler {
 
     @Autowired
     private BbMessageApi bbMessageApi;
+
+    /** 统一回复入口（T1）。 */
+    @Autowired
+    private BbReplies bbReplies;
 
     /** 阻塞 + 流式都走 AiChatService（M9 重构后唯一入口）。 */
     @Autowired
@@ -201,7 +205,7 @@ public class BbAiChatHandler {
             log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
                     globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), bbReceiveMessage.getUserId());
             if (decision.isDirectTrigger()) {
-                sendAtText(bbReceiveMessage, "今日 AI 调用量已达系统上限，请明天再试。");
+                bbReplies.atText(bbReceiveMessage, "今日 AI 调用量已达系统上限，请明天再试。");
             }
             return;
         }
@@ -212,7 +216,7 @@ public class BbAiChatHandler {
             if (decision.isDirectTrigger()) {
                 com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
                         quotaGuard.status(bbReceiveMessage.getUserId(), bbReceiveMessage.getBotType());
-                sendAtText(bbReceiveMessage, String.format(
+                bbReplies.atText(bbReceiveMessage, String.format(
                         "本月 AI 额度已用完（已用 ¥%s / 额度 ¥%s）。发『/额度申请 理由』可请求管理员重置。",
                         st.getSpent().toPlainString(), st.getLimit().toPlainString()));
             }
@@ -415,7 +419,7 @@ public class BbAiChatHandler {
         }
         List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
         persistBotReply(msg, answerMessage);
-        sendReply(msg, answerMessage);
+        bbReplies.send(msg, answerMessage);
     }
 
     /** 流式分支：走 AiChatService.chatStream（轻/重模型由 tier 决定）。 */
@@ -596,11 +600,11 @@ public class BbAiChatHandler {
             keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
     public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
         if (!isAdmin(bbReceiveMessage.getUserId())) {
-            sendAtText(bbReceiveMessage, "您当前不具备该权限噢");
+            bbReplies.atText(bbReceiveMessage, "您当前不具备该权限噢");
             return;
         }
         List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
-        sendAtText(bbReceiveMessage, "\n" + JSON.toJSONString(clueDetailList));
+        bbReplies.atText(bbReceiveMessage, "\n" + JSON.toJSONString(clueDetailList));
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -614,12 +618,12 @@ public class BbAiChatHandler {
             Asserts.notNull(clue, "线索不能为空");
             clueDetailList = JSON.parseArray(clue, ClueDetail.class);
         } catch (Exception e) {
-            sendAtText(bbReceiveMessage, "线索格式不正确");
+            bbReplies.atText(bbReceiveMessage, "线索格式不正确");
             return;
         }
 
         aiClueService.importGroupClue(bbReceiveMessage.getGroupId(), clueDetailList);
-        sendAtText(bbReceiveMessage, "导入成功");
+        bbReplies.atText(bbReceiveMessage, "导入成功");
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -632,29 +636,15 @@ public class BbAiChatHandler {
             aiClueService.deleteClue(Long.parseLong(clueId));
         } catch (Exception e) {
             log.error("删除线索失败", e);
-            sendAtText(bbReceiveMessage, "删除失败，格式不正确");
+            bbReplies.atText(bbReceiveMessage, "删除失败，格式不正确");
             return;
         }
-        sendAtText(bbReceiveMessage, "删除成功");
+        bbReplies.atText(bbReceiveMessage, "删除成功");
     }
 
     // =========================================================================
     // helpers
     // =========================================================================
-
-    private void sendReply(BbReceiveMessage source, List<BbMessageContent> answerMessage) {
-        BbSendMessage out = new BbSendMessage(source);
-        out.setMessageList(answerMessage);
-        bbMessageApi.sendMessage(out);
-    }
-
-    private void sendAtText(BbReceiveMessage source, String text) {
-        BbSendMessage out = new BbSendMessage(source);
-        out.setMessageList(Arrays.asList(
-                BbMessageContent.buildAtMessageContent(source.getUserId()),
-                BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(out);
-    }
 
     private boolean isGroupLike(BbReceiveMessage msg) {
         return MessageType.GROUP.equals(msg.getMessageType())
