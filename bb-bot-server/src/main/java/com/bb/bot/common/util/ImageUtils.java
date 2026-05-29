@@ -275,6 +275,19 @@ public class ImageUtils{
      * @param toPath	拼接生成图片的路径
      */
     public static void joinImagesHorizontal(String firstSrcImagePath, String secondSrcImagePath,String imageFormat, String toPath){
+        joinImages(firstSrcImagePath, secondSrcImagePath, imageFormat, toPath, true);
+    }
+
+    /**
+     * 拼接两张图片（横向或纵向），由 {@link #joinImagesHorizontal} / {@link #joinImagesVertical} 委托。
+     *
+     * @param firstSrcImagePath 第一张图片的路径
+     * @param secondSrcImagePath 第二张图片的路径
+     * @param imageFormat 拼接生成图片的格式
+     * @param toPath 拼接生成图片的路径
+     * @param horizontal true=横向（左右），false=纵向（上下）
+     */
+    private static void joinImages(String firstSrcImagePath, String secondSrcImagePath, String imageFormat, String toPath, boolean horizontal){
         try {
             //读取第一张图片
             File  fileOne  =  new  File(firstSrcImagePath);
@@ -292,15 +305,17 @@ public class ImageUtils{
             int height2 = imageTwo.getHeight();
             int[]   ImageArrayTwo  =  new  int[width2*height2];
             ImageArrayTwo  =  imageTwo.getRGB(0,0,width,height,ImageArrayTwo,0,width);
-            //ImageArrayTwo  =  imageTwo.getRGB(0,0,width2,height2,ImageArrayTwo,0,width2);
 
             //生成新图片
-            //int height3 = (height>height2 || height==height2)?height:height2;
-            BufferedImage  imageNew  =  new  BufferedImage(width*2,height,BufferedImage.TYPE_INT_RGB);
-            //BufferedImage  imageNew  =  new  BufferedImage(width+width2,height3,BufferedImage.TYPE_INT_RGB);
-            imageNew.setRGB(0,0,width,height,imageArrayOne,0,width);//设置左半部分的RGB
-            imageNew.setRGB(width,0,width,height,ImageArrayTwo,0,width);//设置右半部分的RGB
-            //imageNew.setRGB(width,0,width2,height2,ImageArrayTwo,0,width2);//设置右半部分的RGB
+            BufferedImage  imageNew  =  horizontal
+                    ? new  BufferedImage(width*2,height,BufferedImage.TYPE_INT_RGB)
+                    : new  BufferedImage(width,height*2,BufferedImage.TYPE_INT_RGB);
+            imageNew.setRGB(0,0,width,height,imageArrayOne,0,width);//设置第一张图的RGB
+            if (horizontal) {
+                imageNew.setRGB(width,0,width,height,ImageArrayTwo,0,width);//设置右半部分的RGB
+            } else {
+                imageNew.setRGB(0,height,width,height,ImageArrayTwo,0,width);//设置下半部分的RGB
+            }
 
             File  outFile  =  new  File(toPath);
             ImageIO.write(imageNew,  imageFormat,  outFile);//写图片
@@ -373,38 +388,7 @@ public class ImageUtils{
      * @param toPath	图片写入路径
      */
     public static void joinImagesVertical(String firstSrcImagePath, String secondSrcImagePath,String imageFormat, String toPath){
-        try {
-            //读取第一张图片
-            File  fileOne  =  new  File(firstSrcImagePath);
-            BufferedImage  imageOne = ImageIO.read(fileOne);
-            int  width  =  imageOne.getWidth();//图片宽度
-            int  height  =  imageOne.getHeight();//图片高度
-            //从图片中读取RGB
-            int[]  imageArrayOne  =  new  int[width*height];
-            imageArrayOne  =  imageOne.getRGB(0,0,width,height,imageArrayOne,0,width);
-
-            //对第二张图片做相同的处理
-            File  fileTwo  =  new  File(secondSrcImagePath);
-            BufferedImage  imageTwo  =  ImageIO.read(fileTwo);
-            int width2 = imageTwo.getWidth();
-            int height2 = imageTwo.getHeight();
-            int[]   ImageArrayTwo  =  new  int[width2*height2];
-            ImageArrayTwo  =  imageTwo.getRGB(0,0,width,height,ImageArrayTwo,0,width);
-            //ImageArrayTwo  =  imageTwo.getRGB(0,0,width2,height2,ImageArrayTwo,0,width2);
-
-            //生成新图片
-            //int width3 = (width>width2 || width==width2)?width:width2;
-            BufferedImage  imageNew  =  new  BufferedImage(width,height*2,BufferedImage.TYPE_INT_RGB);
-            //BufferedImage  imageNew  =  new  BufferedImage(width3,height+height2,BufferedImage.TYPE_INT_RGB);
-            imageNew.setRGB(0,0,width,height,imageArrayOne,0,width);//设置上半部分的RGB
-            imageNew.setRGB(0,height,width,height,ImageArrayTwo,0,width);//设置下半部分的RGB
-            //imageNew.setRGB(0,height,width2,height2,ImageArrayTwo,0,width2);//设置下半部分的RGB
-
-            File  outFile  =  new  File(toPath);
-            ImageIO.write(imageNew,  imageFormat,  outFile);//写图片
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        joinImages(firstSrcImagePath, secondSrcImagePath, imageFormat, toPath, false);
     }
 
     /**
