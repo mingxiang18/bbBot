@@ -56,8 +56,9 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         JSONObject vsMode = battleRecord.getJSONObject("vsMode");
         splatoonBattleRecord.setVsModeId(vsMode.getString("id"));
         splatoonBattleRecord.setVsModeName(vsMode.getString("mode"));
-        if (battleDetail.getJSONObject("bankaraMatch") != null) {
-            splatoonBattleRecord.setVsSubMode(battleDetail.getJSONObject("bankaraMatch").getString("mode"));
+        JSONObject detailBankaraMatchMode = battleDetail.getJSONObject("bankaraMatch");
+        if (detailBankaraMatchMode != null) {
+            splatoonBattleRecord.setVsSubMode(detailBankaraMatchMode.getString("mode"));
         }
 
         //设置对战规则
@@ -70,14 +71,14 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         splatoonBattleRecord.setVsStageId(vsStage.getString("id"));
         splatoonBattleRecord.setVsStageName(vsStage.getString("name"));
         resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/battle/stage/" + splatoonBattleRecord.getVsStageId() + ".png",
-                battleRecord.getJSONObject("vsStage").getJSONObject("image").getString("url"));
+                vsStage.getJSONObject("image").getString("url"));
 
         //设置对战结果
         splatoonBattleRecord.setJudgement(battleRecord.getString("judgement"));
         //设置对战计数
-        if (battleRecord.getJSONObject("myTeam") != null
-            && battleRecord.getJSONObject("myTeam").getJSONObject("result") != null) {
-            JSONObject teamResult = battleRecord.getJSONObject("myTeam").getJSONObject("result");
+        JSONObject recordMyTeam = battleRecord.getJSONObject("myTeam");
+        if (recordMyTeam != null && recordMyTeam.getJSONObject("result") != null) {
+            JSONObject teamResult = recordMyTeam.getJSONObject("result");
             //涂地模式设置涂地数，其他模式设置分数
             if (teamResult.getInteger("score") != null) {
                 splatoonBattleRecord.setScore(teamResult.getInteger("score"));
@@ -89,17 +90,20 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         //设置段位,只有部分比赛模式有
         splatoonBattleRecord.setRankCode(battleRecord.getString("udemae"));
         //设置分数变动,只有部分比赛模式有
-        if (battleRecord.getJSONObject("bankaraMatch") != null) {
-            splatoonBattleRecord.setPointChange(battleRecord.getJSONObject("bankaraMatch").getInteger("earnedUdemaePoint"));
+        JSONObject recordBankaraMatch = battleRecord.getJSONObject("bankaraMatch");
+        if (recordBankaraMatch != null) {
+            splatoonBattleRecord.setPointChange(recordBankaraMatch.getInteger("earnedUdemaePoint"));
         }
         //设置技术点数,只有部分比赛模式有
-        if (battleDetail.getJSONObject("bankaraMatch") != null
-                && battleDetail.getJSONObject("bankaraMatch").getJSONObject("bankaraPower") != null
-                && battleDetail.getJSONObject("bankaraMatch").getJSONObject("bankaraPower").containsKey("power")) {
-            splatoonBattleRecord.setPower(battleDetail.getJSONObject("bankaraMatch").getJSONObject("bankaraPower").getInteger("power"));
-        }else if (battleDetail.getJSONObject("leagueMatch") != null
-                && battleDetail.getJSONObject("leagueMatch").containsKey("myLeaguePower")) {
-            splatoonBattleRecord.setPower(battleDetail.getJSONObject("leagueMatch").getInteger("myLeaguePower"));
+        JSONObject detailBankaraMatch = battleDetail.getJSONObject("bankaraMatch");
+        JSONObject detailLeagueMatch = battleDetail.getJSONObject("leagueMatch");
+        if (detailBankaraMatch != null
+                && detailBankaraMatch.getJSONObject("bankaraPower") != null
+                && detailBankaraMatch.getJSONObject("bankaraPower").containsKey("power")) {
+            splatoonBattleRecord.setPower(detailBankaraMatch.getJSONObject("bankaraPower").getInteger("power"));
+        }else if (detailLeagueMatch != null
+                && detailLeagueMatch.containsKey("myLeaguePower")) {
+            splatoonBattleRecord.setPower(detailLeagueMatch.getInteger("myLeaguePower"));
         }
         //设置对战时间
         splatoonBattleRecord.setPlayedTime(DateUtils.convertUTCTimeToCNLocalDateTime(battleDetail.getString("playedTime")));
@@ -112,11 +116,13 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
             splatoonBattleRecord.setKnockout(knockout);
         }
         //双方比分(占地=涂地率%,真格=计数);取自 detail 的 myTeam / otherTeams[0]
-        if (battleDetail.getJSONObject("myTeam") != null) {
-            splatoonBattleRecord.setMyScore(teamScoreText(battleDetail.getJSONObject("myTeam").getJSONObject("result")));
+        JSONObject detailMyTeam = battleDetail.getJSONObject("myTeam");
+        if (detailMyTeam != null) {
+            splatoonBattleRecord.setMyScore(teamScoreText(detailMyTeam.getJSONObject("result")));
         }
-        if (battleDetail.getJSONArray("otherTeams") != null && !battleDetail.getJSONArray("otherTeams").isEmpty()) {
-            splatoonBattleRecord.setOtherScore(teamScoreText(battleDetail.getJSONArray("otherTeams").getJSONObject(0).getJSONObject("result")));
+        JSONArray detailOtherTeams = battleDetail.getJSONArray("otherTeams");
+        if (detailOtherTeams != null && !detailOtherTeams.isEmpty()) {
+            splatoonBattleRecord.setOtherScore(teamScoreText(detailOtherTeams.getJSONObject(0).getJSONObject("result")));
         }
         //奖牌(名称逗号分隔)
         JSONArray awardsArray = battleDetail.getJSONArray("awards");
@@ -136,8 +142,8 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         List<SplatoonBattleUserDetail> userDetailList = new ArrayList<>();
 
         //封装己方队伍的对战数据
-        if (battleDetail.containsKey("myTeam") && battleDetail.getJSONObject("myTeam").containsKey("players")) {
-            JSONObject myTeam = battleDetail.getJSONObject("myTeam");
+        JSONObject myTeam = battleDetail.getJSONObject("myTeam");
+        if (myTeam != null && myTeam.containsKey("players")) {
             JSONArray playerArray = myTeam.getJSONArray("players");
             for (int i = 0; i < playerArray.size(); i++) {
                 JSONObject playerData = playerArray.getJSONObject(i);
@@ -191,6 +197,18 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         return null;
     }
 
+    /**
+     * 保存一件装备(头/衣/鞋)的图片资源到本地静态目录。
+     * 路径 nso_splatoon/user/gear/{gearName}.png,图源取自 gear.originalImage.url。
+     */
+    private void saveGearResource(String gearName, JSONObject gear) {
+        if (gear == null) {
+            return;
+        }
+        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + gearName + ".png",
+                gear.getJSONObject("originalImage").getString("url"));
+    }
+
     /** 取一件装备的主技能名;无则空串。 */
     private String primaryGearPower(JSONObject gear) {
         if (gear == null) {
@@ -239,23 +257,17 @@ public class SplatoonBattleRecordServiceImpl extends ServiceImpl<SplatoonBattleR
         //用户头部装备
         JSONObject headGear = playerDetail.getJSONObject("headGear");
         splatoonBattleUserDetail.setPlayerHeadGear(headGear.getString("name"));
-        //保存图片
-        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerHeadGear() + ".png",
-                headGear.getJSONObject("originalImage").getString("url"));
+        saveGearResource(splatoonBattleUserDetail.getPlayerHeadGear(), headGear);
 
         //用户衣服装备
         JSONObject clothingGear = playerDetail.getJSONObject("clothingGear");
         splatoonBattleUserDetail.setPlayerClothesGear(clothingGear.getString("name"));
-        //保存图片
-        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerClothesGear() + ".png",
-                clothingGear.getJSONObject("originalImage").getString("url"));
+        saveGearResource(splatoonBattleUserDetail.getPlayerClothesGear(), clothingGear);
 
         //用户鞋子装备
         JSONObject shoesGear = playerDetail.getJSONObject("shoesGear");
         splatoonBattleUserDetail.setPlayerShoesGear(shoesGear.getString("name"));
-        //保存图片
-        resourcesUtils.getOrAddStaticResourceFromNet("nso_splatoon/user/gear/" + splatoonBattleUserDetail.getPlayerShoesGear() + ".png",
-                shoesGear.getJSONObject("originalImage").getString("url"));
+        saveGearResource(splatoonBattleUserDetail.getPlayerShoesGear(), shoesGear);
 
         //三件装备主技能概要(头/衣/鞋)
         String gearPowers = (primaryGearPower(headGear) + " " + primaryGearPower(clothingGear) + " " + primaryGearPower(shoesGear)).trim();
