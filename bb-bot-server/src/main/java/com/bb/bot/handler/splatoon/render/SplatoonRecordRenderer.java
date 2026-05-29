@@ -96,9 +96,27 @@ public class SplatoonRecordRenderer {
         return imageFile;
     }
 
-    /** 绘制一条打工记录 */
+    /**
+     * 绘制一条打工记录。
+     *
+     * <p>T7.7 拆分：方法体按"头部信息 / 武器图标 / 玩家明细块"三段拆为
+     * {@link #drawCoopHeader}、{@link #drawCoopWeapons}、{@link #drawCoopPlayerBlock}，
+     * 绘制顺序与坐标/字号/颜色逐字保留，纯提取重构不改变像素输出。
+     */
     @SneakyThrows
     public void writeOneCoopRecord(Graphics2D g2d, SplatoonCoopRecord record, List<SplatoonCoopUserDetail> userDetailList, int startY) {
+        drawCoopHeader(g2d, record, startY);
+
+        int userX = 120;
+        for (SplatoonCoopUserDetail splatoonCoopUserDetail : userDetailList) {
+            drawCoopPlayerBlock(g2d, splatoonCoopUserDetail, userX, startY);
+            userX += 150;
+        }
+    }
+
+    /** 打工记录头部：底框、序号/时间/场地、武器图标、危险度、金/红鳞数、段位或模式名。 */
+    @SneakyThrows
+    private void drawCoopHeader(Graphics2D g2d, SplatoonCoopRecord record, int startY) {
         ImageUtils.createRoundRectOnImage(g2d, new Color(255, 115, 0), 15, startY, 690, 130, 0.3f);
 
         ImageUtils.writeWordInImage(g2d,
@@ -122,14 +140,7 @@ public class SplatoonRecordRenderer {
                 200, 30,
                 0);
 
-        File weapon1 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 35, 35);
-        File weapon2 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 35, 35);
-        File weapon3 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 35, 35);
-        File weapon4 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png");
-        ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
+        drawCoopWeapons(g2d, record, startY);
 
         ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, 560, startY + 3, 70, 38, 0.3f);
 
@@ -175,47 +186,59 @@ public class SplatoonRecordRenderer {
                     200, 30,
                     0);
         }
+    }
 
-        int userX = 120;
+    /** 打工记录四把武器图标，横向等距排布。 */
+    @SneakyThrows
+    private void drawCoopWeapons(Graphics2D g2d, SplatoonCoopRecord record, int startY) {
+        File weapon1 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon1() + ".png");
+        ImageUtils.mergeImageToOtherImage(g2d, weapon1, 380, startY + 5, 35, 35);
+        File weapon2 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon2() + ".png");
+        ImageUtils.mergeImageToOtherImage(g2d, weapon2, 420, startY + 5, 35, 35);
+        File weapon3 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon3() + ".png");
+        ImageUtils.mergeImageToOtherImage(g2d, weapon3, 460, startY + 5, 35, 35);
+        File weapon4 = resourcesUtils.getStaticResource("nso_splatoon/coop/weapon/" + record.getWeapon4() + ".png");
+        ImageUtils.mergeImageToOtherImage(g2d, weapon4, 500, startY + 5, 35, 35);
+    }
+
+    /** 单个玩家明细块：名称、击倒数、金/红鳞投递、救助/被救数。 */
+    @SneakyThrows
+    private void drawCoopPlayerBlock(Graphics2D g2d, SplatoonCoopUserDetail splatoonCoopUserDetail, int userX, int startY) {
         Color color = Color.WHITE;
-        for (SplatoonCoopUserDetail splatoonCoopUserDetail : userDetailList) {
-            ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 135, 80, 0.4f);
+        ImageUtils.createRoundRectOnImage(g2d, Color.BLACK, userX - 5, startY + 45, 135, 80, 0.4f);
 
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "名称：" + splatoonCoopUserDetail.getPlayerName(),
-                    userX, startY + 60,
-                    200, 30,
-                    0);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
-                    "击倒数：" + splatoonCoopUserDetail.getDefeatEnemyCount(),
-                    userX, startY + 80,
-                    200, 30,
-                    0);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"),
-                    userX, startY + 86, 18, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"),
-                    userX + 60, startY + 86, 18, 18);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getDeliverGlodenCount() + "             " + splatoonCoopUserDetail.getDeliverRedCount(),
-                    userX + 20, startY + 100,
-                    200, 30,
-                    0);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescue.png"),
-                    userX, startY + 106, 36, 18);
-            ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescued.png"),
-                    userX + 60, startY + 106, 36, 18);
-            ImageUtils.writeWordInImage(g2d,
-                    resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
-                    splatoonCoopUserDetail.getRescueCount() + "             " + splatoonCoopUserDetail.getRescuedCount(),
-                    userX + 40, startY + 120,
-                    200, 30,
-                    0);
-
-            userX += 150;
-        }
+        ImageUtils.writeWordInImage(g2d,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
+                "名称：" + splatoonCoopUserDetail.getPlayerName(),
+                userX, startY + 60,
+                200, 30,
+                0);
+        ImageUtils.writeWordInImage(g2d,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, color,
+                "击倒数：" + splatoonCoopUserDetail.getDefeatEnemyCount(),
+                userX, startY + 80,
+                200, 30,
+                0);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/gold.png"),
+                userX, startY + 86, 18, 18);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/red.png"),
+                userX + 60, startY + 86, 18, 18);
+        ImageUtils.writeWordInImage(g2d,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                splatoonCoopUserDetail.getDeliverGlodenCount() + "             " + splatoonCoopUserDetail.getDeliverRedCount(),
+                userX + 20, startY + 100,
+                200, 30,
+                0);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescue.png"),
+                userX, startY + 106, 36, 18);
+        ImageUtils.mergeImageToOtherImage(g2d, resourcesUtils.getStaticResource("nso_splatoon/coop/icon/rescued.png"),
+                userX + 60, startY + 106, 36, 18);
+        ImageUtils.writeWordInImage(g2d,
+                resourcesUtils.getStaticResource("font/sakura.ttf"), Font.PLAIN, 13, Color.WHITE,
+                splatoonCoopUserDetail.getRescueCount() + "             " + splatoonCoopUserDetail.getRescuedCount(),
+                userX + 40, startY + 120,
+                200, 30,
+                0);
     }
 
     /** 绘制完整对战记录图片 */
