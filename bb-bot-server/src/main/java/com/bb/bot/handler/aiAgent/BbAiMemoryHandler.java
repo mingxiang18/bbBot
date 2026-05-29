@@ -4,21 +4,19 @@ import com.bb.bot.aiAgent.auth.AiAgentAuthService;
 import com.bb.bot.aiAgent.memory.MemoryCompiler;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
 import com.bb.bot.aiAgent.memory.SessionTracker;
-import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
 import com.bb.bot.common.constant.EventType;
 import com.bb.bot.common.constant.RuleType;
+import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
-import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +38,7 @@ import java.util.regex.Pattern;
 public class BbAiMemoryHandler {
 
     @Autowired
-    private BbMessageApi bbMessageApi;
+    private BbReplies replies;
 
     @Autowired
     private AiAgentAuthService authService;
@@ -65,7 +63,7 @@ public class BbAiMemoryHandler {
         int n = (m.matches() && m.group(1) != null) ? Integer.parseInt(m.group(1)) : 20;
         n = Math.min(Math.max(n, 1), 100);
         List<AiMemoryEvent> events = memoryQueryService.tail(n);
-        if (events.isEmpty()) { reply(msg, "事件流为空"); return; }
+        if (events.isEmpty()) { replies.text(msg, "事件流为空"); return; }
         StringBuilder sb = new StringBuilder("最近 ").append(events.size()).append(" 条事件：\n");
         for (AiMemoryEvent e : events) {
             sb.append("[").append(e.getCreatedAt()).append("] ")
@@ -74,7 +72,7 @@ public class BbAiMemoryHandler {
                     .append(abbr(e.getText(), 60))
                     .append("\n");
         }
-        reply(msg, sb.toString().trim());
+        replies.text(msg, sb.toString().trim());
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
@@ -82,15 +80,15 @@ public class BbAiMemoryHandler {
     public void search(BbReceiveMessage msg) {
         if (denyIfNotOwner(msg)) return;
         Matcher m = SEARCH_RE.matcher(text(msg));
-        if (!m.find()) { reply(msg, "用法: /aiAgent.memory.search <关键字>"); return; }
+        if (!m.find()) { replies.text(msg, "用法: /aiAgent.memory.search <关键字>"); return; }
         String kw = m.group(1).trim();
         List<AiMemoryEvent> events = memoryQueryService.searchText(kw, 20);
-        if (events.isEmpty()) { reply(msg, "没找到包含 \"" + kw + "\" 的事件"); return; }
+        if (events.isEmpty()) { replies.text(msg, "没找到包含 \"" + kw + "\" 的事件"); return; }
         StringBuilder sb = new StringBuilder("命中 ").append(events.size()).append(" 条:\n");
         for (AiMemoryEvent e : events) {
             sb.append("- [").append(e.getCreatedAt()).append("] ").append(e.getKind()).append(": ").append(abbr(e.getText(), 80)).append("\n");
         }
-        reply(msg, sb.toString().trim());
+        replies.text(msg, sb.toString().trim());
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
@@ -98,7 +96,7 @@ public class BbAiMemoryHandler {
     public void session(BbReceiveMessage msg) {
         if (denyIfNotOwner(msg)) return;
         String sessionId = sessionTracker.attachSessionId(msg.getUserId(), msg.getGroupId(), msg.getBotType());
-        reply(msg, "当前 session_id = " + sessionId);
+        replies.text(msg, "当前 session_id = " + sessionId);
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
@@ -106,7 +104,7 @@ public class BbAiMemoryHandler {
     public void reset(BbReceiveMessage msg) {
         if (denyIfNotOwner(msg)) return;
         int ended = sessionTracker.forceEndCurrent(msg.getUserId(), msg.getGroupId());
-        reply(msg, "已强制结束 " + ended + " 个 session；下一条消息将进入新 session（蒸馏会异步进行）");
+        replies.text(msg, "已强制结束 " + ended + " 个 session；下一条消息将进入新 session（蒸馏会异步进行）");
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
@@ -114,7 +112,7 @@ public class BbAiMemoryHandler {
     public void rebuild(BbReceiveMessage msg) {
         if (denyIfNotOwner(msg)) return;
         String mem = memoryCompiler.rebuildAll(msg.getUserId());
-        reply(msg, "已强制重编 memory.md，长度 " + (mem == null ? 0 : mem.length()) + " 字符");
+        replies.text(msg, "已强制重编 memory.md，长度 " + (mem == null ? 0 : mem.length()) + " 字符");
     }
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
@@ -122,15 +120,15 @@ public class BbAiMemoryHandler {
     public void view(BbReceiveMessage msg) {
         if (denyIfNotOwner(msg)) return;
         String mem = memoryCompiler.ensureCompiledMemory(msg.getUserId());
-        if (StringUtils.isBlank(mem)) { reply(msg, "（暂无记忆）"); return; }
+        if (StringUtils.isBlank(mem)) { replies.text(msg, "（暂无记忆）"); return; }
         // 截到 4KB 防止 IM 平台炸
         if (mem.length() > 4000) mem = mem.substring(0, 4000) + "\n...(truncated)";
-        reply(msg, mem);
+        replies.text(msg, mem);
     }
 
     private boolean denyIfNotOwner(BbReceiveMessage msg) {
         if (authService.isOwner(msg.getUserId())) return false;
-        reply(msg, "无权限（仅 owner 可执行）");
+        replies.text(msg, "无权限（仅 owner 可执行）");
         return true;
     }
 
@@ -145,11 +143,5 @@ public class BbAiMemoryHandler {
     private String abbr(String s, int n) {
         if (s == null) return "";
         return s.length() <= n ? s : s.substring(0, n) + "…";
-    }
-
-    private void reply(BbReceiveMessage msg, String text) {
-        BbSendMessage send = new BbSendMessage(msg);
-        send.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
-        bbMessageApi.sendMessage(send);
     }
 }
