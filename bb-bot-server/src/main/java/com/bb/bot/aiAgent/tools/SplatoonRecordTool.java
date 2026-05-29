@@ -294,52 +294,51 @@ public class SplatoonRecordTool {
         return Collections.emptyList();
     }
 
-    /** 对战胜负过滤 → judgement;无则 null(不过滤)。 */
-    static String battleJudgement(String result) {
-        if (StringUtils.isBlank(result)) {
+    /**
+     * 在去前后空白并转小写后的关键词文本里,按表顺序找第一个命中(任一别名作为子串)的条目,返回其映射值;
+     * 全不命中或入参空白则返回 null。用于把"若干别名 → 单一筛选值"的多分支收敛为查表。
+     */
+    private static <V> V matchKeyword(String raw, List<Map.Entry<V, List<String>>> table) {
+        if (StringUtils.isBlank(raw)) {
             return null;
         }
-        String k = result.trim().toLowerCase();
-        if (k.contains("win") || k.contains("胜") || k.contains("赢")) {
-            return "WIN";
-        }
-        if (k.contains("lose") || k.contains("负") || k.contains("输") || k.contains("败")) {
-            return "LOSE";
+        String k = raw.trim().toLowerCase();
+        for (Map.Entry<V, List<String>> entry : table) {
+            for (String alias : entry.getValue()) {
+                if (k.contains(alias)) {
+                    return entry.getKey();
+                }
+            }
         }
         return null;
     }
+
+    private static final List<Map.Entry<String, List<String>>> JUDGEMENT_TABLE = List.of(
+            Map.entry("WIN", List.of("win", "胜", "赢")),
+            Map.entry("LOSE", List.of("lose", "负", "输", "败")));
+
+    /** 对战胜负过滤 → judgement;无则 null(不过滤)。 */
+    static String battleJudgement(String result) {
+        return matchKeyword(result, JUDGEMENT_TABLE);
+    }
+
+    private static final List<Map.Entry<Boolean, List<String>>> COOP_CLEAR_TABLE = List.of(
+            Map.entry(Boolean.TRUE, List.of("clear", "通关", "成功", "胜", "win", "全清")),
+            Map.entry(Boolean.FALSE, List.of("fail", "失败", "输", "败", "没过", "没通")));
 
     /** 打工成败过滤 → TRUE=通关 / FALSE=失败 / null=不过滤。 */
     static Boolean coopClear(String result) {
-        if (StringUtils.isBlank(result)) {
-            return null;
-        }
-        String k = result.trim().toLowerCase();
-        if (k.contains("clear") || k.contains("通关") || k.contains("成功") || k.contains("胜") || k.contains("win") || k.contains("全清")) {
-            return Boolean.TRUE;
-        }
-        if (k.contains("fail") || k.contains("失败") || k.contains("输") || k.contains("败") || k.contains("没过") || k.contains("没通")) {
-            return Boolean.FALSE;
-        }
-        return null;
+        return matchKeyword(result, COOP_CLEAR_TABLE);
     }
+
+    private static final List<Map.Entry<String, List<String>>> SCALE_TABLE = List.of(
+            Map.entry("gold", List.of("金", "gold")),
+            Map.entry("silver", List.of("银", "silver")),
+            Map.entry("bronze", List.of("铜", "bronze")));
 
     /** 鳞片筛选关键词 → gold/silver/bronze;无则 null(不过滤)。出了该色鳞片(数量>0)。 */
     static String scaleKey(String scale) {
-        if (StringUtils.isBlank(scale)) {
-            return null;
-        }
-        String k = scale.trim().toLowerCase();
-        if (k.contains("金") || k.contains("gold")) {
-            return "gold";
-        }
-        if (k.contains("银") || k.contains("silver")) {
-            return "silver";
-        }
-        if (k.contains("铜") || k.contains("bronze")) {
-            return "bronze";
-        }
-        return null;
+        return matchKeyword(scale, SCALE_TABLE);
     }
 
     /**
@@ -479,6 +478,11 @@ public class SplatoonRecordTool {
         return r;
     }
 
+    /** 把若干描述片段拼成 {@code (a/b/c)};空片段列表返回空串。统一三处选择/筛选描述的拼接口径。 */
+    static String formatDesc(List<String> parts) {
+        return parts.isEmpty() ? "" : "(" + String.join("/", parts) + ")";
+    }
+
     private String selectorDesc(int idx, LocalDateTime time, Boolean bossOnly, String mode) {
         List<String> parts = new ArrayList<>();
         if (time != null) {
@@ -492,7 +496,7 @@ public class SplatoonRecordTool {
         if (StringUtils.isNotBlank(mode)) {
             parts.add(mode);
         }
-        return "(" + String.join("/", parts) + ")";
+        return formatDesc(parts);
     }
 
     private static final DateTimeFormatter TF = DateTimeFormatter.ofPattern("MM-dd HH:mm");
@@ -505,7 +509,7 @@ public class SplatoonRecordTool {
         if ("gold".equals(scaleKey)) p.add("出金鳞片");
         else if ("silver".equals(scaleKey)) p.add("出银鳞片");
         else if ("bronze".equals(scaleKey)) p.add("出铜鳞片");
-        return p.isEmpty() ? "" : "(" + String.join("/", p) + ")";
+        return formatDesc(p);
     }
 
     private String battleDesc(String mode, String judgement) {
@@ -513,7 +517,7 @@ public class SplatoonRecordTool {
         if (StringUtils.isNotBlank(mode)) p.add(mode);
         if ("WIN".equals(judgement)) p.add("胜");
         else if ("LOSE".equals(judgement)) p.add("负");
-        return p.isEmpty() ? "" : "(" + String.join("/", p) + ")";
+        return formatDesc(p);
     }
 
     private int clamp(int v, int lo, int hi) {
