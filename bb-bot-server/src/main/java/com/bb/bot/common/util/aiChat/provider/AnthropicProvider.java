@@ -62,6 +62,9 @@ public class AnthropicProvider implements AIProvider {
     @Value("${ai.anthropic.max-tokens:4096}")
     private int maxTokens;
 
+    /** 指数退避重试委托给公共 {@link RetryExecutor}，语义与原内联循环一致。 */
+    private final RetryExecutor retryExecutor = new RetryExecutor();
+
     private static final HttpClient SHARED_HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(15))
             .version(HttpClient.Version.HTTP_1_1)
@@ -102,25 +105,13 @@ public class AnthropicProvider implements AIProvider {
     // ---- 阻塞 ----
 
     private String executeWithRetry(ModelSpec spec, List<ChatMessage> messages) {
-        AIProviderProperties.RetryConfig retry = properties.getRetry();
-        long interval = retry.getInitialIntervalMs();
-        AIException last = null;
-        for (int attempt = 1; attempt <= retry.getMaxAttempts(); attempt++) {
-            try {
-                return doCall(spec, messages);
-            } catch (AIException e) {
-                last = e;
-                if (!e.isRetryable() || attempt == retry.getMaxAttempts()) {
-                    throw e;
-                }
-                log.warn("AI model [{}/{}] call failed (attempt {}/{}, type={}, status={}): {}. Retrying in {}ms",
-                        spec.getKind(), spec.getModel(), attempt, retry.getMaxAttempts(),
-                        e.getErrorType(), e.getHttpStatus(), e.getMessage(), interval);
-                sleep(interval);
-                interval = Math.min((long) (interval * retry.getMultiplier()), retry.getMaxIntervalMs());
-            }
-        }
-        throw last;
+        return retryExecutor.execute(properties.getRetry(),
+                () -> doCall(spec, messages),
+                (attempt, interval, e) -> log.warn(
+                        "AI model [{}/{}] call failed (attempt {}/{}, type={}, status={}): {}. Retrying in {}ms",
+                        spec.getKind(), spec.getModel(), attempt, properties.getRetry().getMaxAttempts(),
+                        e.getErrorType(), e.getHttpStatus(), e.getMessage(), interval),
+                null);
     }
 
     private String doCall(ModelSpec spec, List<ChatMessage> messages) {
@@ -139,7 +130,7 @@ public class AnthropicProvider implements AIProvider {
         if (response.status() / 100 == 2) {
             return parseSuccess(spec, response.body());
         }
-        throw classify(spec, response.status(), response.body());
+        throw HttpErrorClassifier.classify(response.status(), tag(spec), response.body());
     }
 
     private String parseSuccess(ModelSpec spec, String responseBody) {
@@ -171,30 +162,16 @@ public class AnthropicProvider implements AIProvider {
                                         List<ChatMessage> messages,
                                         List<ToolDefinition> tools,
                                         StreamHandler handler) {
-        AIProviderProperties.RetryConfig retry = properties.getRetry();
-        long interval = retry.getInitialIntervalMs();
-        AIException last = null;
-        for (int attempt = 1; attempt <= retry.getMaxAttempts(); attempt++) {
-            try {
-                doStreamCall(spec, messages, tools, handler);
-                return;
-            } catch (AIException e) {
-                last = e;
-                if (!e.isRetryable() || attempt == retry.getMaxAttempts()) {
-                    handler.onError(e);
-                    throw e;
-                }
-                log.warn("AI model [{}/{}] stream failed (attempt {}/{}, type={}, status={}): {}. Retrying in {}ms",
-                        spec.getKind(), spec.getModel(), attempt, retry.getMaxAttempts(),
-                        e.getErrorType(), e.getHttpStatus(), e.getMessage(), interval);
-                sleep(interval);
-                interval = Math.min((long) (interval * retry.getMultiplier()), retry.getMaxIntervalMs());
-            }
-        }
-        if (last != null) {
-            handler.onError(last);
-            throw last;
-        }
+        retryExecutor.execute(properties.getRetry(),
+                () -> {
+                    doStreamCall(spec, messages, tools, handler);
+                    return null;
+                },
+                (attempt, interval, e) -> log.warn(
+                        "AI model [{}/{}] stream failed (attempt {}/{}, type={}, status={}): {}. Retrying in {}ms",
+                        spec.getKind(), spec.getModel(), attempt, properties.getRetry().getMaxAttempts(),
+                        e.getErrorType(), e.getHttpStatus(), e.getMessage(), interval),
+                handler::onError);
     }
 
     private void doStreamCall(ModelSpec spec,
@@ -226,7 +203,7 @@ public class AnthropicProvider implements AIProvider {
             HttpResponse<InputStream> resp = SHARED_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofInputStream());
             if (resp.statusCode() / 100 != 2) {
                 String errBody = new String(resp.body().readAllBytes(), StandardCharsets.UTF_8);
-                throw classify(spec, resp.statusCode(), errBody);
+                throw HttpErrorClassifier.classify(resp.statusCode(), tag(spec), errBody);
             }
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(resp.body(), StandardCharsets.UTF_8))) {
@@ -612,22 +589,9 @@ public class AnthropicProvider implements AIProvider {
         return headers;
     }
 
-    private AIException classify(ModelSpec spec, int status, String body) {
-        String tag = spec.getKind() + "/" + spec.getModel();
-        if (status == 401 || status == 403) {
-            return new AIException(AIException.ErrorType.UNAUTHORIZED, status,
-                    "AI model [" + tag + "] unauthorized: " + body);
-        }
-        if (status == 429) {
-            return new AIException(AIException.ErrorType.RATE_LIMITED, status,
-                    "AI model [" + tag + "] rate limited: " + body);
-        }
-        if (status >= 500) {
-            return new AIException(AIException.ErrorType.RETRYABLE, status,
-                    "AI model [" + tag + "] server error: " + body);
-        }
-        return new AIException(AIException.ErrorType.FATAL, status,
-                "AI model [" + tag + "] client error: " + body);
+    /** 模型标识 {@code kind/model}，供 {@link HttpErrorClassifier} 拼接异常信息。 */
+    private static String tag(ModelSpec spec) {
+        return spec.getKind() + "/" + spec.getModel();
     }
 
     private String baseUrl(ModelSpec spec) {
@@ -636,13 +600,5 @@ public class AnthropicProvider implements AIProvider {
             return DEFAULT_BASE_URL;
         }
         return b.endsWith("/") ? b.substring(0, b.length() - 1) : b;
-    }
-
-    private static void sleep(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
