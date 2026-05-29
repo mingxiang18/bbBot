@@ -115,22 +115,12 @@ public class FileUtils {
      */
     public static String fileToBase64(File file) {
         String base64 = null;
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (InputStream in = new FileInputStream(file)) {
             byte[] bytes = new byte[(int) file.length()];
             in.read(bytes);
             base64 = new String(Base64.getEncoder().encode(bytes),"UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return base64;
     }
@@ -160,30 +150,14 @@ public class FileUtils {
      */
     @SneakyThrows
     public static byte[] getFile(String filePath) {
-        InputStream fileInputStream = null;
         byte[] data = null;
-        try {
-            if (!filePath.substring(0, 1).equals("/")) {
-                //如果第一个路径不是/号，则从相对路径取文件
-                String absolutePath = getAbsolutePath(filePath);
-                fileInputStream = new FileInputStream(absolutePath);
-            }else {
-                //否则从绝对路径读取文件
-                fileInputStream = new FileInputStream(filePath);
-            }
-
-            if (fileInputStream != null) {
-                data = new byte[fileInputStream.available()];
-                fileInputStream.read(data);
-                fileInputStream.close();
-            }
-
+        //如果第一个路径不是/号，则从相对路径取文件，否则从绝对路径读取文件
+        String resolvedPath = filePath.substring(0, 1).equals("/") ? filePath : getAbsolutePath(filePath);
+        try (InputStream fileInputStream = new FileInputStream(resolvedPath)) {
+            data = new byte[fileInputStream.available()];
+            fileInputStream.read(data);
         }catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if (fileInputStream != null) {
-                fileInputStream.close();
-            }
         }
 
         return data;
@@ -197,19 +171,13 @@ public class FileUtils {
      */
     @SneakyThrows
     public static void copyFileUsingFileStreams(File source, File dest) {
-        InputStream input = null;
-        OutputStream output = null;
-        try {
-            input = new FileInputStream(source);
-            output = new FileOutputStream(dest);
+        try (InputStream input = new FileInputStream(source);
+             OutputStream output = new FileOutputStream(dest)) {
             byte[] buf = new byte[1024];
             int bytesRead;
             while ((bytesRead = input.read(buf)) > 0) {
                 output.write(buf, 0, bytesRead);
             }
-        } finally {
-            input.close();
-            output.close();
         }
     }
 
