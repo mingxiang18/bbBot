@@ -155,12 +155,8 @@ public class BbEventDispatcher {
             }else if (SyncType.ASYNC.equals(rule.syncType())) {
                 //如果执行类型是异步执行, 则通过线程池异步执行消息处理
                 if (messageRuleMatch(bbReceiveMessage, rule)) {
-                    eventHandlerExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
-                        }
-                    });
+                    eventHandlerExecutor.execute(() ->
+                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage));
                     //如果规则关键字不为空，说明匹配到了规则
                     if (rule.keyword() != null && rule.keyword().length > 0) {
                         matchFlag = true;
@@ -173,12 +169,9 @@ public class BbEventDispatcher {
         if (!matchFlag) {
             for (Map.Entry<Method, Object> entry : defaultHandlerMap.entrySet()) {
                 Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
-                eventHandlerExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (messageRuleMatch(bbReceiveMessage, rule)) {
-                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
-                        }
+                eventHandlerExecutor.execute(() -> {
+                    if (messageRuleMatch(bbReceiveMessage, rule)) {
+                        handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
                     }
                 });
             }
