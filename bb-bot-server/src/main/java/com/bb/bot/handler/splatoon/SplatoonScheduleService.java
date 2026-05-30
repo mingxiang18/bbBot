@@ -33,14 +33,28 @@ public class SplatoonScheduleService {
     @Autowired
     private ScheduleMapRenderer scheduleMapRenderer;
 
-    /** 对战地图。timeIndex：0=当前，越大越靠后的时段，-1=全部时段一张图。 */
+    @Autowired
+    private SplatoonScheduleCache splatoonScheduleCache;
+
+    /**
+     * 对战地图。timeIndex：0=当前，越大越靠后的时段，-1=全部时段一张图。
+     *
+     * <p>单时段走 {@link SplatoonScheduleCache} 缓存（命中秒回、未命中实时兜底）；
+     * {@code 全图}（-1）始终实时拉取渲染。</p>
+     */
     public File renderRegularMap(int timeIndex) {
-        return scheduleMapRenderer.writeRegularMap(fetchSchedules(), timeIndex);
+        if (timeIndex == -1) {
+            return scheduleMapRenderer.writeRegularMap(fetchSchedules(), -1);
+        }
+        return splatoonScheduleCache.getRegularMap(timeIndex);
     }
 
-    /** 打工（鲑鱼跑）地图 + 支给武器。timeIndex 同上。 */
+    /** 打工（鲑鱼跑）地图 + 支给武器。timeIndex 同上；{@code 全工}（-1）始终实时。 */
     public File renderCoopMap(int timeIndex) {
-        return scheduleMapRenderer.writeCoopMap(fetchSchedules(), timeIndex);
+        if (timeIndex == -1) {
+            return scheduleMapRenderer.writeCoopMap(fetchSchedules(), -1);
+        }
+        return splatoonScheduleCache.getCoopMap(timeIndex);
     }
 
     /** 祭典海报。timeIndex：0=当前/最近，越大越早的往届。 */
