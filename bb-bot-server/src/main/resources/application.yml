@@ -264,8 +264,12 @@ fileClient:
 #    remoteReadAddress: http://127.0.0.1:30080/bbBotStatic/
 
 # ============ 每日资讯日报 ============
+# 上线前置（push master 即部署到生产，故默认关闭，备齐后再开）：
+#   1) 在 MySQL 执行 bb-bot-server/src/main/resources/sql/news_ddl.sql 建表
+#   2) 确认 rsshub Deployment 已就绪（bb-bot.yaml 已含），http://rsshub:1200 可达
+#   3) 把下面 enabled 改为 true
 news:
-  enabled: true
+  enabled: false
   cron: "0 0 8 * * ?"        # 每日 08:00
   archiveDays: 30
   perSourceLimit: 30
