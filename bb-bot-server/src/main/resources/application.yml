@@ -262,3 +262,46 @@ fileClient:
 #    remoteDir: /root/bbBot/static/
 #    #可被公网访问的地址
 #    remoteReadAddress: http://127.0.0.1:30080/bbBotStatic/
+
+# ============ 每日资讯日报 ============
+news:
+  enabled: true
+  cron: "0 0 8 * * ?"        # 每日 08:00
+  archiveDays: 30
+  perSourceLimit: 30
+  perCategoryLimit: 5
+  hosting:
+    dir: /bot/static/news     # HTML 落盘目录（位于 file.path 下）
+    publicBase: /news         # 对外访问前缀（无鉴权）
+  rsshub:
+    baseUrl: http://rsshub:1200   # 自建 RSSHub 内网地址
+  ai:
+    enabled: true
+    maxItems: 40
+    role: light               # 用轻模型做廉价总结/分类
+    translateEnTitle: false   # 英文标题不翻译，摘要中文
+  push:
+    enabled: false            # 首版不自动推送
+  # 数据源（2026-05-30 实测存活）。via=direct 用 url；via=rsshub 用 path 拼 rsshub.baseUrl
+  sources:
+    - { name: 澎湃新闻,   category: 时政, via: rsshub, path: /thepaper/featured, lang: zh }
+    - { name: 中新网滚动, category: 时政, via: direct, url: "https://www.chinanews.com.cn/rss/scroll-news.xml", lang: zh }
+    - { name: 中新网国际, category: 国际, via: direct, url: "https://www.chinanews.com.cn/rss/world.xml", lang: zh }
+    - { name: BBC中文,    category: 国际, via: direct, url: "https://feeds.bbci.co.uk/zhongwen/simp/rss.xml", lang: zh }
+    - { name: 华尔街见闻, category: 财经, via: rsshub, path: /wallstreetcn/news, lang: zh }
+    - { name: 界面新闻,   category: 财经, via: rsshub, path: /jiemian/lists/65, lang: zh }
+    - { name: 36氪快讯,   category: 财经, via: direct, url: "https://36kr.com/feed-newsflash", lang: zh }
+    - { name: 量子位,     category: AI,   via: direct, url: "https://www.qbitai.com/feed", lang: zh }
+    - { name: The Decoder, category: AI,  via: direct, url: "https://the-decoder.com/feed/", lang: en }
+    - { name: 爱范儿,     category: 苹果, via: direct, url: "https://www.ifanr.com/feed", lang: zh }
+    - { name: 数字尾巴,   category: 苹果, via: rsshub, path: /dgtle/news/0, lang: zh }
+    - { name: MacRumors,  category: 苹果, via: direct, url: "https://feeds.macrumors.com/MacRumors-All", lang: en }
+    - { name: 9to5Mac,    category: 苹果, via: direct, url: "https://9to5mac.com/feed/", lang: en }
+    - { name: 机核,       category: 游戏, via: direct, url: "https://www.gcores.com/rss", lang: zh }
+    - { name: 触乐,       category: 游戏, via: direct, url: "https://www.chuapp.com/feed", lang: zh }
+    - { name: 游研社,     category: 游戏, via: direct, url: "https://www.yystv.cn/rss/feed", lang: zh }
+    - { name: IGN,        category: 游戏, via: direct, url: "https://feeds.ign.com/ign/all", lang: en }
+    - { name: 电动邦,     category: 汽车, via: rsshub, path: /diandong/news, lang: zh }
+    - { name: Electrek,   category: 汽车, via: direct, url: "https://electrek.co/feed/", lang: en }
+    - { name: 虎嗅,       category: 科技, via: rsshub, path: /huxiu/article, lang: zh }
+    - { name: 少数派,     category: 科技, via: direct, url: "https://sspai.com/feed", lang: zh }
