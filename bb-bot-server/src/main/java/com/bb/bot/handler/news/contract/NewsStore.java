@@ -36,4 +36,11 @@ public interface NewsStore {
      * @param days 天数（默认 30）
      */
     List<ReportMeta> listRecent(int days);
+
+    /**
+     * 删除早于 keepDays 天的历史记录（news_item 与 news_daily），用于归档保留裁剪。
+     *
+     * @param keepDays 保留天数
+     */
+    void pruneOld(int keepDays);
 }
