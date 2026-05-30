@@ -59,10 +59,10 @@ public class SplatoonScheduleCache {
     /** 缓存的打工单时段，含义同上（每段图为「该段 + 下一段」拼接，与命令 {@code 工} 行为一致）。 */
     private volatile List<CachedSlot> coopSlots = Collections.emptyList();
 
-    /** 一个已预渲染的时段：UTC 起止时间 + 落盘图绝对路径。 */
+    /** 一个已预渲染的时段：UTC 起止时间 + 落盘图绝对路径。包级可见以便单测构造。 */
     @Data
     @AllArgsConstructor
-    private static class CachedSlot {
+    static class CachedSlot {
         private LocalDateTime start;
         private LocalDateTime end;
         private String filePath;
@@ -110,10 +110,23 @@ public class SplatoonScheduleCache {
      * 定位不到当前、目标越界、或落盘文件已不在则返回 null（交由调用方实时兜底）。
      */
     private File lookup(List<CachedSlot> slots, int timeIndex) {
-        if (slots.isEmpty()) {
+        int target = resolveTargetIndex(slots, timeIndex, LocalDateTime.now(ZoneOffset.UTC));
+        if (target < 0) {
             return null;
         }
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        File file = new File(slots.get(target).getFilePath());
+        return file.exists() ? file : null;
+    }
+
+    /**
+     * 纯定位逻辑（无 IO、无 now() 副作用，便于单测）：在有序时段列表里按 now 找 base
+     * （第一个 endTime 在 now 之后的时段 = 当前），返回 base+timeIndex 的下标。
+     * 列表空、now 已过全部时段、或目标越界 → 返回 -1。
+     */
+    static int resolveTargetIndex(List<CachedSlot> slots, int timeIndex, LocalDateTime now) {
+        if (slots == null || slots.isEmpty()) {
+            return -1;
+        }
         int base = -1;
         for (int i = 0; i < slots.size(); i++) {
             if (slots.get(i).getEnd().isAfter(now)) {
@@ -122,14 +135,13 @@ public class SplatoonScheduleCache {
             }
         }
         if (base < 0) {
-            return null;
+            return -1;
         }
         int target = base + timeIndex;
         if (target < 0 || target >= slots.size()) {
-            return null;
+            return -1;
         }
-        File file = new File(slots.get(target).getFilePath());
-        return file.exists() ? file : null;
+        return target;
     }
 
     /** 预渲染对战 12 段：每段调用现有 {@link ScheduleMapRenderer#writeRegularMap} 出综合图，落盘按 startTime 命名。 */
@@ -210,12 +222,12 @@ public class SplatoonScheduleCache {
     }
 
     /** startTime 转安全文件名（冒号不能做文件名），如 2026-05-30T06:00:00Z → 2026-05-30T06-00-00Z。 */
-    private static String keyOf(String startTime) {
+    static String keyOf(String startTime) {
         return startTime.replace(':', '-');
     }
 
     /** UTC 字符串（...Z）按 UTC 墙钟时间解析，便于与 now(UTC) 直接比较。 */
-    private static LocalDateTime parseUtc(String time) {
+    static LocalDateTime parseUtc(String time) {
         return LocalDateTime.parse(time, DateUtils.timePattern);
     }
 
