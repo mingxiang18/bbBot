@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 资讯采集器实现（任务 T2）。
@@ -26,6 +30,10 @@ public class NewsFetcherImpl implements NewsFetcher {
     private static final String USER_AGENT =
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                     + "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
+    /** XML 声明里的 encoding 探测：{@code <?xml ... encoding="UTF-8"?>}。 */
+    private static final Pattern XML_ENCODING =
+            Pattern.compile("<\\?xml[^>]*encoding=[\"']([^\"']+)[\"']", Pattern.CASE_INSENSITIVE);
 
     @Autowired
     private RestClient restClient;
@@ -52,11 +60,14 @@ public class NewsFetcherImpl implements NewsFetcher {
                     continue;
                 }
 
-                String xml = restClient.get()
+                // 取字节流后按 XML 声明的 encoding 解码：RestClient 的 body(String) 会用 HTTP 头
+                // charset，源站未声明时默认 ISO-8859-1，导致中文乱码。
+                byte[] bytes = restClient.get()
                         .uri(url)
                         .header("User-Agent", USER_AGENT)
                         .retrieve()
-                        .body(String.class);
+                        .body(byte[].class);
+                String xml = decodeXml(bytes);
 
                 List<NewsItem> items = RssParser.parse(
                         xml, source.getName(), source.getCategory(), source.getLang());
@@ -95,5 +106,28 @@ public class NewsFetcherImpl implements NewsFetcher {
         }
         // 默认按 direct 处理
         return source.getUrl();
+    }
+
+    /**
+     * 按 XML 声明的 encoding 把字节解码为字符串；未声明或字符集非法时默认 UTF-8。
+     * 绝大多数 RSS 为 UTF-8，个别中文源可能是 GBK，靠此正确还原。
+     */
+    static String decodeXml(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+        // 仅用 ASCII 读取前若干字节探测 XML 声明（声明本身是 ASCII 安全的）
+        int probeLen = Math.min(bytes.length, 256);
+        String head = new String(bytes, 0, probeLen, StandardCharsets.US_ASCII);
+        Charset charset = StandardCharsets.UTF_8;
+        Matcher m = XML_ENCODING.matcher(head);
+        if (m.find()) {
+            try {
+                charset = Charset.forName(m.group(1).trim());
+            } catch (Exception ignored) {
+                charset = StandardCharsets.UTF_8;
+            }
+        }
+        return new String(bytes, charset);
     }
 }
