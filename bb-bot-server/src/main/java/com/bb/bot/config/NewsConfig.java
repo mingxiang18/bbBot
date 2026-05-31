@@ -45,6 +45,11 @@ public class NewsConfig {
         private String dir = "/bot/static/news";
         /** 对外访问路径前缀。 */
         private String publicBase = "/news";
+        /**
+         * 对外可访问的完整基地址（scheme + host[:port]，不含尾斜杠），如 http://1.2.3.4:8099。
+         * 用于在聊天里回复可点击的完整链接；留空则只给出相对路径。
+         */
+        private String externalBaseUrl = "";
     }
 
     @Data

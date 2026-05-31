@@ -277,6 +277,7 @@ news:
   hosting:
     dir: /bot/static/news     # HTML 落盘目录（位于 file.path 下）
     publicBase: /news         # 对外访问前缀（无鉴权）
+    externalBaseUrl: ""       # 对外完整地址(如 http://1.2.3.4:8099)；配了聊天里才回可点链接，留空只给相对路径
   rsshub:
     baseUrl: http://rsshub:1200   # 自建 RSSHub 内网地址
   ai:

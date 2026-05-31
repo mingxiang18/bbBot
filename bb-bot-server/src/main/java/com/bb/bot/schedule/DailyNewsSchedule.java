@@ -68,22 +68,24 @@ public class DailyNewsSchedule {
     }
 
     /**
-     * 承载日报生成主体，便于单测与将来手动触发。
+     * 承载日报生成主体，便于单测与手动触发。
      *
      * <p>注意：本方法不做 enabled 判断（由 {@link #runDaily()} 负责），也不吞异常——
      * 手动触发场景下调用方可直接感知失败。定时场景的吞异常由 {@link #runDaily()} 兜底。</p>
+     *
+     * @return 生成成功时返回当日页访问 URL；无采集内容/无新增条目而短路时返回 null
      */
-    public void generateNow() {
+    public String generateNow() {
         List<NewsItem> items = newsFetcher.fetchAll();
         if (items == null || items.isEmpty()) {
             log.info("本次未采集到任何资讯条目，跳过出页");
-            return;
+            return null;
         }
 
         List<NewsItem> fresh = newsStore.dedupAndSave(items);
         if (fresh == null || fresh.isEmpty()) {
             log.info("去重后无新增条目（共采集 {} 条），跳过出页", items.size());
-            return;
+            return null;
         }
 
         DailyReport report = newsAiCurator.curate(fresh);
@@ -101,5 +103,6 @@ public class DailyNewsSchedule {
 
         log.info("每日资讯日报生成成功，日期={}，精选 {} 条，访问地址={}",
                 report.date(), report.totalCount(), url);
+        return url;
     }
 }
