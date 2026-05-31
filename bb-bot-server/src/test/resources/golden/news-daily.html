@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日资讯 · 2026-05-30</title>
+<style>
+  :root{--bg:#f4f5f7;--card:#fff;--ink:#1a1d24;--sub:#6b7280;--line:#e7e9ee;--brand:#c8102e;--brand-soft:#fbe9ec;--chip:#eef1f5;--shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.04)}
+  @media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#181b22;--ink:#e8eaed;--sub:#9aa0aa;--line:#262a33;--brand:#ff5a6e;--brand-soft:#2a181c;--chip:#222630;--shadow:0 1px 3px rgba(0,0,0,.4)}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px 64px}
+  header{padding:28px 0 18px;text-align:center}
+  .kicker{color:var(--brand);font-weight:700;letter-spacing:.18em;font-size:12px}
+  h1{font-size:30px;margin:6px 0 2px;letter-spacing:-.5px}
+  .date{color:var(--sub);font-size:14px}
+  .nav{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0 2px;flex-wrap:wrap}
+  .nav a,.nav span.navbtn{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 13px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer}
+  .nav a:hover{border-color:var(--brand);color:var(--brand)}
+  .nav span.navbtn.disabled{opacity:.4;cursor:not-allowed}
+  .nav select{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 10px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer}
+  .nav .arch{color:var(--sub)}
+  .brief{background:linear-gradient(135deg,var(--brand-soft),transparent);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0 8px;font-size:14.5px}
+  .brief b{color:var(--brand)}
+  .search{position:relative;margin:14px 0 2px}
+  .search input{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:11px 40px 11px 15px;font-size:14.5px;outline:none}
+  .search input:focus{border-color:var(--brand)}
+  .search .clr{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--sub);cursor:pointer;font-size:18px;line-height:1;display:none}
+  .tabs{position:sticky;top:0;z-index:9;display:flex;gap:8px;overflow-x:auto;padding:12px 0;background:var(--bg);scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--sub);padding:7px 15px;border-radius:999px;font-size:13.5px;cursor:pointer;transition:.15s;font-weight:600;white-space:nowrap}
+  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);transition:.15s}
+  .card:hover{transform:translateY(-1px);border-color:var(--brand)}
+  .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-bottom:7px;flex-wrap:wrap}
+  .src{background:var(--chip);padding:2px 9px;border-radius:6px;font-weight:600;color:var(--ink)}
+  .cat{color:var(--brand);font-weight:700}
+  .en{border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:10.5px;color:var(--sub)}
+  .stars{color:#f5a623;letter-spacing:1px}
+  .title{font-size:17.5px;font-weight:650;letter-spacing:-.2px}
+  .title a{color:inherit;text-decoration:none}
+  .title a:hover{color:var(--brand);text-decoration:underline}
+  .sum{margin-top:8px;font-size:14.5px;color:var(--ink)}
+  .sum .ai{display:inline-block;font-size:11px;color:#fff;background:linear-gradient(135deg,#6d5efc,#a855f7);padding:1px 7px;border-radius:5px;margin-right:6px;font-weight:700;vertical-align:1px}
+  .orig{display:inline-block;margin-top:10px;font-size:13px;color:var(--brand);text-decoration:none;font-weight:600}
+  .orig:hover{text-decoration:underline}
+  footer{text-align:center;color:var(--sub);font-size:12px;margin-top:28px;line-height:1.9}
+  .hidden{display:none}
+  .count{color:var(--sub);font-size:13px;margin:6px 2px 14px}
+  .empty{color:var(--sub);font-size:14px;text-align:center;padding:28px 0;display:none}
+  .arch-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow);text-decoration:none;color:inherit;transition:.15s}
+  .arch-item:hover{transform:translateY(-1px);border-color:var(--brand)}
+  .arch-item .d{font-size:16px;font-weight:650}
+  .arch-item .s{font-size:13px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">BB·DAILY</div>
+    <h1>每日资讯日报</h1>
+    <div class="date">2026-05-30 · 08:00 自动生成</div>
+    <div class="nav">
+      <a href="./2026-05-29.html">← 前一天</a>
+      <select id="date-picker" aria-label="选择日期">
+        <option value="2026-05-30" selected>2026-05-30</option>
+        <option value="2026-05-29">2026-05-29</option>
+      </select>
+      <span class="navbtn disabled">后一天 →</span>
+      <a class="arch" href="./index.html">📚 归档</a>
+    </div>
+  </header>
+
+  <div class="brief">
+    <b>📌 今日速览（AI 生成）</b>　&lt;b&gt;🤖 AI&lt;/b&gt;：比亚迪自研芯片。&lt;b&gt;🌏 国际&lt;/b&gt;：黎以停火谈判破裂。　共聚合 <b>4 个源</b>，精选 <b>4 条</b>。
+  </div>
+
+  <div class="search">
+    <input id="search" type="search" placeholder="🔍 搜索标题或摘要…" autocomplete="off">
+    <span class="clr" id="search-clear" title="清空">×</span>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-cat="all">全部 4</div>
+    <div class="tab" data-cat="AI">🤖 AI 2</div>
+    <div class="tab" data-cat="国际">🌏 国际 1</div>
+    <div class="tab" data-cat="苹果">🍎 苹果 1</div>
+  </div>
+  <div class="count" id="count"></div>
+
+  <div id="list">
+
+    <!-- ===== AI ===== -->
+    <article class="card" data-cat="AI" data-search="比亚迪自研ai芯片来了 智驾出事，比亚迪兜底">
+      <div class="meta"><span class="src">量子位</span><span class="cat">AI</span><span class="stars">★★★★★</span></div>
+      <div class="title"><a href="https://www.qbitai.com/2026/05/426557.html" target="_blank" rel="noopener">比亚迪自研AI芯片来了</a></div>
+      <div class="sum"><span class="ai">AI摘要</span>智驾出事，比亚迪兜底</div>
+      <a class="orig" href="https://www.qbitai.com/2026/05/426557.html" target="_blank" rel="noopener">阅读原文 →</a>
+    </article>
+    <article class="card" data-cat="AI" data-search="one company reportedly spent $500 million on claude 一家未具名公司被曝单月在 claude 授权上花费 5 亿美元。">
+      <div class="meta"><span class="src">The Decoder</span><span class="cat">AI</span><span class="en">EN</span><span class="stars">★★★★</span></div>
+      <div class="title"><a href="https://the-decoder.com/500m-claude/" target="_blank" rel="noopener">One company reportedly spent $500 million on Claude</a></div>
+      <div class="sum"><span class="ai">AI摘要</span>一家未具名公司被曝单月在 Claude 授权上花费 5 亿美元。</div>
+      <a class="orig" href="https://the-decoder.com/500m-claude/" target="_blank" rel="noopener">阅读原文 →</a>
+    </article>
+
+    <!-- ===== 国际 ===== -->
+    <article class="card" data-cat="国际" data-search="黎以在美谈判未就停火达成一致 黎以军方代表团在美谈判未能就停火达成一致。">
+      <div class="meta"><span class="src">中新网</span><span class="cat">国际</span><span class="stars">★★★★★</span><span>· 多源合并</span></div>
+      <div class="title"><a href="https://www.chinanews.com.cn/gj/2026/05-30/10631330.shtml" target="_blank" rel="noopener">黎以在美谈判未就停火达成一致</a></div>
+      <div class="sum"><span class="ai">AI摘要</span>黎以军方代表团在美谈判未能就停火达成一致。</div>
+      <a class="orig" href="https://www.chinanews.com.cn/gj/2026/05-30/10631330.shtml" target="_blank" rel="noopener">阅读原文 →</a>
+    </article>
+
+    <!-- ===== 苹果 ===== -->
+    <article class="card" data-cat="苹果" data-search="apple music could soon get different subscription tiers 测试版字符串显示 apple 正为 apple music 准备多级订阅方案。">
+      <div class="meta"><span class="src">9to5Mac</span><span class="cat">苹果</span><span class="en">EN</span><span class="stars">★★★</span></div>
+      <div class="title"><a href="https://9to5mac.com/x?a=1&amp;b=2" target="_blank" rel="noopener">Apple Music could soon get different subscription tiers</a></div>
+      <div class="sum"><span class="ai">AI摘要</span>测试版字符串显示 Apple 正为 Apple Music 准备多级订阅方案。</div>
+      <a class="orig" href="https://9to5mac.com/x?a=1&amp;b=2" target="_blank" rel="noopener">阅读原文 →</a>
+    </article>
+  </div>
+  <div class="empty" id="empty">没有匹配的资讯</div>
+
+  <footer>
+    📰 数据源：量子位 · The Decoder · 中新网 · 9to5Mac<br>
+    每日 08:00 自动聚合 → AI 整理 → 生成本页　|　bbBot 自动生成 · 链接直达原文 · 摘要以原文为准
+  </footer>
+</div>
+<script>
+  const DATES=['2026-05-30','2026-05-29'];
+  const CURRENT='2026-05-30';
+  const tabs=document.getElementById('tabs');
+  const cards=[...document.querySelectorAll('.card')];
+  const countEl=document.getElementById('count');
+  const emptyEl=document.getElementById('empty');
+  const searchEl=document.getElementById('search');
+  const clrEl=document.getElementById('search-clear');
+  let curCat='all';
+  function apply(){
+    const kw=(searchEl?searchEl.value:'').trim().toLowerCase();
+    let n=0;
+    cards.forEach(c=>{
+      const catOk=curCat==='all'||c.dataset.cat===curCat;
+      const hay=(c.dataset.search||'');
+      const kwOk=kw===''||hay.indexOf(kw)>=0;
+      const show=catOk&&kwOk;
+      c.classList.toggle('hidden',!show);
+      if(show)n++;
+    });
+    countEl.textContent=`显示 ${n} 条`;
+    if(emptyEl)emptyEl.style.display=n===0?'block':'none';
+    if(clrEl)clrEl.style.display=kw===''?'none':'block';
+  }
+  if(tabs)tabs.addEventListener('click',e=>{
+    const t=e.target.closest('.tab');if(!t)return;
+    tabs.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');curCat=t.dataset.cat;apply();
+  });
+  if(searchEl)searchEl.addEventListener('input',apply);
+  if(clrEl)clrEl.addEventListener('click',()=>{searchEl.value='';searchEl.focus();apply();});
+  const picker=document.getElementById('date-picker');
+  if(picker)picker.addEventListener('change',()=>{
+    const d=picker.value;if(d&&d!==CURRENT)location.href='./'+d+'.html';
+  });
+  apply();
+</script>
+</body>
+</html>

@@ -101,3 +101,59 @@ spec:
     - { name: tcp,              port: 8099,  nodePort: 8099 }
     - { name: websocket-server, port: 8888,  nodePort: 8888 }
     - { name: bb-server,        port: 30210, nodePort: 30210 }
+---
+# 自建 RSSHub：为每日资讯日报提供「官方无 RSS」的权威源（澎湃/华尔街见闻/电动邦等）。
+# bb-bot 通过 ClusterIP 内网地址 http://rsshub:1200 访问（见 news.rsshub.baseUrl）。
+# 公共实例反爬严重且有缓存延迟，故自建。镜像为公共镜像；若集群无 docker.io 出网，
+# 需先把 diygod/rsshub 镜像同步到内网 registry 再改这里。
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rsshub
+  namespace: bb-bot
+  labels: { app: rsshub }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rsshub }
+  template:
+    metadata:
+      labels: { app: rsshub }
+    spec:
+      terminationGracePeriodSeconds: 15
+      containers:
+        - name: rsshub
+          image: diygod/rsshub:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - { name: http, containerPort: 1200 }
+          env:
+            - { name: NODE_ENV,     value: "production" }
+            - { name: CACHE_EXPIRE, value: "300" }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits:   { cpu: 1,    memory: 512Mi }
+          startupProbe:
+            httpGet: { path: /, port: 1200 }
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket: { port: 1200 }
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            httpGet: { path: /, port: 1200 }
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsshub
+  namespace: bb-bot
+  labels: { app: rsshub }
+spec:
+  type: ClusterIP
+  selector: { app: rsshub }
+  ports:
+    - { name: http, port: 1200, targetPort: 1200 }
