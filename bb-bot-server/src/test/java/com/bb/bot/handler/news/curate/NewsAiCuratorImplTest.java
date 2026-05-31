@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -180,5 +181,56 @@ class NewsAiCuratorImplTest {
 
         assertThat(report.totalCount()).isEqualTo(2);
         verify(providerDispatcher, never()).chat(any(), anyList());
+    }
+
+    // ---- 按源轮转（修复 maxItems 只喂前几个源的缺陷） ----
+
+    private static NewsItem ni(String source, String title) {
+        return new NewsItem(source, "时政", title, "https://x/" + title, "desc", "", "zh", title);
+    }
+
+    @Test
+    void interleaveBySource_roundRobinBalancesSources() {
+        List<NewsItem> in = List.of(
+                ni("A", "a1"), ni("A", "a2"), ni("A", "a3"),
+                ni("B", "b1"),
+                ni("C", "c1"), ni("C", "c2"));
+
+        List<NewsItem> out = NewsAiCuratorImpl.interleaveBySource(in);
+
+        // 轮转顺序 A,B,C,A,C,A；组内相对顺序保持
+        assertThat(out).extracting(NewsItem::sourceName)
+                .containsExactly("A", "B", "C", "A", "C", "A");
+        assertThat(out).extracting(NewsItem::title)
+                .containsExactly("a1", "b1", "c1", "a2", "c2", "a3");
+    }
+
+    @Test
+    void interleaveBySource_truncationNowCoversAllSources() {
+        // 真实问题复现：源1有 30 条、后面源各 1 条。旧逻辑前 N 条全是源1。
+        List<NewsItem> in = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            in.add(ni("澎湃", "p" + i));
+        }
+        in.add(ni("量子位", "q1"));
+        in.add(ni("机核", "g1"));
+
+        List<NewsItem> out = NewsAiCuratorImpl.interleaveBySource(in);
+
+        // 轮转后前 3 条就覆盖了 3 个源（旧逻辑这 3 条全是澎湃，量子位/机核被饿死）
+        assertThat(out.subList(0, 3)).extracting(NewsItem::sourceName)
+                .containsExactly("澎湃", "量子位", "机核");
+    }
+
+    @Test
+    void interleaveBySource_emptyOrNull_safe() {
+        assertThat(NewsAiCuratorImpl.interleaveBySource(null)).isEmpty();
+        assertThat(NewsAiCuratorImpl.interleaveBySource(List.of())).isEmpty();
+    }
+
+    @Test
+    void curatePrompt_instructsSelectionAndDropTrivial() {
+        String sys = CuratePrompt.system();
+        assertThat(sys).contains("精选").contains("丢弃");
     }
 }

@@ -9,6 +9,7 @@ import com.bb.bot.handler.news.contract.ReportMeta;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,10 +188,15 @@ public class NewsPageBuilderImpl implements NewsPageBuilder {
         if (items != null) {
             for (CuratedItem item : items) {
                 String cat = NewsCategory.normalize(item.category());
-                List<CuratedItem> bucket = grouped.get(cat);
-                if (bucket.size() < limit) {
-                    bucket.add(item);
-                }
+                grouped.get(cat).add(item);   // 先全部归类，截断前再按重要性排序
+            }
+        }
+        // 每类按 importance 倒序（稳定排序：同分保持 AI 返回顺序），再截断到 limit，
+        // 保证每个分类留下的是该类「最重要」的若干条，而非采集/返回顺序的前几条。
+        for (List<CuratedItem> bucket : grouped.values()) {
+            bucket.sort(Comparator.comparingInt(CuratedItem::importance).reversed());
+            if (bucket.size() > limit) {
+                bucket.subList(limit, bucket.size()).clear();
             }
         }
         return grouped;
