@@ -49,6 +49,21 @@ template:
           # 同时跳过 javadoc 生成 —— CI 部署不需要 javadoc jar，且省时间。
           - name: MAVEN_OPTS
             value: "-Dmaven.repo.local=/home/runner/.m2/repository -Dmaven.javadoc.skip=true"
+          # runner 在墙内：git fetch GitHub / Kaniko 拉 docker.io base 走 clash 代理（misu-maco 上）。
+          # NO_PROXY 覆盖内网，保证 kubectl(集群API) 与 Kaniko push 私有 registry(10.8.0.26:30500) 直连，
+          # 否则会被代理掐断。maven 走 PVC 缓存、不读 HTTP_PROXY env，不受影响。
+          - name: HTTP_PROXY
+            value: "http://10.8.0.26:7890"
+          - name: HTTPS_PROXY
+            value: "http://10.8.0.26:7890"
+          - name: http_proxy
+            value: "http://10.8.0.26:7890"
+          - name: https_proxy
+            value: "http://10.8.0.26:7890"
+          - name: NO_PROXY
+            value: "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.svc.cluster.local,.cluster.local,kubernetes.default.svc"
+          - name: no_proxy
+            value: "localhost,127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.svc.cluster.local,.cluster.local,kubernetes.default.svc"
         resources:
           requests:
             cpu: "500m"
