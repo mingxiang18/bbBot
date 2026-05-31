@@ -18,10 +18,14 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,9 +67,12 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return fallback(input);
         }
 
-        // 取前 maxItems 条
+        // 按源轮转后再取前 maxItems 条：原始 input 是各源顺序拼接的，直接 subList(0,maxItems)
+        // 会让前 1~2 个源占满名额、后面所有源/分类被饿死（AI 根本看不到）。轮转保证截断后
+        // 每个源/分类都有代表，AI 才能在全量里做有意义的精选。
         int maxItems = aiCfg.getMaxItems() > 0 ? aiCfg.getMaxItems() : input.size();
-        List<NewsItem> picked = input.size() > maxItems ? input.subList(0, maxItems) : input;
+        List<NewsItem> balanced = interleaveBySource(input);
+        List<NewsItem> picked = balanced.size() > maxItems ? balanced.subList(0, maxItems) : balanced;
         if (picked.isEmpty()) {
             return fallback(input);
         }
@@ -116,6 +123,37 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return null;
         }
         return aiProviderProperties.getModels().get(name);
+    }
+
+    /**
+     * 按源轮转（round-robin）重排：把"各源顺序拼接"的列表，重排成"每轮各源各取一条"。
+     * 例如 [澎湃1,澎湃2,中新1,中新2,BBC1] → [澎湃1,中新1,BBC1,澎湃2,中新2]。
+     * 这样后续 subList(0,maxItems) 截断时，每个源/分类都能进入 AI 视野，而不是被前几个源占满。
+     * 各源内部相对顺序保持不变。
+     */
+    static List<NewsItem> interleaveBySource(List<NewsItem> items) {
+        if (items == null || items.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // 按源分组（保持首次出现顺序 + 组内顺序）
+        Map<String, Deque<NewsItem>> bySource = new LinkedHashMap<>();
+        for (NewsItem it : items) {
+            String key = it.sourceName() == null ? "" : it.sourceName();
+            bySource.computeIfAbsent(key, k -> new ArrayDeque<>()).addLast(it);
+        }
+        List<NewsItem> out = new ArrayList<>(items.size());
+        boolean any = true;
+        while (any) {
+            any = false;
+            for (Deque<NewsItem> q : bySource.values()) {
+                NewsItem it = q.pollFirst();
+                if (it != null) {
+                    out.add(it);
+                    any = true;
+                }
+            }
+        }
+        return out;
     }
 
     /**

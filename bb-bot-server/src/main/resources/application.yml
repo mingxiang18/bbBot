@@ -282,7 +282,7 @@ news:
     baseUrl: http://rsshub:1200   # 自建 RSSHub 内网地址
   ai:
     enabled: true
-    maxItems: 40
+    maxItems: 100             # 喂 AI 上限；条目先按源轮转再截断，保证各源/分类都进 AI 视野
     role: light               # 用轻模型做廉价总结/分类
     translateEnTitle: false   # 英文标题不翻译，摘要中文
   push:

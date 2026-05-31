@@ -62,8 +62,8 @@ public class NewsConfig {
     public static class Ai {
         /** 是否启用 AI 整理；关闭则走降级（原始标题 + 原始摘要）。 */
         private boolean enabled = true;
-        /** 喂给 LLM 的总条数上限（成本控制）。 */
-        private int maxItems = 40;
+        /** 喂给 LLM 的总条数上限（成本控制）；条目会先按源轮转再截断，保证各源/分类都被 AI 看到。 */
+        private int maxItems = 100;
         /** 使用的模型角色：light（廉价总结分类）/ heavy。 */
         private String role = "light";
         /** 是否翻译英文源标题（默认 false：保留英文标题，摘要中文）。 */
