@@ -153,6 +153,25 @@ class NewsPageBuilderImplTest {
     }
 
     @Test
+    void buildDaily_sortsByImportanceWithinCategory_keepsTopWhenLimited() {
+        // 同一分类 3 条，importance 乱序 [2,5,3]
+        List<CuratedItem> items = List.of(
+                new CuratedItem("标题甲低", "https://t.test/a", "源", "科技", "摘要甲", 2, false, 1, ""),
+                new CuratedItem("标题乙高", "https://t.test/b", "源", "科技", "摘要乙", 5, false, 1, ""),
+                new CuratedItem("标题丙中", "https://t.test/c", "源", "科技", "摘要丙", 3, false, 1, "")
+        );
+        DailyReport report = new DailyReport("2026-05-30", "导语", items, 1, 3);
+
+        // perCategoryLimit=2 → 应保留 importance 5(乙) 和 3(丙)，丢掉 2(甲)；且乙在丙之前
+        String html = newBuilder(2).buildDaily(report, fixtureDates());
+
+        assertThat(html).contains("data-cat=\"科技\">🔬 科技 2</div>");
+        assertThat(html).contains("标题乙高").contains("标题丙中");
+        assertThat(html).doesNotContain("标题甲低");                 // importance 最低被截断
+        assertThat(html.indexOf("标题乙高")).isLessThan(html.indexOf("标题丙中")); // 高分在前
+    }
+
+    @Test
     void buildArchiveIndex_listsDatesDescendingWithLinks() {
         String html = newBuilder(5).buildArchiveIndex(List.of(
                 new ReportMeta("2026-05-29", 6, 5, "/news/2026-05-29.html"),
