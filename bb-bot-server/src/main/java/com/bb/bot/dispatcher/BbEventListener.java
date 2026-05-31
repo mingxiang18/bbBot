@@ -2,6 +2,7 @@ package com.bb.bot.dispatcher;
 
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.entity.bb.BbReceiveMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
  * 机器人事件监听者
  * @author ren
  */
+@Slf4j
 @Component
 public class BbEventListener {
 
@@ -19,8 +21,18 @@ public class BbEventListener {
     @Autowired
     private MemoryEventRecorder memoryEventRecorder;
 
+    @Autowired
+    private InboundMessageDeduplicator inboundMessageDeduplicator;
+
     @EventListener
     public void listenMessageEvent(BbReceiveMessage bbReceiveMessage) {
+        // 入站幂等去重：QQ webhook 在被动回复超时后会重推同一条消息（msg_id 相同），
+        // 没有这道拦截就会处理两遍、给用户发两张一模一样的图。放在最前面，连记忆落库和分发都不重复。
+        if (!inboundMessageDeduplicator.firstSeen(bbReceiveMessage.getMessageId())) {
+            log.warn("重复入站消息，已跳过 messageId={}", bbReceiveMessage.getMessageId());
+            return;
+        }
+
         // M8.2：每条入站消息先落 ai_memory_event（自动按内容预分类 kind）
         // 不阻塞 dispatcher：recorder 内部已 try/catch 兜底
         Long inboundEventId = memoryEventRecorder.recordInbound(bbReceiveMessage);
