@@ -120,6 +120,15 @@ spec:
     metadata:
       labels: { app: rsshub }
     spec:
+      # 与 bb-bot 同落 misu-maco：该节点确认可出网（raspberrypi 出网受限会导致 RSSHub 抓不到上游 502）。
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: [misu-maco]
       terminationGracePeriodSeconds: 15
       containers:
         - name: rsshub
