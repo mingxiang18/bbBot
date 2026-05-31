@@ -15,9 +15,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * qq官方请求调用工具
@@ -58,26 +60,68 @@ public class QqApiCaller {
     private String uploadC2CMediaUrl;
 
     /**
-     * 获取token
+     * 缓存 TTL 比官方 expires_in 提前的安全余量（秒）：保证缓存里绝不残留已过期 token。
+     */
+    private static final long EXPIRE_SAFETY_SEC = 30;
+
+    /**
+     * 定时任务「提前刷新」阈值（秒）：剩余有效期不足这么多就换新 token。
+     * 官方在过期前 60 秒内重新获取会拿到新 token 且旧 token 仍有效，故 120s 提前换可无缝衔接。
+     */
+    private static final long REFRESH_AHEAD_SEC = 120;
+
+    /**
+     * appId -> token 过期 epoch 秒。仅供定时任务判断「是否该提前刷新」；缓存本身的过期由
+     * {@link LocalCacheUtils} 的 TTL 兜底（即便定时任务没跑，过期后也会现拉，不会用到旧 token）。
+     */
+    private final Map<String, Long> tokenExpireAtSec = new ConcurrentHashMap<>();
+
+    private static String tokenCacheKey(QqConfig qqConfig) {
+        return "qq.token." + qqConfig.getAppId();
+    }
+
+    /**
+     * 获取 token（请求热路径）。命中缓存直接返回，绝不在这里同步现拉——靠
+     * {@link QqTokenRefreshSchedule} 提前刷新保持缓存常热；仅缓存为空（冷启动/异常）时才兜底现拉。
      */
     public String getToken(QqConfig qqConfig) {
-        String qqToken = LocalCacheUtils.getCacheObject("qq.token");
-        if (StringUtils.isEmpty(qqToken)) {
-            //调用接口获取token
-            Map<String, String> request = new HashMap<>();
-            request.put("appId", qqConfig.getAppId());
-            request.put("clientSecret", qqConfig.getClientSecret());
-            Map response = restUtils.post(getAppAccessTokenUrl, request, Map.class);
-            String token = "QQBot " + (String) response.get("access_token");
-            //缓存设置token
-            LocalCacheUtils.setCacheObject("qq.token",
-                    token,
-                    Long.valueOf((String) response.get("expires_in")) - 30,
-                    ChronoUnit.SECONDS);
-            return token;
-        }else {
+        String qqToken = LocalCacheUtils.getCacheObject(tokenCacheKey(qqConfig));
+        if (StringUtils.isNotEmpty(qqToken)) {
             return qqToken;
         }
+        return refreshToken(qqConfig);
+    }
+
+    /**
+     * 强制拉取新 token、写缓存并记录过期时间，返回新 token。{@code synchronized} 避免并发重复拉取；
+     * 进入后二次确认：若已有别的线程刚刷出有效且未临近过期的 token，则直接复用、不再请求。
+     */
+    public synchronized String refreshToken(QqConfig qqConfig) {
+        String existing = LocalCacheUtils.getCacheObject(tokenCacheKey(qqConfig));
+        if (StringUtils.isNotEmpty(existing) && !nearExpiry(qqConfig)) {
+            return existing;
+        }
+
+        Map<String, String> request = new HashMap<>();
+        request.put("appId", qqConfig.getAppId());
+        request.put("clientSecret", qqConfig.getClientSecret());
+        Map response = restUtils.post(getAppAccessTokenUrl, request, Map.class);
+
+        long expiresIn = Long.parseLong((String) response.get("expires_in"));
+        String token = "QQBot " + response.get("access_token");
+        LocalCacheUtils.setCacheObject(tokenCacheKey(qqConfig), token, expiresIn - EXPIRE_SAFETY_SEC, ChronoUnit.SECONDS);
+        tokenExpireAtSec.put(qqConfig.getAppId(), Instant.now().getEpochSecond() + expiresIn);
+        log.info("刷新 QQ access_token，appId={}，有效期 {}s", qqConfig.getAppId(), expiresIn);
+        return token;
+    }
+
+    /**
+     * token 是否已临近过期（剩余有效期不足 {@link #REFRESH_AHEAD_SEC}）。
+     * 无记录（从未拉过）也视为需要刷新。供 {@link QqTokenRefreshSchedule} 判断。
+     */
+    public boolean nearExpiry(QqConfig qqConfig) {
+        Long expireAt = tokenExpireAtSec.get(qqConfig.getAppId());
+        return expireAt == null || Instant.now().getEpochSecond() >= expireAt - REFRESH_AHEAD_SEC;
     }
 
     /**
