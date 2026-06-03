@@ -127,7 +127,7 @@ public class MemorySelector {
         return fallbackTopN(base);
     }
 
-    private List<AiMemoryItem> coarseFilter(List<AiMemoryItem> pool, String queryText) {
+    List<AiMemoryItem> coarseFilter(List<AiMemoryItem> pool, String queryText) {
         Set<String> tokens = tokenize(queryText);
         if (tokens.isEmpty()) return Collections.emptyList();
         List<AiMemoryItem> hit = new ArrayList<>();
@@ -189,7 +189,7 @@ public class MemorySelector {
     }
 
     /** 兜底：按 importance desc、last_seen desc 取前 N。 */
-    private List<AiMemoryItem> fallbackTopN(List<AiMemoryItem> base) {
+    List<AiMemoryItem> fallbackTopN(List<AiMemoryItem> base) {
         return base.stream()
                 .sorted((a, b) -> {
                     int ci = Double.compare(imp(b), imp(a));
@@ -229,7 +229,7 @@ public class MemorySelector {
         return out;
     }
 
-    private boolean eligible(AiMemoryItem c, String userId, String groupId, boolean inGroup) {
+    boolean eligible(AiMemoryItem c, String userId, String groupId, boolean inGroup) {
         MemoryScope scope = MemoryScope.parse(c.getScope());
         if (scope == null) return false;
         return switch (scope) {
@@ -270,7 +270,7 @@ public class MemorySelector {
     }
 
     /** 老化提示：stale 强提醒；project_state/ephemeral/reference 满 2 天提醒；稳定项放宽。 */
-    private String stalenessWarning(AiMemoryItem c) {
+    String stalenessWarning(AiMemoryItem c) {
         LocalDateTime ref = c.getLastSeenAt() != null ? c.getLastSeenAt() : c.getCreatedAt();
         long days = ref == null ? 0 : Duration.between(ref, LocalDateTime.now()).toDays();
         boolean isStale = MemoryStatus.STALE.code().equals(c.getStatus());
@@ -297,7 +297,7 @@ public class MemorySelector {
         return StringUtils.defaultString(platform) + "|" + StringUtils.defaultString(groupId) + "|" + StringUtils.defaultString(userId);
     }
 
-    private static Set<String> tokenize(String q) {
+    static Set<String> tokenize(String q) {
         String norm = FactStore.normalize(q);
         if (StringUtils.isBlank(norm)) return Collections.emptySet();
         Set<String> out = new LinkedHashSet<>();

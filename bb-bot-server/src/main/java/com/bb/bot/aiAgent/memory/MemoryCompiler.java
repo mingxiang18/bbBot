@@ -343,7 +343,7 @@ public class MemoryCompiler {
     }
 
     /** 先按字符数截，再按 UTF-8 字节数截（二分定位 char 边界，不切坏多字节字符）；任一触发都追加截断提醒。 */
-    private String truncateByCharsAndBytes(String text) {
+    String truncateByCharsAndBytes(String text) {
         boolean truncated = false;
         if (text.length() > memoryMdMaxChars) {
             text = text.substring(0, memoryMdMaxChars);
