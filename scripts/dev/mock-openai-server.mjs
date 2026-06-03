@@ -205,6 +205,43 @@ function extractPath(text, fallback = 'bb-demo.txt') {
   return rel ? rel[0] : fallback;
 }
 
+/* ---------------- 每日资讯日报 curate（Phase 3 活体：返回 id 化 JSON，服务端按 id 回填） ---------------- */
+
+// 识别新闻整理 system prompt（含"资讯主编" + "clusterIds" schema 标记）
+function isCuratePrompt(sys) {
+  return /资讯主编/.test(sys) && /clusterIds/.test(sys);
+}
+
+// 从 user 消息里抽出条目 id（"id: nX" 行）
+function extractCurateIds(messages) {
+  const u = messages.filter(m => m.role === 'user')
+    .map(m => (typeof m.content === 'string' ? m.content : JSON.stringify(m.content)))
+    .join('\n');
+  return [...u.matchAll(/^id:\s*(n\d+)/gm)].map(m => m[1]);
+}
+
+// 构造 id 化精选 JSON：选前 8 条，引用真实 id，分配有效分类/摘要/重要性。
+// 故意混入一个不存在的 id 与一个重复 id，验证服务端校验会丢弃它们。
+function buildCurateJson(messages) {
+  const ids = extractCurateIds(messages);
+  const cats = ['国际', '科技', '财经', 'AI'];
+  const pick = ids.slice(0, Math.min(8, ids.length));
+  const items = pick.map((id, i) => ({
+    id,
+    clusterIds: [id],
+    category: cats[i % cats.length],
+    summaryZh: `${id} 的中文一句话摘要（mock 精选）`,
+    importance: 5 - (i % 5),
+    note: '',
+  }));
+  // 注入异常项：n9999 不存在 + 重复第一个 id —— 应被服务端 assemble 丢弃
+  if (pick.length > 0) {
+    items.push({ id: 'n9999', clusterIds: ['n9999'], category: '国际', summaryZh: '幻觉条目', importance: 5, note: '' });
+    items.push({ id: pick[0], clusterIds: [pick[0]], category: '科技', summaryZh: '重复条目', importance: 4, note: '' });
+  }
+  return JSON.stringify({ brief: '今日要点（mock 精选）', items, rejected: [] });
+}
+
 /* ---------------- Handler ---------------- */
 
 async function handleCompletion(req, res, body) {
@@ -218,6 +255,27 @@ async function handleCompletion(req, res, body) {
   const { model = 'mock-gpt-4', messages = [], stream = false, tools = [], stream_options = null } = parsed;
   const id = makeId();
   const sys = systemText(messages);
+
+  // 每日资讯日报整理：返回 id 化 JSON（不论 stream 与否），活体验证服务端按 id 回填与校验
+  if (isCuratePrompt(sys)) {
+    const json = buildCurateJson(messages);
+    console.log(`[mock] news-curate model=${model} ids=${extractCurateIds(messages).length} → ${json.slice(0, 80)}…`);
+    if (!stream) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({
+        id, object: 'chat.completion', created: Math.floor(Date.now() / 1000), model,
+        choices: [{ index: 0, message: { role: 'assistant', content: json }, finish_reason: 'stop' }],
+        usage: buildUsage(messages, json),
+      }));
+    }
+    res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'Connection': 'keep-alive' });
+    sseChunk(res, textChunk(id, model, json));
+    sseChunk(res, finishChunk(id, model, 'stop'));
+    if (stream_options?.include_usage) {
+      sseChunk(res, usageChunk(id, model, buildUsage(messages, json)));
+    }
+    return sseDone(res);
+  }
 
   if (!stream) {
     // 非流式分支：分类器 / 视觉桥接 / 内部总结都走 chat()（阻塞），在这里应答。

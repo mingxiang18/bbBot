@@ -59,6 +59,27 @@ aiChat:
   # 直接对话挂载工具（统一 handler，无需 agent 前缀）
   toolsEnabled: true
 
+# 每日资讯日报本地活体测试：直连公网源(不依赖内网 rsshub)，候选池/AI ID 化/降级全链路
+news:
+  enabled: true
+  autoCreateTables: true        # 启动幂等建 news 表(本地库无需手动跑 ddl)
+  candidateWindowHours: 48
+  perSourceLimit: 8
+  admin:
+    token: local-news-token     # /news/run 触发令牌
+  fetch:
+    concurrency: 4
+    connectTimeoutMs: 4000
+    readTimeoutMs: 12000
+  hosting:
+    dir: /tmp/bb-bot-test/static/news
+    publicBase: /news
+  sources:
+    - { name: 中新网国际, category: 国际, via: direct, url: "https://www.chinanews.com.cn/rss/world.xml", lang: zh }
+    - { name: 少数派,    category: 科技, via: direct, url: "https://sspai.com/feed", lang: zh }
+    - { name: 36氪快讯,  category: 财经, via: direct, url: "https://36kr.com/feed-newsflash", lang: zh }
+    - { name: BBC中文,   category: 国际, via: direct, url: "https://feeds.bbci.co.uk/zhongwen/simp/rss.xml", lang: zh }
+
 aiAgent:
   owners: tester-owner
   maxSteps: 10
