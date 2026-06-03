@@ -156,6 +156,20 @@ public class AiAgentSchemaInitializer {
                     "  FULLTEXT KEY ft_memory_search (search_text) WITH PARSER ngram" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 结构化记忆卡片'",
 
+            // 记忆选择审计（Phase 3）。带 TTL，MemoryLifecycleSweeper 定时清理。
+            "CREATE TABLE IF NOT EXISTS ai_memory_selection_log (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  user_id VARCHAR(64) DEFAULT NULL," +
+                    "  group_id VARCHAR(64) DEFAULT NULL," +
+                    "  query_text VARCHAR(512) DEFAULT NULL," +
+                    "  candidate_keys TEXT," +
+                    "  selected_keys TEXT," +
+                    "  selector_model VARCHAR(32) DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  KEY idx_created (created_at)," +
+                    "  KEY idx_user_created (user_id, created_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 记忆选择审计（带 TTL）'",
+
             "CREATE TABLE IF NOT EXISTS ai_cron_task (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  owner_user_id VARCHAR(64) NOT NULL," +

@@ -2,7 +2,9 @@ package com.bb.bot.aiAgent.memory;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bb.bot.database.aiAgent.entity.AiMemoryItem;
+import com.bb.bot.database.aiAgent.entity.AiMemorySelectionLog;
 import com.bb.bot.database.aiAgent.service.IAiMemoryItemService;
+import com.bb.bot.database.aiAgent.service.IAiMemorySelectionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +32,16 @@ public class MemoryLifecycleSweeper {
     @Autowired
     private IAiMemoryItemService itemService;
 
+    @Autowired
+    private IAiMemorySelectionLogService selectionLogService;
+
     /** 超过这么多天没被再次确认（last_seen_at）就降级 stale。 */
     @Value("${aiAgent.memory.staleAfterDays:60}")
     private int staleAfterDays;
+
+    /** 记忆选择审计保留天数（TTL）。 */
+    @Value("${aiAgent.memory.selectionLogTtlDays:14}")
+    private int selectionLogTtlDays;
 
     @Scheduled(fixedDelay = 600_000L, initialDelay = 120_000L)
     public void sweep() {
@@ -60,6 +69,14 @@ public class MemoryLifecycleSweeper {
             }
             if (n > 0) {
                 log.info("MemoryLifecycleSweeper 降级 stale {} 条", n);
+            }
+
+            // selection_log TTL 清理
+            LocalDateTime logCutoff = now.minusDays(selectionLogTtlDays);
+            long removed = selectionLogService.remove(new LambdaQueryWrapper<AiMemorySelectionLog>()
+                    .lt(AiMemorySelectionLog::getCreatedAt, logCutoff)) ? 1 : 0;
+            if (removed > 0) {
+                log.debug("MemoryLifecycleSweeper 清理过期 selection_log");
             }
         } catch (Exception e) {
             log.warn("MemoryLifecycleSweeper sweep 异常", e);

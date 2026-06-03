@@ -134,6 +134,9 @@ public class BbAiChatHandler {
     @Autowired
     private com.bb.bot.aiAgent.memory.MemoryCompiler memoryCompiler;
 
+    @Autowired
+    private com.bb.bot.aiAgent.memory.MemorySelector memorySelector;
+
     /** 工具循环编排 + 注册表 + 执行器 + 技能目录（合并 agent 能力后引入）。 */
     @Autowired
     private ToolLoopExecutor toolLoopExecutor;
@@ -219,7 +222,8 @@ public class BbAiChatHandler {
         }
         boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
 
-        String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
+        String personality = composePersonality(bbReceiveMessage.getUserId(), bbReceiveMessage.getGroupId(),
+                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), decision.getClues(), useTools);
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -494,31 +498,43 @@ public class BbAiChatHandler {
                 .orElse(null);
     }
 
-    /** 测试兼容用 2 参重载：等价于不挂工具。 */
+    /** 测试兼容用 2 参重载：等价于不挂工具、无群/消息上下文。 */
     String composePersonality(String userId, List<String> clues) {
-        return composePersonality(userId, clues, false);
+        return composePersonality(userId, null, null, null, clues, false);
+    }
+
+    /** 兼容旧 3 参调用：无群/消息上下文（记忆退化为按重要度兜底选择）。 */
+    String composePersonality(String userId, List<String> clues, boolean useTools) {
+        return composePersonality(userId, null, null, null, clues, useTools);
     }
 
     /**
-     * M8.6：personality = prompts.yml 模板 + clue suffix + 长期记忆 memory.md 注入。
-     * useTools 时再追加工具使用引导 + 技能目录（progressive disclosure）。
+     * personality = prompts.yml 模板 + clue suffix + 长期记忆注入。
+     *
+     * <p>Phase 3：记忆注入改为「短索引 + selector 选中正文」({@link MemorySelector})。
+     * 卡片尚未积累（selector 返回空）时回退旧整包 memory.md，保证过渡期不空窗。</p>
      */
-    String composePersonality(String userId, List<String> clues, boolean useTools) {
+    String composePersonality(String userId, String groupId, String platform, String queryText,
+                              List<String> clues, boolean useTools) {
         String base = StringUtils.defaultString(promptProperties.getAiChat().getPersonality());
         if (!CollectionUtils.isEmpty(clues)) {
             Map<String, String> vars = new HashMap<>();
             vars.put("clues", String.join("-", clues));
             base = base + "\n" + PromptRenderer.render(promptProperties.getAiChat().getClueSuffix(), vars);
         }
-        // M8.6：把 caller user 的长期记忆 memory.md prepend 到 personality
+        // Phase 3：优先注入 selector 选中的结构化记忆；无卡片则回退旧 memory.md
         try {
-            String userMemoryMd = memoryCompiler.ensureCompiledMemory(userId);
-            if (StringUtils.isNoneBlank(userMemoryMd)) {
-                base = base + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n"
-                        + MEMORY_USAGE_GUIDANCE;
+            String memBlock = memorySelector.composeMemoryBlock(userId, groupId, platform, queryText);
+            if (StringUtils.isBlank(memBlock)) {
+                String userMemoryMd = memoryCompiler.ensureCompiledMemory(userId);
+                if (StringUtils.isNoneBlank(userMemoryMd)) {
+                    memBlock = "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n"
+                            + MEMORY_USAGE_GUIDANCE;
+                }
             }
+            base = base + StringUtils.defaultString(memBlock);
         } catch (Exception e) {
-            log.warn("注入 memory.md 失败 user={}", userId, e);
+            log.warn("注入长期记忆失败 user={}", userId, e);
         }
         if (useTools) {
             base = base + "\n\n" + toolGuidance;
