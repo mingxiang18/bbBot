@@ -88,17 +88,15 @@ class RssParserTest {
     }
 
     @Test
-    void linkHash_ignoresQueryParams() {
-        // 两个只差 query 的 link 必须得到相同 hash
-        String a = "https://example.com/post/42?utm_source=rss&x=1";
-        String b = "https://example.com/post/42?from=feed";
+    void linkHash_stripsTrackingParams_keepsBusinessParams() {
+        // Phase 4 canonical：只剥追踪参(utm_/from)，仅差追踪参 → 相同 hash
+        String a = "https://example.com/post/42?utm_source=rss&from=feed";
         String c = "https://example.com/post/42";
+        assertThat(LinkHash.of(a)).isEqualTo(LinkHash.of(c));
 
-        String hashA = LinkHash.of(a);
-        String hashB = LinkHash.of(b);
-        String hashC = LinkHash.of(c);
-
-        assertThat(hashA).isEqualTo(hashB).isEqualTo(hashC);
+        // 以 query 作为文章 ID 的源：业务参不同 → 不同 hash（旧实现会误并）
+        assertThat(LinkHash.of("https://example.com/read?id=42"))
+                .isNotEqualTo(LinkHash.of("https://example.com/read?id=43"));
     }
 
     @Test

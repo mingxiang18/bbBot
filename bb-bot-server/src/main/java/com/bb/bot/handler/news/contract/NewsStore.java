@@ -19,7 +19,19 @@ public interface NewsStore {
      */
     List<NewsItem> dedupAndSave(List<NewsItem> items);
 
-    /** 持久化某天的整理结果（速览 + 统计 + 条目的 AI 字段）。 */
+    /**
+     * 候选池（Phase 2）：返回时间窗内仍可评估的 {@code RAW} 条目，供 AI/服务端精选。
+     *
+     * <p>把"见过"与"评估过"分开：超过 {@code ai.maxItems} 截断、故障期、被同日刷新覆盖的
+     * 条目，只要还在时间窗内（按 {@code candidateWindowHours} 或源级 {@code windowHours}），
+     * 就能重新进入候选，不再因一次入库就被永久判死。已 SELECTED/REJECTED 的不返回。</p>
+     *
+     * @param date 目标日报日期 "yyyy-MM-dd"（当前实现按"现在"算时间窗）
+     * @return 候选 NewsItem 列表
+     */
+    List<NewsItem> listEligibleForReport(String date);
+
+    /** 持久化某天的整理结果（速览 + 统计 + 条目的 AI 字段），并把选中条目标记为 SELECTED。 */
     void saveReport(DailyReport report);
 
     /**

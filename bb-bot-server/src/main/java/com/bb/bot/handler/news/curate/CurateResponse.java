@@ -1,22 +1,25 @@
 package com.bb.bot.handler.news.curate;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.annotation.JSONField;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LLM 整理结果的 JSON 映射 DTO 与鲁棒解析辅助。
+ * LLM 整理结果的 JSON 映射 DTO 与鲁棒解析辅助（Phase 3：ID 化）。
  *
- * <p>对应 {@link CuratePrompt#system()} 约定的 schema：
- * {@code {"brief":"…","items":[{title,link,sourceName,category,summaryZh,importance,english,mergedCount,note}]}}。</p>
+ * <p>LLM <b>只</b>用 {@code id} 引用输入条目并给出整理判断（分类/摘要/重要性/合并），
+ * <b>不</b>输出 title/link/sourceName——这些由服务端按 id 回填真实值，从根上杜绝幻觉链接与
+ * prompt injection 伪造来源。对应 {@link CuratePrompt#system()} 约定的 schema：</p>
+ * <pre>{"brief":"…","items":[{"id":"n1","clusterIds":["n1","n3"],"category":"…","summaryZh":"…","importance":1,"note":""}],"rejected":[{"id":"n2","reason":"low_value"}]}</pre>
  */
 public class CurateResponse {
 
     private String brief;
 
     private List<Item> items = new ArrayList<>();
+
+    private List<Rejected> rejected = new ArrayList<>();
 
     public String getBrief() {
         return brief;
@@ -34,40 +37,37 @@ public class CurateResponse {
         this.items = items;
     }
 
-    /** 单条整理结果。 */
+    public List<Rejected> getRejected() {
+        return rejected;
+    }
+
+    public void setRejected(List<Rejected> rejected) {
+        this.rejected = rejected;
+    }
+
+    /** 单条整理结果：仅 id 引用 + 整理字段，无 title/link/sourceName。 */
     public static class Item {
-        private String title;
-        private String link;
-        private String sourceName;
+        private String id;
+        private List<String> clusterIds = new ArrayList<>();
         private String category;
         private String summaryZh;
         private int importance;
-        private boolean english;
-        private int mergedCount;
         private String note;
 
-        public String getTitle() {
-            return title;
+        public String getId() {
+            return id;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public void setId(String id) {
+            this.id = id;
         }
 
-        public String getLink() {
-            return link;
+        public List<String> getClusterIds() {
+            return clusterIds;
         }
 
-        public void setLink(String link) {
-            this.link = link;
-        }
-
-        public String getSourceName() {
-            return sourceName;
-        }
-
-        public void setSourceName(String sourceName) {
-            this.sourceName = sourceName;
+        public void setClusterIds(List<String> clusterIds) {
+            this.clusterIds = clusterIds;
         }
 
         public String getCategory() {
@@ -94,23 +94,6 @@ public class CurateResponse {
             this.importance = importance;
         }
 
-        @JSONField(name = "english")
-        public boolean isEnglish() {
-            return english;
-        }
-
-        public void setEnglish(boolean english) {
-            this.english = english;
-        }
-
-        public int getMergedCount() {
-            return mergedCount;
-        }
-
-        public void setMergedCount(int mergedCount) {
-            this.mergedCount = mergedCount;
-        }
-
         public String getNote() {
             return note;
         }
@@ -120,14 +103,40 @@ public class CurateResponse {
         }
     }
 
+    /** 被模型显式拒绝的条目（仅观测用）。 */
+    public static class Rejected {
+        private String id;
+        private String reason;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+    }
+
     /**
      * 鲁棒解析 LLM 文本为 {@link CurateResponse}。
      *
      * <p>容错：① 剥掉 ```json / ``` 代码围栏；② 截取首个 '{' 到末个 '}' 之间的子串
      * 以容忍模型输出的前后缀杂字；③ 任意异常返回 {@code null}（由上层走降级），不抛出。</p>
      *
+     * <p><b>空精选是合法结果</b>：JSON 能解析但 {@code items} 为空（模型判定当天无合格资讯），
+     * 返回 items 为空列表的对象，由上层按"宁缺毋滥"处理，<b>不</b>等同于解析失败、<b>不</b>触发降级。
+     * 仅当文本根本无法解析为 JSON 对象时才返回 {@code null}。</p>
+     *
      * @param raw LLM 原始回复文本，可能为 null
-     * @return 解析结果；无法解析或为空时返回 {@code null}
+     * @return 解析结果（items 可能为空）；无法解析为 JSON 对象时返回 {@code null}
      */
     public static CurateResponse parse(String raw) {
         if (raw == null || raw.isBlank()) {
@@ -142,8 +151,12 @@ public class CurateResponse {
             }
             json = json.substring(start, end + 1);
             CurateResponse resp = JSON.parseObject(json, CurateResponse.class);
-            if (resp == null || resp.getItems() == null || resp.getItems().isEmpty()) {
+            if (resp == null) {
                 return null;
+            }
+            // items 缺失 → 归一化为空列表（合法的"空精选"），不再当作解析失败
+            if (resp.getItems() == null) {
+                resp.setItems(new ArrayList<>());
             }
             return resp;
         } catch (Exception e) {

@@ -69,4 +69,24 @@ public class NewsItemPo {
 
     /** 创建时间。 */
     private LocalDateTime createdAt;
+
+    // ---- Phase 2：候选生命周期 ----
+
+    /** 标准化发布时间（由 pub_date 解析，解析失败为空）。 */
+    private LocalDateTime publishedAt;
+
+    /** 首次采集时间。 */
+    private LocalDateTime firstSeenAt;
+
+    /** 最近一次仍在源 feed 中出现的时间。 */
+    private LocalDateTime lastSeenAt;
+
+    /** 评估状态：RAW / SELECTED / REJECTED（见 NewsReviewState）。 */
+    private String reviewState;
+
+    /** 拒绝原因：duplicate/stale/low_value/invalid/ai_omitted 等。 */
+    private String rejectReason;
+
+    /** 被哪天日报选中（展示用查询键，区别于 report_date=采集日）。 */
+    private LocalDate selectedReportDate;
 }
