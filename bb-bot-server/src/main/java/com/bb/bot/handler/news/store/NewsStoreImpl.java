@@ -9,7 +9,9 @@ import com.bb.bot.database.news.service.INewsItemService;
 import com.bb.bot.handler.news.contract.CuratedItem;
 import com.bb.bot.handler.news.contract.DailyReport;
 import com.bb.bot.handler.news.contract.LinkHash;
+import com.bb.bot.handler.news.contract.NewsDateParser;
 import com.bb.bot.handler.news.contract.NewsItem;
+import com.bb.bot.handler.news.contract.NewsReviewState;
 import com.bb.bot.handler.news.contract.NewsStore;
 import com.bb.bot.handler.news.contract.ReportMeta;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -42,8 +45,9 @@ public class NewsStoreImpl implements NewsStore {
     private NewsConfig newsConfig;
 
     /**
-     * L1 物理去重并保存：查出传入 items 的 linkHash 中哪些已在 news_item 存在，
-     * 仅把不存在的新条目插入（report_date=今天），返回这些新条目。
+     * 采集 upsert（Phase 2）：新条目以 {@code review_state=RAW} 入库并记录 first/last_seen_at 与
+     * published_at；已存在条目只刷新 {@code last_seen_at}（表示仍在源 feed 中出现），<b>不</b>因
+     * 一次入库就把它判死。返回本次真正新增的条目。
      */
     @Override
     public List<NewsItem> dedupAndSave(List<NewsItem> items) {
@@ -70,6 +74,19 @@ public class NewsStoreImpl implements NewsStore {
         }
 
         LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+
+        // 已存在条目：批量刷新 last_seen_at（一条 UPDATE ... WHERE link_hash IN (...)）。
+        // 用 update(entity, 惰性 wrapper) 而非 LambdaUpdateWrapper.set(SFunction)——后者会立即解析
+        // 列名走 lambda 缓存，无 MyBatis 上下文的单测里会抛 "can not find lambda cache"。
+        if (!existing.isEmpty()) {
+            NewsItemPo touch = new NewsItemPo();
+            touch.setLastSeenAt(now);
+            LambdaQueryWrapper<NewsItemPo> where = new LambdaQueryWrapper<>();
+            where.in(NewsItemPo::getLinkHash, existing);
+            newsItemService.update(touch, where);
+        }
+
         // 批内同 hash 也去重，避免一批里重复 link 重复插入
         Set<String> seen = new HashSet<>(existing);
         List<NewsItem> fresh = new ArrayList<>();
@@ -81,13 +98,54 @@ public class NewsStoreImpl implements NewsStore {
             }
             seen.add(hash);
             fresh.add(item);
-            toInsert.add(toRawPo(item, today));
+            toInsert.add(toRawPo(item, today, now));
         }
 
         if (!toInsert.isEmpty()) {
             newsItemService.saveBatch(toInsert);
         }
         return fresh;
+    }
+
+    /**
+     * 候选池：时间窗内的 {@code RAW} 条目（含 review_state 为空的历史行），按源级 windowHours 二次过滤。
+     */
+    @Override
+    public List<NewsItem> listEligibleForReport(String date) {
+        int globalWindow = Math.max(1, newsConfig.getCandidateWindowHours());
+        int maxWindow = globalWindow;
+        Map<String, Integer> sourceWindow = new java.util.HashMap<>();
+        if (newsConfig.getSources() != null) {
+            for (NewsConfig.Source s : newsConfig.getSources()) {
+                int w = s.getWindowHours() > 0 ? s.getWindowHours() : globalWindow;
+                sourceWindow.put(s.getName(), w);
+                maxWindow = Math.max(maxWindow, w);
+            }
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime maxCutoff = now.minusHours(maxWindow);
+
+        LambdaQueryWrapper<NewsItemPo> query = new LambdaQueryWrapper<>();
+        query.and(w -> w.eq(NewsItemPo::getReviewState, NewsReviewState.RAW)
+                        .or().isNull(NewsItemPo::getReviewState))
+                .and(w -> w.ge(NewsItemPo::getFirstSeenAt, maxCutoff)
+                        .or().isNull(NewsItemPo::getFirstSeenAt))
+                .orderByDesc(NewsItemPo::getFirstSeenAt);
+
+        List<NewsItem> pool = new ArrayList<>();
+        for (NewsItemPo po : newsItemService.list(query)) {
+            // 源级时间窗二次过滤（不同源 cutoff 不同，SQL 用最宽窗，这里收紧）
+            Integer w = sourceWindow.get(po.getSourceName());
+            if (w != null && po.getFirstSeenAt() != null
+                    && po.getFirstSeenAt().isBefore(now.minusHours(w))) {
+                continue;
+            }
+            pool.add(new NewsItem(
+                    po.getSourceName(), po.getCategory(), po.getTitle(), po.getLink(),
+                    po.getDescription(), po.getPubDate(), po.getLang(), po.getLinkHash()));
+        }
+        return pool;
     }
 
     /**
@@ -126,10 +184,12 @@ public class NewsStoreImpl implements NewsStore {
             update.setSummaryZh(item.summaryZh());
             update.setImportance(item.importance());
             update.setMergedCount(item.mergedCount());
+            // Phase 2：标记选中 + 记录被哪天选中（候选池条目可能来自前几天，按 link_hash 匹配而非 report_date）
+            update.setReviewState(NewsReviewState.SELECTED);
+            update.setSelectedReportDate(date);
 
             LambdaQueryWrapper<NewsItemPo> where = new LambdaQueryWrapper<>();
-            where.eq(NewsItemPo::getReportDate, date)
-                    .eq(NewsItemPo::getLinkHash, hash);
+            where.eq(NewsItemPo::getLinkHash, hash);
             newsItemService.update(update, where);
         }
     }
@@ -146,8 +206,9 @@ public class NewsStoreImpl implements NewsStore {
             return null;
         }
 
+        // 按"被哪天选中"查询：候选池条目可能在前几天采集，selected_report_date 才是展示日键
         LambdaQueryWrapper<NewsItemPo> query = new LambdaQueryWrapper<>();
-        query.eq(NewsItemPo::getReportDate, reportDate)
+        query.eq(NewsItemPo::getSelectedReportDate, reportDate)
                 .isNotNull(NewsItemPo::getSummaryZh)
                 .ne(NewsItemPo::getSummaryZh, "")
                 .orderByDesc(NewsItemPo::getImportance);
@@ -210,8 +271,8 @@ public class NewsStoreImpl implements NewsStore {
         newsDailyService.remove(dailyQuery);
     }
 
-    /** 把原始 NewsItem 映射为入库 Po，只填原始字段；report_date=入参当天。 */
-    private NewsItemPo toRawPo(NewsItem item, LocalDate reportDate) {
+    /** 把原始 NewsItem 映射为入库 Po：原始字段 + Phase 2 生命周期字段（RAW / first&last_seen / published_at）。 */
+    private NewsItemPo toRawPo(NewsItem item, LocalDate reportDate, LocalDateTime now) {
         NewsItemPo po = new NewsItemPo();
         po.setReportDate(reportDate);
         po.setSourceName(item.sourceName());
@@ -222,6 +283,10 @@ public class NewsStoreImpl implements NewsStore {
         po.setDescription(item.description());
         po.setPubDate(item.pubDate());
         po.setLang(item.lang());
+        po.setReviewState(NewsReviewState.RAW);
+        po.setFirstSeenAt(now);
+        po.setLastSeenAt(now);
+        po.setPublishedAt(NewsDateParser.parse(item.pubDate()));
         return po;
     }
 }

@@ -33,12 +33,34 @@ public class NewsConfig {
     /** 每个分类在页面上最多展示的条目数。 */
     private int perCategoryLimit = 5;
 
+    /** 启动时自动建表/迁移 news 表（Phase 2 候选生命周期列）。 */
+    private boolean autoCreateTables = true;
+
+    /** 候选池默认时间窗（小时）：RAW 条目在此窗内仍可被反复评估，可被源级 windowHours 覆盖。 */
+    private int candidateWindowHours = 48;
+
     private Hosting hosting = new Hosting();
     private Rsshub rsshub = new Rsshub();
     private Ai ai = new Ai();
     private Push push = new Push();
     private Admin admin = new Admin();
+    private Fetch fetch = new Fetch();
     private List<Source> sources = new ArrayList<>();
+
+    /**
+     * 抓取可靠性配置（Phase 4）：有限并发 + 真实 connect/read 超时。
+     *
+     * <p>news 用<b>独立</b>的 HTTP client，避免改全局 restClient（LLM 流式也用它，需长超时）。</p>
+     */
+    @Data
+    public static class Fetch {
+        /** 并发抓取度（建议 4-6）。 */
+        private int concurrency = 5;
+        /** 单源建立连接超时（毫秒）。 */
+        private int connectTimeoutMs = 4000;
+        /** 单源响应读取超时（毫秒）——修正旧实现"只有 connection-request 超时、无 socket 读超时"的缺陷。 */
+        private int readTimeoutMs = 12000;
+    }
 
     @Data
     public static class Hosting {
@@ -115,5 +137,7 @@ public class NewsConfig {
         private String path;
         /** 语言："zh" 或 "en"。 */
         private String lang = "zh";
+        /** 源级候选时间窗（小时）；0=用全局 candidateWindowHours。慢源（游戏/汽车）可设 72。 */
+        private int windowHours = 0;
     }
 }

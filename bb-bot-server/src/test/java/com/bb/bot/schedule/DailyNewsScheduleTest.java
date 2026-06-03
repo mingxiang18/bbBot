@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -84,6 +85,7 @@ class DailyNewsScheduleTest {
     void happyPath_callsAllStepsInOrderWithCorrectArguments() {
         List<NewsItem> raw = List.of(sampleItem());
         List<NewsItem> fresh = List.of(sampleItem());
+        List<NewsItem> pool = List.of(sampleItem());
         DailyReport report = sampleReport();
         List<ReportMeta> recent = List.of(new ReportMeta("2026-05-30", 7, 3, "/news/2026-05-30.html"));
         String dailyHtml = "<html>daily</html>";
@@ -93,7 +95,9 @@ class DailyNewsScheduleTest {
         when(newsConfig.getArchiveDays()).thenReturn(30);
         when(newsFetcher.fetchAll()).thenReturn(raw);
         when(newsStore.dedupAndSave(raw)).thenReturn(fresh);
-        when(newsAiCurator.curate(fresh)).thenReturn(report);
+        // Phase 2：精选输入是候选池而非 fresh
+        when(newsStore.listEligibleForReport(anyString())).thenReturn(pool);
+        when(newsAiCurator.curate(pool)).thenReturn(report);
         when(newsStore.listRecent(30)).thenReturn(recent);
         when(newsPageBuilder.buildDaily(report, recent)).thenReturn(dailyHtml);
         when(newsPageBuilder.buildArchiveIndex(recent)).thenReturn(indexHtml);
@@ -104,7 +108,8 @@ class DailyNewsScheduleTest {
         InOrder order = inOrder(newsFetcher, newsStore, newsAiCurator, newsPageBuilder, newsHosting);
         order.verify(newsFetcher).fetchAll();
         order.verify(newsStore).dedupAndSave(raw);
-        order.verify(newsAiCurator).curate(fresh);
+        order.verify(newsStore).listEligibleForReport(anyString());
+        order.verify(newsAiCurator).curate(pool);
         order.verify(newsStore).saveReport(report);
         order.verify(newsStore).listRecent(30);
         order.verify(newsPageBuilder).buildDaily(report, recent);
@@ -167,6 +172,7 @@ class DailyNewsScheduleTest {
     void stepThrows_generateNowPropagates() {
         when(newsFetcher.fetchAll()).thenReturn(List.of(sampleItem()));
         when(newsStore.dedupAndSave(any())).thenReturn(List.of(sampleItem()));
+        when(newsStore.listEligibleForReport(anyString())).thenReturn(List.of(sampleItem()));
         when(newsAiCurator.curate(any())).thenThrow(new RuntimeException("ai down"));
 
         // generateNow 本身不吞异常（手动触发可感知失败），仅 runDaily 兜底
@@ -189,6 +195,7 @@ class DailyNewsScheduleTest {
         when(newsConfig.getArchiveDays()).thenReturn(30);
         when(newsFetcher.fetchAll()).thenReturn(fresh);
         when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsStore.listEligibleForReport(anyString())).thenReturn(fresh);
         when(newsAiCurator.curate(fresh)).thenReturn(freshReport);
         when(newsStore.getReport("2026-05-30")).thenReturn(existing);
         when(newsStore.listRecent(30)).thenReturn(Collections.emptyList());
@@ -216,6 +223,7 @@ class DailyNewsScheduleTest {
         when(newsConfig.getArchiveDays()).thenReturn(30);
         when(newsFetcher.fetchAll()).thenReturn(fresh);
         when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsStore.listEligibleForReport(anyString())).thenReturn(fresh);
         when(newsAiCurator.curate(fresh)).thenReturn(emptyReport);
         when(newsStore.getReport("2026-05-30")).thenReturn(existing);
         when(newsStore.listRecent(30)).thenReturn(Collections.emptyList());
@@ -238,6 +246,7 @@ class DailyNewsScheduleTest {
         when(newsConfig.isEnabled()).thenReturn(true);
         when(newsFetcher.fetchAll()).thenReturn(fresh);
         when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsStore.listEligibleForReport(anyString())).thenReturn(fresh);
         when(newsAiCurator.curate(fresh)).thenReturn(emptyReport);
         when(newsStore.getReport("2026-05-30")).thenReturn(null);
 

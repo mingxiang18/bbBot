@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -97,18 +98,27 @@ public class DailyNewsSchedule {
 
     private String doGenerate() {
         List<NewsItem> items = newsFetcher.fetchAll();
-        if (items == null || items.isEmpty()) {
+        int fetched = items == null ? 0 : items.size();
+        if (fetched == 0) {
             log.info("本次未采集到任何资讯条目，跳过出页");
             return null;
         }
 
+        // upsert raw（新条目 RAW 入库 + 刷新已存在条目 last_seen）
         List<NewsItem> fresh = newsStore.dedupAndSave(items);
-        if (fresh == null || fresh.isEmpty()) {
-            log.info("去重后无新增条目（共采集 {} 条），保留既有日报，跳过出页", items.size());
+        int freshCount = fresh == null ? 0 : fresh.size();
+
+        // Phase 2：从候选池（时间窗内 RAW 条目）重建，而非只处理本次新增——
+        // 超 maxItems 截断 / 故障期 / 同日刷新覆盖的条目，只要还在窗内就能重新评估。
+        String today = LocalDate.now().toString();
+        List<NewsItem> pool = newsStore.listEligibleForReport(today);
+        int eligible = pool == null ? 0 : pool.size();
+        if (eligible == 0) {
+            log.info("候选池为空（采集 {} 条 / 新增 {} 条），保留既有日报，跳过出页", fetched, freshCount);
             return null;
         }
 
-        DailyReport freshReport = newsAiCurator.curate(fresh);
+        DailyReport freshReport = newsAiCurator.curate(pool);
 
         // 同日合并：把当天已选条目并入本次结果，避免二次生成只用新增条目覆盖旧页而丢失已选内容。
         DailyReport existing = newsStore.getReport(freshReport.date());

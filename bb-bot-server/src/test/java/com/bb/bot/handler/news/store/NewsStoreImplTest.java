@@ -8,16 +8,19 @@ import com.bb.bot.database.news.service.INewsDailyService;
 import com.bb.bot.database.news.service.INewsItemService;
 import com.bb.bot.handler.news.contract.DailyReport;
 import com.bb.bot.handler.news.contract.NewsItem;
+import com.bb.bot.handler.news.contract.NewsReviewState;
 import com.bb.bot.handler.news.contract.ReportMeta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -155,5 +158,76 @@ class NewsStoreImplTest {
     void getReport_returnsNullWhenAbsent() {
         when(newsDailyService.getById(any())).thenReturn(null);
         assertThat(store.getReport("2026-05-30")).isNull();
+    }
+
+    // ---- Phase 2：候选生命周期 ----
+
+    @Test
+    void dedupAndSave_touchesLastSeenOfExisting_andInsertsFreshAsRaw() {
+        NewsItem a = item("a", "hash-a");
+        NewsItem b = item("b", "hash-b"); // 已存在
+
+        NewsItemPo existing = new NewsItemPo();
+        existing.setLinkHash("hash-b");
+        when(newsItemService.list(any(LambdaQueryWrapper.class))).thenReturn(List.of(existing));
+        when(newsItemService.saveBatch(any())).thenReturn(true);
+
+        store.dedupAndSave(List.of(a, b));
+
+        // 已存在条目走 last_seen 刷新（update(entity, 惰性 wrapper)）
+        verify(newsItemService, atLeastOnce())
+                .update(any(NewsItemPo.class), any(LambdaQueryWrapper.class));
+
+        // 新条目以 RAW + first/last_seen 入库
+        @SuppressWarnings("unchecked")
+        org.mockito.ArgumentCaptor<List<NewsItemPo>> captor =
+                org.mockito.ArgumentCaptor.forClass(List.class);
+        verify(newsItemService, times(1)).saveBatch(captor.capture());
+        assertThat(captor.getValue()).hasSize(1);
+        NewsItemPo inserted = captor.getValue().get(0);
+        assertThat(inserted.getLinkHash()).isEqualTo("hash-a");
+        assertThat(inserted.getReviewState()).isEqualTo(NewsReviewState.RAW);
+        assertThat(inserted.getFirstSeenAt()).isNotNull();
+        assertThat(inserted.getLastSeenAt()).isNotNull();
+    }
+
+    @Test
+    void listEligibleForReport_mapsRows_andAppliesPerSourceWindow() {
+        // 配置：慢源 window=72h，快源用默认 48h
+        NewsConfig.Source slow = new NewsConfig.Source();
+        slow.setName("慢源");
+        slow.setWindowHours(72);
+        NewsConfig.Source fast = new NewsConfig.Source();
+        fast.setName("快源");
+        fast.setWindowHours(0); // → 默认 48
+        newsConfig.setSources(List.of(slow, fast));
+        newsConfig.setCandidateWindowHours(48);
+
+        LocalDateTime now = LocalDateTime.now();
+        NewsItemPo slowOld = poOf("慢源", "https://s/1", "hh-s", now.minusHours(60)); // 60<72 → 保留
+        NewsItemPo fastOld = poOf("快源", "https://f/1", "hh-f", now.minusHours(60)); // 60>48 → 丢弃
+        NewsItemPo fastNew = poOf("快源", "https://f/2", "hh-f2", now.minusHours(10)); // 10<48 → 保留
+        when(newsItemService.list(any(LambdaQueryWrapper.class)))
+                .thenReturn(List.of(slowOld, fastOld, fastNew));
+
+        List<NewsItem> pool = store.listEligibleForReport("2026-06-03");
+
+        assertThat(pool).extracting(NewsItem::linkHash)
+                .containsExactlyInAnyOrder("hh-s", "hh-f2");
+        assertThat(pool).extracting(NewsItem::linkHash).doesNotContain("hh-f");
+    }
+
+    private static NewsItemPo poOf(String source, String link, String hash, LocalDateTime firstSeen) {
+        NewsItemPo po = new NewsItemPo();
+        po.setSourceName(source);
+        po.setCategory("科技");
+        po.setTitle("t");
+        po.setLink(link);
+        po.setLinkHash(hash);
+        po.setDescription("d");
+        po.setLang("zh");
+        po.setReviewState(NewsReviewState.RAW);
+        po.setFirstSeenAt(firstSeen);
+        return po;
     }
 }
