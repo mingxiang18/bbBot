@@ -1,22 +1,25 @@
 package com.bb.bot.handler.news.curate;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.annotation.JSONField;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LLM 整理结果的 JSON 映射 DTO 与鲁棒解析辅助。
+ * LLM 整理结果的 JSON 映射 DTO 与鲁棒解析辅助（Phase 3：ID 化）。
  *
- * <p>对应 {@link CuratePrompt#system()} 约定的 schema：
- * {@code {"brief":"…","items":[{title,link,sourceName,category,summaryZh,importance,english,mergedCount,note}]}}。</p>
+ * <p>LLM <b>只</b>用 {@code id} 引用输入条目并给出整理判断（分类/摘要/重要性/合并），
+ * <b>不</b>输出 title/link/sourceName——这些由服务端按 id 回填真实值，从根上杜绝幻觉链接与
+ * prompt injection 伪造来源。对应 {@link CuratePrompt#system()} 约定的 schema：</p>
+ * <pre>{"brief":"…","items":[{"id":"n1","clusterIds":["n1","n3"],"category":"…","summaryZh":"…","importance":1,"note":""}],"rejected":[{"id":"n2","reason":"low_value"}]}</pre>
  */
 public class CurateResponse {
 
     private String brief;
 
     private List<Item> items = new ArrayList<>();
+
+    private List<Rejected> rejected = new ArrayList<>();
 
     public String getBrief() {
         return brief;
@@ -34,40 +37,37 @@ public class CurateResponse {
         this.items = items;
     }
 
-    /** 单条整理结果。 */
+    public List<Rejected> getRejected() {
+        return rejected;
+    }
+
+    public void setRejected(List<Rejected> rejected) {
+        this.rejected = rejected;
+    }
+
+    /** 单条整理结果：仅 id 引用 + 整理字段，无 title/link/sourceName。 */
     public static class Item {
-        private String title;
-        private String link;
-        private String sourceName;
+        private String id;
+        private List<String> clusterIds = new ArrayList<>();
         private String category;
         private String summaryZh;
         private int importance;
-        private boolean english;
-        private int mergedCount;
         private String note;
 
-        public String getTitle() {
-            return title;
+        public String getId() {
+            return id;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public void setId(String id) {
+            this.id = id;
         }
 
-        public String getLink() {
-            return link;
+        public List<String> getClusterIds() {
+            return clusterIds;
         }
 
-        public void setLink(String link) {
-            this.link = link;
-        }
-
-        public String getSourceName() {
-            return sourceName;
-        }
-
-        public void setSourceName(String sourceName) {
-            this.sourceName = sourceName;
+        public void setClusterIds(List<String> clusterIds) {
+            this.clusterIds = clusterIds;
         }
 
         public String getCategory() {
@@ -94,29 +94,34 @@ public class CurateResponse {
             this.importance = importance;
         }
 
-        @JSONField(name = "english")
-        public boolean isEnglish() {
-            return english;
-        }
-
-        public void setEnglish(boolean english) {
-            this.english = english;
-        }
-
-        public int getMergedCount() {
-            return mergedCount;
-        }
-
-        public void setMergedCount(int mergedCount) {
-            this.mergedCount = mergedCount;
-        }
-
         public String getNote() {
             return note;
         }
 
         public void setNote(String note) {
             this.note = note;
+        }
+    }
+
+    /** 被模型显式拒绝的条目（仅观测用）。 */
+    public static class Rejected {
+        private String id;
+        private String reason;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
         }
     }
 

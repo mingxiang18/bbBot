@@ -77,12 +77,15 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return fallback(input);
         }
 
+        // Phase 3：给每条分配稳定 id（n1..nN），LLM 只引用 id，服务端按 id 回填真实字段
+        Map<String, NewsItem> byId = assignIds(picked);
+
         // 调 LLM
         String raw;
         try {
             List<ChatMessage> messages = List.of(
                     ChatMessage.system(CuratePrompt.system()),
-                    ChatMessage.user(CuratePrompt.user(picked))
+                    ChatMessage.user(CuratePrompt.user(byId))
             );
             raw = providerDispatcher.chat(spec, messages);
         } catch (AIException e) {
@@ -101,7 +104,17 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return fallback(input);
         }
 
-        return assemble(resp, input);
+        return assemble(resp, byId, input);
+    }
+
+    /** 给候选条目分配稳定 id（n1..nN），保持喂入顺序。 */
+    static Map<String, NewsItem> assignIds(List<NewsItem> picked) {
+        Map<String, NewsItem> byId = new LinkedHashMap<>();
+        int i = 1;
+        for (NewsItem it : picked) {
+            byId.put("n" + (i++), it);
+        }
+        return byId;
     }
 
     /**
@@ -156,30 +169,57 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
         return out;
     }
 
+    /** 摘要最大长度（防超长）。 */
+    private static final int MAX_SUMMARY_LEN = 140;
+
     /**
-     * 组装正常结果：normalize 分类、按 (分类顺序, importance 倒序) 排序，统计 source/total。
+     * 组装正常结果（Phase 3）：按 id 回填真实 title/link/sourceName/english，校验未知/重复 id、
+     * 非法分类、空/超长摘要；再 normalize 分类、按 (分类顺序, importance 倒序) 排序。
+     *
+     * @param byId  喂给 LLM 的 id → 真实条目映射（回填来源）
+     * @param input 全量候选（用于统计 sourceCount）
      */
-    private DailyReport assemble(CurateResponse resp, List<NewsItem> input) {
+    private DailyReport assemble(CurateResponse resp, Map<String, NewsItem> byId, List<NewsItem> input) {
         List<CuratedItem> curated = new ArrayList<>();
+        Set<String> usedIds = new java.util.HashSet<>();
+        int unknown = 0;
+        int dup = 0;
         for (CurateResponse.Item it : resp.getItems()) {
             if (it == null) {
                 continue;
             }
+            String id = it.getId();
+            NewsItem src = id == null ? null : byId.get(id);
+            if (src == null) {
+                // 未知 / 缺失 id：LLM 凭空造出来的条目，丢弃（核心防幻觉）
+                unknown++;
+                continue;
+            }
+            if (!usedIds.add(id)) {
+                dup++;
+                continue;
+            }
             String category = NewsCategory.normalize(it.getCategory());
             int importance = clampImportance(it.getImportance());
-            int mergedCount = it.getMergedCount() > 0 ? it.getMergedCount() : 1;
+            int mergedCount = clusterCount(it.getClusterIds());
             String note = it.getNote() == null ? "" : it.getNote();
+            String summary = sanitizeSummary(it.getSummaryZh(), src);
+            boolean english = "en".equalsIgnoreCase(src.lang());
+            // title/link/sourceName 全部来自服务端回填，绝不采信 LLM 输出
             curated.add(new CuratedItem(
-                    it.getTitle(),
-                    it.getLink(),
-                    it.getSourceName(),
+                    src.title(),
+                    src.link(),
+                    src.sourceName(),
                     category,
-                    it.getSummaryZh(),
+                    summary,
                     importance,
-                    it.isEnglish(),
+                    english,
                     mergedCount,
                     note
             ));
+        }
+        if (unknown > 0 || dup > 0) {
+            log.warn("[news-curate] 校验丢弃：未知/缺失 id={} 条，重复 id={} 条", unknown, dup);
         }
 
         sortItems(curated);
@@ -192,6 +232,26 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
                 countSources(input),
                 curated.size()
         );
+    }
+
+    /** clusterIds 数量即合并条目数；为空按 1（未合并）。 */
+    private static int clusterCount(List<String> clusterIds) {
+        return clusterIds == null || clusterIds.isEmpty() ? 1 : clusterIds.size();
+    }
+
+    /** 摘要清洗：空则回退原文摘要再回退标题；超长截断。 */
+    private static String sanitizeSummary(String summary, NewsItem src) {
+        String s = summary == null ? "" : summary.trim();
+        if (s.isEmpty()) {
+            s = src.description() == null ? "" : src.description().trim();
+        }
+        if (s.isEmpty()) {
+            s = src.title() == null ? "" : src.title().trim();
+        }
+        if (s.length() > MAX_SUMMARY_LEN) {
+            s = s.substring(0, MAX_SUMMARY_LEN) + "…";
+        }
+        return s;
     }
 
     /** 降级页面的导语标记，供页面显式提示"非 AI 精选"。 */
