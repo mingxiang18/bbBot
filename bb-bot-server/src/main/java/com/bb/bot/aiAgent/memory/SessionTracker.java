@@ -46,9 +46,12 @@ public class SessionTracker {
             userId = "_anonymous";
         }
         // 找该 (user, group) 最近一条 session
+        // groupId 为空必须用 IS NULL 约束，否则私聊消息会复用到同一用户最近的【群】session 造成串味。
+        // 注意不能写成 eq(groupId=null)：MyBatis-Plus 会生成 `=NULL` 永假。
         AiMemorySession latest = sessionService.getOne(new LambdaQueryWrapper<AiMemorySession>()
                 .eq(AiMemorySession::getUserId, userId)
                 .eq(StringUtils.isNotBlank(groupId), AiMemorySession::getGroupId, groupId)
+                .isNull(StringUtils.isBlank(groupId), AiMemorySession::getGroupId)
                 .orderByDesc(AiMemorySession::getStartedAt)
                 .last("limit 1"));
 
@@ -111,6 +114,7 @@ public class SessionTracker {
         List<AiMemorySession> open = sessionService.list(new LambdaQueryWrapper<AiMemorySession>()
                 .eq(AiMemorySession::getUserId, userId)
                 .eq(StringUtils.isNotBlank(groupId), AiMemorySession::getGroupId, groupId)
+                .isNull(StringUtils.isBlank(groupId), AiMemorySession::getGroupId)
                 .isNull(AiMemorySession::getEndedAt));
         int n = 0;
         for (AiMemorySession s : open) {

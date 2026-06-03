@@ -57,6 +57,7 @@ public class MemoryQueryService {
                 .in(AiMemoryEvent::getKind, kinds)
                 .eq(AiMemoryEvent::getUserId, userId)
                 .eq(StringUtils.isNotBlank(groupId), AiMemoryEvent::getGroupId, groupId)
+                .isNull(StringUtils.isBlank(groupId), AiMemoryEvent::getGroupId)
                 .eq(StringUtils.isNotBlank(sessionId), AiMemoryEvent::getSessionId, sessionId)
                 .orderByDesc(AiMemoryEvent::getCreatedAt)
                 .last("limit " + limit);

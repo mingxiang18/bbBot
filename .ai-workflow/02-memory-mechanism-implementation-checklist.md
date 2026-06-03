@@ -46,7 +46,8 @@
 - [ ] `SessionTracker.sweepInactiveSessions`：扫描条件改为 `last_event_at < now - gap`。
 - [ ] `MemoryCompiler.assemble` 截断：在字符数之外**增加字节上限**，截断时写明确的「...(truncated)」提醒（保持现有优先级 today>facts>week>longterm）。
 - [ ] `prompts.yml`：记忆使用措辞改为「自然使用长期记忆，不主动声明来源；仅当用户追问过去/是否记得/记忆可能过期时才说明来源、时间、不确定性」。
-- [ ] **前置核查（group scope 首期开启的硬门槛）**：确认 `BbAiChatHandler` 链路能稳定拿到 `groupId` 和「群内 userId」。**链路不可靠 = blocker，必须回报**（决策 2 已定首期开 group，不可带病上）。
+- [x] **前置核查（group scope 首期开启的硬门槛）— 通过 ✅**：核查 OneBot/QQ群/QQ频道/Telegram/Discord 全平台，群聊均稳定带非空 `groupId` + 群内真实发送者 `userId`（`BbReceiveMessage` 透传 → `recordInbound` → `SessionTracker`/`BbAiChatHandler` 全程不被覆盖）。**group scope 可首期上线。**
+  - 顺带修掉一个相邻 bug：私聊（`groupId` 空）查最近 session 时 `eq(isNotBlank(groupId),…)` 不加约束，会复用到同一用户最近的【群】session → 私聊↔群串味。已在 `SessionTracker`(attachSessionId/forceEndCurrent) + `MemoryQueryService` 用 `isNull(isBlank(groupId), groupId)` 修正（注意不能用 `eq(null)`，MyBatis-Plus 会生成 `=NULL` 永假）。
 
 验收：
 - [ ] 连续聊天 >30min 中途不断开 → 不被切成多个 session（活体验证）。
