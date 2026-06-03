@@ -65,6 +65,18 @@ bot:
       #是否处理私聊消息
       enableDirectMessage: true
 
+  #类型：bb（BB自研协议）。QQ GUI 桥（10.8.0.26 驱动已登录个人号QQ）作为客户端连入此协议。
+  bb:
+    #机器人名称（map key）
+    bridge:
+      #是否启用：启用后 bbBot 在 port 起 BB WS 服务端，桥用 run_bb.py 作客户端连入
+      enable: true
+      #BB WS 服务端口（bb-bot.yaml 已暴露 NodePort 30210）
+      port: 30210
+      #客户端鉴权：由部署环境变量注入，勿在源码写死。桥 run_bb.py 的 BB_APPID/BB_SECRET 需与此一致
+      appId: ${BB_BRIDGE_APPID:}
+      secret: ${BB_BRIDGE_SECRET:}
+
 # 数据库配置
 mysql:
   address: localhost:3306/bb_bot
