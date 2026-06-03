@@ -62,33 +62,27 @@
 目标：新增 `ai_memory_item`，后台抽卡片落库，**user + group scope 同时上**（决策 2；前提是 Phase 1 groupId 链路核查通过）。
 
 ### 数据模型
-- [ ] 新表 `ai_memory_item`（字段见原方案「推荐数据模型」）：含 type/scope/user_id/group_id/subject_user_id/summary/body/why/how_to_apply/evidence/tags/search_text/status/confidence/importance/expires_at/last_seen_at/superseded_by/source_session_id/created_at/updated_at。
-- [ ] 索引：`idx_scope_user_group`、`idx_type_status`、`idx_updated`、`FULLTEXT ft_memory_search(search_text) WITH PARSER ngram`。
-- [ ] **类型用「4 类骨架 + scope 承载群聊差异」，不开 8 套并行 type**（学 CC：CC 全系统只 4 类 `user/feedback/project/reference`）：
-  - 骨架 4 类：`user_profile`(画像) / `preference`(偏好，对应 CC 的 feedback) / `project_state` / `reference`。
-  - **群聊差异交给 `scope`（user/group/user_in_group），而不是再开 type**——原方案的 `relationship`/`group_topic` 其实是「带 scope 的画像/话题」，用 scope 表达即可。
-  - 仅保留 CC 没有、群聊确实独有的少数：`inside_joke`、`ephemeral_event`。
-  - 收益：类型从 8→约 6，每类一套老化/校验逻辑的策略面和测试面显著收窄。
-- [ ] 枚举 `MemoryType` / `MemoryScope` / `MemoryStatus`；entity + mapper + service。
-- [ ] **`summary` 是检索命脉**（对应 CC frontmatter 的 `description`：selector 只看它决定选不选）。抽取时强约束 summary 写成「一句话、自带主语、可独立理解」，不是流水账标题。
+- [x] 新表 `ai_memory_item`（`AiAgentSchemaInitializer` DDL）：含 type/scope/user_id/group_id/subject_user_id/summary/body/why/how_to_apply/evidence/tags/search_text/status/confidence/importance/expires_at/last_seen_at/superseded_by/source_session_id/created_at/updated_at。
+- [x] 索引：`idx_scope_user_group`、`idx_type_status`、`idx_updated`、`idx_expires(status,expires_at)`、`FULLTEXT ft_memory_search(search_text) WITH PARSER ngram`。
+- [x] **类型「4 骨架 + scope 承载群聊差异」**：`MemoryType` = user_profile/preference/project_state/reference + inside_joke/ephemeral_event（共 6，群内关系/话题靠 scope 表达，不再开 relationship/group_topic）。
+- [x] 枚举 `MemoryType`(含宽松 parse) / `MemoryScope`(needsUser/needsGroup) / `MemoryStatus`；entity + mapper + service(impl)。
+- [x] **`summary` 检索命脉**：抽取 prompt 强约束「一句话、自带主语、可独立理解」。
 
 ### 抽取与策略
-- [ ] `MemoryExtractor`：在 session ended 后从 `ai_memory_session` + 本 session `ai_memory_event` + **当前用户已有记忆索引**抽结构化候选 JSON。
-  - **⚠️ 成本约束：复用已编译/已缓存的会话上下文，和现有 `compileSessionSummary` 的 LLM 调用合并为一次** —— 一次调用同时产出 summary 和候选卡片，不为「抽记忆」重建上下文（学 CC 的 forked-agent + 复用 prompt cache 思路；bbBot 是 session 结束批处理，做不到 live fork，但「不重建上下文」的原则照用）。
-  - 抽取规则：只抽「会影响未来回复」的；不抽流水账（除非用户显式要记）；相对日期→绝对日期；preference/project_state 必须有 why + how_to_apply；低置信度只记候选不进 active。
-  - **`project_state` 默认 `expires_at = created_at + 14 天`**（决策 3；用户给了明确期限则用用户的）。
-  - **写入边界（学 CC 的禁令清单）**：不抽 ① 已在 `prompts.yml` 静态人设里的事实；② 能从代码/配置/数据源（splatoon/news 等）直接查到的内容；③ 单轮对话上下文/临时任务态。原则：**只记代码和静态层都推不出来的东西**。
-- [ ] `MemoryPolicy`：**刻意做轻**（学 CC：CC 不维护语义冲突检测，靠「老化警告 + 用时验证」防过时误导）。
-  - 主路径只做 `insert / merge(明显同主题归并) / refresh(更 last_seen) / ignore`。
-  - `supersede` **只处理「明显同主题的新覆旧」**：把旧卡降级 `stale` 并记 `superseded_by`，**不硬 delete**、**不追求 LLM 语义冲突判定**（那是易错又费模型的活）。
-  - 省下的可靠性预算压到 Phase 3 的注入端：staleness 警告 + 用时验证（见下）。
-- [ ] `MemoryLifecycleSweeper`：**复用现有 `@Scheduled` 基础设施**（参考 `sweepInactiveSessions`），定时把 `expires_at < now` / `last_seen_at` 超龄的卡片降级 active→stale。明确 status 流转的唯一归属人就是它。
+- [x] `MemoryExtractor`：从 ended session + 本 session 对话 + **已有记忆索引**抽候选。
+  - [x] **复用 `compileSessionSummary` 同一次 LLM 调用**：append `buildCardPromptSection`，回复里解析 ` ```json {cards:[…]} `（离线实测通过），不另起模型。
+  - [x] 抽取规则全部进 prompt：只抽影响未来回复的、相对日期→绝对、preference/project_state 必填 why+howToApply、低置信度丢弃、私聊禁 group/user_in_group scope。
+  - [x] **`project_state` 默认 14 天过期**（`projectStateTtlDays`，候选给了 `expiresInDays` 则优先）。
+  - [x] **写入禁令**进 prompt：不抽静态人设已有/可查到/单轮临时态。
+- [x] `MemoryPolicy`：**刻意做轻**——insert / refresh(同义卡更 last_seen) / supersede(仅 LLM 明确给 supersedesKey) / ignore；不做 LLM 语义冲突判定。
+  - [x] `supersede` 软降级旧卡为 `superseded` + 回填 `superseded_by`，不硬 delete；置信度<0.6 ignore；scope 越权降级；preference/project_state 缺 why/howToApply 直接 ignore。
+- [x] `MemoryLifecycleSweeper`：复用 `@Scheduled`，唯一 status 归属人，定时把 `expires_at<now` / `last_seen_at` 超龄(默认60天) 的 active→stale。
 
-验收：
-- [ ] 含明确偏好的对话结束后能生成 `preference` 卡片，带 why/how_to_apply。
-- [ ] 流水账不进 active。
-- [ ] 相对日期转成绝对日期。
-- [ ] session 结束的 LLM 调用次数没有因新增 Extractor 而翻倍（用日志/计数确认）。
+验收（代码完成 + 编译通过 + parse 离线实测；带 ⏳ 的需活体 LLM+DB 实测）：
+- [ ] ⏳ 含明确偏好的对话结束后能生成 `preference` 卡片，带 why/how_to_apply（需真 LLM 跑蒸馏 + DB）。
+- [ ] ⏳ 流水账不进 active（依赖 LLM 遵守写入禁令 + 置信度门槛，需活体观察）。
+- [x] 相对日期转绝对：已在 prompt 强约束 + `expiresInDays`→绝对 `expires_at`（parse 实测 expiresInDays 映射正确）。
+- [x] session 结束 LLM 调用未翻倍：卡片抽取并入 `compileSessionSummary` 原有那一次 `chat(LIGHT)`，无新增调用（代码确认）。
 
 ---
 
