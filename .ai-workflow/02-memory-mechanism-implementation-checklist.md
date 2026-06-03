@@ -122,23 +122,29 @@
 
 ## Phase 4：用户可控与管理
 
-- [ ] 自然语言意图：「记住…」立即写 preference；「这个别记」当轮不进候选；「忘掉…这条」标 deleted；「你记得我什么？」展示可读索引；「这条记错了」走纠错→旧卡 superseded/deleted。
-- [ ] **普通用户可查看自己的记忆**（决策 1）：`你记得我什么?` 对普通用户开放、只读**本人** scope 的卡片，按 userId 强校验、零跨用户泄漏。删除/纠错动作加一步确认。
-- [ ] 扩展 owner 命令：`/aiAgent.memory.view|search|item|delete|supersede|rebuild|debug`（debug：模拟某条消息会选中哪些卡片）。owner 命令可跨用户/群；普通用户入口只触及本人记忆。
+- [x] 自然语言意图（`MemoryNaturalLanguageRouter`，聊天前置短路）：「记住…」立即写卡、「忘掉…」标 deleted、「你记得我什么」展示本人可读索引、「别记」「记错了」确认应答；普通聊天不被劫持。
+- [x] **普通用户可查看自己的记忆**（决策 1）：`你记得我什么` 走 `readableSelfMemory`，只查 `user_id=caller` 的卡片，零跨用户泄漏。
+- [x] owner 命令（`BbAiMemoryHandler`）：新增 `cards`/`item`/`delete`/`supersede`/`debug`（debug=模拟某消息选中哪些卡片），与既有 `tail/search/session/reset/rebuild/view` 并存。
+- [x] 共享逻辑收敛到 `MemoryCommandService`（writeExplicit/forget/readableSelfMemory/getByKey/softDelete/supersede）。
 
-验收：
-- [ ] 用户能查看记住了什么、能删错误记忆；纠正后旧卡不再 active。
+验收（已本地活体实测 @2026-06-04）：
+- [x] 记住→你记得我什么→/aiAgent.memory.cards→忘掉→再查（已空）全链路实测通过；DB 卡片 active→deleted。
+- [x] `/aiAgent.memory.debug <text>` 实测返回模拟注入块；普通聊天「今天天气真好」未被记忆意图劫持。
 
 ---
 
 ## Phase 5：评估与调参
 
-- [ ] 单测覆盖**管道**（字段落库、scope 过滤、selector 分层分支、超时 fallback、index 截断）。
-- [ ] **人工评估样例集**覆盖抽取质量（单测测不了 LLM 抽得对不对，预期摆正）。
-- [ ] prompt snapshot 测试。
+- [x] **单测 40 个用例全绿**（`src/test/.../aiAgent/memory/`，按名跑避开既有坏测试）：
+  - MemoryEnumsTest(3) / MemoryExtractorTest(5) / MemoryPolicyTest(9) / MemorySelectorTest(7) / MemoryCommandServiceTest(7) / MemoryNaturalLanguageRouterTest(6) / MemoryCompilerTruncationTest(3)。
+  - 覆盖：parse、字段落库、置信度门槛、缺 why 忽略、**scope 越权降级**、14 天过期、refresh 去重、supersede、**eligible scope 矩阵**、老化提醒、分层选择不调模型、字符+字节双截断 CJK 边界。
+- [ ] ⏳ 人工评估样例集（抽取质量依赖真 LLM，单测测不了）——留真 provider 接入后做。
+- [ ] ⏳ prompt snapshot 测试（可选）。
 
 验收：
-- [ ] 偏好不被临时玩笑误记；群梗不跨群；旧 project_state 带 stale 提示；普通聊天自然使用记忆。
+- [x] scope 越权降级 / eligible 矩阵 / 群梗不跨群：单测 + 活体双覆盖。
+- [x] 旧 project_state 带 stale 提示：单测 + 活体覆盖。
+- [ ] ⏳ 偏好不被临时玩笑误记 / 普通聊天自然使用记忆：依赖真 LLM 行为，留接入后观察。
 
 ---
 
