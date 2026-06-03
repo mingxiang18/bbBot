@@ -90,9 +90,9 @@
 
 目标：把整包 memory.md 注入换成「短索引常驻 + 少量正文按需」。
 
-- [ ] **`MemoryIndexCompiler` 不另起新类**：改造现有 `MemoryCompiler.ensureCompiledMemory`，让它产出**短索引**（每条一行：`id type scope: summary`），复用其缓存与失效逻辑。
-  - 限制：≤200 行 + ≤25KB 双限制；超限按 importance/status/updated_at/scope 保留高价值项并写截断提醒。
-- [ ] **`MemorySelector`（分层，热路径优化的关键）**：
+- [x] **短索引**：由 `MemorySelector` 从 `ai_memory_item` 直接产出（每条 `key [type/scope] summary`）。
+  - 偏离说明：未复用 `ensureCompiledMemory` 缓存——卡片是 DB 实时查（已索引、cheap、永远新鲜），无需文件缓存层；候选上限 `selectCandidateCap=80` 控量。
+- [x] **`MemorySelector`（分层，热路径优化的关键）**：
   ```
   0. alreadySurfaced 过滤: 本会话上一轮已注入过的卡片这轮排除，名额留给新候选(学 CC)
   1. 结构化过滤: scope(user/global/group/user_in_group，强校验 groupId) + status in (active,stale) + type 按消息意图
@@ -103,22 +103,19 @@
   ```
   - **门控负责「少调」、模型选型负责「调得准」，两者不是二选一**（学 CC：CC 用 Sonnet 不用 Haiku，因为选错一条记忆会污染整条回复，判错代价 ≫ 省的 token）。→ selector 一旦触发，**用够准的那档模型，不要图便宜**；靠候选阈值把它变稀有来控成本/延迟。
   - **模型调用必须有硬超时；超时/异常 → fallback 按 importance+last_seen 取 topK，不阻塞主回复。**
-  - selector prompt 措辞偏严：**「只选你确信对当前回复有帮助的；宁可少选不可错选」**（照搬 CC 的 selective/discerning 取向）。
-- [ ] `MemoryPromptAssembler`：组装 `--- Memory Index ---` + `--- Selected Memories ---` + 记忆使用规则。
-  - 选中正文用 `<system-reminder>` 包裹注入，避免被当成「用户刚说的话」（学 CC）。
-  - **老化警告**：今天/昨天不警告；≥2 天的 `project_state`/`ephemeral_event`/`reference` 主动加「这条存于 N 天前，可能已变，动手前先核实」；`user_profile`/`preference` 这类稳定项放宽阈值（按 type 老化，已在原方案）。
-  - **用时验证规则**（学 CC 的 "Before recommending from memory"）：记忆里提到的具体事实（某 API/某决定/某文件/某 flag）在据此行动前，先对照当前上下文/数据源确认，「记忆说 X 存在」≠「X 现在存在」。
-  - 使用纪律：自然使用不主动声明来源；scope 不匹配不得用；过期项谨慎。
-- [ ] `BbAiChatHandler.composePersonality`：从「整包 memory.md」改为「短索引 + 选中正文」注入。
-- [ ] `ai_memory_selection_log` 表（可选但建议）：记 candidate_keys / selected_keys / selector_model。**必须带 TTL（保留 7-14 天）**，定时清理，防膨胀。
+  - selector prompt 措辞偏严：**「只选你确信对当前回复有帮助的；宁可少选不可错选」**（已落 `MemorySelector.llmSelect`）。
+- [x] 渲染（assembler 逻辑并入 `MemorySelector.render`）：`--- Memory Index ---` + `--- Selected Memories ---` + 记忆使用规则。
+  - [x] **老化警告**：今天/昨天不警告；≥2 天的 project_state/ephemeral_event/reference 加「N 天前、动手前先核实」；user_profile/preference 放宽（离线实测通过）。
+  - [x] **用时验证规则** + scope 不匹配不得用 + 自然使用不报来源：写进 `USAGE_RULES`。
+  - 说明：未用 `<system-reminder>` 标签包裹（bbBot 注入在 system prompt 的 personality 段内，已是系统语境；用 `--- Selected Memories ---` 分隔，不会被当成用户话）。
+- [x] `BbAiChatHandler.composePersonality`：改为 selector 短索引+选中正文；**卡片未积累时回退旧 memory.md**（过渡不空窗）。
+- [x] `ai_memory_selection_log` 表 + `MemorySelectionLogger`(best-effort) + Sweeper TTL 清理(14天)。
 
-验收：
-- [ ] prompt 注入长度稳定，不随历史无限增长。
-- [ ] 同一问题选中相关卡片，而非全部长期事实。
-- [ ] 连续多轮对话中，同几张卡不会每轮重复注入（alreadySurfaced 生效）。
-- [ ] **注入记忆带来的额外延迟 P95 < 目标值；selector 故障不阻塞回复**（活体验证，重点防 QQ 重复回复复发）。
-- [ ] stale 的 project_state 注入时带「N 天前、动手前先核实」警告。
-- [ ] 群记忆不出现在私聊/其他群（group scope 首期即上，重点验证）。
+验收（代码完成 + 编译 + scope/老化离线实测；带 ⏳ 的需活体）：
+- [x] scope 隔离：群记忆不漏到私聊/别的群、群内不漏别人 user_in_group（离线穷举实测通过）。
+- [x] stale/volatile 卡注入带老化警告（离线实测）。
+- [x] alreadySurfaced 去重逻辑就位（会话内已注入排除）。
+- [ ] ⏳ 注入长度稳定 + 同问选中相关卡 + **额外延迟 P95 达标 + selector 故障不阻塞**（需活体跑，重点防 QQ 重复回复复发）。
 
 ---
 
