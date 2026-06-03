@@ -60,6 +60,9 @@ public class MemoryCompiler {
     private FactStore factStore;
 
     @Autowired
+    private MemoryExtractor memoryExtractor;
+
+    @Autowired
     private AiChatService aiChatService;
 
     @Value("${aiAgent.memory.workspaceDir:./memory-workspace}")
@@ -109,9 +112,11 @@ public class MemoryCompiler {
             if (events.isEmpty()) return;
 
             String conv = renderConversation(events);
+            // 一次 LLM 调用同时产出：摘要 + 重要事实（旧 FactStore 路径）+ 结构化记忆卡片（Phase 2 新路径）
             String prompt = "请用中文简洁总结以下对话，并在最后用 ## 重要事实 标题列出长期值得保留的事实。\n" +
                     "对话开始：\n" + conv + "\n对话结束。\n\n" +
-                    "格式：\n## 摘要\n（3-5 句话总结这段对话的主题和结论）\n## 重要事实\n- 事实 1\n- 事实 2\n（仅列时间持久的事实：身份、偏好、长期关系、配置等；不要列工作流程/工具偏好/执行细节）";
+                    "格式：\n## 摘要\n（3-5 句话总结这段对话的主题和结论）\n## 重要事实\n- 事实 1\n- 事实 2\n（仅列时间持久的事实：身份、偏好、长期关系、配置等；不要列工作流程/工具偏好/执行细节）"
+                    + memoryExtractor.buildCardPromptSection(s);
 
             List<ChatMessage> req = new ArrayList<>();
             req.add(ChatMessage.system("你是一个对话摘要器。输出严格遵守用户给的 markdown 结构。"));
@@ -126,11 +131,14 @@ public class MemoryCompiler {
             s.setSummaryCompiledAt(LocalDateTime.now());
             sessionService.updateById(s);
 
-            // 从 summary 抽 Key Facts 进 FactStore
+            // 从 summary 抽 Key Facts 进 FactStore（旧路径，保留兼容）
             List<String> keyFacts = extractKeyFacts(answer);
             for (String fact : keyFacts) {
                 factStore.add(s.getUserId(), fact, autoTags(fact), null, s.getSessionId());
             }
+
+            // 从同一回复抽结构化记忆卡片落库（Phase 2 新路径，与 FactStore 并行）
+            memoryExtractor.extractAndPersist(answer, s);
 
             // 蒸馏完一个 session 后 invalidate compiled 文件，下次 ensure 时重编
             invalidateCompiled(s.getUserId());

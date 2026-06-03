@@ -123,6 +123,39 @@ public class AiAgentSchemaInitializer {
                     "  FULLTEXT KEY ft_search (search_text) WITH PARSER ngram" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 长期事实库（openhanako FactStore 等价）'",
 
+            // 结构化记忆卡片（记忆机制重构 Phase 2）。与 ai_memory_fact 并行，不迁移旧数据。
+            "CREATE TABLE IF NOT EXISTS ai_memory_item (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  memory_key VARCHAR(64) NOT NULL," +
+                    "  type VARCHAR(32) NOT NULL," +
+                    "  scope VARCHAR(32) NOT NULL," +
+                    "  user_id VARCHAR(64) DEFAULT NULL," +
+                    "  group_id VARCHAR(64) DEFAULT NULL," +
+                    "  subject_user_id VARCHAR(64) DEFAULT NULL," +
+                    "  summary VARCHAR(1024) NOT NULL," +
+                    "  body MEDIUMTEXT," +
+                    "  why TEXT," +
+                    "  how_to_apply TEXT," +
+                    "  evidence TEXT," +
+                    "  tags VARCHAR(512) DEFAULT '[]'," +
+                    "  search_text TEXT," +
+                    "  status VARCHAR(32) NOT NULL DEFAULT 'active'," +
+                    "  confidence DECIMAL(4,3) DEFAULT NULL," +
+                    "  importance DECIMAL(4,3) DEFAULT NULL," +
+                    "  expires_at DATETIME DEFAULT NULL," +
+                    "  last_seen_at DATETIME DEFAULT NULL," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+                    "  source_session_id VARCHAR(64) DEFAULT NULL," +
+                    "  superseded_by VARCHAR(64) DEFAULT NULL," +
+                    "  UNIQUE KEY uk_memory_key (memory_key)," +
+                    "  KEY idx_scope_user_group (scope, user_id, group_id)," +
+                    "  KEY idx_type_status (type, status)," +
+                    "  KEY idx_updated (updated_at)," +
+                    "  KEY idx_expires (status, expires_at)," +
+                    "  FULLTEXT KEY ft_memory_search (search_text) WITH PARSER ngram" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 结构化记忆卡片'",
+
             "CREATE TABLE IF NOT EXISTS ai_cron_task (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  owner_user_id VARCHAR(64) NOT NULL," +
