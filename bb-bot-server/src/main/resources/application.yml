@@ -285,6 +285,12 @@ news:
     maxItems: 100             # 喂 AI 上限；条目先按源轮转再截断，保证各源/分类都进 AI 视野
     role: light               # 用轻模型做廉价总结/分类
     translateEnTitle: false   # 英文标题不翻译，摘要中文
+    fallbackPerSource: 2      # 降级时每源最多保留条数（不再 raw 全量出页）
+    fallbackMaxItems: 10      # 降级时总条数上限
+    # lowValueKeywords: [...] # 降级时按标题命中即丢弃的低价值关键词，留空用代码默认
+  admin:
+    token: "${NEWS_ADMIN_TOKEN:}"   # /news/run 触发令牌；留空则 fail-closed（端点禁用）
+    rateLimitMillis: 600000         # 手动强制刷新最小间隔（10 分钟）
   push:
     enabled: false            # 首版不自动推送
   # 数据源（2026-05-30 实测存活）。via=direct 用 url；via=rsshub 用 path 拼 rsshub.baseUrl

@@ -1,6 +1,7 @@
 package com.bb.bot.schedule;
 
 import com.bb.bot.config.NewsConfig;
+import com.bb.bot.handler.news.contract.CuratedItem;
 import com.bb.bot.handler.news.contract.DailyReport;
 import com.bb.bot.handler.news.contract.NewsAiCurator;
 import com.bb.bot.handler.news.contract.NewsFetcher;
@@ -11,13 +12,17 @@ import com.bb.bot.handler.news.contract.NewsStore;
 import com.bb.bot.handler.news.contract.ReportMeta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -65,8 +70,14 @@ class DailyNewsScheduleTest {
                 "摘要", "Mon, 30 May 2026 08:00:00 GMT", "zh", "hash1");
     }
 
+    private static CuratedItem curated(String title, String link) {
+        return new CuratedItem(title, link, "中新网", "world", "摘要", 4, false, 1, "");
+    }
+
     private DailyReport sampleReport() {
-        return new DailyReport("2026-05-30", "今日速览", Collections.emptyList(), 3, 7);
+        // 非空报告：合并后非空才会出页（空精选会被短路）
+        return new DailyReport("2026-05-30", "今日速览",
+                List.of(curated("标题", "https://a.com/1")), 3, 7);
     }
 
     @Test
@@ -160,5 +171,123 @@ class DailyNewsScheduleTest {
 
         // generateNow 本身不吞异常（手动触发可感知失败），仅 runDaily 兜底
         org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> schedule.generateNow());
+    }
+
+    // ---- Phase 1：同日合并不覆盖 / 空精选不灌水 / 生成互斥 ----
+
+    @Test
+    void sameDayRerun_mergesExistingSelected_savesUnion_notOverwrite() {
+        List<NewsItem> fresh = List.of(sampleItem());
+        // 本次精选只含 B
+        DailyReport freshReport = new DailyReport("2026-05-30", "新速览",
+                List.of(curated("B 新闻", "https://b.com/2")), 1, 1);
+        // 当天已存在 A（第一次生成的精选）
+        DailyReport existing = new DailyReport("2026-05-30", "旧速览",
+                List.of(curated("A 新闻", "https://a.com/1")), 1, 1);
+
+        when(newsConfig.isEnabled()).thenReturn(true);
+        when(newsConfig.getArchiveDays()).thenReturn(30);
+        when(newsFetcher.fetchAll()).thenReturn(fresh);
+        when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsAiCurator.curate(fresh)).thenReturn(freshReport);
+        when(newsStore.getReport("2026-05-30")).thenReturn(existing);
+        when(newsStore.listRecent(30)).thenReturn(Collections.emptyList());
+        when(newsHosting.publish(eq("2026-05-30"), any(), any())).thenReturn("/news/2026-05-30.html");
+
+        schedule.generateNow();
+
+        ArgumentCaptor<DailyReport> saved = ArgumentCaptor.forClass(DailyReport.class);
+        verify(newsStore).saveReport(saved.capture());
+        // 合并后同时含 A 与 B：旧精选未被覆盖丢失
+        assertThat(saved.getValue().items()).extracting(CuratedItem::title)
+                .containsExactlyInAnyOrder("A 新闻", "B 新闻");
+        verify(newsHosting).publish(eq("2026-05-30"), any(), any());
+    }
+
+    @Test
+    void aiEmptySelection_withExisting_preservesExisting_andPublishes() {
+        List<NewsItem> fresh = List.of(sampleItem());
+        // 本次空精选（合法空，非降级灌水）
+        DailyReport emptyReport = new DailyReport("2026-05-30", "今日暂无", Collections.emptyList(), 0, 0);
+        DailyReport existing = new DailyReport("2026-05-30", "旧速览",
+                List.of(curated("A 新闻", "https://a.com/1")), 1, 1);
+
+        when(newsConfig.isEnabled()).thenReturn(true);
+        when(newsConfig.getArchiveDays()).thenReturn(30);
+        when(newsFetcher.fetchAll()).thenReturn(fresh);
+        when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsAiCurator.curate(fresh)).thenReturn(emptyReport);
+        when(newsStore.getReport("2026-05-30")).thenReturn(existing);
+        when(newsStore.listRecent(30)).thenReturn(Collections.emptyList());
+        when(newsHosting.publish(eq("2026-05-30"), any(), any())).thenReturn("/news/2026-05-30.html");
+
+        schedule.generateNow();
+
+        ArgumentCaptor<DailyReport> saved = ArgumentCaptor.forClass(DailyReport.class);
+        verify(newsStore).saveReport(saved.capture());
+        // 空精选未抹掉既有 A
+        assertThat(saved.getValue().items()).extracting(CuratedItem::title).containsExactly("A 新闻");
+        verify(newsHosting).publish(eq("2026-05-30"), any(), any());
+    }
+
+    @Test
+    void aiEmptySelection_noExisting_skipsPublish_noRawDump() {
+        List<NewsItem> fresh = List.of(sampleItem());
+        DailyReport emptyReport = new DailyReport("2026-05-30", "今日暂无", Collections.emptyList(), 0, 0);
+
+        when(newsConfig.isEnabled()).thenReturn(true);
+        when(newsFetcher.fetchAll()).thenReturn(fresh);
+        when(newsStore.dedupAndSave(fresh)).thenReturn(fresh);
+        when(newsAiCurator.curate(fresh)).thenReturn(emptyReport);
+        when(newsStore.getReport("2026-05-30")).thenReturn(null);
+
+        String url = schedule.generateNow();
+
+        assertThat(url).isNull();
+        verify(newsStore, never()).saveReport(any());
+        verify(newsHosting, never()).publish(any(), any(), any());
+    }
+
+    @Test
+    void concurrentGeneration_throwsBusy_whenAlreadyRunning() {
+        // 模拟已有任务在执行：把互斥位置 true
+        ((AtomicBoolean) ReflectionTestUtils.getField(schedule, "running")).set(true);
+
+        assertThatThrownBy(() -> schedule.generateNow())
+                .isInstanceOf(NewsGenerationBusyException.class);
+        verifyNoInteractions(newsFetcher);
+    }
+
+    @Test
+    void generateNow_releasesLock_afterException_allowingRetry() {
+        when(newsFetcher.fetchAll())
+                .thenThrow(new RuntimeException("boom"))
+                .thenReturn(Collections.emptyList());
+
+        // 第一次失败后锁必须释放，第二次仍可进入（短路返回 null）
+        org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class, () -> schedule.generateNow());
+        assertThat(schedule.generateNow()).isNull();
+    }
+
+    @Test
+    void mergeReports_existingNull_returnsFreshAsIs() {
+        DailyReport fresh = new DailyReport("2026-05-30", "b",
+                List.of(curated("B", "https://b/1")), 1, 1);
+        assertThat(DailyNewsSchedule.mergeReports(null, fresh)).isSameAs(fresh);
+    }
+
+    @Test
+    void mergeReports_sameLink_freshOverridesExisting() {
+        DailyReport existing = new DailyReport("2026-05-30", "old",
+                List.of(curated("旧标题", "https://x/1")), 1, 1);
+        DailyReport fresh = new DailyReport("2026-05-30", "new",
+                List.of(curated("新标题", "https://x/1")), 1, 1);
+
+        DailyReport merged = DailyNewsSchedule.mergeReports(existing, fresh);
+
+        // 同链接以本次为准，不重复
+        assertThat(merged.items()).hasSize(1);
+        assertThat(merged.items().get(0).title()).isEqualTo("新标题");
+        assertThat(merged.brief()).isEqualTo("new");
     }
 }

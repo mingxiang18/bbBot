@@ -126,8 +126,12 @@ public class CurateResponse {
      * <p>容错：① 剥掉 ```json / ``` 代码围栏；② 截取首个 '{' 到末个 '}' 之间的子串
      * 以容忍模型输出的前后缀杂字；③ 任意异常返回 {@code null}（由上层走降级），不抛出。</p>
      *
+     * <p><b>空精选是合法结果</b>：JSON 能解析但 {@code items} 为空（模型判定当天无合格资讯），
+     * 返回 items 为空列表的对象，由上层按"宁缺毋滥"处理，<b>不</b>等同于解析失败、<b>不</b>触发降级。
+     * 仅当文本根本无法解析为 JSON 对象时才返回 {@code null}。</p>
+     *
      * @param raw LLM 原始回复文本，可能为 null
-     * @return 解析结果；无法解析或为空时返回 {@code null}
+     * @return 解析结果（items 可能为空）；无法解析为 JSON 对象时返回 {@code null}
      */
     public static CurateResponse parse(String raw) {
         if (raw == null || raw.isBlank()) {
@@ -142,8 +146,12 @@ public class CurateResponse {
             }
             json = json.substring(start, end + 1);
             CurateResponse resp = JSON.parseObject(json, CurateResponse.class);
-            if (resp == null || resp.getItems() == null || resp.getItems().isEmpty()) {
+            if (resp == null) {
                 return null;
+            }
+            // items 缺失 → 归一化为空列表（合法的"空精选"），不再当作解析失败
+            if (resp.getItems() == null) {
+                resp.setItems(new ArrayList<>());
             }
             return resp;
         } catch (Exception e) {

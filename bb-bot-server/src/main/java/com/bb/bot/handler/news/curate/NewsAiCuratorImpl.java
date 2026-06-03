@@ -194,12 +194,42 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
         );
     }
 
+    /** 降级页面的导语标记，供页面显式提示"非 AI 精选"。 */
+    static final String FALLBACK_BRIEF = "⚠️ AI 整理降级：以下为按源限量挑选的原文摘要，未经语义精选";
+
     /**
-     * 降级结果：原始条目直接映射，brief 空。
+     * 降级结果：<b>保守</b>映射，不再 raw 全量出页。
+     *
+     * <p>规则：按源轮转后，逐条过滤——标题非空、链接合法（http/https）、不含低价值关键词；
+     * 每源最多 {@code fallbackPerSource} 条、总数不超过 {@code fallbackMaxItems}。
+     * brief 置为 {@link #FALLBACK_BRIEF} 以便页面标记降级来源。</p>
      */
     private DailyReport fallback(List<NewsItem> input) {
+        NewsConfig.Ai ai = newsConfig.getAi();
+        int perSource = ai != null && ai.getFallbackPerSource() > 0 ? ai.getFallbackPerSource() : 2;
+        int maxItems = ai != null && ai.getFallbackMaxItems() > 0 ? ai.getFallbackMaxItems() : 10;
+        List<String> lowValue = ai == null || ai.getLowValueKeywords() == null
+                ? List.of() : ai.getLowValueKeywords();
+
         List<CuratedItem> curated = new ArrayList<>();
-        for (NewsItem item : input) {
+        Map<String, Integer> perSourceCount = new LinkedHashMap<>();
+        // 复用按源轮转，保证降级名额也均摊到各源而非被前几个源占满
+        for (NewsItem item : interleaveBySource(input)) {
+            if (curated.size() >= maxItems) {
+                break;
+            }
+            if (StringUtils.isBlank(item.title()) || !isValidLink(item.link())) {
+                continue;
+            }
+            if (containsLowValue(item.title(), lowValue)) {
+                continue;
+            }
+            String src = item.sourceName() == null ? "" : item.sourceName();
+            int used = perSourceCount.getOrDefault(src, 0);
+            if (used >= perSource) {
+                continue;
+            }
+            perSourceCount.put(src, used + 1);
             curated.add(new CuratedItem(
                     item.title(),
                     item.link(),
@@ -215,11 +245,33 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
         sortItems(curated);
         return new DailyReport(
                 today(),
-                "",
+                FALLBACK_BRIEF,
                 curated,
                 countSources(input),
                 curated.size()
         );
+    }
+
+    /** 链接是否为合法 http/https 绝对地址。 */
+    private static boolean isValidLink(String link) {
+        if (StringUtils.isBlank(link)) {
+            return false;
+        }
+        String l = link.trim().toLowerCase();
+        return l.startsWith("http://") || l.startsWith("https://");
+    }
+
+    /** 标题是否命中任一低价值关键词。 */
+    private static boolean containsLowValue(String title, List<String> keywords) {
+        if (title == null || keywords == null || keywords.isEmpty()) {
+            return false;
+        }
+        for (String kw : keywords) {
+            if (StringUtils.isNotBlank(kw) && title.contains(kw)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 按分类顺序（NewsCategory.ALL）升序、importance 倒序排序。 */

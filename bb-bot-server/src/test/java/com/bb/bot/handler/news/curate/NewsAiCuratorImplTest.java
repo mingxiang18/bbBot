@@ -132,7 +132,8 @@ class NewsAiCuratorImplTest {
         List<NewsItem> input = List.of(zhItem(), enItem());
         DailyReport report = curator.curate(input);
 
-        assertThat(report.brief()).isEmpty();
+        // 降级页面 brief 显式标记，不再为空
+        assertThat(report.brief()).isEqualTo(NewsAiCuratorImpl.FALLBACK_BRIEF);
         assertThat(report.totalCount()).isEqualTo(2);
         assertThat(report.items()).hasSize(2);
         // 降级映射：summaryZh = 原 description, importance=3
@@ -152,7 +153,7 @@ class NewsAiCuratorImplTest {
         List<NewsItem> input = List.of(zhItem(), enItem());
         DailyReport report = curator.curate(input);
 
-        assertThat(report.brief()).isEmpty();
+        assertThat(report.brief()).isEqualTo(NewsAiCuratorImpl.FALLBACK_BRIEF);
         assertThat(report.totalCount()).isEqualTo(2);
         assertThat(report.sourceCount()).isEqualTo(2);
         verify(providerDispatcher, never()).chat(any(), anyList());
@@ -165,8 +166,60 @@ class NewsAiCuratorImplTest {
 
         DailyReport report = curator.curate(List.of(zhItem()));
 
-        assertThat(report.brief()).isEmpty();
+        assertThat(report.brief()).isEqualTo(NewsAiCuratorImpl.FALLBACK_BRIEF);
         assertThat(report.totalCount()).isEqualTo(1);
+    }
+
+    @Test
+    void curate_whenAiReturnsEmptyItems_isLegalEmpty_notRawFallback() throws Exception {
+        // 模型显式判定当天无合格资讯：合法空精选，不得退化成降级（更不能 raw 全量）
+        when(providerDispatcher.chat(any(ModelSpec.class), anyList()))
+                .thenReturn("{\"brief\":\"今日暂无足够高价值资讯\",\"items\":[]}");
+
+        DailyReport report = curator.curate(List.of(zhItem(), enItem()));
+
+        assertThat(report.items()).isEmpty();
+        assertThat(report.totalCount()).isZero();
+        // brief 来自模型，而非降级标记
+        assertThat(report.brief()).isEqualTo("今日暂无足够高价值资讯");
+        assertThat(report.brief()).isNotEqualTo(NewsAiCuratorImpl.FALLBACK_BRIEF);
+    }
+
+    @Test
+    void fallback_isConservative_capsPerSource_dropsLowValueAndBadLinks() {
+        // 强制降级（AI 未启用），构造：单源多条 + 低价值标题 + 非法链接
+        newsConfig.getAi().setEnabled(false);
+        List<NewsItem> input = new ArrayList<>();
+        // 澎湃 5 条合法 → 每源上限 2，只保留 2
+        for (int i = 0; i < 5; i++) {
+            input.add(new NewsItem("澎湃", "时政", "正常新闻" + i,
+                    "https://p.com/" + i, "摘要", "", "zh", "ph" + i));
+        }
+        // 低价值标题 → 丢弃
+        input.add(new NewsItem("中新", "时政", "双十一促销大放送",
+                "https://c.com/ad", "摘要", "", "zh", "c1"));
+        // 中新一条合法 → 保留（中新计数 1）
+        input.add(new NewsItem("中新", "时政", "国内要闻",
+                "https://c.com/news", "摘要", "", "zh", "c2"));
+        // 非法链接 → 丢弃
+        input.add(new NewsItem("网易", "时政", "标题正常但链接坏",
+                "ftp://bad/x", "摘要", "", "zh", "w1"));
+
+        DailyReport report = curator.curate(input);
+
+        // 保留 = 澎湃 2 + 中新 1 = 3
+        assertThat(report.items()).hasSize(3);
+        assertThat(report.items()).extracting(CuratedItem::title)
+                .noneMatch(t -> t.contains("促销"));
+        assertThat(report.items()).extracting(CuratedItem::link)
+                .allMatch(l -> l.startsWith("https://"));
+        assertThat(report.items()).allSatisfy(it -> assertThat(it.importance()).isEqualTo(3));
+        assertThat(report.brief()).isEqualTo(NewsAiCuratorImpl.FALLBACK_BRIEF);
+
+        // 进一步收紧总量上限：fallbackMaxItems=2 时整体只剩 2 条
+        newsConfig.getAi().setFallbackMaxItems(2);
+        DailyReport capped = curator.curate(input);
+        assertThat(capped.items()).hasSize(2);
     }
 
     @Test

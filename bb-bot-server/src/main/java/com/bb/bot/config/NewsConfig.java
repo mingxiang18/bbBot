@@ -37,6 +37,7 @@ public class NewsConfig {
     private Rsshub rsshub = new Rsshub();
     private Ai ai = new Ai();
     private Push push = new Push();
+    private Admin admin = new Admin();
     private List<Source> sources = new ArrayList<>();
 
     @Data
@@ -68,6 +69,29 @@ public class NewsConfig {
         private String role = "light";
         /** 是否翻译英文源标题（默认 false：保留英文标题，摘要中文）。 */
         private boolean translateEnTitle = false;
+
+        // ---- 降级（fallback）保守策略：LLM 不可用/解析失败时不再 raw 全量出页 ----
+        /** 降级时每个源最多保留几条。 */
+        private int fallbackPerSource = 2;
+        /** 降级时总条数上限。 */
+        private int fallbackMaxItems = 10;
+        /** 降级时按标题命中即丢弃的低价值关键词。 */
+        private List<String> lowValueKeywords = new ArrayList<>(List.of(
+                "广告", "推广", "软文", "抽奖", "优惠", "促销", "福利", "直播预告", "招聘"));
+    }
+
+    /**
+     * 管理端点（{@code /news/run}）的鉴权与限流配置。
+     *
+     * <p>{@code token} 留空时端点 fail-closed（拒绝触发），生产需注入
+     * {@code NEWS_ADMIN_TOKEN} 才能手动触发，避免裸暴露。</p>
+     */
+    @Data
+    public static class Admin {
+        /** 触发令牌；留空则 /news/run 一律拒绝（fail-closed）。 */
+        private String token = "";
+        /** 手动强制刷新的最小间隔（毫秒），默认 10 分钟。 */
+        private long rateLimitMillis = 600_000L;
     }
 
     @Data
