@@ -1,6 +1,7 @@
 package com.bb.bot.controller;
 
 import com.bb.bot.config.NewsConfig;
+import com.bb.bot.handler.news.contract.NewsRunStats;
 import com.bb.bot.schedule.DailyNewsSchedule;
 import com.bb.bot.schedule.NewsGenerationBusyException;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * {@link NewsAdminController} 单测：鉴权（令牌 / fail-closed）、限流、互斥（409）、
- * 以及成功 / 短路 / 异常的返回。
+ * dryRun，以及成功 / 短路 / 异常的返回。
  */
 class NewsAdminControllerTest {
 
@@ -42,9 +43,17 @@ class NewsAdminControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
+    private static NewsRunStats published(String url) {
+        return new NewsRunStats(20, 5, 18, 12, "success", true, url);
+    }
+
+    private static NewsRunStats notPublished() {
+        return new NewsRunStats(20, 0, 0, 0, "no_candidate", false, null);
+    }
+
     @Test
     void run_success_returnsUrl() throws Exception {
-        when(schedule.generateNow()).thenReturn("/news/2026-05-30.html");
+        when(schedule.generateNow(false, false)).thenReturn(published("/news/2026-05-30.html"));
 
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isOk())
@@ -53,7 +62,7 @@ class NewsAdminControllerTest {
 
     @Test
     void run_success_acceptsTokenFromHeader() throws Exception {
-        when(schedule.generateNow()).thenReturn("/news/x.html");
+        when(schedule.generateNow(false, false)).thenReturn(published("/news/x.html"));
 
         mockMvc.perform(post("/news/run").header("X-News-Token", TOKEN))
                 .andExpect(status().isOk());
@@ -61,7 +70,7 @@ class NewsAdminControllerTest {
 
     @Test
     void run_shortCircuit_returnsOkWithHint() throws Exception {
-        when(schedule.generateNow()).thenReturn(null);
+        when(schedule.generateNow(false, false)).thenReturn(notPublished());
 
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isOk())
@@ -69,8 +78,20 @@ class NewsAdminControllerTest {
     }
 
     @Test
+    void run_dryRun_returnsStatsWithoutPublishing() throws Exception {
+        when(schedule.generateNow(true, false))
+                .thenReturn(new NewsRunStats(20, 5, 18, 12, "success", false, null));
+
+        mockMvc.perform(post("/news/run").param("token", TOKEN).param("dryRun", "true"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("dryRun")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("selected=12")));
+        verify(schedule).generateNow(true, false);
+    }
+
+    @Test
     void run_exception_returns500() throws Exception {
-        doThrow(new RuntimeException("db down")).when(schedule).generateNow();
+        doThrow(new RuntimeException("db down")).when(schedule).generateNow(false, false);
 
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isInternalServerError())
@@ -81,14 +102,14 @@ class NewsAdminControllerTest {
     void run_noToken_returns403_andNeverTriggers() throws Exception {
         mockMvc.perform(post("/news/run"))
                 .andExpect(status().isForbidden());
-        verify(schedule, never()).generateNow();
+        verify(schedule, never()).generateNow(false, false);
     }
 
     @Test
     void run_wrongToken_returns403() throws Exception {
         mockMvc.perform(post("/news/run").param("token", "wrong"))
                 .andExpect(status().isForbidden());
-        verify(schedule, never()).generateNow();
+        verify(schedule, never()).generateNow(false, false);
     }
 
     @Test
@@ -98,13 +119,13 @@ class NewsAdminControllerTest {
         mockMvc.perform(post("/news/run").param("token", "anything"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("已禁用")));
-        verify(schedule, never()).generateNow();
+        verify(schedule, never()).generateNow(false, false);
     }
 
     @Test
     void run_busy_returns409() throws Exception {
         doThrow(new NewsGenerationBusyException("已有日报生成任务在执行，请稍后再试"))
-                .when(schedule).generateNow();
+                .when(schedule).generateNow(false, false);
 
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isConflict())
@@ -113,12 +134,10 @@ class NewsAdminControllerTest {
 
     @Test
     void run_rateLimited_secondCallWithinWindowReturns429() throws Exception {
-        when(schedule.generateNow()).thenReturn("/news/x.html");
+        when(schedule.generateNow(false, false)).thenReturn(published("/news/x.html"));
 
-        // 第一次通过
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isOk());
-        // 紧接着第二次：默认 10 分钟窗口内 → 429
         mockMvc.perform(post("/news/run").param("token", TOKEN))
                 .andExpect(status().isTooManyRequests());
     }

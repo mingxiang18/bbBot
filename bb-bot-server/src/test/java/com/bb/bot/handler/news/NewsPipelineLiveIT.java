@@ -55,9 +55,8 @@ class NewsPipelineLiveIT {
                 src("BBC中文", "国际", "https://feeds.bbci.co.uk/zhongwen/simp/rss.xml", "zh")
         ));
 
-        // --- T2 采集（真实网络） ---
+        // --- T2 采集（真实网络，并发 + 真实超时；client 由 fetcher 懒建） ---
         NewsFetcherImpl fetcher = new NewsFetcherImpl();
-        ReflectionTestUtils.setField(fetcher, "restClient", RestClient.create());
         ReflectionTestUtils.setField(fetcher, "newsConfig", cfg);
         List<NewsItem> items = fetcher.fetchAll();
         System.out.println("[LIVE] 采集到条目数 = " + items.size());

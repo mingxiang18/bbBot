@@ -274,6 +274,12 @@ news:
   archiveDays: 30
   perSourceLimit: 30
   perCategoryLimit: 5
+  autoCreateTables: true     # 启动时幂等建表/迁移 news 表(Phase 2 候选生命周期列)
+  candidateWindowHours: 48   # 候选池默认时间窗(小时);源可用 windowHours 覆盖(慢源设 72)
+  fetch:
+    concurrency: 5           # 有限并发抓取
+    connectTimeoutMs: 4000   # 单源建连超时
+    readTimeoutMs: 12000     # 单源响应读取(socket)超时——修正旧实现无 socket 读超时的缺陷
   hosting:
     dir: /bot/static/news     # HTML 落盘目录（位于 file.path 下）
     publicBase: /news         # 对外访问前缀（无鉴权）

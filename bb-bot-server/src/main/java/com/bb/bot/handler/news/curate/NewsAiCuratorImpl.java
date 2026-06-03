@@ -255,7 +255,7 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
     }
 
     /** 降级页面的导语标记，供页面显式提示"非 AI 精选"。 */
-    static final String FALLBACK_BRIEF = "⚠️ AI 整理降级：以下为按源限量挑选的原文摘要，未经语义精选";
+    public static final String FALLBACK_BRIEF = "⚠️ AI 整理降级：以下为按源限量挑选的原文摘要，未经语义精选";
 
     /**
      * 降级结果：<b>保守</b>映射，不再 raw 全量出页。

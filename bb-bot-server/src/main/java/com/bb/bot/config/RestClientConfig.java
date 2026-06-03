@@ -74,7 +74,7 @@ public class RestClientConfig {
      * 单段主机名（无点，如 rsshub）、*.svc.cluster.local / *.cluster.local / *.local、
      * localhost / 回环、以及私有网段 10/192.168/172.16-31。
      */
-    static boolean isInternalHost(String host) {
+    public static boolean isInternalHost(String host) {
         if (host == null || host.isBlank()) {
             return false;
         }

@@ -9,8 +9,10 @@ import com.bb.bot.handler.news.contract.NewsFetcher;
 import com.bb.bot.handler.news.contract.NewsHosting;
 import com.bb.bot.handler.news.contract.NewsItem;
 import com.bb.bot.handler.news.contract.NewsPageBuilder;
+import com.bb.bot.handler.news.contract.NewsRunStats;
 import com.bb.bot.handler.news.contract.NewsStore;
 import com.bb.bot.handler.news.contract.ReportMeta;
+import com.bb.bot.handler.news.curate.NewsAiCuratorImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -86,57 +88,78 @@ public class DailyNewsSchedule {
      * @throws NewsGenerationBusyException 已有生成任务在执行
      */
     public String generateNow() {
+        return generateNow(false, false).url();
+    }
+
+    /**
+     * 生成主体（Phase 4：支持 dryRun / forceRebuild，并返回可观测指标）。
+     *
+     * @param dryRun       只跑采集/候选/精选并返回统计，不落库不出页
+     * @param forceRebuild 跳过抓取，直接从候选池重建当天日报
+     * @return 本次运行指标 {@link NewsRunStats}
+     * @throws NewsGenerationBusyException 已有生成任务在执行
+     */
+    public NewsRunStats generateNow(boolean dryRun, boolean forceRebuild) {
         if (!running.compareAndSet(false, true)) {
             throw new NewsGenerationBusyException("已有日报生成任务在执行，请稍后再试");
         }
         try {
-            return doGenerate();
+            return doGenerate(dryRun, forceRebuild);
         } finally {
             running.set(false);
         }
     }
 
-    private String doGenerate() {
-        List<NewsItem> items = newsFetcher.fetchAll();
-        int fetched = items == null ? 0 : items.size();
-        if (fetched == 0) {
-            log.info("本次未采集到任何资讯条目，跳过出页");
-            return null;
-        }
+    private NewsRunStats doGenerate(boolean dryRun, boolean forceRebuild) {
+        String today = LocalDate.now().toString();
+        int fetched = 0;
+        int freshCount = 0;
 
-        // upsert raw（新条目 RAW 入库 + 刷新已存在条目 last_seen）
-        List<NewsItem> fresh = newsStore.dedupAndSave(items);
-        int freshCount = fresh == null ? 0 : fresh.size();
+        if (!forceRebuild) {
+            List<NewsItem> items = newsFetcher.fetchAll();
+            fetched = items == null ? 0 : items.size();
+            if (fetched == 0) {
+                log.info("本次未采集到任何资讯条目，跳过出页");
+                return stats(0, 0, 0, 0, "no_fetch", false, null);
+            }
+            // upsert raw（新条目 RAW 入库 + 刷新已存在条目 last_seen）
+            List<NewsItem> fresh = newsStore.dedupAndSave(items);
+            freshCount = fresh == null ? 0 : fresh.size();
+        }
 
         // Phase 2：从候选池（时间窗内 RAW 条目）重建，而非只处理本次新增——
         // 超 maxItems 截断 / 故障期 / 同日刷新覆盖的条目，只要还在窗内就能重新评估。
-        String today = LocalDate.now().toString();
         List<NewsItem> pool = newsStore.listEligibleForReport(today);
         int eligible = pool == null ? 0 : pool.size();
         if (eligible == 0) {
             log.info("候选池为空（采集 {} 条 / 新增 {} 条），保留既有日报，跳过出页", fetched, freshCount);
-            return null;
+            return stats(fetched, freshCount, 0, 0, "no_candidate", false, null);
         }
 
         DailyReport freshReport = newsAiCurator.curate(pool);
+        String aiStatus = classifyAi(freshReport);
 
         // 同日合并：把当天已选条目并入本次结果，避免二次生成只用新增条目覆盖旧页而丢失已选内容。
         DailyReport existing = newsStore.getReport(freshReport.date());
         DailyReport report = mergeReports(existing, freshReport);
+        int selected = report.items() == null ? 0 : report.items().size();
 
-        if (report.items() == null || report.items().isEmpty()) {
+        if (selected == 0) {
             // 宁缺毋滥：本次空精选且无既有内容 → 不出页、不覆盖（避免 raw 灌水）
             log.info("精选结果为空且无既有日报，跳过出页（日期={}）", report.date());
-            return null;
+            return stats(fetched, freshCount, eligible, 0, aiStatus, false, null);
+        }
+
+        if (dryRun) {
+            log.info("[news] dryRun：精选 {} 条，未落库未出页（日期={}）", selected, report.date());
+            return stats(fetched, freshCount, eligible, selected, aiStatus, false, null);
         }
 
         newsStore.saveReport(report);
 
         List<ReportMeta> availableDates = newsStore.listRecent(newsConfig.getArchiveDays());
-
         String dailyHtml = newsPageBuilder.buildDaily(report, availableDates);
         String indexHtml = newsPageBuilder.buildArchiveIndex(availableDates);
-
         String url = newsHosting.publish(report.date(), dailyHtml, indexHtml);
 
         // 归档保留裁剪：删除超出保留期的历史记录
@@ -144,7 +167,26 @@ public class DailyNewsSchedule {
 
         log.info("每日资讯日报生成成功，日期={}，精选 {} 条，访问地址={}",
                 report.date(), report.totalCount(), url);
-        return url;
+        return stats(fetched, freshCount, eligible, selected, aiStatus, true, url);
+    }
+
+    /** 记录一条结构化运行指标日志并返回（Phase 4 可观测）。 */
+    private NewsRunStats stats(int fetched, int fresh, int eligible, int selected,
+                               String aiStatus, boolean published, String url) {
+        NewsRunStats s = new NewsRunStats(fetched, fresh, eligible, selected, aiStatus, published, url);
+        log.info("[news-run] {}", s.toLine());
+        return s;
+    }
+
+    /** 区分 AI 状态：空精选 / 降级 / 正常。 */
+    private static String classifyAi(DailyReport report) {
+        if (report.items() == null || report.items().isEmpty()) {
+            return "empty";
+        }
+        if (NewsAiCuratorImpl.FALLBACK_BRIEF.equals(report.brief())) {
+            return "fallback";
+        }
+        return "success";
     }
 
     /**

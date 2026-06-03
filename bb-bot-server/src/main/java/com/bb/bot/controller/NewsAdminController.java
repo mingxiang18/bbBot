@@ -1,6 +1,7 @@
 package com.bb.bot.controller;
 
 import com.bb.bot.config.NewsConfig;
+import com.bb.bot.handler.news.contract.NewsRunStats;
 import com.bb.bot.schedule.DailyNewsSchedule;
 import com.bb.bot.schedule.NewsGenerationBusyException;
 import io.swagger.annotations.Api;
@@ -57,7 +58,9 @@ public class NewsAdminController {
     @ApiOperation("手动触发生成一次日报")
     public ResponseEntity<String> run(
             @RequestParam(value = "token", required = false) String token,
-            @RequestHeader(value = "X-News-Token", required = false) String headerToken) {
+            @RequestHeader(value = "X-News-Token", required = false) String headerToken,
+            @RequestParam(value = "dryRun", required = false, defaultValue = "false") boolean dryRun,
+            @RequestParam(value = "forceRebuild", required = false, defaultValue = "false") boolean forceRebuild) {
 
         // 1) 鉴权（fail-closed）
         String expected = newsConfig.getAdmin() == null ? null : newsConfig.getAdmin().getToken();
@@ -85,13 +88,16 @@ public class NewsAdminController {
         lastRunAt = now;
 
         // 3) 生成（互斥 + 异常映射）
-        log.info("[news] 收到手动触发请求（鉴权通过）");
+        log.info("[news] 收到手动触发请求（鉴权通过，dryRun={}，forceRebuild={}）", dryRun, forceRebuild);
         try {
-            String url = dailyNewsSchedule.generateNow();
-            if (url == null) {
-                return ResponseEntity.ok("已执行：本次无采集内容/无新增/空精选，未出页");
+            NewsRunStats st = dailyNewsSchedule.generateNow(dryRun, forceRebuild);
+            if (dryRun) {
+                return ResponseEntity.ok("dryRun 统计：" + st.toLine());
             }
-            return ResponseEntity.ok("生成成功：" + url);
+            if (!st.published()) {
+                return ResponseEntity.ok("已执行：未出页（" + st.toLine() + "）");
+            }
+            return ResponseEntity.ok("生成成功：" + st.url() + "\n" + st.toLine());
         } catch (NewsGenerationBusyException busy) {
             log.info("[news] 生成被互斥拒绝：{}", busy.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(busy.getMessage());
