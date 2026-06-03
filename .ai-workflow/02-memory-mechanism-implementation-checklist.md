@@ -49,11 +49,11 @@
 - [x] **前置核查（group scope 首期开启的硬门槛）— 通过 ✅**：核查 OneBot/QQ群/QQ频道/Telegram/Discord 全平台，群聊均稳定带非空 `groupId` + 群内真实发送者 `userId`（`BbReceiveMessage` 透传 → `recordInbound` → `SessionTracker`/`BbAiChatHandler` 全程不被覆盖）。**group scope 可首期上线。**
   - 顺带修掉一个相邻 bug：私聊（`groupId` 空）查最近 session 时 `eq(isNotBlank(groupId),…)` 不加约束，会复用到同一用户最近的【群】session → 私聊↔群串味。已在 `SessionTracker`(attachSessionId/forceEndCurrent) + `MemoryQueryService` 用 `isNull(isBlank(groupId), groupId)` 修正（注意不能用 `eq(null)`，MyBatis-Plus 会生成 `=NULL` 永假）。
 
-验收（代码完成 + 本地编译通过；带 ⏳ 的需活体链路实测，待跑起来验）：
-- [ ] ⏳ 连续聊天 >30min 中途不断开 → 不被切成多个 session（需 MySQL + 运行实例实测）。
-- [ ] ⏳ 普通回复不再机械输出「曾经讨论过」（需活体跑一轮群聊看输出）。
-- [ ] ⏳ memory.md 超长时按字节正确截断且带提醒（可单测覆盖，见 Phase 5）。
-- [x] groupId 链路结论记录在案（见上，已通过）。
+验收（已本地活体实测 @2026-06-04，mysql:8+mock LLM via bb-dev harness）：
+- [x] **session 复用经实测**：多条私聊复用同一 session、message_count 累加、`last_event_at` 持续推进；私聊与群是独立 session（串味 bug 不复现）。
+- [ ] ⏳ 普通回复不再机械「曾经讨论」：prompt 已改，但本地 clue 路径因测试库缺 `ai_keyword` 表报错，未观测到回复文本（与本次改动无关）。
+- [ ] ⏳ memory.md 字节截断：逻辑+编译过，留 Phase 5 单测。
+- [x] groupId 链路结论记录在案（已通过）。
 
 ---
 
@@ -78,11 +78,11 @@
   - [x] `supersede` 软降级旧卡为 `superseded` + 回填 `superseded_by`，不硬 delete；置信度<0.6 ignore；scope 越权降级；preference/project_state 缺 why/howToApply 直接 ignore。
 - [x] `MemoryLifecycleSweeper`：复用 `@Scheduled`，唯一 status 归属人，定时把 `expires_at<now` / `last_seen_at` 超龄(默认60天) 的 active→stale。
 
-验收（代码完成 + 编译通过 + parse 离线实测；带 ⏳ 的需活体 LLM+DB 实测）：
-- [ ] ⏳ 含明确偏好的对话结束后能生成 `preference` 卡片，带 why/how_to_apply（需真 LLM 跑蒸馏 + DB）。
-- [ ] ⏳ 流水账不进 active（依赖 LLM 遵守写入禁令 + 置信度门槛，需活体观察）。
-- [x] 相对日期转绝对：已在 prompt 强约束 + `expiresInDays`→绝对 `expires_at`（parse 实测 expiresInDays 映射正确）。
-- [x] session 结束 LLM 调用未翻倍：卡片抽取并入 `compileSessionSummary` 原有那一次 `chat(LIGHT)`，无新增调用（代码确认）。
+验收（已本地活体实测 @2026-06-04）：
+- [x] **端到端实测通过**：force-end session → sweep 跑蒸馏 → 同一次 LLM 调用产出卡片 → `MemoryPolicy [apply] 候选=1 insert=1` → `ai_memory_item` 落 preference/user/conf=0.95 卡，source_session 匹配。
+- [ ] ⏳ 流水账不进 active：依赖真 LLM 遵守写入禁令（mock 是 canned，未覆盖），留真 LLM 观察。
+- [x] 相对日期转绝对 + `expiresInDays`→`expires_at`（parse 离线实测）。
+- [x] **LLM 调用未翻倍经实测**：日志同一 session 既「抽出 1 条 facts」又出 1 张卡片，同一次 `chat(LIGHT)`。
 
 ---
 
@@ -111,11 +111,12 @@
 - [x] `BbAiChatHandler.composePersonality`：改为 selector 短索引+选中正文；**卡片未积累时回退旧 memory.md**（过渡不空窗）。
 - [x] `ai_memory_selection_log` 表 + `MemorySelectionLogger`(best-effort) + Sweeper TTL 清理(14天)。
 
-验收（代码完成 + 编译 + scope/老化离线实测；带 ⏳ 的需活体）：
-- [x] scope 隔离：群记忆不漏到私聊/别的群、群内不漏别人 user_in_group（离线穷举实测通过）。
-- [x] stale/volatile 卡注入带老化警告（离线实测）。
-- [x] alreadySurfaced 去重逻辑就位（会话内已注入排除）。
-- [ ] ⏳ 注入长度稳定 + 同问选中相关卡 + **额外延迟 P95 达标 + selector 故障不阻塞**（需活体跑，重点防 QQ 重复回复复发）。
+验收（已本地活体实测 @2026-06-04，从 mock 收到的真实 system prompt 直接观测注入块）：
+- [x] **scope 隔离经实测**：私聊只注入 user/global 卡，群卡 `mv_group1`/`mv_uig1` **确认未出现在私聊**（离线穷举 + live 双证）。
+- [x] **老化警告经实测**：stale/6天前 project_state 注入时带「N 天前、动手前先核实」。
+- [x] **selector 热路径稳定经实测**：私聊多轮 0 warn/0 超时/0 阻塞，bot 正常回复；候选≤8 走直接注入快路径。
+- [x] alreadySurfaced 去重逻辑就位。
+- [ ] ⏳ 延迟 P95 压测 + >8 候选触发模型选择/超时 fallback：未做负载测试（mock 下 CHAT 选择走 fallback 路径，逻辑已验）。
 
 ---
 
