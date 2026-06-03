@@ -1,8 +1,10 @@
 package com.bb.bot.handler.aiAgent;
 
 import com.bb.bot.aiAgent.auth.AiAgentAuthService;
+import com.bb.bot.aiAgent.memory.MemoryCommandService;
 import com.bb.bot.aiAgent.memory.MemoryCompiler;
 import com.bb.bot.aiAgent.memory.MemoryQueryService;
+import com.bb.bot.aiAgent.memory.MemorySelector;
 import com.bb.bot.aiAgent.memory.SessionTracker;
 import com.bb.bot.common.annotation.BootEventHandler;
 import com.bb.bot.common.annotation.Rule;
@@ -11,6 +13,7 @@ import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
+import com.bb.bot.database.aiAgent.entity.AiMemoryItem;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +55,19 @@ public class BbAiMemoryHandler {
     @Autowired
     private MemoryCompiler memoryCompiler;
 
+    @Autowired
+    private MemoryCommandService commandService;
+
+    @Autowired
+    private MemorySelector memorySelector;
+
     private static final Pattern TAIL_RE = Pattern.compile("^/?aiAgent\\.memory\\.tail(?:\\s+(\\d+))?\\s*$");
     private static final Pattern SEARCH_RE = Pattern.compile("^/?aiAgent\\.memory\\.search\\s+(.+)$");
+    private static final Pattern CARDS_RE = Pattern.compile("^/?aiAgent\\.memory\\.cards(?:\\s+(\\S+))?\\s*$");
+    private static final Pattern ITEM_RE = Pattern.compile("^/?aiAgent\\.memory\\.item\\s+(\\S+)\\s*$");
+    private static final Pattern DELETE_RE = Pattern.compile("^/?aiAgent\\.memory\\.delete\\s+(\\S+)\\s*$");
+    private static final Pattern SUPERSEDE_RE = Pattern.compile("^/?aiAgent\\.memory\\.supersede\\s+(\\S+)\\s+(\\S+)\\s*$");
+    private static final Pattern DEBUG_RE = Pattern.compile("^/?aiAgent\\.memory\\.debug\\s+(.+)$");
 
     @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
             keyword = {"^/?aiAgent\\.memory\\.tail"}, name = "记忆 tail")
@@ -124,6 +138,73 @@ public class BbAiMemoryHandler {
         // 截到 4KB 防止 IM 平台炸
         if (mem.length() > 4000) mem = mem.substring(0, 4000) + "\n...(truncated)";
         replies.text(msg, mem);
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?aiAgent\\.memory\\.cards"}, name = "记忆卡片索引")
+    public void cards(BbReceiveMessage msg) {
+        if (denyIfNotOwner(msg)) return;
+        Matcher m = CARDS_RE.matcher(text(msg));
+        String targetUser = (m.matches() && m.group(1) != null) ? m.group(1) : null;
+        List<AiMemoryItem> items = commandService.listForOwner(targetUser, 40);
+        if (items.isEmpty()) { replies.text(msg, "没有记忆卡片" + (targetUser != null ? "（user=" + targetUser + "）" : "")); return; }
+        StringBuilder sb = new StringBuilder("记忆卡片 ").append(items.size()).append(" 张：\n");
+        for (AiMemoryItem it : items) {
+            sb.append("- ").append(it.getMemoryKey()).append(" [").append(it.getType()).append('/').append(it.getScope())
+                    .append('/').append(it.getStatus()).append("] ").append(abbr(it.getSummary(), 60)).append('\n');
+        }
+        replies.text(msg, sb.toString().trim());
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?aiAgent\\.memory\\.item\\s"}, name = "查看记忆卡片")
+    public void item(BbReceiveMessage msg) {
+        if (denyIfNotOwner(msg)) return;
+        Matcher m = ITEM_RE.matcher(text(msg));
+        if (!m.find()) { replies.text(msg, "用法: /aiAgent.memory.item <memory_key>"); return; }
+        AiMemoryItem it = commandService.getByKey(m.group(1));
+        if (it == null) { replies.text(msg, "卡片不存在: " + m.group(1)); return; }
+        StringBuilder sb = new StringBuilder();
+        sb.append("key: ").append(it.getMemoryKey()).append('\n')
+          .append("type/scope/status: ").append(it.getType()).append('/').append(it.getScope()).append('/').append(it.getStatus()).append('\n')
+          .append("user/group: ").append(StringUtils.defaultString(it.getUserId(), "-")).append(" / ").append(StringUtils.defaultString(it.getGroupId(), "-")).append('\n')
+          .append("summary: ").append(it.getSummary()).append('\n');
+        if (StringUtils.isNotBlank(it.getWhy())) sb.append("why: ").append(it.getWhy()).append('\n');
+        if (StringUtils.isNotBlank(it.getHowToApply())) sb.append("howToApply: ").append(it.getHowToApply()).append('\n');
+        sb.append("conf/imp: ").append(it.getConfidence()).append(" / ").append(it.getImportance()).append('\n')
+          .append("expires/lastSeen: ").append(it.getExpiresAt()).append(" / ").append(it.getLastSeenAt());
+        if (StringUtils.isNotBlank(it.getSupersededBy())) sb.append('\n').append("supersededBy: ").append(it.getSupersededBy());
+        replies.text(msg, sb.toString());
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?aiAgent\\.memory\\.delete\\s"}, name = "删除记忆卡片")
+    public void delete(BbReceiveMessage msg) {
+        if (denyIfNotOwner(msg)) return;
+        Matcher m = DELETE_RE.matcher(text(msg));
+        if (!m.find()) { replies.text(msg, "用法: /aiAgent.memory.delete <memory_key>"); return; }
+        boolean ok = commandService.softDelete(m.group(1));
+        replies.text(msg, ok ? ("已删除 " + m.group(1)) : ("卡片不存在: " + m.group(1)));
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?aiAgent\\.memory\\.supersede\\s"}, name = "替代记忆卡片")
+    public void supersede(BbReceiveMessage msg) {
+        if (denyIfNotOwner(msg)) return;
+        Matcher m = SUPERSEDE_RE.matcher(text(msg));
+        if (!m.find()) { replies.text(msg, "用法: /aiAgent.memory.supersede <旧key> <新key>"); return; }
+        boolean ok = commandService.supersede(m.group(1), m.group(2));
+        replies.text(msg, ok ? ("已将 " + m.group(1) + " 标记为被 " + m.group(2) + " 替代") : ("旧卡片不存在: " + m.group(1)));
+    }
+
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
+            keyword = {"^/?aiAgent\\.memory\\.debug\\s"}, name = "模拟记忆选择")
+    public void debug(BbReceiveMessage msg) {
+        if (denyIfNotOwner(msg)) return;
+        Matcher m = DEBUG_RE.matcher(text(msg));
+        if (!m.find()) { replies.text(msg, "用法: /aiAgent.memory.debug <模拟消息>"); return; }
+        String block = memorySelector.composeMemoryBlock(msg.getUserId(), msg.getGroupId(), msg.getBotType(), m.group(1).trim());
+        replies.text(msg, StringUtils.isBlank(block) ? "（该消息不会注入任何记忆卡片）" : abbr(block, 3500));
     }
 
     private boolean denyIfNotOwner(BbReceiveMessage msg) {

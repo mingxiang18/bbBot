@@ -137,6 +137,9 @@ public class BbAiChatHandler {
     @Autowired
     private com.bb.bot.aiAgent.memory.MemorySelector memorySelector;
 
+    @Autowired
+    private com.bb.bot.aiAgent.memory.MemoryNaturalLanguageRouter memoryNaturalLanguageRouter;
+
     /** 工具循环编排 + 注册表 + 执行器 + 技能目录（合并 agent 能力后引入）。 */
     @Autowired
     private ToolLoopExecutor toolLoopExecutor;
@@ -204,6 +207,15 @@ public class BbAiChatHandler {
         }
         if (!passesUsageGuards(bbReceiveMessage, decision)) {
             return;
+        }
+
+        // Phase 4：自然语言记忆意图（记住/忘掉/你记得我什么/别记/记错了）前置短路，不进 LLM
+        try {
+            if (memoryNaturalLanguageRouter.tryHandle(bbReceiveMessage, extractPlainText(bbReceiveMessage))) {
+                return;
+            }
+        } catch (Exception e) {
+            log.warn("记忆意图处理异常，回退常规聊天 user={}", bbReceiveMessage.getUserId(), e);
         }
 
         // M8 cutover：history 从 ai_memory_event 拉，转 ChatHistory 兼容 MessageBuilder
