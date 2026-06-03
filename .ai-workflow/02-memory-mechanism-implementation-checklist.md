@@ -41,19 +41,19 @@
 
 目标：修会话边界 + prompt 自然度 + 截断口径，并**前置验证 groupId 链路**（给 Phase 2/3 的 scope 铺路）。
 
-- [ ] `ai_memory_session` 增加 `last_event_at` 字段（DDL + entity + mapper）。
-- [ ] `SessionTracker.attachSessionId`：reuse 条件从 `started_at + gap > now` 改为 `last_event_at + gap > now`；每次 record 更新 `last_event_at`。
-- [ ] `SessionTracker.sweepInactiveSessions`：扫描条件改为 `last_event_at < now - gap`。
-- [ ] `MemoryCompiler.assemble` 截断：在字符数之外**增加字节上限**，截断时写明确的「...(truncated)」提醒（保持现有优先级 today>facts>week>longterm）。
-- [ ] `prompts.yml`：记忆使用措辞改为「自然使用长期记忆，不主动声明来源；仅当用户追问过去/是否记得/记忆可能过期时才说明来源、时间、不确定性」。
+- [x] `ai_memory_session` 增加 `last_event_at`（`AiAgentSchemaInitializer` 建表带列 + 幂等 ALTER + 一次性回填；entity 加字段）。
+- [x] `SessionTracker.attachSessionId`：reuse 改按 `last_event_at + gap > now`（null 回退 started_at），每次复用/新建都写 `last_event_at = now`。
+- [x] `SessionTracker.sweepInactiveSessions`：扫描条件改为 `last_event_at < now - gap`。
+- [x] `MemoryCompiler.assemble` 截断：新增字节上限（默认 25KB，二分定位 char 边界不切坏多字节）+ 明确截断提醒。
+- [x] `prompts.yml` clue-suffix + `BbAiChatHandler` 记忆注入（新增 `MEMORY_USAGE_GUIDANCE`）：改为自然使用、历史追问才说明来源。
 - [x] **前置核查（group scope 首期开启的硬门槛）— 通过 ✅**：核查 OneBot/QQ群/QQ频道/Telegram/Discord 全平台，群聊均稳定带非空 `groupId` + 群内真实发送者 `userId`（`BbReceiveMessage` 透传 → `recordInbound` → `SessionTracker`/`BbAiChatHandler` 全程不被覆盖）。**group scope 可首期上线。**
   - 顺带修掉一个相邻 bug：私聊（`groupId` 空）查最近 session 时 `eq(isNotBlank(groupId),…)` 不加约束，会复用到同一用户最近的【群】session → 私聊↔群串味。已在 `SessionTracker`(attachSessionId/forceEndCurrent) + `MemoryQueryService` 用 `isNull(isBlank(groupId), groupId)` 修正（注意不能用 `eq(null)`，MyBatis-Plus 会生成 `=NULL` 永假）。
 
-验收：
-- [ ] 连续聊天 >30min 中途不断开 → 不被切成多个 session（活体验证）。
-- [ ] 普通回复不再机械输出「曾经讨论过」。
-- [ ] memory.md 超长时按字节正确截断且带提醒。
-- [ ] groupId 链路结论记录在案。
+验收（代码完成 + 本地编译通过；带 ⏳ 的需活体链路实测，待跑起来验）：
+- [ ] ⏳ 连续聊天 >30min 中途不断开 → 不被切成多个 session（需 MySQL + 运行实例实测）。
+- [ ] ⏳ 普通回复不再机械输出「曾经讨论过」（需活体跑一轮群聊看输出）。
+- [ ] ⏳ memory.md 超长时按字节正确截断且带提醒（可单测覆盖，见 Phase 5）。
+- [x] groupId 链路结论记录在案（见上，已通过）。
 
 ---
 
