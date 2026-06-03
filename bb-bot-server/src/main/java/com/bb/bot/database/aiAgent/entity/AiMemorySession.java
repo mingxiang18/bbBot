@@ -34,6 +34,9 @@ public class AiMemorySession {
 
     private LocalDateTime startedAt;
 
+    /** 最近一条事件的时间。会话复用 / sweep 都基于它（而非 started_at），避免活跃聊天被误切。 */
+    private LocalDateTime lastEventAt;
+
     /** null 表示 session 仍在进行中 */
     private LocalDateTime endedAt;
 

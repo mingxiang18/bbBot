@@ -93,14 +93,20 @@ public class AiAgentSchemaInitializer {
                     "  group_id VARCHAR(64) DEFAULT NULL," +
                     "  platform VARCHAR(32) DEFAULT NULL," +
                     "  started_at DATETIME NOT NULL," +
+                    "  last_event_at DATETIME DEFAULT NULL," +
                     "  ended_at DATETIME DEFAULT NULL," +
                     "  message_count INT DEFAULT 0," +
                     "  summary MEDIUMTEXT," +
                     "  summary_compiled_at DATETIME DEFAULT NULL," +
                     "  UNIQUE KEY uk_session (session_id)," +
                     "  KEY idx_user_started (user_id, started_at)," +
-                    "  KEY idx_unended (ended_at)" +
+                    "  KEY idx_unended (ended_at, last_event_at)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 会话窗口 + 蒸馏 summary'",
+
+            // 给已存在的 ai_memory_session 补 last_event_at（基于"最近一条事件"切分会话，避免活跃聊天被 started_at+gap 误切）。
+            // 列已存在时本句报错被逐句 try/catch 吞掉；随后把历史行回填成 started_at 以便 sweep 统一按 last_event_at 比较。
+            "ALTER TABLE ai_memory_session ADD COLUMN last_event_at DATETIME DEFAULT NULL",
+            "UPDATE ai_memory_session SET last_event_at = started_at WHERE last_event_at IS NULL",
 
             // ai_memory_fact 的 FULLTEXT 用 ngram 分词（MySQL 5.7+ / 8.0 支持 CJK）
             "CREATE TABLE IF NOT EXISTS ai_memory_fact (" +

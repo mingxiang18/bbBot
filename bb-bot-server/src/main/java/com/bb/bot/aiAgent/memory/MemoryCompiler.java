@@ -77,6 +77,13 @@ public class MemoryCompiler {
     @Value("${aiAgent.memory.memoryMdMaxChars:6000}")
     private int memoryMdMaxChars;
 
+    /** 字节上限：防"行数/字符数没超但字节爆 system prompt"（CJK 一字 3 字节，长串索引尤甚）。 */
+    @Value("${aiAgent.memory.memoryMdMaxBytes:25000}")
+    private int memoryMdMaxBytes;
+
+    private static final String TRUNCATION_NOTICE =
+            "\n\n...(记忆已截断：超出长度上限，部分内容未加载。完整记忆见后台 memory.md)";
+
     private static final Pattern KEY_FACTS_RE = Pattern.compile(
             "(?ms)^#{1,3}\\s*(重要事实|Key Facts)\\s*$\\s*((?:.|\\n)*?)(?=^#{1,3}\\s|\\z)");
 
@@ -320,13 +327,34 @@ public class MemoryCompiler {
         sb.append("## 本周\n").append(readOrPlaceholder(root.resolve("week.md"))).append("\n\n");
         sb.append("## 长期画像\n").append(readOrPlaceholder(root.resolve("longterm.md"))).append("\n");
         String text = sb.toString();
-        // 按优先级 today > facts > week > longterm 倒着截断
-        if (text.length() > memoryMdMaxChars) {
-            text = text.substring(0, memoryMdMaxChars) + "\n...(truncated)";
-        }
+        // 字符 + 字节双限制，超限按优先级 facts > today > week > longterm（正文已倒序拼接）截断并写明提醒
+        text = truncateByCharsAndBytes(text);
         Files.writeString(memory, text, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         return text;
+    }
+
+    /** 先按字符数截，再按 UTF-8 字节数截（二分定位 char 边界，不切坏多字节字符）；任一触发都追加截断提醒。 */
+    private String truncateByCharsAndBytes(String text) {
+        boolean truncated = false;
+        if (text.length() > memoryMdMaxChars) {
+            text = text.substring(0, memoryMdMaxChars);
+            truncated = true;
+        }
+        if (text.getBytes(StandardCharsets.UTF_8).length > memoryMdMaxBytes) {
+            int lo = 0, hi = text.length();
+            while (lo < hi) {
+                int mid = (lo + hi + 1) >>> 1;
+                if (text.substring(0, mid).getBytes(StandardCharsets.UTF_8).length <= memoryMdMaxBytes) {
+                    lo = mid;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+            text = text.substring(0, lo);
+            truncated = true;
+        }
+        return truncated ? text + TRUNCATION_NOTICE : text;
     }
 
     private String readOrPlaceholder(Path p) {

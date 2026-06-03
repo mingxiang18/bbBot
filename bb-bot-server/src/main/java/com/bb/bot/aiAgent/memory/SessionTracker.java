@@ -53,13 +53,17 @@ public class SessionTracker {
                 .last("limit 1"));
 
         LocalDateTime now = LocalDateTime.now();
+        // 以"最近一条事件"为基准判活跃：last_event_at 缺失时回退 started_at（兼容回填前的老行）
+        LocalDateTime lastActive = latest == null ? null
+                : (latest.getLastEventAt() != null ? latest.getLastEventAt() : latest.getStartedAt());
         boolean reuse = latest != null
                 && latest.getEndedAt() == null
-                && latest.getStartedAt() != null
-                && latest.getStartedAt().plusMinutes(sessionGapMinutes).isAfter(now);
+                && lastActive != null
+                && lastActive.plusMinutes(sessionGapMinutes).isAfter(now);
 
         if (reuse) {
             latest.setMessageCount((latest.getMessageCount() == null ? 0 : latest.getMessageCount()) + 1);
+            latest.setLastEventAt(now);
             sessionService.updateById(latest);
             return latest.getSessionId();
         }
@@ -70,6 +74,7 @@ public class SessionTracker {
         fresh.setGroupId(groupId);
         fresh.setPlatform(platform);
         fresh.setStartedAt(now);
+        fresh.setLastEventAt(now);
         fresh.setMessageCount(1);
         sessionService.save(fresh);
         log.info("SessionTracker 新开 session={} user={} group={}", fresh.getSessionId(), userId, groupId);
@@ -84,10 +89,10 @@ public class SessionTracker {
     public void sweepInactiveSessions() {
         try {
             LocalDateTime threshold = LocalDateTime.now().minusMinutes(sessionGapMinutes);
-            // 查所有未结束的、started_at 早于 threshold 的 session
+            // 查所有未结束的、最近一条事件早于 threshold 的 session（last_event_at 回填后等价于"静默超 gap"）
             List<AiMemorySession> stale = sessionService.list(new LambdaQueryWrapper<AiMemorySession>()
                     .isNull(AiMemorySession::getEndedAt)
-                    .lt(AiMemorySession::getStartedAt, threshold)
+                    .lt(AiMemorySession::getLastEventAt, threshold)
                     .last("limit 50"));
             for (AiMemorySession s : stale) {
                 s.setEndedAt(LocalDateTime.now());

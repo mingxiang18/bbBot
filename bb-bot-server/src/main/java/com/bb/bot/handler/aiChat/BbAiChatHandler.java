@@ -514,7 +514,8 @@ public class BbAiChatHandler {
         try {
             String userMemoryMd = memoryCompiler.ensureCompiledMemory(userId);
             if (StringUtils.isNoneBlank(userMemoryMd)) {
-                base = base + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n";
+                base = base + "\n\n--- 关于这位用户的长期记忆 ---\n" + userMemoryMd + "\n--- 长期记忆结束 ---\n"
+                        + MEMORY_USAGE_GUIDANCE;
             }
         } catch (Exception e) {
             log.warn("注入 memory.md 失败 user={}", userId, e);
@@ -531,6 +532,11 @@ public class BbAiChatHandler {
         base = base + "\n\n" + HISTORY_BOUNDARY_GUIDANCE;
         return base;
     }
+
+    /** 长期记忆使用纪律：自然融入、不主动报来源；历史追问 / 可能过期时才说明。 */
+    private static final String MEMORY_USAGE_GUIDANCE =
+            "【记忆使用】上面的长期记忆请自然地融入回复，不要主动声明\"根据长期记忆\"或\"你以前说过\"。" +
+            "只有当用户主动问起过去发生过什么、你是否记得某事、或记忆可能已过期时，才明确说明来源、时间或不确定性。";
 
     /** 防止模型把历史里更早的消息当成待办再处理一遍。 */
     private static final String HISTORY_BOUNDARY_GUIDANCE =
