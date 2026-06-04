@@ -55,6 +55,10 @@ public class NewsFetcherImpl implements NewsFetcher {
     @Autowired
     private NewsConfig newsConfig;
 
+    /** 源健康记录 service；活体 IT 无 Spring 时为 null，recordHealth 内判空降级。 */
+    @Autowired(required = false)
+    private com.bb.bot.database.news.service.INewsSourceHealthService sourceHealthService;
+
     @Value("${rest.proxyIp:}")
     private String proxyIp;
 
@@ -119,10 +123,12 @@ public class NewsFetcherImpl implements NewsFetcher {
 
     /** 抓取单源并解析；任何异常都被吞掉返回空列表（单源失败隔离）。 */
     private List<NewsItem> fetchOne(NewsConfig.Source source, int limit) {
+        long start = System.currentTimeMillis();
         try {
             String url = resolveUrl(source);
             if (url == null || url.isBlank()) {
                 log.error("[news] 源[{}]无法确定 URL（via={}），跳过", source.getName(), source.getVia());
+                recordHealth(source, "error", 0, "config", "无法确定 URL", System.currentTimeMillis() - start);
                 return new ArrayList<>();
             }
 
@@ -141,13 +147,78 @@ public class NewsFetcherImpl implements NewsFetcher {
             if (limit > 0 && items.size() > limit) {
                 items = items.subList(0, limit);
             }
-            log.info("[news] 源[{}]采集 {} 条（url={}）", source.getName(), items.size(), url);
+            long cost = System.currentTimeMillis() - start;
+            if (items.isEmpty()) {
+                log.warn("[news] 源[{}]采集 0 条（疑似源停更/解析空，cost={}ms url={}）", source.getName(), cost, url);
+                recordHealth(source, "empty", 0, null, null, cost);
+            } else {
+                log.info("[news] 源[{}]采集 {} 条（cost={}ms url={}）", source.getName(), items.size(), cost, url);
+                recordHealth(source, "ok", items.size(), null, null, cost);
+            }
             return items;
         } catch (Exception e) {
-            log.error("[news] 源[{}]采集失败，已跳过（via={}）：{}",
-                    source.getName(), source.getVia(), e.getMessage());
+            long cost = System.currentTimeMillis() - start;
+            // 分类错误便于排查"源是否失效"：timeout（读/连超时）/ connect（连不上）/ http（4xx/5xx）/ parse（解析失败）
+            String type = classifyError(e);
+            log.error("[news] 源[{}]采集失败，已跳过（via={} errorType={} cost={}ms）：{}",
+                    source.getName(), source.getVia(), type, cost, e.getMessage());
+            recordHealth(source, type, 0, type, StringUtils.left(e.getMessage(), 480), cost);
             return new ArrayList<>();
         }
+    }
+
+    /** 落一条源健康记录；service 缺失（活体 IT 无 Spring）或写库失败时静默跳过，绝不影响抓取。 */
+    private void recordHealth(NewsConfig.Source source, String status, int count,
+                              String errorType, String errorMsg, long costMs) {
+        if (sourceHealthService == null) {
+            return;
+        }
+        try {
+            com.bb.bot.database.news.entity.NewsSourceHealthPo po =
+                    new com.bb.bot.database.news.entity.NewsSourceHealthPo();
+            po.setReportDate(java.time.LocalDate.now());
+            po.setSourceName(source.getName());
+            po.setCategory(source.getCategory());
+            po.setVia(source.getVia());
+            po.setStatus(status);
+            po.setItemCount(count);
+            po.setErrorType(errorType);
+            po.setErrorMsg(errorMsg);
+            po.setCostMs(costMs);
+            po.setCheckedAt(java.time.LocalDateTime.now());
+            sourceHealthService.save(po);
+        } catch (Exception ex) {
+            log.debug("[news] 源健康记录写库失败（非致命）source={}", source.getName(), ex);
+        }
+    }
+
+    /**
+     * 把抓取异常归类为简短可读的错误类型，供日志与（P2）源健康记录使用。
+     * 沿 cause 链查找已知异常，命中即返回对应标签，否则 error。
+     */
+    static String classifyError(Throwable e) {
+        Throwable t = e;
+        // 沿 cause 链最多走 8 层，防御性避免循环引用导致死循环
+        for (int depth = 0; t != null && depth < 8; t = t.getCause(), depth++) {
+            String cn = t.getClass().getName();
+            if (t instanceof java.net.SocketTimeoutException
+                    || cn.contains("Timeout") || cn.contains("TimeoutException")) {
+                return "timeout";
+            }
+            if (t instanceof java.net.ConnectException
+                    || t instanceof java.net.UnknownHostException
+                    || t instanceof java.net.NoRouteToHostException) {
+                return "connect";
+            }
+            if (cn.contains("HttpClientErrorException") || cn.contains("HttpServerErrorException")
+                    || cn.contains("HttpStatusCodeException")) {
+                return "http";
+            }
+            if (cn.contains("SAX") || cn.contains("Parse") || cn.contains("XML")) {
+                return "parse";
+            }
+        }
+        return "error";
     }
 
     /** 懒初始化 news 专用 client（带超时 + 复用全局代理直连规则）。 */

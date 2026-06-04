@@ -84,7 +84,40 @@ public class NewsSchemaInitializer {
             //    review_state=SELECTED，使新版 getReport(按 selected_report_date 查) 仍能展示旧日报。
             //    只动 selected_report_date 仍为空的行，幂等。
             "UPDATE news_item SET selected_report_date = report_date, review_state = 'SELECTED' " +
-                    "WHERE summary_zh IS NOT NULL AND summary_zh <> '' AND selected_report_date IS NULL"
+                    "WHERE summary_zh IS NOT NULL AND summary_zh <> '' AND selected_report_date IS NULL",
+
+            // 5) 可观测性：源健康记录（每次每源一行）+ 运行指标历史（每次生成一行）
+            "CREATE TABLE IF NOT EXISTS news_source_health (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '自增主键'," +
+                    "  report_date DATE DEFAULT NULL COMMENT '抓取所属日期'," +
+                    "  source_name VARCHAR(64) NOT NULL COMMENT '源名称'," +
+                    "  category VARCHAR(16) DEFAULT NULL COMMENT '分类键'," +
+                    "  via VARCHAR(16) DEFAULT NULL COMMENT '获取方式 direct/rsshub'," +
+                    "  status VARCHAR(16) NOT NULL COMMENT 'ok/empty/timeout/connect/http/parse/error'," +
+                    "  item_count INT DEFAULT 0 COMMENT '本次抓取条数'," +
+                    "  error_type VARCHAR(16) DEFAULT NULL COMMENT '失败类型'," +
+                    "  error_msg VARCHAR(512) DEFAULT NULL COMMENT '失败信息'," +
+                    "  cost_ms BIGINT DEFAULT NULL COMMENT '抓取耗时(ms)'," +
+                    "  checked_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '记录时间'," +
+                    "  PRIMARY KEY (id)," +
+                    "  KEY idx_source_time (source_name, checked_at)," +
+                    "  KEY idx_checked (checked_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资讯源抓取健康记录'",
+
+            "CREATE TABLE IF NOT EXISTS news_run_stats (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '自增主键'," +
+                    "  report_date DATE DEFAULT NULL COMMENT '日报日期'," +
+                    "  fetched INT DEFAULT 0 COMMENT '采集总数'," +
+                    "  fresh INT DEFAULT 0 COMMENT '本次新增'," +
+                    "  eligible INT DEFAULT 0 COMMENT '候选池数量'," +
+                    "  selected INT DEFAULT 0 COMMENT '最终展示数量'," +
+                    "  ai_status VARCHAR(24) DEFAULT NULL COMMENT 'AI 状态'," +
+                    "  published TINYINT DEFAULT 0 COMMENT '是否出页'," +
+                    "  url VARCHAR(256) DEFAULT NULL COMMENT '出页地址'," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '记录时间'," +
+                    "  PRIMARY KEY (id)," +
+                    "  KEY idx_created (created_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日报运行指标历史'"
     };
 
     @EventListener

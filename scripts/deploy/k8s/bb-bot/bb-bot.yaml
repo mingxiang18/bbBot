@@ -80,6 +80,8 @@ spec:
             - { name: static, mountPath: /bot/static }
             # 与 bb-sandbox 共享的用户文件空间（hostPath，同在 misu-maco）。aiAgent.fs.userFileRoot 指向这里。
             - { name: agentfiles, mountPath: /bot/agent-files }
+            # 日志持久化：logback 写 /bot/logs，挂 hostPath 使 Pod 重启后历史日志仍在（保留由 logback maxHistory=15 控制）。
+            - { name: logs, mountPath: /bot/logs }
       volumes:
         - name: config
           configMap: { name: bb-bot-config }
@@ -87,6 +89,8 @@ spec:
           persistentVolumeClaim: { claimName: bb-bot-static-pvc }
         - name: agentfiles
           hostPath: { path: /mnt/misu/sandbox, type: DirectoryOrCreate }
+        - name: logs
+          hostPath: { path: /mnt/misu/bb-bot-logs, type: DirectoryOrCreate }
 ---
 apiVersion: v1
 kind: Service
