@@ -172,6 +172,10 @@ function pickIntent(text) {
   const t = (text || '').toLowerCase();
   // 并行工具测试：一轮里发两个 tool_call，验证 ToolLoopExecutor 的并发执行
   if (/(并行|parallel)/.test(t)) return 'parallel';
+  // 自查三件套（owner 诊断工具）：优先级靠前，避免被泛化规则吃掉
+  if (/(自查|你最近.*正常|还活着|怎么不爱说话|最近有没有问题|self.?check)/.test(t)) return 'self_check';
+  if (/(为什么没回|怎么没回|收到我.*消息|那条.*没反应|消息.*轨迹|trace)/.test(t)) return 'trace_message';
+  if (/(新闻源.*失效|源.*失效|日报.*没更新|新闻.*怎么筛|优质源|news.?health)/.test(t)) return 'news_health';
   if (/(时间|几点|几号|time|date|clock)/.test(t)) return 'time';
   // Memory 系统三件套
   if (/(记住|记下来|remember|帮我记)/.test(t)) return 'record_experience';
@@ -340,6 +344,9 @@ async function handleCompletion(req, res, body) {
     || (intent === 'record_experience' && toolNames.has('record_experience'))
     || (intent === 'recall_experience' && toolNames.has('recall_experience'))
     || (intent === 'search_memory' && toolNames.has('search_memory'))
+    || (intent === 'self_check' && toolNames.has('self_check'))
+    || (intent === 'trace_message' && toolNames.has('trace_message'))
+    || (intent === 'news_health' && toolNames.has('news_health'))
   );
 
   console.log(`[mock] intent=${intent} triggerTool=${triggerTool} toolFinished=${toolFinished} userText="${userText}"`);
@@ -415,6 +422,12 @@ async function handleCompletion(req, res, body) {
       const tokens = userText.split(/\s+/).filter(s => s.length > 1).slice(-1);
       sseChunk(res, toolCallChunk(id, model, makeToolId(), 'search_memory',
           JSON.stringify({ query: tokens[0] || userText.slice(-20) })));
+    } else if (intent === 'self_check') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'self_check', '{}'));
+    } else if (intent === 'trace_message') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'trace_message', '{}'));
+    } else if (intent === 'news_health') {
+      sseChunk(res, toolCallChunk(id, model, makeToolId(), 'news_health', '{}'));
     }
     sseChunk(res, finishChunk(id, model, 'tool_calls'));
     if (stream_options?.include_usage) {

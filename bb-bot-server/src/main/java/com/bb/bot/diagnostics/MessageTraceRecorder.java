@@ -88,9 +88,24 @@ public class MessageTraceRecorder {
         }
     }
 
-    /** 发送结果（SENT / FAILED）。 */
+    /** 发送结果（SENT / FAILED），用当前线程 MDC 的 traceId 定位轨迹。 */
     public void onReply(String status, String via, String error) {
         MessageTrace t = current();
+        if (t != null) {
+            t.setReply(status, via, error);
+        }
+    }
+
+    /**
+     * 发送结果（按显式 traceId 定位）。供流式 / 工具循环回复在非 MDC 线程的 onComplete 回调里使用——
+     * 这些回调可能跑在 provider 的流线程上，MDC traceId 不一定还在，但 traceId 是 messageId 的纯函数
+     * （{@link TraceContext#newId}），可由 messageId 重算后定位同一条轨迹。
+     */
+    public void onReply(String traceId, String status, String via, String error) {
+        if (traceId == null) {
+            return;
+        }
+        MessageTrace t = byId.get(traceId);
         if (t != null) {
             t.setReply(status, via, error);
         }

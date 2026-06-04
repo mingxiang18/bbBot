@@ -481,6 +481,13 @@ public class BbAiChatHandler {
                 .map(c -> c.getData().toString())
                 .collect(Collectors.joining());
         memoryEventRecorder.recordOutbound(msg, "chat_reply", text, IdWorker.getIdStr());
+        // 标记该条消息已成功产出 AI 回复。流式/工具循环的 onComplete 可能在非 MDC 线程，
+        // 故按 messageId 重算 traceId 定位轨迹（不依赖 ThreadLocal）。
+        if (messageTraceRecorder != null) {
+            messageTraceRecorder.onReply(
+                    com.bb.bot.diagnostics.TraceContext.newId(msg.getMessageId()),
+                    MessageTrace.REPLY_SENT, "ai", null);
+        }
     }
 
     /** M8.3：history 从 ai_memory_event 拉，转 ChatHistory 给 MessageBuilder 用。 */
