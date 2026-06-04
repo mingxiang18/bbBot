@@ -19,8 +19,10 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
             <fileNamePattern>${log.path}/sys-info.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 5天 -->
-            <maxHistory>5</maxHistory>
+            <!-- 日志最大的历史 15 天 -->
+            <maxHistory>15</maxHistory>
+            <!-- 总量上限兜底：超出按时间从旧到新删，防磁盘被写满 -->
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -33,8 +35,10 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
             <fileNamePattern>${log.path}/sys-error.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- 日志最大的历史 5天 -->
-            <maxHistory>5</maxHistory>
+            <!-- 日志最大的历史 15 天 -->
+            <maxHistory>15</maxHistory>
+            <!-- 总量上限兜底：超出按时间从旧到新删，防磁盘被写满 -->
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>${log.pattern}</pattern>
