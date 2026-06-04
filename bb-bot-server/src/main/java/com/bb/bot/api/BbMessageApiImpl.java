@@ -7,6 +7,7 @@ import com.bb.bot.api.qq.QqToBbMessageApi;
 import com.bb.bot.api.telegram.TelegramMessageApi;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbSendMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
  * 发起动作请求Api
  * @author ren
  */
+@Slf4j
 @Component
 public class BbMessageApiImpl implements BbMessageApi{
 
@@ -47,6 +49,9 @@ public class BbMessageApiImpl implements BbMessageApi{
             telegramMessageApi.sendMessage(bbSendMessage);
         }else if (BotType.DISCORD.equals(bbSendMessage.getBotType())) {
             discordMessageApi.sendMessage(bbSendMessage);
+        }else {
+            log.warn("未知平台类型，消息未发送 botType={} group={} user={}",
+                    bbSendMessage.getBotType(), bbSendMessage.getGroupId(), bbSendMessage.getUserId());
         }
     };
 

@@ -1,11 +1,13 @@
 package com.bb.bot.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -39,6 +41,27 @@ public class BotThreadPoolExecutorConfig {
         executor.setQueueCapacity(queueCapacity);
         // 配置线程池中的线程的名称前缀
         executor.setThreadNamePrefix("event-handler-");
+        // 把提交线程的 MDC（含 traceId）复制到工作线程，使异步 handler 的日志仍带同一条消息的 traceId
+        executor.setTaskDecorator(runnable -> {
+            Map<String, String> submitContext = MDC.getCopyOfContextMap();
+            return () -> {
+                Map<String, String> restore = MDC.getCopyOfContextMap();
+                if (submitContext != null) {
+                    MDC.setContextMap(submitContext);
+                } else {
+                    MDC.clear();
+                }
+                try {
+                    runnable.run();
+                } finally {
+                    if (restore != null) {
+                        MDC.setContextMap(restore);
+                    } else {
+                        MDC.clear();
+                    }
+                }
+            };
+        });
         // 设置拒绝策略：当pool已经达到max size的时候，如何处理新任务
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
         //执行初始化

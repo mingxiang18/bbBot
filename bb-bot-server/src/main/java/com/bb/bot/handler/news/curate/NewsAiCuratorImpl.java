@@ -81,6 +81,8 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
         Map<String, NewsItem> byId = assignIds(picked);
 
         // 调 LLM
+        log.info("[news-curate] 喂入 LLM 候选 {} 条（轮转截断自 {} 条，model={}）",
+                byId.size(), input.size(), spec.getModel());
         String raw;
         try {
             List<ChatMessage> messages = List.of(
@@ -96,6 +98,9 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return fallback(input);
         }
 
+        // 原始输出留痕（debug 级，便于排查 AI 选取逻辑；正常 info 不刷全文）
+        log.debug("[news-curate] LLM 原始输出：{}", raw);
+
         // 鲁棒解析
         CurateResponse resp = CurateResponse.parse(raw);
         if (resp == null) {
@@ -104,7 +109,10 @@ public class NewsAiCuratorImpl implements NewsAiCurator {
             return fallback(input);
         }
 
-        return assemble(resp, byId, input);
+        DailyReport report = assemble(resp, byId, input);
+        log.info("[news-curate] AI 精选完成：喂入 {} 条 → 最终保留 {} 条", byId.size(),
+                report == null || report.items() == null ? 0 : report.items().size());
+        return report;
     }
 
     /** 给候选条目分配稳定 id（n1..nN），保持喂入顺序。 */

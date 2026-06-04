@@ -268,6 +268,8 @@ public class BbAiChatHandler {
 
         // 月度限额：超额硬阻断（所有人含 owner）。命令类 handler 不经此入口，申请/审批不受影响。
         if (quotaGuard.isOverLimit(msg.getUserId(), msg.getBotType())) {
+            log.warn("跳过回复：月度额度已用完 user={} platform={} directTrigger={}",
+                    msg.getUserId(), msg.getBotType(), decision.isDirectTrigger());
             if (decision.isDirectTrigger()) {
                 com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
                         quotaGuard.status(msg.getUserId(), msg.getBotType());
@@ -588,6 +590,7 @@ public class BbAiChatHandler {
             return ReplyDecision.replyDirect();
         }
         if (!isGroupLike(msg)) {
+            log.info("跳过回复：非群聊/频道消息 type={}", msg.getMessageType());
             return ReplyDecision.skip();
         }
 
@@ -604,12 +607,14 @@ public class BbAiChatHandler {
                 .eq(UserConfigValue::getValueName, "1")
                 .last("limit 1"));
         if (autoConfig == null) {
+            log.info("跳过回复：本群未开启自动回复(aiAutoReply) group={}", msg.getGroupId());
             return ReplyDecision.skip();
         }
 
         double rand = randomSource.getAsDouble();
-        log.info("AI 自动回复随机数：{} (阈值 {})", rand, autoReplyRate);
-        return rand > autoReplyRate ? ReplyDecision.reply() : ReplyDecision.skip();
+        boolean hit = rand > autoReplyRate;
+        log.info("AI 自动回复随机数：{} (阈值 {})，{}", rand, autoReplyRate, hit ? "命中→回复" : "未命中→跳过");
+        return hit ? ReplyDecision.reply() : ReplyDecision.skip();
     }
 
     // =========================================================================

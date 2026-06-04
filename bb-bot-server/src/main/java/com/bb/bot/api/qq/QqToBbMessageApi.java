@@ -14,6 +14,7 @@ import com.bb.bot.entity.qq.UploadMediaRequest;
 import com.bb.bot.entity.qq.UploadMediaResponse;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @Component
 public class QqToBbMessageApi {
 
@@ -96,6 +98,7 @@ public class QqToBbMessageApi {
                         groupMessage.setMsgType(7);
                         groupMessage.setMedia(uploadMediaResponse);
                     } catch (IOException e) {
+                        log.error("本地图片上传失败 group={} user={}", bbSendMessage.getGroupId(), bbSendMessage.getUserId(), e);
                         throw new RuntimeException(e);
                     }
                 },
@@ -118,6 +121,8 @@ public class QqToBbMessageApi {
 
         //调用qq接口发送消息
         qqApiCaller.sendGroupMessage(qqConfig, bbSendMessage.getGroupId(), groupMessage);
+        log.info("QQ 群消息已投递 group={} replyTo={} msgType={}", bbSendMessage.getGroupId(),
+                groupMessage.getMsgId(), groupMessage.getMsgType());
     }
 
     private void sendChannelMessage(BbSendMessage bbSendMessage, QqConfig qqConfig) {
@@ -135,6 +140,7 @@ public class QqToBbMessageApi {
                         //本地图片上传后获取临时网络地址
                         channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
                     } catch (IOException e) {
+                        log.error("本地图片上传失败 group={} user={}", bbSendMessage.getGroupId(), bbSendMessage.getUserId(), e);
                         throw new RuntimeException(e);
                     }
                 },
@@ -150,6 +156,7 @@ public class QqToBbMessageApi {
 
         //调用qq接口发送消息
         qqApiCaller.sendChannelMessage(qqConfig, bbSendMessage.getGroupId(), channelMessage);
+        log.info("QQ 子频道消息已投递 channel={} replyTo={}", bbSendMessage.getGroupId(), channelMessage.getMsgId());
     }
 
     /**
@@ -174,6 +181,7 @@ public class QqToBbMessageApi {
                         groupMessage.setMsgType(7);
                         groupMessage.setMedia(uploadMediaResponse);
                     } catch (IOException e) {
+                        log.error("本地图片上传失败 group={} user={}", bbSendMessage.getGroupId(), bbSendMessage.getUserId(), e);
                         throw new RuntimeException(e);
                     }
                 },
@@ -196,6 +204,8 @@ public class QqToBbMessageApi {
 
         //调用qq接口发送消息
         qqApiCaller.sendC2CMessage(qqConfig, bbSendMessage.getUserId(), groupMessage);
+        log.info("QQ 单聊消息已投递 user={} replyTo={} msgType={}", bbSendMessage.getUserId(),
+                groupMessage.getMsgId(), groupMessage.getMsgType());
     }
 
     /**
@@ -215,6 +225,7 @@ public class QqToBbMessageApi {
                         //本地图片上传后获取临时网络地址
                         channelMessage.setImage(fileClientApi.uploadTmpFile(inputStream));
                     } catch (IOException e) {
+                        log.error("本地图片上传失败 group={} user={}", bbSendMessage.getGroupId(), bbSendMessage.getUserId(), e);
                         throw new RuntimeException(e);
                     }
                 },
@@ -230,6 +241,7 @@ public class QqToBbMessageApi {
 
         //调用qq接口发送消息
         qqApiCaller.sendDirectMessage(qqConfig, bbSendMessage.getGroupId(), channelMessage);
+        log.info("QQ 频道私信已投递 guild={} replyTo={}", bbSendMessage.getGroupId(), channelMessage.getMsgId());
     }
 
     /**

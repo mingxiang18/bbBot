@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -155,8 +156,7 @@ public class BbEventDispatcher {
             }else if (SyncType.ASYNC.equals(rule.syncType())) {
                 //如果执行类型是异步执行, 则通过线程池异步执行消息处理
                 if (messageRuleMatch(bbReceiveMessage, rule)) {
-                    eventHandlerExecutor.execute(() ->
-                            handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage));
+                    submitAsync(entry.getKey(), entry.getValue(), bbReceiveMessage);
                     //如果规则关键字不为空，说明匹配到了规则
                     if (rule.keyword() != null && rule.keyword().length > 0) {
                         matchFlag = true;
@@ -167,16 +167,37 @@ public class BbEventDispatcher {
 
         //如果没有匹配到任何规则，则调用默认处理者进行回复
         if (!matchFlag) {
+            log.info("未命中任何关键字处理者，转交默认处理者 messageId={}", bbReceiveMessage.getMessageId());
             for (Map.Entry<Method, Object> entry : defaultHandlerMap.entrySet()) {
                 Rule rule = AnnotationUtils.findAnnotation(entry.getKey(), Rule.class);
-                eventHandlerExecutor.execute(() -> {
-                    if (messageRuleMatch(bbReceiveMessage, rule)) {
-                        handlerExecute(entry.getKey(), entry.getValue(), bbReceiveMessage);
-                    }
-                });
+                submitAsyncMatching(entry.getKey(), entry.getValue(), bbReceiveMessage, rule);
             }
         }
         return matchFlag;
+    }
+
+    /** 提交异步 handler，捕获线程池拒绝避免消息静默丢失。 */
+    private void submitAsync(Method method, Object instance, BbReceiveMessage event) {
+        try {
+            eventHandlerExecutor.execute(() -> handlerExecute(method, instance, event));
+        } catch (RejectedExecutionException e) {
+            log.error("事件线程池已满，异步 handler={} 被拒绝，消息丢失 messageId={}",
+                    instance.getClass().getSimpleName() + "." + method.getName(), event.getMessageId(), e);
+        }
+    }
+
+    /** 提交异步 handler，但在工作线程内先做规则匹配（默认处理者路径用）。 */
+    private void submitAsyncMatching(Method method, Object instance, BbReceiveMessage event, Rule rule) {
+        try {
+            eventHandlerExecutor.execute(() -> {
+                if (messageRuleMatch(event, rule)) {
+                    handlerExecute(method, instance, event);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            log.error("事件线程池已满，默认 handler={} 被拒绝，消息丢失 messageId={}",
+                    instance.getClass().getSimpleName() + "." + method.getName(), event.getMessageId(), e);
+        }
     }
 
     /**
@@ -185,6 +206,7 @@ public class BbEventDispatcher {
     void handlerExecute(Method method, Object instance, Object event) {
         String handlerName = instance.getClass().getSimpleName() + "." + method.getName();
         try {
+            log.info("命中处理者并执行 handler={}", handlerName);
             method.invoke(instance, event);
         } catch (InvocationTargetException e) {
             //反射调用 handler 抛出的业务异常会被包装为 InvocationTargetException，记录原始异常

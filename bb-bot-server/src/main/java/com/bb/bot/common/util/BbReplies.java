@@ -4,6 +4,7 @@ import com.bb.bot.api.BbMessageApi;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import java.util.List;
  *
  * @author ren
  */
+@Slf4j
 @Component
 public class BbReplies {
 
@@ -40,7 +42,7 @@ public class BbReplies {
         out.setMessageList(Arrays.asList(
                 BbMessageContent.buildAtMessageContent(src.getUserId()),
                 BbMessageContent.buildTextContent(text)));
-        messageApi.sendMessage(out);
+        sendInternal(out, "atText", text == null ? 0 : text.length());
     }
 
     /**
@@ -52,7 +54,7 @@ public class BbReplies {
     public void text(BbReceiveMessage src, String text) {
         BbSendMessage out = new BbSendMessage(src);
         out.setMessageList(Collections.singletonList(BbMessageContent.buildTextContent(text)));
-        messageApi.sendMessage(out);
+        sendInternal(out, "text", text == null ? 0 : text.length());
     }
 
     /**
@@ -64,6 +66,28 @@ public class BbReplies {
     public void send(BbReceiveMessage src, List<BbMessageContent> contents) {
         BbSendMessage out = new BbSendMessage(src);
         out.setMessageList(contents);
-        messageApi.sendMessage(out);
+        sendInternal(out, "send", contents == null ? 0 : contents.size());
+    }
+
+    /**
+     * 统一发送出口：记录发送尝试与结果，发送失败的异常照原样上抛（不改变现有调用方行为）。
+     *
+     * @param out   待发送消息
+     * @param via   发送入口名（atText / text / send）
+     * @param size  载荷规模（文本长度或内容条数），便于排查空回复
+     */
+    private void sendInternal(BbSendMessage out, String via, int size) {
+        long start = System.currentTimeMillis();
+        try {
+            messageApi.sendMessage(out);
+            log.info("回复已发出 via={} platform={} type={} group={} user={} replyTo={} size={} cost={}ms",
+                    via, out.getBotType(), out.getMessageType(), out.getGroupId(), out.getUserId(),
+                    out.getReceiveMessageId(), size, System.currentTimeMillis() - start);
+        } catch (RuntimeException e) {
+            log.error("回复发送失败 via={} platform={} type={} group={} user={} replyTo={} cost={}ms",
+                    via, out.getBotType(), out.getMessageType(), out.getGroupId(), out.getUserId(),
+                    out.getReceiveMessageId(), System.currentTimeMillis() - start, e);
+            throw e;
+        }
     }
 }
