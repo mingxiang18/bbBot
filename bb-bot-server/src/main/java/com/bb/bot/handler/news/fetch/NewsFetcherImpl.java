@@ -55,6 +55,10 @@ public class NewsFetcherImpl implements NewsFetcher {
     @Autowired
     private NewsConfig newsConfig;
 
+    /** 源健康记录 service；活体 IT 无 Spring 时为 null，recordHealth 内判空降级。 */
+    @Autowired(required = false)
+    private com.bb.bot.database.news.service.INewsSourceHealthService sourceHealthService;
+
     @Value("${rest.proxyIp:}")
     private String proxyIp;
 
@@ -124,6 +128,7 @@ public class NewsFetcherImpl implements NewsFetcher {
             String url = resolveUrl(source);
             if (url == null || url.isBlank()) {
                 log.error("[news] 源[{}]无法确定 URL（via={}），跳过", source.getName(), source.getVia());
+                recordHealth(source, "error", 0, "config", "无法确定 URL", System.currentTimeMillis() - start);
                 return new ArrayList<>();
             }
 
@@ -145,16 +150,45 @@ public class NewsFetcherImpl implements NewsFetcher {
             long cost = System.currentTimeMillis() - start;
             if (items.isEmpty()) {
                 log.warn("[news] 源[{}]采集 0 条（疑似源停更/解析空，cost={}ms url={}）", source.getName(), cost, url);
+                recordHealth(source, "empty", 0, null, null, cost);
             } else {
                 log.info("[news] 源[{}]采集 {} 条（cost={}ms url={}）", source.getName(), items.size(), cost, url);
+                recordHealth(source, "ok", items.size(), null, null, cost);
             }
             return items;
         } catch (Exception e) {
             long cost = System.currentTimeMillis() - start;
             // 分类错误便于排查"源是否失效"：timeout（读/连超时）/ connect（连不上）/ http（4xx/5xx）/ parse（解析失败）
+            String type = classifyError(e);
             log.error("[news] 源[{}]采集失败，已跳过（via={} errorType={} cost={}ms）：{}",
-                    source.getName(), source.getVia(), classifyError(e), cost, e.getMessage());
+                    source.getName(), source.getVia(), type, cost, e.getMessage());
+            recordHealth(source, type, 0, type, StringUtils.left(e.getMessage(), 480), cost);
             return new ArrayList<>();
+        }
+    }
+
+    /** 落一条源健康记录；service 缺失（活体 IT 无 Spring）或写库失败时静默跳过，绝不影响抓取。 */
+    private void recordHealth(NewsConfig.Source source, String status, int count,
+                              String errorType, String errorMsg, long costMs) {
+        if (sourceHealthService == null) {
+            return;
+        }
+        try {
+            com.bb.bot.database.news.entity.NewsSourceHealthPo po =
+                    new com.bb.bot.database.news.entity.NewsSourceHealthPo();
+            po.setReportDate(java.time.LocalDate.now());
+            po.setSourceName(source.getName());
+            po.setCategory(source.getCategory());
+            po.setVia(source.getVia());
+            po.setStatus(status);
+            po.setItemCount(count);
+            po.setErrorType(errorType);
+            po.setErrorMsg(errorMsg);
+            po.setCostMs(costMs);
+            po.setCheckedAt(java.time.LocalDateTime.now());
+            sourceHealthService.save(po);
+        } catch (Exception ex) {
+            log.debug("[news] 源健康记录写库失败（非致命）source={}", source.getName(), ex);
         }
     }
 

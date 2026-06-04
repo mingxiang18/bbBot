@@ -57,6 +57,10 @@ public class DailyNewsSchedule {
     @Autowired
     private NewsHosting newsHosting;
 
+    /** 运行指标历史落库 service（可缺省）。 */
+    @Autowired(required = false)
+    private com.bb.bot.database.news.service.INewsRunStatsService runStatsService;
+
     /** 生成互斥：定时与手动触发共享，避免并发生成相互覆盖。 */
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -170,12 +174,36 @@ public class DailyNewsSchedule {
         return stats(fetched, freshCount, eligible, selected, aiStatus, true, url);
     }
 
-    /** 记录一条结构化运行指标日志并返回（Phase 4 可观测）。 */
+    /** 记录一条结构化运行指标日志并落库（Phase 4 可观测 + P2 历史回溯）后返回。 */
     private NewsRunStats stats(int fetched, int fresh, int eligible, int selected,
                                String aiStatus, boolean published, String url) {
         NewsRunStats s = new NewsRunStats(fetched, fresh, eligible, selected, aiStatus, published, url);
         log.info("[news-run] {}", s.toLine());
+        persistRunStats(s);
         return s;
+    }
+
+    /** 把本次运行指标落 news_run_stats；service 缺失或写库失败时静默跳过，绝不影响生成主流程。 */
+    private void persistRunStats(NewsRunStats s) {
+        if (runStatsService == null) {
+            return;
+        }
+        try {
+            com.bb.bot.database.news.entity.NewsRunStatsPo po =
+                    new com.bb.bot.database.news.entity.NewsRunStatsPo();
+            po.setReportDate(java.time.LocalDate.now());
+            po.setFetched(s.fetched());
+            po.setFresh(s.fresh());
+            po.setEligible(s.eligible());
+            po.setSelected(s.selected());
+            po.setAiStatus(s.aiStatus());
+            po.setPublished(s.published());
+            po.setUrl(s.url());
+            po.setCreatedAt(java.time.LocalDateTime.now());
+            runStatsService.save(po);
+        } catch (Exception e) {
+            log.debug("[news-run] 运行指标写库失败（非致命）", e);
+        }
     }
 
     /** 区分 AI 状态：空精选 / 降级 / 正常。 */
