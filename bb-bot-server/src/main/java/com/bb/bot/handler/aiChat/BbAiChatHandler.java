@@ -20,7 +20,6 @@ import com.bb.bot.common.constant.RuleType;
 import com.bb.bot.common.util.BbReplies;
 import com.bb.bot.common.util.aiChat.MessageBuilder;
 import com.bb.bot.common.util.aiChat.prompt.PromptProperties;
-import com.bb.bot.common.util.aiChat.prompt.PromptRenderer;
 import com.bb.bot.common.util.aiChat.provider.AIException;
 import com.bb.bot.common.util.aiChat.provider.AiCallContext;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
@@ -37,8 +36,6 @@ import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.constant.MessageType;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
-import com.bb.bot.database.aiKeywordAndClue.service.IAiClueService;
-import com.bb.bot.database.aiKeywordAndClue.vo.ClueDetail;
 import com.bb.bot.database.chatHistory.entity.ChatHistory;
 import com.bb.bot.database.chatHistory.service.IChatHistoryService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
@@ -50,21 +47,16 @@ import com.bb.bot.entity.bb.MessageUser;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.util.Asserts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.DoubleSupplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -116,9 +108,6 @@ public class BbAiChatHandler {
     private IChatHistoryService chatHistoryService;
 
     @Autowired
-    private IAiClueService aiClueService;
-
-    @Autowired
     private IUserConfigValueService userConfigValueService;
 
     @Autowired
@@ -166,9 +155,6 @@ public class BbAiChatHandler {
 
     @Value("${aiChat.chatHistoryNum:10}")
     private int chatHistoryNum;
-
-    @Value("#{'${aiChat.adminUserIds:}'.split(',')}")
-    private List<String> adminUserIds;
 
     /** M9.9：迁到 aiChat.streamEnabled，跟 provider 配置解耦。chatGPT.streamEnabled 仍兼容（fallback）。 */
     @Value("${aiChat.streamEnabled:${chatGPT.streamEnabled:false}}")
@@ -235,7 +221,7 @@ public class BbAiChatHandler {
         boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
 
         String personality = composePersonality(bbReceiveMessage.getUserId(), bbReceiveMessage.getGroupId(),
-                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), decision.getClues(), useTools);
+                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), useTools);
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -510,30 +496,21 @@ public class BbAiChatHandler {
                 .orElse(null);
     }
 
-    /** 测试兼容用 2 参重载：等价于不挂工具、无群/消息上下文。 */
-    String composePersonality(String userId, List<String> clues) {
-        return composePersonality(userId, null, null, null, clues, false);
-    }
-
-    /** 兼容旧 3 参调用：无群/消息上下文（记忆退化为按重要度兜底选择）。 */
-    String composePersonality(String userId, List<String> clues, boolean useTools) {
-        return composePersonality(userId, null, null, null, clues, useTools);
+    /** 兼容简化调用：无群/消息上下文、不挂工具（记忆退化为按重要度兜底选择）。 */
+    String composePersonality(String userId, boolean useTools) {
+        return composePersonality(userId, null, null, null, useTools);
     }
 
     /**
-     * personality = prompts.yml 模板 + clue suffix + 长期记忆注入。
+     * personality = prompts.yml 模板 + 长期记忆注入。
      *
      * <p>Phase 3：记忆注入改为「短索引 + selector 选中正文」({@link MemorySelector})。
-     * 卡片尚未积累（selector 返回空）时回退旧整包 memory.md，保证过渡期不空窗。</p>
+     * 卡片尚未积累（selector 返回空）时回退旧整包 memory.md，保证过渡期不空窗。
+     * 群聊随机回复与 @回复都走这条，记忆（长期卡片 + 短期上下文）自动注入，无需人工线索。</p>
      */
     String composePersonality(String userId, String groupId, String platform, String queryText,
-                              List<String> clues, boolean useTools) {
+                              boolean useTools) {
         String base = StringUtils.defaultString(promptProperties.getAiChat().getPersonality());
-        if (!CollectionUtils.isEmpty(clues)) {
-            Map<String, String> vars = new HashMap<>();
-            vars.put("clues", String.join("-", clues));
-            base = base + "\n" + PromptRenderer.render(promptProperties.getAiChat().getClueSuffix(), vars);
-        }
         // Phase 3：优先注入 selector 选中的结构化记忆；无卡片则回退旧 memory.md
         try {
             String memBlock = memorySelector.composeMemoryBlock(userId, groupId, platform, queryText);
@@ -598,13 +575,17 @@ public class BbAiChatHandler {
     // =========================================================================
 
     /**
-     * 判断本轮消息是否需要 AI 回复。私聊必回；群聊@必回；群聊未@时按配置 + 关键词 + 概率门控。
+     * 判断本轮消息是否需要 AI 回复。私聊必回；群聊 @ 必回；群聊未 @ 时按「是否开启自动回复 + 概率」门控。
      * 私聊与 @机器人 标记为 directTrigger（会挂工具）；概率自动回复不挂工具。
-     * 包级可见：方便单元测试在 Mock 服务后直接调用。
+     *
+     * <p>不再依赖人工导入的「线索」：开了自动回复的群，消息只靠概率决定是否随机插话，
+     * 回复内容由 {@link #composePersonality} 自动注入的长期记忆 + 短期上下文支撑。</p>
+     *
+     * <p>包级可见：方便单元测试在 Mock 服务后直接调用。</p>
      */
     ReplyDecision decideShouldReply(BbReceiveMessage msg) {
         if (MessageType.PRIVATE.equals(msg.getMessageType())) {
-            return ReplyDecision.replyDirect(Collections.emptyList());
+            return ReplyDecision.replyDirect();
         }
         if (!isGroupLike(msg)) {
             return ReplyDecision.skip();
@@ -613,7 +594,7 @@ public class BbAiChatHandler {
         boolean atMe = msg.getAtUserList() != null && msg.getAtUserList().stream()
                 .filter(MessageUser::getBotFlag).findFirst().isPresent();
         if (atMe) {
-            return ReplyDecision.replyDirect(aiClueService.selectClue(formatForClueLookup(msg)));
+            return ReplyDecision.replyDirect();
         }
 
         UserConfigValue autoConfig = userConfigValueService.getOne(new LambdaQueryWrapper<UserConfigValue>()
@@ -626,63 +607,9 @@ public class BbAiChatHandler {
             return ReplyDecision.skip();
         }
 
-        List<String> clues = aiClueService.selectClue(formatForClueLookup(msg));
-        if (CollectionUtils.isEmpty(clues)) {
-            return ReplyDecision.skip();
-        }
         double rand = randomSource.getAsDouble();
         log.info("AI 自动回复随机数：{} (阈值 {})", rand, autoReplyRate);
-        return rand > autoReplyRate ? ReplyDecision.reply(clues) : ReplyDecision.skip();
-    }
-
-    // =========================================================================
-    // 线索管理（owner 才能玩）
-    // =========================================================================
-
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH,
-            keyword = {"获取聊天线索", "/获取聊天线索"}, name = "获取聊天线索")
-    public void chatHistoryClueHandle(BbReceiveMessage bbReceiveMessage) {
-        if (!isAdmin(bbReceiveMessage.getUserId())) {
-            bbReplies.atText(bbReceiveMessage, "您当前不具备该权限噢");
-            return;
-        }
-        List<ClueDetail> clueDetailList = aiClueService.getClueDetailList();
-        bbReplies.atText(bbReceiveMessage, "\n" + JSON.toJSONString(clueDetailList));
-    }
-
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
-            keyword = {"^/?导入线索\\s?"}, name = "导入线索")
-    public void importClueHandle(BbReceiveMessage bbReceiveMessage) {
-        Matcher matcher = Pattern.compile("导入线索([\\s\\S]*)").matcher(bbReceiveMessage.getMessage());
-        String clue = matcher.find() ? matcher.group(1) : null;
-
-        List<ClueDetail> clueDetailList;
-        try {
-            Asserts.notNull(clue, "线索不能为空");
-            clueDetailList = JSON.parseArray(clue, ClueDetail.class);
-        } catch (Exception e) {
-            bbReplies.atText(bbReceiveMessage, "线索格式不正确");
-            return;
-        }
-
-        aiClueService.importGroupClue(bbReceiveMessage.getGroupId(), clueDetailList);
-        bbReplies.atText(bbReceiveMessage, "导入成功");
-    }
-
-    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX,
-            keyword = {"^/?删除线索\\s?"}, name = "删除线索")
-    public void deleteClueHandle(BbReceiveMessage bbReceiveMessage) {
-        Matcher matcher = Pattern.compile("^/?删除线索(\\d+)").matcher(bbReceiveMessage.getMessage());
-        String clueId = matcher.find() ? matcher.group(1) : null;
-
-        try {
-            aiClueService.deleteClue(Long.parseLong(clueId));
-        } catch (Exception e) {
-            log.error("删除线索失败", e);
-            bbReplies.atText(bbReceiveMessage, "删除失败，格式不正确");
-            return;
-        }
-        bbReplies.atText(bbReceiveMessage, "删除成功");
+        return rand > autoReplyRate ? ReplyDecision.reply() : ReplyDecision.skip();
     }
 
     // =========================================================================
@@ -692,19 +619,6 @@ public class BbAiChatHandler {
     private boolean isGroupLike(BbReceiveMessage msg) {
         return MessageType.GROUP.equals(msg.getMessageType())
                 || MessageType.CHANNEL.equals(msg.getMessageType());
-    }
-
-    private boolean isAdmin(String userId) {
-        if (CollectionUtils.isEmpty(adminUserIds)) {
-            return false;
-        }
-        return adminUserIds.stream().map(String::trim).filter(StringUtils::isNotBlank)
-                .anyMatch(id -> id.equals(userId));
-    }
-
-    private String formatForClueLookup(BbReceiveMessage msg) {
-        String prefix = msg.getSender() == null ? "" : msg.getSender().getNickname() + "：";
-        return prefix + msg.getMessage();
     }
 
     // ---- 类型适配 ----

@@ -3,9 +3,6 @@ package com.bb.bot.handler.aiChat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * AI 自动回复决策结果。
  *
@@ -18,9 +15,6 @@ public class ReplyDecision {
     /** 是否需要回复。 */
     private final boolean shouldReply;
 
-    /** 触发的线索列表（用于在 personality 后追加记忆）。 */
-    private final List<String> clues;
-
     /**
      * 是否为「直接对话」触发：私聊 / 群里 @ 机器人。
      *
@@ -30,16 +24,16 @@ public class ReplyDecision {
     private final boolean directTrigger;
 
     public static ReplyDecision skip() {
-        return new ReplyDecision(false, Collections.emptyList(), false);
+        return new ReplyDecision(false, false);
     }
 
     /** 概率自动回复触发（非直接对话）。 */
-    public static ReplyDecision reply(List<String> clues) {
-        return new ReplyDecision(true, clues == null ? Collections.emptyList() : clues, false);
+    public static ReplyDecision reply() {
+        return new ReplyDecision(true, false);
     }
 
     /** 直接对话触发（私聊 / @机器人）。 */
-    public static ReplyDecision replyDirect(List<String> clues) {
-        return new ReplyDecision(true, clues == null ? Collections.emptyList() : clues, true);
+    public static ReplyDecision replyDirect() {
+        return new ReplyDecision(true, true);
     }
 }

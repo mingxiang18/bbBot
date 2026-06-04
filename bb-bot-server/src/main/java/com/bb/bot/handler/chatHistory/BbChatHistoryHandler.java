@@ -77,13 +77,6 @@ public class BbChatHistoryHandler {
                 "当前暂无聊天记录可总结");
     }
 
-    public void chatHistoryCharacteristicHandle(BbReceiveMessage bbReceiveMessage) {
-        runSummary(bbReceiveMessage,
-                promptProperties.getChatHistory().getCharacteristic(),
-                "机器人当前暂不支持提取聊天线索",
-                "当前暂无聊天记录可提取线索");
-    }
-
     private void runSummary(BbReceiveMessage source,
                             String personality,
                             String unsupportedMsg,

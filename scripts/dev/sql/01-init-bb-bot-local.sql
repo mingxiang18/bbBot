@@ -37,16 +37,6 @@ CREATE TABLE IF NOT EXISTS chat_history (
   KEY idx_user_time (private_user_id, create_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天历史';
 
--- BbAiChatHandler 关键字线索查询会用
-CREATE TABLE IF NOT EXISTS ai_clue (
-  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  group_id VARCHAR(64) DEFAULT NULL,
-  keyword VARCHAR(255) DEFAULT NULL,
-  clue TEXT,
-  create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-  KEY idx_group_keyword (group_id, keyword)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 聊天线索';
-
 -- 业务表全部为可空就行，测试场景里不会触发它们
 CREATE TABLE IF NOT EXISTS bb_misc_placeholder (
   id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,

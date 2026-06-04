@@ -25,14 +25,11 @@ public class PromptProperties {
     @Data
     public static class AiChatPrompts {
         private String personality;
-        /** 含 {clues} 占位符。当查询到 clueList 时追加在 personality 之后。 */
-        private String clueSuffix;
     }
 
     @Data
     public static class ChatHistoryPrompts {
         private String summary;
-        private String characteristic;
     }
 
     @Data

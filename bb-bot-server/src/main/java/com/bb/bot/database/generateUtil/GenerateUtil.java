@@ -21,7 +21,6 @@ public class GenerateUtil {
                         .xml("mapper.xml")
                 )
                 .strategyConfig(builder -> builder
-                        .addInclude("ai_keyword_clue")
                         .entityBuilder()
                         .enableLombok()
                 )
