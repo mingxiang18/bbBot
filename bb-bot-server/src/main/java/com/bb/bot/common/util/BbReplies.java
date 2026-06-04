@@ -1,6 +1,8 @@
 package com.bb.bot.common.util;
 
 import com.bb.bot.api.BbMessageApi;
+import com.bb.bot.diagnostics.MessageTrace;
+import com.bb.bot.diagnostics.MessageTraceRecorder;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
@@ -25,6 +27,10 @@ import java.util.List;
 public class BbReplies {
 
     private final BbMessageApi messageApi;
+
+    /** 处理轨迹记录（自查用），缺失时静默跳过。 */
+    @Autowired(required = false)
+    private MessageTraceRecorder messageTraceRecorder;
 
     @Autowired
     public BbReplies(BbMessageApi messageApi) {
@@ -83,10 +89,16 @@ public class BbReplies {
             log.info("回复已发出 via={} platform={} type={} group={} user={} replyTo={} size={} cost={}ms",
                     via, out.getBotType(), out.getMessageType(), out.getGroupId(), out.getUserId(),
                     out.getReceiveMessageId(), size, System.currentTimeMillis() - start);
+            if (messageTraceRecorder != null) {
+                messageTraceRecorder.onReply(MessageTrace.REPLY_SENT, via, null);
+            }
         } catch (RuntimeException e) {
             log.error("回复发送失败 via={} platform={} type={} group={} user={} replyTo={} cost={}ms",
                     via, out.getBotType(), out.getMessageType(), out.getGroupId(), out.getUserId(),
                     out.getReceiveMessageId(), System.currentTimeMillis() - start, e);
+            if (messageTraceRecorder != null) {
+                messageTraceRecorder.onReply(MessageTrace.REPLY_FAILED, via, e.getMessage());
+            }
             throw e;
         }
     }

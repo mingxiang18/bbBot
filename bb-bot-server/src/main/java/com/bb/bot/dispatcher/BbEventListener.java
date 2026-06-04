@@ -1,6 +1,7 @@
 package com.bb.bot.dispatcher;
 
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
+import com.bb.bot.diagnostics.MessageTraceRecorder;
 import com.bb.bot.diagnostics.TraceContext;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -25,20 +26,27 @@ public class BbEventListener {
     @Autowired
     private InboundMessageDeduplicator inboundMessageDeduplicator;
 
+    @Autowired
+    private MessageTraceRecorder messageTraceRecorder;
+
     @EventListener
     public void listenMessageEvent(BbReceiveMessage bbReceiveMessage) {
         // 全链路 traceId：同一条消息在去重 / 分发 / 决策 / 发送各处的日志共享此 id，便于事后串联排查。
-        TraceContext.start(bbReceiveMessage.getMessageId());
+        String traceId = TraceContext.start(bbReceiveMessage.getMessageId());
         try {
             log.info("收到入站消息 platform={} type={} group={} user={} messageId={} text={}",
                     bbReceiveMessage.getBotType(), bbReceiveMessage.getMessageType(),
                     bbReceiveMessage.getGroupId(), bbReceiveMessage.getUserId(),
                     bbReceiveMessage.getMessageId(), abbreviate(bbReceiveMessage.getMessage()));
 
+            // 记录处理轨迹（内存环形缓冲），供 owner 对话式自查
+            messageTraceRecorder.onInbound(traceId, bbReceiveMessage);
+
             // 入站幂等去重：QQ webhook 在被动回复超时后会重推同一条消息（msg_id 相同），
             // 没有这道拦截就会处理两遍、给用户发两张一模一样的图。放在最前面，连记忆落库和分发都不重复。
             if (!inboundMessageDeduplicator.firstSeen(bbReceiveMessage.getMessageId())) {
                 log.warn("重复入站消息，已跳过 messageId={}", bbReceiveMessage.getMessageId());
+                messageTraceRecorder.onDuplicate(traceId);
                 return;
             }
 

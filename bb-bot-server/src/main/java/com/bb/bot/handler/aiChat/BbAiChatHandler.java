@@ -41,6 +41,7 @@ import com.bb.bot.database.chatHistory.service.IChatHistoryService;
 import com.bb.bot.database.userConfigInfo.entity.UserConfigValue;
 import com.bb.bot.database.userConfigInfo.service.IUserConfigValueService;
 import com.bb.bot.entity.bb.BbMessageContent;
+import com.bb.bot.diagnostics.MessageTrace;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import com.bb.bot.entity.bb.BbSendMessage;
 import com.bb.bot.entity.bb.MessageUser;
@@ -149,6 +150,10 @@ public class BbAiChatHandler {
     /** 入站文件 / 图片落盘到每用户目录，供模型用 file_read 读取。 */
     @Autowired
     private AgentFileStore agentFileStore;
+
+    /** 处理轨迹记录（自查用）。纯逻辑单测 @InjectMocks 不注入它，故所有调用前判空。 */
+    @Autowired(required = false)
+    private com.bb.bot.diagnostics.MessageTraceRecorder messageTraceRecorder;
 
     @Value("${aiChat.autoReplyRate:0.99}")
     private double autoReplyRate;
@@ -260,6 +265,7 @@ public class BbAiChatHandler {
         if (globalUsageGuard.isOverDailyLimit()) {
             log.warn("全局每日 token 已达上限（{}/{}），暂停 AI 回复 user={}",
                     globalUsageGuard.tokensToday(), globalUsageGuard.dailyLimit(), msg.getUserId());
+            traceDecision(MessageTrace.DECISION_SKIP, "QUOTA_DAILY");
             if (decision.isDirectTrigger()) {
                 bbReplies.atText(msg, "今日 AI 调用量已达系统上限，请明天再试。");
             }
@@ -270,6 +276,7 @@ public class BbAiChatHandler {
         if (quotaGuard.isOverLimit(msg.getUserId(), msg.getBotType())) {
             log.warn("跳过回复：月度额度已用完 user={} platform={} directTrigger={}",
                     msg.getUserId(), msg.getBotType(), decision.isDirectTrigger());
+            traceDecision(MessageTrace.DECISION_SKIP, "QUOTA_MONTHLY");
             if (decision.isDirectTrigger()) {
                 com.bb.bot.common.util.aiChat.billing.QuotaGuard.QuotaStatus st =
                         quotaGuard.status(msg.getUserId(), msg.getBotType());
@@ -587,16 +594,19 @@ public class BbAiChatHandler {
      */
     ReplyDecision decideShouldReply(BbReceiveMessage msg) {
         if (MessageType.PRIVATE.equals(msg.getMessageType())) {
+            traceDecision(MessageTrace.DECISION_REPLY_DIRECT, null);
             return ReplyDecision.replyDirect();
         }
         if (!isGroupLike(msg)) {
             log.info("跳过回复：非群聊/频道消息 type={}", msg.getMessageType());
+            traceDecision(MessageTrace.DECISION_SKIP, "NOT_GROUP");
             return ReplyDecision.skip();
         }
 
         boolean atMe = msg.getAtUserList() != null && msg.getAtUserList().stream()
                 .filter(MessageUser::getBotFlag).findFirst().isPresent();
         if (atMe) {
+            traceDecision(MessageTrace.DECISION_REPLY_DIRECT, null);
             return ReplyDecision.replyDirect();
         }
 
@@ -608,13 +618,22 @@ public class BbAiChatHandler {
                 .last("limit 1"));
         if (autoConfig == null) {
             log.info("跳过回复：本群未开启自动回复(aiAutoReply) group={}", msg.getGroupId());
+            traceDecision(MessageTrace.DECISION_SKIP, "AUTO_REPLY_DISABLED");
             return ReplyDecision.skip();
         }
 
         double rand = randomSource.getAsDouble();
         boolean hit = rand > autoReplyRate;
         log.info("AI 自动回复随机数：{} (阈值 {})，{}", rand, autoReplyRate, hit ? "命中→回复" : "未命中→跳过");
+        traceDecision(hit ? MessageTrace.DECISION_REPLY : MessageTrace.DECISION_SKIP, hit ? null : "PROB_MISS");
         return hit ? ReplyDecision.reply() : ReplyDecision.skip();
+    }
+
+    /** 记录回复决策到处理轨迹（自查用），recorder 缺失时静默跳过。 */
+    private void traceDecision(String decision, String skipReason) {
+        if (messageTraceRecorder != null) {
+            messageTraceRecorder.onDecision(decision, skipReason);
+        }
     }
 
     // =========================================================================

@@ -45,6 +45,9 @@ public class BbEventDispatcher {
     @Autowired
     private IUserConfigValueService userConfigValueService;
 
+    @Autowired
+    private com.bb.bot.diagnostics.MessageTraceRecorder messageTraceRecorder;
+
     /**
      * 消息处理方法Map
      */
@@ -207,6 +210,7 @@ public class BbEventDispatcher {
         String handlerName = instance.getClass().getSimpleName() + "." + method.getName();
         try {
             log.info("命中处理者并执行 handler={}", handlerName);
+            messageTraceRecorder.onHandler(handlerName);
             method.invoke(instance, event);
         } catch (InvocationTargetException e) {
             //反射调用 handler 抛出的业务异常会被包装为 InvocationTargetException，记录原始异常
