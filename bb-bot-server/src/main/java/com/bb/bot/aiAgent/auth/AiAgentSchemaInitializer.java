@@ -247,7 +247,8 @@ public class AiAgentSchemaInitializer {
                     "('splatoon_record_detail','user',1)," +
                     "('search_memory','user',1)," +
                     "('recall_experience','user',1)," +
-                    "('record_experience','user',1)"
+                    "('record_experience','user',1)," +
+                    "('send_image','user',1)"
     };
 
     @EventListener
