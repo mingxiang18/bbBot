@@ -77,6 +77,7 @@ public class NewsAdminController {
 
         // 2) 限流
         long now = nowSupplier.getAsLong();
+        long prevRunAt = lastRunAt;
         long window = newsConfig.getAdmin().getRateLimitMillis();
         long since = now - lastRunAt;
         if (lastRunAt > 0 && window > 0 && since < window) {
@@ -85,11 +86,13 @@ public class NewsAdminController {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                     .body("触发过于频繁，请约 " + waitSec + " 秒后再试");
         }
-        lastRunAt = now;
 
         // 3) 生成（互斥 + 异常映射）
+        // 注意：lastRunAt 只在"确实进入生成"后才更新——被 409（互斥）拦下的请求不应消耗冷却窗口。
+        // 限流/互斥/lastRunAt 均为单实例内存态，依赖 CLAUDE.md「单副本部署」前提；扩副本即失效。
         log.info("[news] 收到手动触发请求（鉴权通过，dryRun={}，forceRebuild={}）", dryRun, forceRebuild);
         try {
+            lastRunAt = now;
             NewsRunStats st = dailyNewsSchedule.generateNow(dryRun, forceRebuild);
             if (dryRun) {
                 return ResponseEntity.ok("dryRun 统计：" + st.toLine());
@@ -99,6 +102,8 @@ public class NewsAdminController {
             }
             return ResponseEntity.ok("生成成功：" + st.url() + "\n" + st.toLine());
         } catch (NewsGenerationBusyException busy) {
+            // 被互斥拒绝：本次并未真正生成，回退冷却时间戳，避免无谓占用冷却窗口
+            lastRunAt = prevRunAt;
             log.info("[news] 生成被互斥拒绝：{}", busy.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(busy.getMessage());
         } catch (Exception e) {
