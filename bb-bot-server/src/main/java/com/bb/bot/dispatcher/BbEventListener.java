@@ -1,5 +1,6 @@
 package com.bb.bot.dispatcher;
 
+import com.bb.bot.aiAgent.fs.InboundImageStore;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.diagnostics.MessageTraceRecorder;
 import com.bb.bot.diagnostics.TraceContext;
@@ -29,6 +30,9 @@ public class BbEventListener {
     @Autowired
     private MessageTraceRecorder messageTraceRecorder;
 
+    @Autowired
+    private InboundImageStore inboundImageStore;
+
     @EventListener
     public void listenMessageEvent(BbReceiveMessage bbReceiveMessage) {
         // 全链路 traceId：同一条消息在去重 / 分发 / 决策 / 发送各处的日志共享此 id，便于事后串联排查。
@@ -49,6 +53,11 @@ public class BbEventListener {
                 messageTraceRecorder.onDuplicate(traceId);
                 return;
             }
+
+            // 入站图片规范化：localImage/netImage → 按内容哈希落盘去重 + 改写成 netImage(ref)。
+            // 放在去重之后、recordInbound 之前：重复消息不重复规范化；且 localImage 若不在此处转成
+            // netImage(ref)，会被 serializeContentList 过滤、历史拿不到图片 ref。
+            inboundImageStore.normalize(bbReceiveMessage.getMessageContentList());
 
             // M8.2：每条入站消息先落 ai_memory_event（自动按内容预分类 kind）
             // 不阻塞 dispatcher：recorder 内部已 try/catch 兜底

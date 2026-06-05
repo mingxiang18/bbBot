@@ -51,6 +51,17 @@ public class AiAgentSchemaInitializer {
                     "  UNIQUE KEY uk_tool_role (tool_name, role)" +
                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Agent 工具策略'",
 
+            "CREATE TABLE IF NOT EXISTS image_vision_cache (" +
+                    "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
+                    "  image_hash VARCHAR(80) NOT NULL," +
+                    "  description MEDIUMTEXT NOT NULL," +
+                    "  model VARCHAR(64) DEFAULT NULL," +
+                    "  hit_count INT NOT NULL DEFAULT 0," +
+                    "  created_at DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                    "  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+                    "  UNIQUE KEY uk_image_hash (image_hash)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='图片视觉描述缓存（按内容哈希）'",
+
             "CREATE TABLE IF NOT EXISTS ai_tool_invocation_log (" +
                     "  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY," +
                     "  session_id VARCHAR(64) DEFAULT NULL," +
@@ -300,7 +311,9 @@ public class AiAgentSchemaInitializer {
                     "('splatoon_record_detail','user',1)," +
                     "('search_memory','user',1)," +
                     "('recall_experience','user',1)," +
-                    "('record_experience','user',1)"
+                    "('record_experience','user',1)," +
+                    "('send_image','user',1)," +
+                    "('analyze_image','user',1)"
     };
 
     @EventListener

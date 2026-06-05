@@ -65,6 +65,18 @@ bot:
       #是否处理私聊消息
       enableDirectMessage: true
 
+  #类型：bb（BB自研协议）。QQ GUI 桥（10.8.0.26 驱动已登录个人号QQ）作为客户端连入此协议。
+  bb:
+    #机器人名称（map key）
+    bridge:
+      #是否启用：启用后 bbBot 在 port 起 BB WS 服务端，桥用 run_bb.py 作客户端连入
+      enable: true
+      #BB WS 服务端口（bb-bot.yaml 已暴露 NodePort 30210）
+      port: 30210
+      #客户端鉴权：由部署环境变量注入，勿在源码写死。桥 run_bb.py 的 BB_APPID/BB_SECRET 需与此一致
+      appId: ${BB_BRIDGE_APPID:}
+      secret: ${BB_BRIDGE_SECRET:}
+
 # 数据库配置
 mysql:
   address: localhost:3306/bb_bot
@@ -156,6 +168,14 @@ ai:
       model: deepseek-chat
       kind: deepseek
       vision: false
+    # Kimi/Moonshot 视觉模型（识图，供 analyze_image / VisionBridge 用）。
+    # api-key 由环境变量 MOONSHOT_API_KEY 注入；未设则 isConfigured=false，识图链路整体 no-op（不报错）。
+    kimi-v:
+      base-url: https://api.moonshot.cn/v1
+      api-key: ${MOONSHOT_API_KEY:}
+      model: moonshot-v1-8k-vision-preview
+      kind: moonshot
+      vision: true
     # 官方 Anthropic（Messages API，x-api-key 鉴权，走 AnthropicProvider）。把 heavy 指过来即可启用：
     # claude:
     #   base-url: https://api.anthropic.com/v1
@@ -166,7 +186,7 @@ ai:
   roles:
     heavy: main
     light:           # 例：再加一个 ai.models.flash 后填 flash
-    vision:          # 例：再加一个 ai.models.kimi-v(kind: moonshot, vision: true) 后填 kimi-v
+    vision: kimi-v   # 识图模型（Kimi/Moonshot）；MOONSHOT_API_KEY 未设时自动 no-op
   retry:
     max-attempts: 3
     initial-interval-ms: 500

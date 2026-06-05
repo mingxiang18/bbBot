@@ -124,8 +124,10 @@ public final class MessageBuilder {
 
     /** 把当前轮的多 part 消息（可能含图）+ 引用消息中的图片合成一条 user 消息。 */
     public static ChatMessage buildAskMessage(List<BbMessageContent> currentMessage, ChatHistory replyTarget) {
-        List<MessageContent> parts = new ArrayList<>();
+        StringBuilder askText = new StringBuilder();
 
+        // 图片一律以「ref + 链接」文本进入上下文（选择性识图）：不直接把图片 part 喂主模型，
+        // 由 AI 据上下文决定是否调 analyze_image 看图。引用消息里的图同样给成 ref。
         if (replyTarget != null) {
             try {
                 List<BbMessageContent> replyContents = JSON.parseObject(
@@ -133,7 +135,7 @@ public final class MessageBuilder {
                 if (replyContents != null) {
                     for (BbMessageContent c : replyContents) {
                         if (BbSendMessageType.NET_IMAGE.equals(c.getType())) {
-                            parts.add(MessageContent.netImage(String.valueOf(c.getData())));
+                            askText.append(imageRefNote(c));
                         }
                     }
                 }
@@ -142,22 +144,25 @@ public final class MessageBuilder {
             }
         }
 
-        StringBuilder askText = new StringBuilder();
         if (currentMessage != null) {
             for (BbMessageContent c : currentMessage) {
-                if (BbSendMessageType.TEXT.equals(c.getType())) {
+                String type = c.getType();
+                if (BbSendMessageType.TEXT.equals(type)) {
                     askText.append(c.getData() == null ? "" : c.getData().toString());
-                } else if (BbSendMessageType.NET_IMAGE.equals(c.getType())) {
-                    parts.add(MessageContent.netImage(String.valueOf(c.getData())));
-                } else if (BbSendMessageType.LOCAL_IMAGE.equals(c.getType())) {
-                    parts.add(MessageContent.base64Image(String.valueOf(c.getData())));
-                } else if (BbSendMessageType.LOCAL_FILE.equals(c.getType())
-                        || BbSendMessageType.NET_FILE.equals(c.getType())) {
+                } else if (BbSendMessageType.NET_IMAGE.equals(type)) {
+                    askText.append(imageRefNote(c));
+                } else if (BbSendMessageType.LOCAL_IMAGE.equals(type)) {
+                    // 正常已被 InboundImageStore 规范化成 netImage；兜底给个无 ref 占位
+                    askText.append("[图片]");
+                } else if (BbSendMessageType.LOCAL_FILE.equals(type)
+                        || BbSendMessageType.NET_FILE.equals(type)) {
                     // 文件附件无法直接喂模型，以文本提示告知；模型可用 file 工具处理
                     askText.append(fileNote(c));
                 }
             }
         }
+
+        List<MessageContent> parts = new ArrayList<>();
         parts.add(MessageContent.text(askText.toString()));
         return ChatMessage.user(parts);
     }
@@ -176,15 +181,19 @@ public final class MessageBuilder {
 
     private static boolean keepForText(BbMessageContent content) {
         String type = content.getType();
+        // 保留 NET_IMAGE：入站已被 InboundImageStore 规范化成 netImage(ref)，历史里渲染成图片 ref 链接，
+        // 让 AI 看到图、可用 analyze_image 自主分析。LOCAL_IMAGE（大 base64）与 REPLY 仍过滤。
         return !BbSendMessageType.LOCAL_IMAGE.equals(type)
-                && !BbSendMessageType.REPLY.equals(type)
-                && !BbSendMessageType.NET_IMAGE.equals(type);
+                && !BbSendMessageType.REPLY.equals(type);
     }
 
     private static String stringifyPart(BbMessageContent content) {
         String type = content.getType();
         if (BbSendMessageType.LOCAL_FILE.equals(type) || BbSendMessageType.NET_FILE.equals(type)) {
             return fileNote(content);
+        }
+        if (BbSendMessageType.NET_IMAGE.equals(type)) {
+            return imageRefNote(content);
         }
         if (content.getData() == null) {
             return "";
@@ -193,6 +202,16 @@ public final class MessageBuilder {
             return "@" + content.getData();
         }
         return content.getData().toString();
+    }
+
+    /**
+     * 把图片（已规范化的 netImage，fileName=内容哈希、data=/img/&lt;hash&gt;.png）渲染成
+     * 给模型可读的「图片 ref + 链接」文本提示。模型据此自主决定是否调 analyze_image 看图。
+     */
+    private static String imageRefNote(BbMessageContent content) {
+        String url = content.getData() == null ? "" : content.getData().toString();
+        String ref = StringUtils.isBlank(content.getFileName()) ? url : content.getFileName().trim();
+        return "[图片 ref=" + ref + " 链接:" + url + "（想了解图片内容就用 analyze_image 工具分析这个 ref）]";
     }
 
     /**
