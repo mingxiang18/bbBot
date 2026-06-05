@@ -25,6 +25,8 @@ public class PromptProperties {
     @Data
     public static class AiChatPrompts {
         private String personality;
+        /** 群里没人点机器人、概率主动插话时，追加到 personality 末尾的「务必极简」约束。 */
+        private String autoReplySuffix;
     }
 
     @Data

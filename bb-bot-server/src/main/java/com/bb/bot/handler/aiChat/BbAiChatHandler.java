@@ -225,8 +225,10 @@ public class BbAiChatHandler {
         }
         boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
 
+        // 群里没人点你的概率插话(非 directTrigger) → 追加极简约束；@机器人 / 私聊延续完整人格。
+        boolean autoReply = !decision.isDirectTrigger();
         String personality = composePersonality(bbReceiveMessage.getUserId(), bbReceiveMessage.getGroupId(),
-                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), useTools);
+                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), useTools, autoReply);
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -514,18 +516,21 @@ public class BbAiChatHandler {
 
     /** 兼容简化调用：无群/消息上下文、不挂工具（记忆退化为按重要度兜底选择）。 */
     String composePersonality(String userId, boolean useTools) {
-        return composePersonality(userId, null, null, null, useTools);
+        return composePersonality(userId, null, null, null, useTools, false);
     }
 
     /**
-     * personality = prompts.yml 模板 + 长期记忆注入。
+     * personality = prompts.yml 模板 + 长期记忆注入（+ 随机插话时的极简约束）。
      *
      * <p>Phase 3：记忆注入改为「短索引 + selector 选中正文」({@link MemorySelector})。
      * 卡片尚未积累（selector 返回空）时回退旧整包 memory.md，保证过渡期不空窗。
      * 群聊随机回复与 @回复都走这条，记忆（长期卡片 + 短期上下文）自动注入，无需人工线索。</p>
+     *
+     * <p>{@code autoReply=true}（群里没人点你、概率主动插话）时，在末尾追加「务必极简」后缀，
+     * 让随机插话只回一句短话；@机器人 / 私聊（directTrigger）不加，延续完整人格。</p>
      */
     String composePersonality(String userId, String groupId, String platform, String queryText,
-                              boolean useTools) {
+                              boolean useTools, boolean autoReply) {
         String base = StringUtils.defaultString(promptProperties.getAiChat().getPersonality());
         // Phase 3：优先注入 selector 选中的结构化记忆；无卡片则回退旧 memory.md
         try {
@@ -551,8 +556,20 @@ public class BbAiChatHandler {
         }
         // 任务边界：历史仅作上下文参考，只回应最新一条消息，避免重复处理之前已经说过/已经处理过的请求
         base = base + "\n\n" + HISTORY_BOUNDARY_GUIDANCE;
+        // 群里没人点你、概率主动插话：放在最后（权重最高）逼极简，只回一句短话。
+        // @机器人 / 私聊不加，延续完整人格。后缀可在 prompts.yml(ai-chat.auto-reply-suffix) 调，留兜底。
+        if (autoReply) {
+            String suffix = StringUtils.defaultIfBlank(
+                    promptProperties.getAiChat().getAutoReplySuffix(), AUTO_REPLY_BREVITY_FALLBACK);
+            base = base + "\n\n" + suffix;
+        }
         return base;
     }
+
+    /** 随机插话极简约束的兜底文案（prompts.yml 未配 ai-chat.auto-reply-suffix 时用）。 */
+    private static final String AUTO_REPLY_BREVITY_FALLBACK =
+            "【随机插话·务必极简】现在没人点你，你只是在群里随口接一句。整条回复就一句话、" +
+            "十几个字以内，像群友顺嘴搭话；不展开、不解释、最多一个 emoji。宁可少说也别长。";
 
     /** 长期记忆使用纪律：自然融入、不主动报来源；历史追问 / 可能过期时才说明。 */
     private static final String MEMORY_USAGE_GUIDANCE =
