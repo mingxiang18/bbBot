@@ -674,8 +674,8 @@ public class BbAiChatHandler {
     // helpers
     // =========================================================================
 
-    /** 本轮消息或近期历史里是否出现图片 ref（决定是否给非工具回复挂 analyze_image）。 */
-    private boolean hasImageRef(List<BbMessageContent> current, List<ChatHistory> history) {
+    /** 本轮消息或近期历史里是否出现图片 ref（决定是否给非工具回复挂 analyze_image）。包级 static 便于单测。 */
+    static boolean hasImageRef(List<BbMessageContent> current, List<ChatHistory> history) {
         if (current != null) {
             for (BbMessageContent c : current) {
                 if (BbSendMessageType.NET_IMAGE.equals(c.getType())) {
