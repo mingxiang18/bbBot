@@ -134,11 +134,20 @@ class BbAiChatHandlerDecisionTest {
     void composePersonality_returnsBaseWithBoundaryGuidanceOnly() {
         // 无长期记忆(memorySelector/memoryCompiler 未注入，调用触发的 NPE 被 catch 吞掉，不注入记忆段)
         // → personality 应为 BASE 本体 + 末尾无条件追加的【对话边界】引导，无其它内容。
-        String personality = handler.composePersonality("user-1", null, null, null, false);
+        String personality = handler.composePersonality("user-1", null, null, null, false, false);
         assertTrue(personality.startsWith("BASE"), "应以 BASE 人格本体开头");
         assertFalse(personality.contains("长期记忆"), "未提供长期记忆时不应注入记忆段");
         assertEquals("BASE\n\n", personality.substring(0, personality.indexOf("【对话边界】")),
                 "BASE 与边界引导之间不应有额外内容");
+    }
+
+    @Test
+    void composePersonality_autoReply_appendsBrevitySuffix_directDoesNot() {
+        // 群里概率插话(autoReply=true) → 末尾追加极简后缀；@机器人/私聊(false) → 不追加。
+        String auto = handler.composePersonality("user-1", null, null, null, false, true);
+        String direct = handler.composePersonality("user-1", null, null, null, false, false);
+        assertTrue(auto.contains("AUTOSUFFIX"), "随机插话应追加极简后缀");
+        assertFalse(direct.contains("AUTOSUFFIX"), "@机器人/私聊不应追加极简后缀");
     }
 
     // =====================================================================
@@ -220,6 +229,7 @@ class BbAiChatHandlerDecisionTest {
     private static PromptProperties buildPromptProps() {
         PromptProperties p = new PromptProperties();
         p.getAiChat().setPersonality("BASE");
+        p.getAiChat().setAutoReplySuffix("AUTOSUFFIX");
         return p;
     }
 }
