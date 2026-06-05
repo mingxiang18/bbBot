@@ -1,5 +1,6 @@
 package com.bb.bot.dispatcher;
 
+import com.bb.bot.aiAgent.fs.InboundImageStore;
 import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.entity.bb.BbReceiveMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,9 @@ public class BbEventListener {
     @Autowired
     private InboundMessageDeduplicator inboundMessageDeduplicator;
 
+    @Autowired
+    private InboundImageStore inboundImageStore;
+
     @EventListener
     public void listenMessageEvent(BbReceiveMessage bbReceiveMessage) {
         // 入站幂等去重：QQ webhook 在被动回复超时后会重推同一条消息（msg_id 相同），
@@ -32,6 +36,10 @@ public class BbEventListener {
             log.warn("重复入站消息，已跳过 messageId={}", bbReceiveMessage.getMessageId());
             return;
         }
+
+        // 入站图片规范化：localImage/netImage → 按内容哈希落盘去重 + 改写成 netImage(ref)。
+        // 必须在 recordInbound 之前，否则 localImage 会被 serializeContentList 过滤、历史拿不到图片 ref。
+        inboundImageStore.normalize(bbReceiveMessage.getMessageContentList());
 
         // M8.2：每条入站消息先落 ai_memory_event（自动按内容预分类 kind）
         // 不阻塞 dispatcher：recorder 内部已 try/catch 兜底

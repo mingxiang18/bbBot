@@ -176,6 +176,14 @@ public class BbAiChatHandler {
     @Value("${aiAgent.maxSteps:10}")
     private int maxSteps;
 
+    /** 「仅 analyze_image」轻量工具循环的步数上限（含图随机回复 / @闲聊看图用，省 token）。 */
+    @Value("${aiChat.imageToolMaxSteps:3}")
+    private int imageToolMaxSteps;
+
+    /** 选择性识图：判断视觉是否配置 + 复用其两层缓存。 */
+    @Autowired
+    private com.bb.bot.common.util.aiChat.provider.VisionDescriber visionDescriber;
+
     /** 挂载工具时追加到 system prompt 的工具使用引导。 */
     @Value("${aiChat.toolGuidance:你不仅能聊天，还能调用工具真正帮用户干活——" +
             "查实时/外部信息、读写文件、跑命令、联网搜索等。当用户明确要求执行某个操作、" +
@@ -218,6 +226,11 @@ public class BbAiChatHandler {
             tier = ModelTier.LIGHT;
         }
         boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
+        // 不挂全量工具、但本轮/近期历史含图片 ref 且视觉已配置 → 挂「仅 analyze_image」的轻量工具循环，
+        // 让 AI（群聊随机回复 / @闲聊）自行决定是否看图。无图则维持纯聊天，不开循环、不烧 token。
+        boolean imageToolOnly = !useTools
+                && visionDescriber.enabled()
+                && hasImageRef(currentContent, historyList);
 
         String personality = composePersonality(bbReceiveMessage.getUserId(), decision.getClues(), useTools);
 
@@ -239,6 +252,8 @@ public class BbAiChatHandler {
         try {
             if (useTools) {
                 toolLoopReply(bbReceiveMessage, messages);
+            } else if (imageToolOnly) {
+                toolLoopReply(bbReceiveMessage, messages, imageOnlyTools(), imageToolMaxSteps);
             } else if (Boolean.TRUE.equals(streamEnabled)) {
                 streamAiReply(bbReceiveMessage, messages, tier);
             } else {
@@ -286,6 +301,11 @@ public class BbAiChatHandler {
      * 追加需求），不另起回复。run 收尾的极小竞态窗口里漏接的消息会被补派。</p>
      */
     private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages) {
+        toolLoopReply(msg, messages, toolRegistry.toToolDefinitions(), maxSteps);
+    }
+
+    private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages,
+                               List<ToolDefinition> tools, int steps) {
         String sessionKey = AgentRunRegistry.sessionKey(msg.getBotType(), msg.getGroupId(), msg.getUserId());
         RunHandle handle = agentRunRegistry.beginOrSteer(sessionKey, extractPlainText(msg));
         if (handle == null) {
@@ -294,7 +314,6 @@ public class BbAiChatHandler {
             return;
         }
 
-        List<ToolDefinition> tools = toolRegistry.toToolDefinitions();
         String callerUserId = msg.getUserId();
         String platform = msg.getBotType();
         String sessionId = "chat-" + msg.getMessageId();
@@ -346,7 +365,7 @@ public class BbAiChatHandler {
                     messages,
                     tools,
                     (toolName, argsJson) -> toolExecutor.invoke(toolName, argsJson, callerUserId, platform, msg.getGroupId(), sessionId, replySink),
-                    maxSteps,
+                    steps,
                     new StreamHandler() {
                         @Override
                         public void onTextDelta(String delta) {
@@ -654,6 +673,34 @@ public class BbAiChatHandler {
     // =========================================================================
     // helpers
     // =========================================================================
+
+    /** 本轮消息或近期历史里是否出现图片 ref（决定是否给非工具回复挂 analyze_image）。 */
+    private boolean hasImageRef(List<BbMessageContent> current, List<ChatHistory> history) {
+        if (current != null) {
+            for (BbMessageContent c : current) {
+                if (BbSendMessageType.NET_IMAGE.equals(c.getType())) {
+                    return true;
+                }
+            }
+        }
+        if (history != null) {
+            int seen = 0;
+            for (int i = history.size() - 1; i >= 0 && seen < 8; i--, seen++) {
+                String t = history.get(i).getText();
+                if (t != null && (t.contains("netImage") || t.contains("图片 ref="))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** 只取 analyze_image 一个工具，给「随机回复 / @闲聊看图」的轻量循环用。 */
+    private List<ToolDefinition> imageOnlyTools() {
+        return toolRegistry.toToolDefinitions().stream()
+                .filter(t -> "analyze_image".equals(t.getName()))
+                .collect(Collectors.toList());
+    }
 
     private boolean isGroupLike(BbReceiveMessage msg) {
         return MessageType.GROUP.equals(msg.getMessageType())

@@ -168,6 +168,14 @@ ai:
       model: deepseek-chat
       kind: deepseek
       vision: false
+    # Kimi/Moonshot 视觉模型（识图，供 analyze_image / VisionBridge 用）。
+    # api-key 由环境变量 MOONSHOT_API_KEY 注入；未设则 isConfigured=false，识图链路整体 no-op（不报错）。
+    kimi-v:
+      base-url: https://api.moonshot.cn/v1
+      api-key: ${MOONSHOT_API_KEY:}
+      model: moonshot-v1-8k-vision-preview
+      kind: moonshot
+      vision: true
     # 官方 Anthropic（Messages API，x-api-key 鉴权，走 AnthropicProvider）。把 heavy 指过来即可启用：
     # claude:
     #   base-url: https://api.anthropic.com/v1
@@ -178,7 +186,7 @@ ai:
   roles:
     heavy: main
     light:           # 例：再加一个 ai.models.flash 后填 flash
-    vision:          # 例：再加一个 ai.models.kimi-v(kind: moonshot, vision: true) 后填 kimi-v
+    vision: kimi-v   # 识图模型（Kimi/Moonshot）；MOONSHOT_API_KEY 未设时自动 no-op
   retry:
     max-attempts: 3
     initial-interval-ms: 500
