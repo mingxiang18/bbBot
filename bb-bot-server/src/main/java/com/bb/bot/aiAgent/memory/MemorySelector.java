@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -68,11 +67,21 @@ public class MemorySelector {
     @Value("${aiAgent.memory.selectCandidateCap:80}")
     private int candidateCap;
 
-    private final ExecutorService selectorPool = Executors.newCachedThreadPool(r -> {
-        Thread t = new Thread(r, "mem-selector");
-        t.setDaemon(true);
-        return t;
-    });
+    /** 选择器并发上限：满了直接拒绝 → 走 fallback topN，而非无界堆线程。 */
+    private static final int SELECTOR_MAX_THREADS = 8;
+
+    // 有界池替代 newCachedThreadPool：被超时 cancel 的任务对阻塞 HTTP 的 LLM 调用不敏感，
+    // orphan 线程会跑满整个请求才释放；无界池在上游慢 + 高 QPS 下会无限堆线程。
+    // SynchronousQueue + AbortPolicy：无空闲线程即拒绝，调用方 catch 后 fallback topN（绝不阻塞回复）。
+    private final ExecutorService selectorPool = new java.util.concurrent.ThreadPoolExecutor(
+            0, SELECTOR_MAX_THREADS, 60L, TimeUnit.SECONDS,
+            new java.util.concurrent.SynchronousQueue<>(),
+            r -> {
+                Thread t = new Thread(r, "mem-selector");
+                t.setDaemon(true);
+                return t;
+            },
+            new java.util.concurrent.ThreadPoolExecutor.AbortPolicy());
 
     /** convKey -> 上一轮注入过的 memory_key 集合，用于 alreadySurfaced。bounded。 */
     private final Map<String, Set<String>> surfacedCache = new ConcurrentHashMap<>();
@@ -142,9 +151,20 @@ public class MemorySelector {
 
     private List<AiMemoryItem> llmSelectWithTimeout(List<AiMemoryItem> base, String queryText,
                                                     String userId, String groupId, String platform) {
-        Future<List<AiMemoryItem>> f = selectorPool.submit(() -> llmSelect(base, queryText, userId, groupId, platform));
+        Future<List<AiMemoryItem>> f;
         try {
-            return f.get(selectorTimeoutMs, TimeUnit.MILLISECONDS);
+            f = selectorPool.submit(() -> llmSelect(base, queryText));
+        } catch (java.util.concurrent.RejectedExecutionException rej) {
+            log.warn("MemorySelector 选择线程池饱和，直接 fallback topN");
+            return null;
+        }
+        try {
+            List<AiMemoryItem> out = f.get(selectorTimeoutMs, TimeUnit.MILLISECONDS);
+            // 仅在拿到结果的轮次记审计日志：被超时 fallback 的轮次不落 selection_log，避免"已 fallback 却记了一条"的歧义。
+            if (selectionLogger != null) {
+                selectionLogger.log(userId, groupId, queryText, base, out, "CHAT");
+            }
+            return out;
         } catch (Exception e) {
             f.cancel(true);
             log.warn("MemorySelector 模型选择超时/异常({}ms)，fallback topN", selectorTimeoutMs);
@@ -152,8 +172,7 @@ public class MemorySelector {
         }
     }
 
-    private List<AiMemoryItem> llmSelect(List<AiMemoryItem> base, String queryText,
-                                         String userId, String groupId, String platform) {
+    private List<AiMemoryItem> llmSelect(List<AiMemoryItem> base, String queryText) {
         Map<String, AiMemoryItem> byKey = new LinkedHashMap<>();
         StringBuilder idx = new StringBuilder();
         for (AiMemoryItem c : base) {
@@ -182,9 +201,8 @@ public class MemorySelector {
         } catch (Exception e) {
             log.warn("MemorySelector 解析模型选择结果失败：{}", StringUtils.abbreviate(answer, 120));
         }
-        if (selectionLogger != null) {
-            selectionLogger.log(userId, groupId, queryText, base, out, "CHAT");
-        }
+        // selection_log 移到 llmSelectWithTimeout 的成功路径记录：被超时 cancel 的 orphan 线程跑到这里时
+        // 本轮其实已 fallback，不应再落审计日志。
         return out;
     }
 
@@ -300,11 +318,23 @@ public class MemorySelector {
     static Set<String> tokenize(String q) {
         String norm = FactStore.normalize(q);
         if (StringUtils.isBlank(norm)) return Collections.emptySet();
+        String[] words = norm.split("\\s+");
         Set<String> out = new LinkedHashSet<>();
-        for (String w : norm.split("\\s+")) {
+        for (int i = 0; i < words.length; i++) {
+            String w = words[i];
+            // 非 CJK 词（latin/digit）：保留 length>=2
             if (w.length() >= 2) out.add(w);
+            // CJK：normalize 已把汉字拆成空格分隔的单字，单字粒度过滤会全军覆没（中文 query 粗筛恒空 → 直接打 LLM）。
+            // 用相邻单字拼 2-gram 恢复判别力；刻意保留中间空格，使形态与 searchText（同样 normalize 过）一致，contains 才能命中。
+            if (isSingleCjk(w) && i + 1 < words.length && isSingleCjk(words[i + 1])) {
+                out.add(w + " " + words[i + 1]);
+            }
         }
         return out;
+    }
+
+    private static boolean isSingleCjk(String w) {
+        return w.length() == 1 && w.charAt(0) >= 0x4E00 && w.charAt(0) <= 0x9FFF;
     }
 
     private static final String USAGE_RULES =
