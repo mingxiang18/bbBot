@@ -175,8 +175,14 @@ public class SplatoonScheduleCache {
     }
 
     /**
-     * 渲染单个时段并落盘：落盘图按 startTime 命名（天然去重），已存在则跳过渲染直接复用。
-     * 单段渲染失败（如祭典期对战节点结构差异）只记录并返回 null，该段不进缓存、读取时走实时兜底。
+     * 渲染单个时段并落盘：落盘图按 startTime 命名，每次刷新都<strong>重渲覆盖</strong>。
+     *
+     * <p>不能「已存在就跳过复用」：打工图 {@code writeCoopMap(data, i)} 画的是「第 i 段 + 第 i+1 段」，
+     * 内容依赖<em>下一段</em>，并非自己这一段的纯函数。每个新打工段首次出现都在窗口末尾（无下一段→只画一张），
+     * 若 skip 复用，等它滑成当前段时就会一直显示那张陈旧的单张图（`工` 本应是当前+下一段两张）。
+     * 故一律重渲；重渲很便宜——stage/weapon 远程图由 {@code SplatoonImageFetcher} 落地缓存，不会重复下载。</p>
+     *
+     * <p>单段渲染失败（如祭典期对战节点结构差异）只记录并返回 null，该段不进缓存、读取时走实时兜底。</p>
      */
     private CachedSlot renderSlot(JSONObject node, String prefix, java.util.function.Supplier<File> render) {
         String startTime = node.getString("startTime");
@@ -184,13 +190,11 @@ public class SplatoonScheduleCache {
         try {
             String targetPath = FileUtils.getAbsolutePath(SCHEDULE_DIR + prefix + keyOf(startTime) + ".png");
             File target = new File(targetPath);
-            if (!target.exists()) {
-                File rendered = render.get();
-                if (target.getParentFile() != null && !target.getParentFile().exists()) {
-                    target.getParentFile().mkdirs();
-                }
-                FileUtils.copyFileUsingFileStreams(rendered, target);
+            File rendered = render.get();
+            if (target.getParentFile() != null && !target.getParentFile().exists()) {
+                target.getParentFile().mkdirs();
             }
+            FileUtils.copyFileUsingFileStreams(rendered, target);
             return new CachedSlot(parseUtc(startTime), parseUtc(endTime), targetPath);
         } catch (Exception e) {
             log.error("预渲染日程时段失败 prefix={} start={}", prefix, startTime, e);

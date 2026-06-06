@@ -103,7 +103,7 @@ class SplatoonScheduleCacheLiveTest {
     }
 
     @Test
-    void refresh_thenReadsHitCache_realLiveChain() {
+    void refresh_thenReadsHitCache_realLiveChain() throws Exception {
         cache.refresh();
 
         List<?> regularSlots = (List<?>) ReflectionTestUtils.getField(cache, "regularSlots");
@@ -129,6 +129,11 @@ class SplatoonScheduleCacheLiveTest {
         File coopNow = cache.getCoopMap(0);
         assertNotNull(coopNow);
         assertTrue(coopNow.exists() && coopNow.length() > 1000, "打工当前图应存在且非空：" + coopNow);
+        // 「工」应是「当前段 + 下一段」两张拼接：单张约 337px 高，两张约 674px。
+        // 当前打工段几乎总有下一段，故断言明显高于单张（>500），守住两张面板不退化成一张。
+        int coopHeight = javax.imageio.ImageIO.read(coopNow).getHeight();
+        assertTrue(coopHeight > 500, "打工当前图应为当前+下一段两张拼接（高约674），实际高=" + coopHeight);
+        System.out.println("[live] 打工当前图高度：" + coopHeight + "（两张拼接）");
 
         // 二次调用走缓存：返回同一落盘路径（在 splatoon/schedule 下，而非 tmp 下的实时渲染产物）
         File regularNow2 = cache.getRegularMap(0);
