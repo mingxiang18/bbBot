@@ -1,0 +1,283 @@
+package com.bb.bot.handler.stardew;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+
+@Slf4j
+@Component
+public class StardewKnowledgeRepository {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private StardewData data = new StardewData();
+
+    @PostConstruct
+    public void load() {
+        try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
+            data = objectMapper.readValue(in, StardewData.class);
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, guides={}",
+                    data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
+                    data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
+                    data.getResources().size(), data.getGuides().size());
+        } catch (Exception e) {
+            log.error("Failed to load Stardew knowledge data", e);
+            data = new StardewData();
+        }
+    }
+
+    public String gameVersion() {
+        return data.getGameVersion();
+    }
+
+    public String lastCheckedAt() {
+        return data.getLastCheckedAt();
+    }
+
+    public List<StardewData.Fish> fish() {
+        return safe(data.getFish());
+    }
+
+    public List<StardewData.Bundle> bundles() {
+        return safe(data.getBundles());
+    }
+
+    public List<StardewData.Crop> crops() {
+        return safe(data.getCrops());
+    }
+
+    public List<StardewData.Building> buildings() {
+        return safe(data.getBuildings());
+    }
+
+    public List<StardewData.Tool> tools() {
+        return safe(data.getTools());
+    }
+
+    public List<StardewData.Machine> machines() {
+        return safe(data.getMachines());
+    }
+
+    public List<StardewData.Shop> shops() {
+        return safe(data.getShops());
+    }
+
+    public List<StardewData.Villager> villagers() {
+        return safe(data.getVillagers());
+    }
+
+    public List<StardewData.ResourceGuide> resources() {
+        return safe(data.getResources());
+    }
+
+    public List<StardewData.GuideTopic> guides() {
+        return safe(data.getGuides());
+    }
+
+    public Optional<StardewData.Bundle> findBundle(String query) {
+        String q = normalize(query);
+        return bundles().stream()
+                .filter(b -> matches(q, b.getName(), b.getId(), b.getAliases()))
+                .findFirst();
+    }
+
+    public Optional<StardewData.Villager> findVillager(String query) {
+        String q = normalize(query);
+        return villagers().stream()
+                .filter(v -> matches(q, v.getName(), v.getNameEn(), v.getAliases()))
+                .findFirst();
+    }
+
+    public Optional<StardewData.ResourceGuide> findResource(String query) {
+        String q = normalize(query);
+        return resources().stream()
+                .filter(r -> matches(q, r.getName(), r.getNameEn(), r.getAliases()))
+                .findFirst();
+    }
+
+    public Optional<StardewData.Crop> findCrop(String query) {
+        String q = normalize(query);
+        return crops().stream()
+                .filter(c -> matches(q, c.getName(), c.getNameEn(), c.getAliases()))
+                .findFirst();
+    }
+
+    public Optional<StardewData.Building> findBuilding(String query) {
+        String q = normalize(query);
+        return buildings().stream()
+                .map(b -> new BuildingMatch(b, scoreSearchable(q, b.getName(), b.getNameEn(), b.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(BuildingMatch::building)
+                .findFirst();
+    }
+
+    public Optional<StardewData.Tool> findTool(String query) {
+        String q = normalize(query);
+        return tools().stream()
+                .map(t -> new ToolMatch(t, scoreSearchable(q, t.getName(), t.getNameEn(), t.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(ToolMatch::tool)
+                .findFirst();
+    }
+
+    public Optional<StardewData.Machine> findMachine(String query) {
+        String q = normalize(query);
+        return machines().stream()
+                .map(m -> new MachineMatch(m, scoreSearchable(q, m.getName(), m.getNameEn(), m.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(MachineMatch::machine)
+                .findFirst();
+    }
+
+    public Optional<StardewData.Shop> findShop(String query) {
+        String q = normalize(query);
+        return shops().stream()
+                .map(s -> new ShopMatch(s, scoreSearchable(q, s.getName(), s.getNameEn(), s.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(ShopMatch::shop)
+                .findFirst();
+    }
+
+    public Optional<StardewData.GuideTopic> findGuide(String query) {
+        String q = normalize(query);
+        return guides().stream()
+                .map(g -> new GuideMatch(g, scoreGuide(q, g)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(GuideMatch::guide)
+                .findFirst();
+    }
+
+    public Optional<StardewData.Fish> findFish(String query) {
+        String q = normalize(query);
+        return fish().stream()
+                .filter(f -> matches(q, f.getName(), f.getNameEn(), f.getAliases()))
+                .findFirst();
+    }
+
+    private boolean matches(String q, String name, String en, List<String> aliases) {
+        List<String> names = new ArrayList<>();
+        names.add(name);
+        names.add(en);
+        if (aliases != null) {
+            names.addAll(aliases);
+        }
+        for (String n : names) {
+            String normalized = normalize(n);
+            if (!normalized.isEmpty() && (q.contains(normalized) || normalized.contains(q))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int scoreSearchable(String q, String name, String en, List<String> aliases) {
+        List<String> names = new ArrayList<>();
+        names.add(name);
+        names.add(en);
+        if (aliases != null) {
+            names.addAll(aliases);
+        }
+        int score = 0;
+        Set<String> seenNames = new LinkedHashSet<>();
+        for (String n : names) {
+            String normalized = normalize(n);
+            if (!seenNames.add(normalized) || normalized.isEmpty()) {
+                continue;
+            }
+            if (q.equals(normalized)) {
+                score += 1000 + normalized.length() * 20;
+            } else if (normalized.length() < 2) {
+                continue;
+            } else if (q.contains(normalized)) {
+                score += normalized.length() * 20;
+            } else if (normalized.contains(q) && q.length() >= 2) {
+                score += q.length() * 5;
+            }
+        }
+        return score;
+    }
+
+    private int scoreGuide(String q, StardewData.GuideTopic guide) {
+        List<String> names = new ArrayList<>();
+        names.add(guide.getName());
+        names.add(guide.getId());
+        if (guide.getAliases() != null) {
+            names.addAll(guide.getAliases());
+        }
+        int score = 0;
+        Set<String> seenNames = new LinkedHashSet<>();
+        for (String n : names) {
+            String normalized = normalize(n);
+            if (!seenNames.add(normalized)) {
+                continue;
+            }
+            if (!normalized.isEmpty() && q.contains(normalized)) {
+                score += Math.max(40, normalized.length() * 10);
+            }
+        }
+        boolean weakNameMatch = q.length() >= 2 && seenNames.stream()
+                .anyMatch(n -> !n.isEmpty() && n.contains(q));
+        if (weakNameMatch) {
+            score += 20;
+        }
+        if (score == 0) {
+            return 0;
+        }
+        List<String> keywords = guide.getKeywords();
+        if (keywords == null || keywords.isEmpty()) {
+            return score;
+        }
+        int keywordScore = keywords.stream()
+                .map(StardewKnowledgeRepository::normalize)
+                .filter(k -> !k.isEmpty() && q.contains(k))
+                .mapToInt(k -> Math.max(5, k.length() * 2))
+                .sum();
+        return score + keywordScore;
+    }
+
+    private static <T> List<T> safe(List<T> value) {
+        return value == null ? Collections.emptyList() : value;
+    }
+
+    static String normalize(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toLowerCase(Locale.ROOT)
+                .replace(" ", "")
+                .replace("/", "")
+                .replace("（", "(")
+                .replace("）", ")")
+                .trim();
+    }
+
+    private record GuideMatch(StardewData.GuideTopic guide, int score) {
+    }
+
+    private record BuildingMatch(StardewData.Building building, int score) {
+    }
+
+    private record ToolMatch(StardewData.Tool tool, int score) {
+    }
+
+    private record MachineMatch(StardewData.Machine machine, int score) {
+    }
+
+    private record ShopMatch(StardewData.Shop shop, int score) {
+    }
+}
