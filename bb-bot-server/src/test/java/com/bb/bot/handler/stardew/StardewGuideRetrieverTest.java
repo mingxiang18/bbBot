@@ -88,6 +88,22 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedMachineIntentRetrievesCraftableConsumablesWithoutFallingBackToGenericGuide() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MACHINE, "雨水图腾怎么做"),
+                intent(StardewGuideIntent.MACHINE, "铱环怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("雨水图腾和铱环怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("machine_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("雨水图腾", "硬木 x1", "松露油 x1", "松焦油 x5")
+                .contains("铱环", "战斗 9 级", "铱锭 x5", "虚空精华 x50");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

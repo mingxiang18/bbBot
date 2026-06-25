@@ -7734,6 +7734,985 @@
         "https://stardewvalleywiki.com/Farm_Computer",
         "https://zh.stardewvalleywiki.com/%E5%86%9C%E5%9C%BA%E7%94%B5%E8%84%91"
       ]
+    },
+    {
+      "id": "basic_fertilizer",
+      "name": "基础肥料",
+      "nameEn": "Basic Fertilizer",
+      "aliases": [
+        "basic fertilizer",
+        "普通肥料",
+        "肥料",
+        "基础肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 1 级",
+      "materials": [
+        {
+          "name": "树液",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "小幅提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "每块已锄地只能使用一种肥料；作物成熟后对品质概率生效。",
+      "recommendation": "前期树液便宜，适合铺在防风草、土豆、蓝莓等大面积作物上补品质收益。",
+      "note": "肥料通常要在种子发芽前使用。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_fertilizer",
+      "name": "高级肥料",
+      "nameEn": "Quality Fertilizer",
+      "aliases": [
+        "quality fertilizer",
+        "高品质肥料",
+        "高级肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 9 级",
+      "materials": [
+        {
+          "name": "树液",
+          "quantity": 4
+        },
+        {
+          "name": "任意鱼",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 2 个高级肥料",
+        "提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "相比基础肥料更偏向出高品质作物。",
+      "recommendation": "后期做高品质作物、卖高品质直接收益或补金星作物时使用；鱼多时材料压力较低。",
+      "note": "不提高生长速度，只影响品质概率。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_fertilizer",
+      "name": "豪华肥料",
+      "nameEn": "Deluxe Fertilizer",
+      "aliases": [
+        "deluxe fertilizer",
+        "顶级肥料",
+        "豪华肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "齐先生核桃房购买配方，20 齐钻",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 40
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 5 个豪华肥料",
+        "大幅提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "高成本品质肥料，适合高价值作物或特定品质目标。",
+      "recommendation": "齐钻和铱锭都贵，优先给高价值长期作物或明确需要高品质产物的场景。",
+      "note": "不加速成熟；如果目标是周转，生长激素类更合适。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "speed_gro",
+      "name": "生长激素",
+      "nameEn": "Speed-Gro",
+      "aliases": [
+        "speed-gro",
+        "speed gro",
+        "普通生长激素",
+        "生长激素怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 3 级",
+      "materials": [
+        {
+          "name": "松焦油",
+          "quantity": 1
+        },
+        {
+          "name": "苔藓",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "每次制作 5 个生长激素",
+        "至少提升 10% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "加速作物成熟，不直接提高品质。",
+      "recommendation": "用于卡月底多收一茬，或让草莓、啤酒花、蓝莓等提前开始再收。",
+      "note": "树液采集器早铺松树能减少松焦油卡点。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_speed_gro",
+      "name": "高级生长激素",
+      "nameEn": "Deluxe Speed-Gro",
+      "aliases": [
+        "deluxe speed-gro",
+        "deluxe speed gro",
+        "高级生长激素怎么做",
+        "豪华生长激素"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 8 级",
+      "materials": [
+        {
+          "name": "橡树树脂",
+          "quantity": 1
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "每次制作 5 个高级生长激素",
+        "至少提升 25% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "高效加速作物成熟，可帮多数作物挤出额外收获。",
+      "recommendation": "夏季杨桃、秋季南瓜、温室/姜岛扩种时非常实用；橡树树脂也要留给小桶。",
+      "note": "如果橡树树脂紧张，先评估小桶产线和本季多收一茬哪个收益更高。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "hyper_speed_gro",
+      "name": "超级生长激素",
+      "nameEn": "Hyper Speed-Gro",
+      "aliases": [
+        "hyper speed-gro",
+        "hyper speed gro",
+        "超级生长激素怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "齐先生核桃房购买配方，30 齐钻",
+      "materials": [
+        {
+          "name": "放射性矿石",
+          "quantity": 1
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 3
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "至少提升 33% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "最高级加速肥料，适合后期高价值作物和时间窗口很紧的补种。",
+      "recommendation": "放射性矿石有限，优先给杨桃、远古水果扩种或赛季末必须赶成熟的作物。",
+      "note": "需要后期齐先生内容和放射性矿石来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "basic_retaining_soil",
+      "name": "初级保湿土壤",
+      "nameEn": "Basic Retaining Soil",
+      "aliases": [
+        "basic retaining soil",
+        "初级保湿土",
+        "保湿土壤"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 4 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "小概率让地块隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "用于减少手动浇水压力。",
+      "recommendation": "没有洒水器时可少量用；大规模农田通常优先做洒水器。",
+      "note": "效果不是 100%，不能完全替代洒水器。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_retaining_soil",
+      "name": "高级保湿土壤",
+      "nameEn": "Quality Retaining Soil",
+      "aliases": [
+        "quality retaining soil",
+        "高级保湿土",
+        "高级保湿土壤怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 7 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 3
+        },
+        {
+          "name": "黏土",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 2 个高级保湿土壤",
+        "较高概率隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "比初级保湿土壤更可靠，但仍不是必定保持浇水。",
+      "recommendation": "适合喷壶期或难覆盖洒水器的位置；黏土前期要留建筑/制作需求。",
+      "note": "想省心到 100% 保湿，后期看豪华保湿土壤。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_retaining_soil",
+      "name": "豪华保湿土壤",
+      "nameEn": "Deluxe Retaining Soil",
+      "aliases": [
+        "deluxe retaining soil",
+        "豪华保湿土",
+        "豪华保湿土壤怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "姜岛商人购买配方，50 火山晶石",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 5
+        },
+        {
+          "name": "纤维",
+          "quantity": 3
+        },
+        {
+          "name": "黏土",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "100% 隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "地块浇过一次后会一直保持浇水状态，直到肥料失效。",
+      "recommendation": "姜岛农场和温室花盆很舒服，可以大幅降低维护成本。",
+      "note": "配方需要姜岛进度；本岛季末肥料会随季节重置。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tree_fertilizer",
+      "name": "树肥",
+      "nameEn": "Tree Fertilizer",
+      "aliases": [
+        "tree fertilizer",
+        "树木肥料",
+        "树肥怎么做",
+        "果树肥料"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "觅食 7 级",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 5
+        },
+        {
+          "name": "石头",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "撒在野生树上"
+      ],
+      "outputs": [
+        "让野生树快速成长，冬天也可生效"
+      ],
+      "processingTime": "使用后作用于该树生长",
+      "formula": "只对橡树、枫树、松树、桃花心木等野生树有效。",
+      "recommendation": "想快速养树液采集器树林、补硬木/木材时很好用。",
+      "note": "树肥不能用于果树，水果树仍按 28 天成熟和周围 3x3 空地规则。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "monster_musk",
+      "name": "怪物香水",
+      "nameEn": "Monster Musk",
+      "aliases": [
+        "monster musk",
+        "怪物香水怎么做",
+        "增加怪物",
+        "刷怪香水"
+      ],
+      "category": "consumable",
+      "recipeSource": "完成法师特别订单后获得配方",
+      "materials": [
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 30
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 30
+        }
+      ],
+      "inputs": [
+        "使用后进入矿井/怪物区域"
+      ],
+      "outputs": [
+        "一段时间内提高怪物生成量"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "提高怪物密度，适合刷击杀数、战斗经验和怪物掉落。",
+      "recommendation": "刷战斗等级、冒险家公会目标或特定掉落时使用；战斗弱时先准备食物和武器。",
+      "note": "没有确认弹窗，使用时注意安全。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "fairy_dust",
+      "name": "仙尘",
+      "nameEn": "Fairy Dust",
+      "aliases": [
+        "fairy dust",
+        "仙尘怎么做",
+        "仙女粉",
+        "立刻完成机器"
+      ],
+      "category": "consumable",
+      "recipeSource": "完成海盗的妻子任务后获得配方",
+      "materials": [
+        {
+          "name": "钻石",
+          "quantity": 1
+        },
+        {
+          "name": "玫瑰仙子",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "对小桶、熔炉等加工/精炼设备使用"
+      ],
+      "outputs": [
+        "立即取得当前加工产物"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "跳过正在进行的加工等待时间。",
+      "recommendation": "适合急着完成任务、赶高价值酒/铱锭等长耗时产物；日常批量生产一般成本偏高。",
+      "note": "只对正在加工中的可用设备有意义。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_beach",
+      "name": "海滩传送图腾",
+      "nameEn": "Warp Totem: Beach",
+      "aliases": [
+        "warp totem beach",
+        "海滩图腾",
+        "海边传送图腾",
+        "海滩传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 6 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "珊瑚",
+          "quantity": 2
+        },
+        {
+          "name": "纤维",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到海滩"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即传送，省去路程时间。",
+      "recommendation": "适合赶威利鱼店、潮汐池采集、海边钓鱼时间窗口。",
+      "note": "使用后消耗一个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_mountains",
+      "name": "山岭传送图腾",
+      "nameEn": "Warp Totem: Mountains",
+      "aliases": [
+        "warp totem mountains",
+        "山岭图腾",
+        "矿山传送图腾",
+        "山岭传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 7 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "石头",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到深山/矿井附近"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即传送到山岭区域。",
+      "recommendation": "下矿、去木匠店、找罗宾、山湖钓鱼前很省时间。",
+      "note": "使用后消耗一个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_farm",
+      "name": "农场传送图腾",
+      "nameEn": "Warp Totem: Farm",
+      "aliases": [
+        "warp totem farm",
+        "回家图腾",
+        "农场图腾",
+        "农场传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 8 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "蜂蜜",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送回农场"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即回到农场，减少深夜赶路风险。",
+      "recommendation": "下矿、钓鱼、姜岛活动前带一个，能把夜间活动时间拉满。",
+      "note": "使用后消耗一个；后期可用回程魔杖替代。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_desert",
+      "name": "沙漠传送图腾",
+      "nameEn": "Warp Totem: Desert",
+      "aliases": [
+        "warp totem desert",
+        "沙漠图腾",
+        "沙漠传送图腾怎么做",
+        "卡利科沙漠图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "沙漠商人用 10 个铱锭兑换配方",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 2
+        },
+        {
+          "name": "椰子",
+          "quantity": 1
+        },
+        {
+          "name": "铱矿石",
+          "quantity": 4
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到卡利科沙漠"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "跳过巴士等待时间，早晨可直接开始骷髅洞穴。",
+      "recommendation": "冲骷髅洞穴深层非常关键，越早到沙漠越有价值。",
+      "note": "配方成本很高；早期也可直接从沙漠商人兑换少量图腾。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_island",
+      "name": "姜岛传送图腾",
+      "nameEn": "Warp Totem: Island",
+      "aliases": [
+        "warp totem island",
+        "姜岛图腾",
+        "姜岛传送图腾怎么做",
+        "岛屿传送图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "火山矮人商店购买配方，10,000g",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "龙牙",
+          "quantity": 1
+        },
+        {
+          "name": "姜",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到姜岛"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "省去坐船时间，直接开始姜岛行动。",
+      "recommendation": "刷火山、金核桃、姜岛农场维护时很好用；龙牙紧张时优先考虑岛屿图腾柱。",
+      "note": "需要先推进姜岛和火山矮人交易。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "rain_totem",
+      "name": "雨水图腾",
+      "nameEn": "Rain Totem",
+      "aliases": [
+        "rain totem",
+        "雨天图腾",
+        "雨水图腾怎么做",
+        "召雨图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 9 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "松露油",
+          "quantity": 1
+        },
+        {
+          "name": "松焦油",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "使用后影响次日天气"
+      ],
+      "outputs": [
+        "大幅提高明天下雨概率"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "适合安排雨天鱼、浇水减负或特定天气事件。",
+      "recommendation": "钓雨天限定鱼、想让作物免浇水或刷雨天事件时很好用；松露油成本较高。",
+      "note": "不是改变当天，而是影响次日天气。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "treasure_totem",
+      "name": "宝藏图腾",
+      "nameEn": "Treasure Totem",
+      "aliases": [
+        "treasure totem",
+        "宝藏图腾怎么做",
+        "挖掘图腾",
+        "藏宝图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食精通",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "神秘糖浆",
+          "quantity": 1
+        },
+        {
+          "name": "苔藓",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "在可挖掘地面使用"
+      ],
+      "outputs": [
+        "生成一圈宝藏点"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "用于集中挖掘宝藏点，配合锄头效率更高。",
+      "recommendation": "后期补古物、特殊掉落和觅食精通玩法时使用；神秘糖浆产线要先准备。",
+      "note": "需要觅食精通。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "sturdy_ring",
+      "name": "坚固戒指",
+      "nameEn": "Sturdy Ring",
+      "aliases": [
+        "sturdy ring",
+        "坚固戒指怎么做",
+        "负面效果减半戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 1 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 2
+        },
+        {
+          "name": "虫肉",
+          "quantity": 25
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "负面状态持续时间减半"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "提供状态抗性，适合早期矿井。",
+      "recommendation": "前期材料够可以做，但通常会很快被更强戒指替换。",
+      "note": "戒指占装备栏，按当前战斗需求取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warrior_ring",
+      "name": "战士戒指",
+      "nameEn": "Warrior Ring",
+      "aliases": [
+        "warrior ring",
+        "战士戒指怎么做"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 4 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 25
+        },
+        {
+          "name": "冰泪晶",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "击杀怪物后有概率进入战士能量状态"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "偏进攻的早中期戒指。",
+      "recommendation": "战斗等级低且缺爆发时可用；后期通常换铱环、幸运戒指等。",
+      "note": "材料成本对前期不低。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "ring_of_yoba",
+      "name": "尤巴戒指",
+      "nameEn": "Ring of Yoba",
+      "aliases": [
+        "ring of yoba",
+        "尤巴戒指怎么做",
+        "约巴戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 7 级",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 5
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        },
+        {
+          "name": "钻石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "受伤后有概率获得尤巴祝福护盾"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "低血量/挨打时提供防护机会。",
+      "recommendation": "操作不稳或武器偏弱时可用来提高容错。",
+      "note": "钻石也常用于送礼和复制机模板，注意取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "thorns_ring",
+      "name": "荆棘戒指",
+      "nameEn": "Thorns Ring",
+      "aliases": [
+        "thorns ring",
+        "荆棘戒指怎么做",
+        "反伤戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 7 级",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 50
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "被攻击时反弹伤害"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "把部分承受伤害转为反伤。",
+      "recommendation": "适合怪物密集但防御足够时使用；追求效率通常还是更偏向伤害/吸附/幸运。",
+      "note": "不要为了反伤主动挨打。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "glowstone_ring",
+      "name": "光辉戒指",
+      "nameEn": "Glowstone Ring",
+      "aliases": [
+        "glowstone ring",
+        "光辉戒指怎么做",
+        "发光吸附戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "采矿 4 级",
+      "materials": [
+        {
+          "name": "太阳精华",
+          "quantity": 5
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "发光",
+        "增加拾取范围"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "同时提供光源和吸附，提升矿井手感。",
+      "recommendation": "铱环前非常好用，尤其是夜间、矿井和资源收集。",
+      "note": "如果已有强力发光/吸附戒指，可按装备栏取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "iridium_band",
+      "name": "铱环",
+      "nameEn": "Iridium Band",
+      "aliases": [
+        "iridium band",
+        "铱戒指",
+        "铱环怎么做",
+        "铱戒"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 9 级",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 5
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 50
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "发光",
+        "增加拾取范围",
+        "攻击伤害 +10%"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "综合了发光、吸附和增伤，是通用强戒指。",
+      "recommendation": "战斗 9 级后优先做，矿井、骷髅洞穴和日常收集都很舒服。",
+      "note": "铱锭和精华消耗很大，提前刷怪和烧铱矿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wedding_ring",
+      "name": "结婚戒指",
+      "nameEn": "Wedding Ring",
+      "aliases": [
+        "wedding ring",
+        "结婚戒指怎么做",
+        "多人结婚戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "旅行货车购买配方，500g；仅多人模式可用",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 5
+        },
+        {
+          "name": "五彩碎片",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "多人模式下赠送给另一位玩家"
+      ],
+      "outputs": [
+        "向其他玩家求婚"
+      ],
+      "processingTime": "一次性求婚道具",
+      "formula": "多人模式专用，不是给 NPC 求婚的道具。",
+      "recommendation": "单人档不用做；多人档需要五彩碎片和铱锭，成本较高。",
+      "note": "NPC 求婚用美人鱼吊坠，不是结婚戒指。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
     }
   ],
   "shops": [

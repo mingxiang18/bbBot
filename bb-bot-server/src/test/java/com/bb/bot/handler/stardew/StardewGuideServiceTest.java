@@ -514,6 +514,45 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFertilizerTotemAndConsumableCraftingDetails() {
+        StardewGuideResult speedGro = service.answer("星露谷 高级生长激素怎么做");
+        StardewGuideResult rainTotem = service.answer("星露谷 雨水图腾怎么做");
+        StardewGuideResult monsterMusk = service.answer("星露谷 怪物香水怎么做");
+
+        assertThat(speedGro.getIntent()).isEqualTo("machine_detail");
+        assertThat(speedGro.getAnswer()).contains("高级生长激素", "耕种 8 级", "橡树树脂 x1", "骨头碎片 x5", "25%");
+        assertThat(rainTotem.getIntent()).isEqualTo("machine_detail");
+        assertThat(rainTotem.getAnswer()).contains("雨水图腾", "觅食 9 级", "硬木 x1", "松露油 x1", "松焦油 x5", "明天下雨");
+        assertThat(monsterMusk.getIntent()).isEqualTo("machine_detail");
+        assertThat(monsterMusk.getAnswer()).contains("怪物香水", "法师特别订单", "蝙蝠翅膀 x30", "史莱姆 x30", "提高怪物生成量");
+    }
+
+    @Test
+    void answersRingCraftingDetails() {
+        StardewGuideResult iridiumBand = service.answer("星露谷 铱环怎么做");
+        StardewGuideResult glowstoneRing = service.answer("星露谷 光辉戒指怎么做");
+
+        assertThat(iridiumBand.getIntent()).isEqualTo("machine_detail");
+        assertThat(iridiumBand.getAnswer()).contains("铱环", "战斗 9 级", "铱锭 x5", "太阳精华 x50", "虚空精华 x50", "攻击伤害 +10%");
+        assertThat(glowstoneRing.getIntent()).isEqualTo("machine_detail");
+        assertThat(glowstoneRing.getAnswer()).contains("光辉戒指", "采矿 4 级", "太阳精华 x5", "铁锭 x5", "增加拾取范围");
+    }
+
+    @Test
+    void answersCraftingConsumableCategoryLists() {
+        StardewGuideResult fertilizers = service.answer("星露谷 肥料有哪些");
+        StardewGuideResult totems = service.answer("星露谷 传送图腾有哪些");
+        StardewGuideResult rings = service.answer("星露谷 戒指有哪些");
+
+        assertThat(fertilizers.getIntent()).isEqualTo("machine_available");
+        assertThat(fertilizers.getAnswer()).contains("肥料/土壤", "基础肥料", "高级生长激素", "树肥");
+        assertThat(totems.getIntent()).isEqualTo("machine_available");
+        assertThat(totems.getAnswer()).contains("图腾/传送", "海滩传送图腾", "农场传送图腾", "雨水图腾");
+        assertThat(rings.getIntent()).isEqualTo("machine_available");
+        assertThat(rings.getAnswer()).contains("戒指", "坚固戒指", "光辉戒指", "铱环");
+    }
+
+    @Test
     void answersMachineListQueriesAndKeepsResourceRouting() {
         StardewGuideResult machines = service.answer("星露谷 加工机器有哪些");
         StardewGuideResult battery = service.answer("星露谷 电池组怎么获得");

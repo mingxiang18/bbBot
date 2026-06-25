@@ -26,7 +26,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(17);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
-        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(39);
+        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(65);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(85);
@@ -233,6 +233,42 @@ class StardewKnowledgeRepositoryTest {
                 "geode_crusher",
                 "hopper",
                 "farm_computer"
+        );
+    }
+
+    @Test
+    void expandedCraftingConsumablesFertilizersTotemsAndRingsAreCovered() {
+        Set<String> machineIds = repository.machines().stream()
+                .map(StardewData.Machine::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(machineIds).contains(
+                "basic_fertilizer",
+                "quality_fertilizer",
+                "deluxe_fertilizer",
+                "speed_gro",
+                "deluxe_speed_gro",
+                "hyper_speed_gro",
+                "basic_retaining_soil",
+                "quality_retaining_soil",
+                "deluxe_retaining_soil",
+                "tree_fertilizer",
+                "monster_musk",
+                "fairy_dust",
+                "warp_totem_beach",
+                "warp_totem_mountains",
+                "warp_totem_farm",
+                "warp_totem_desert",
+                "warp_totem_island",
+                "rain_totem",
+                "treasure_totem",
+                "sturdy_ring",
+                "warrior_ring",
+                "ring_of_yoba",
+                "thorns_ring",
+                "glowstone_ring",
+                "iridium_band",
+                "wedding_ring"
         );
     }
 

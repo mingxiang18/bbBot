@@ -1315,7 +1315,14 @@ public class StardewGuideService {
                 || query.contains("骨头磨坊") || query.contains("骨磨机")
                 || query.contains("晶球破开器") || query.contains("晶球破碎机") || query.contains("自动开晶球")
                 || query.contains("料斗") || query.contains("自动上料")
-                || query.contains("农场电脑");
+                || query.contains("农场电脑")
+                || query.contains("肥料") || query.contains("生长激素") || query.contains("保湿土壤")
+                || query.contains("保湿土") || query.contains("树肥")
+                || query.contains("图腾") || query.contains("传送图腾") || query.contains("雨水图腾")
+                || query.contains("宝藏图腾") || query.contains("怪物香水") || query.contains("仙尘")
+                || query.contains("戒指") || query.contains("铱环") || query.contains("尤巴戒指")
+                || query.contains("约巴戒指") || query.contains("光辉戒指") || query.contains("荆棘戒指")
+                || query.contains("结婚戒指");
     }
 
     private boolean looksLikeCookingQuery(String query) {
@@ -1348,7 +1355,7 @@ public class StardewGuideService {
                 && (query.contains("材料") || query.contains("配方") || query.contains("加工") || query.contains("机器")
                 || query.contains("设备") || query.contains("产出") || query.contains("值钱")
                 || query.contains("收益") || query.contains("怎么做") || query.contains("怎么制作")
-                || query.contains("能产"));
+                || query.contains("能产") || query.contains("配方来源"));
     }
 
     private boolean shouldPreferResourceOverMachine(
@@ -1451,10 +1458,29 @@ public class StardewGuideService {
                 || query.contains("制作设备有哪些") || query.contains("加工机器")
                 || query.contains("赚钱机器推荐") || query.contains("储物设备")
                 || query.contains("矿洞设备") || query.contains("洒水设备")
-                || query.contains("灌溉设备") || query.contains("农场工具");
+                || query.contains("灌溉设备") || query.contains("农场工具")
+                || query.contains("肥料有哪些") || query.contains("肥料列表")
+                || query.contains("保湿土壤有哪些") || query.contains("生长激素有哪些")
+                || query.contains("图腾有哪些") || query.contains("传送图腾有哪些")
+                || query.contains("戒指有哪些") || query.contains("戒指列表")
+                || query.contains("消耗品有哪些");
     }
 
     private String parseMachineCategory(String query) {
+        if (query.contains("肥料") || query.contains("保湿土壤") || query.contains("保湿土")
+                || query.contains("生长激素") || query.contains("树肥")) {
+            return "fertilizer";
+        }
+        if (query.contains("图腾") || query.contains("传送")) {
+            return "totem";
+        }
+        if (query.contains("戒指") || query.contains("铱环") || query.contains("尤巴")
+                || query.contains("约巴") || query.contains("荆棘") || query.contains("光辉")) {
+            return "ring";
+        }
+        if (query.contains("怪物香水") || query.contains("仙尘") || query.contains("消耗品")) {
+            return "consumable";
+        }
         if (query.contains("工匠") || query.contains("加工") || query.contains("赚钱")
                 || query.contains("酒") || query.contains("果酱") || query.contains("奶酪")
                 || query.contains("蛋黄酱") || query.contains("松露油")) {
@@ -1499,6 +1525,10 @@ public class StardewGuideService {
             case "farm_utility" -> "农场工具";
             case "slime" -> "史莱姆";
             case "automation" -> "自动化";
+            case "fertilizer" -> "肥料/土壤";
+            case "totem" -> "图腾/传送";
+            case "ring" -> "戒指";
+            case "consumable" -> "一次性消耗品";
             default -> category;
         };
     }
