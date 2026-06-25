@@ -466,6 +466,54 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersExpandedCraftingDeviceDetails() {
+        StardewGuideResult sprinkler = service.answer("星露谷 优质洒水器怎么做");
+        StardewGuideResult staircase = service.answer("星露谷 楼梯怎么做，骷髅洞穴跳层用");
+        StardewGuideResult bomb = service.answer("星露谷 炸弹怎么做");
+        StardewGuideResult chest = service.answer("星露谷 大箱子怎么做");
+
+        assertThat(sprinkler.getIntent()).isEqualTo("machine_detail");
+        assertThat(sprinkler.getAnswer()).contains("耕种 6 级", "铁锭 x1", "金锭 x1", "精炼石英 x1", "8 格");
+        assertThat(staircase.getIntent()).isEqualTo("machine_detail");
+        assertThat(staircase.getAnswer()).contains("采矿 2 级", "石头 x99", "翡翠", "骷髅洞穴");
+        assertThat(bomb.getIntent()).isEqualTo("machine_detail");
+        assertThat(bomb.getAnswer()).contains("采矿 6 级", "铁矿石 x4", "煤炭 x1", "半径约 5 格");
+        assertThat(chest.getIntent()).isEqualTo("machine_detail");
+        assertThat(chest.getAnswer()).contains("木匠的商店", "木材 x120", "铜锭 x2", "两倍");
+    }
+
+    @Test
+    void answersLateGameAndUtilityCraftingDevices() {
+        StardewGuideResult heavyFurnace = service.answer("星露谷 重型熔炉需要什么材料");
+        StardewGuideResult solarPanel = service.answer("星露谷 太阳能板怎么做，能产电池吗");
+        StardewGuideResult slimePress = service.answer("星露谷 史莱姆蛋压制机怎么做");
+        StardewGuideResult geodeCrusher = service.answer("星露谷 晶球破开器怎么做");
+
+        assertThat(heavyFurnace.getIntent()).isEqualTo("machine_detail");
+        assertThat(heavyFurnace.getAnswer()).contains("采矿精通", "熔炉 x2", "铁锭 x3", "石头 x50");
+        assertThat(solarPanel.getIntent()).isEqualTo("machine_detail");
+        assertThat(solarPanel.getAnswer()).contains("卡洛琳特别订单", "精炼石英 x10", "铁锭 x5", "金锭 x5", "电池组");
+        assertThat(slimePress.getIntent()).isEqualTo("machine_detail");
+        assertThat(slimePress.getAnswer()).contains("战斗 6 级", "煤炭 x25", "火水晶 x1", "电池组 x1", "史莱姆蛋");
+        assertThat(geodeCrusher.getIntent()).isEqualTo("machine_detail");
+        assertThat(geodeCrusher.getAnswer()).contains("克林特特别订单", "金锭 x2", "石头 x50", "钻石 x1");
+    }
+
+    @Test
+    void answersCraftingDeviceCategoryLists() {
+        StardewGuideResult irrigation = service.answer("星露谷 洒水设备有哪些");
+        StardewGuideResult mining = service.answer("星露谷 矿洞设备有哪些");
+        StardewGuideResult storage = service.answer("星露谷 储物设备有哪些");
+
+        assertThat(irrigation.getIntent()).isEqualTo("machine_available");
+        assertThat(irrigation.getAnswer()).contains("洒水/灌溉", "洒水器", "优质洒水器", "铱制洒水器");
+        assertThat(mining.getIntent()).isEqualTo("machine_available");
+        assertThat(mining.getAnswer()).contains("矿洞/炸弹", "樱桃炸弹", "炸弹", "超级炸弹", "楼梯");
+        assertThat(storage.getIntent()).isEqualTo("machine_available");
+        assertThat(storage.getAnswer()).contains("储物/标记", "箱子", "大箱子", "木牌");
+    }
+
+    @Test
     void answersMachineListQueriesAndKeepsResourceRouting() {
         StardewGuideResult machines = service.answer("星露谷 加工机器有哪些");
         StardewGuideResult battery = service.answer("星露谷 电池组怎么获得");

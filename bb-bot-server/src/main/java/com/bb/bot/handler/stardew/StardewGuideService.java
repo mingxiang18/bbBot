@@ -77,7 +77,8 @@ public class StardewGuideService {
         }
         if (resource.isPresent() && looksLikeResourceQuery(query)
                 && !(fish.isPresent() && query.contains("果冻"))
-                && !isFishingQuestion(query) && !isMachineCraftingQuestion(query, machine)) {
+                && !isFishingQuestion(query)
+                && (!isMachineCraftingQuestion(query, machine) || shouldPreferResourceOverMachine(query, resource.get(), machine))) {
             return resourceAnswer(query, resource.get());
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
@@ -137,6 +138,115 @@ public class StardewGuideService {
         }
 
         return wikiFallbackAnswer(query, help());
+    }
+
+    public StardewGuideResult answer(StardewGuideIntent type, String rawQuery) {
+        String query = cleanQuery(rawQuery);
+        if (StringUtils.isBlank(query)) {
+            return result("help", help(), List.of());
+        }
+        StardewGuideIntent effectiveType = type == null ? StardewGuideIntent.UNKNOWN : type;
+        return switch (effectiveType) {
+            case FISH -> typedFishAnswer(query);
+            case BUNDLE -> typedBundleAnswer(query);
+            case VILLAGER_SCHEDULE -> typedVillagerScheduleAnswer(query);
+            case VILLAGER_PROFILE -> typedVillagerProfileAnswer(query);
+            case RESOURCE -> typedResourceAnswer(query);
+            case ANIMAL_CARE, FRUIT_TREE, SKILL, MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case CROP -> typedCropAnswer(query);
+            case TOOL -> typedToolAnswer(query);
+            case BUILDING -> typedBuildingAnswer(query);
+            case MACHINE -> typedMachineAnswer(query);
+            case SHOP -> typedShopAnswer(query);
+            case COOKING -> typedCookingAnswer(query);
+            case UNKNOWN -> answer(query);
+        };
+    }
+
+    private StardewGuideResult typedFishAnswer(String query) {
+        Optional<StardewData.Fish> fish = repository.findFish(query);
+        if (fish.isPresent() && !isBroadFishQuery(query)) {
+            return specificFishAnswer(query, fish.get());
+        }
+        return fishListAnswer(query);
+    }
+
+    private StardewGuideResult typedBundleAnswer(String query) {
+        return repository.findBundle(query)
+                .map(bundle -> bundleAnswer(query, bundle))
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应收集包。可以试试：海鱼收集包、湖鱼收集包、工匠收集包、锅炉房。"));
+    }
+
+    private StardewGuideResult typedVillagerScheduleAnswer(String query) {
+        return repository.findVillager(query)
+                .map(villager -> villagerAnswer(query, villager))
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应居民。可以补充居民名、季节、日期和游戏内时间。"));
+    }
+
+    private StardewGuideResult typedVillagerProfileAnswer(String query) {
+        return repository.findVillager(query)
+                .map(this::villagerProfileAnswer)
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应居民资料。可以试试：阿比盖尔喜欢什么、莉亚生日。"));
+    }
+
+    private StardewGuideResult typedResourceAnswer(String query) {
+        return repository.findResource(query)
+                .map(resource -> resourceAnswer(query, resource))
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到这个资源。可以试试：硬木、电池组、铱矿石、五彩碎片、上古种子。"));
+    }
+
+    private StardewGuideResult typedGuideAnswer(String query) {
+        return repository.findGuide(query)
+                .map(this::guideAnswer)
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应攻略条目。可以试试：战斗技能、博物馆捐赠、动物养殖、果树。"));
+    }
+
+    private StardewGuideResult typedCropAnswer(String query) {
+        Optional<StardewData.Crop> crop = repository.findCrop(query);
+        if (crop.isPresent() && !isBroadCropQuery(query)) {
+            return cropDetailAnswer(crop.get());
+        }
+        return cropListAnswer(query);
+    }
+
+    private StardewGuideResult typedToolAnswer(String query) {
+        return repository.findTool(query)
+                .map(tool -> toolUpgradeAnswer(query, tool))
+                .orElseGet(this::toolUpgradeListAnswer);
+    }
+
+    private StardewGuideResult typedBuildingAnswer(String query) {
+        Optional<StardewData.Building> building = repository.findBuilding(query);
+        if (building.isPresent() && !isBroadBuildingQuery(query)) {
+            return buildingDetailAnswer(building.get());
+        }
+        return buildingListAnswer(query);
+    }
+
+    private StardewGuideResult typedMachineAnswer(String query) {
+        Optional<StardewData.Machine> machine = repository.findMachine(query);
+        if (machine.isPresent() && !isBroadMachineQuery(query)) {
+            return machineDetailAnswer(machine.get());
+        }
+        return machineListAnswer(query);
+    }
+
+    private StardewGuideResult typedShopAnswer(String query) {
+        Optional<ShopStockMatch> shopItem = findShopStock(query);
+        if (shopItem.isPresent()) {
+            return shopItemAnswer(query, shopItem.get());
+        }
+        return repository.findShop(query)
+                .map(this::shopAnswer)
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应商店或商品。可以试试：背包升级、铱制洒水器在哪里买、书商什么时候来。"));
+    }
+
+    private StardewGuideResult typedCookingAnswer(String query) {
+        Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
+        if (cookingRecipe.isPresent() && !isBroadCookingQuery(query)) {
+            return cookingRecipeAnswer(cookingRecipe.get());
+        }
+        return cookingListAnswer(query, cookingRecipe);
     }
 
     private StardewGuideResult guideAnswer(StardewData.GuideTopic guide) {
@@ -1192,7 +1302,20 @@ public class StardewGuideService {
                 || query.contains("避雷针") || query.contains("鱼熏机") || query.contains("熏鱼")
                 || query.contains("脱水机") || query.contains("风干机") || query.contains("果干") || query.contains("葡萄干")
                 || query.contains("诱饵制造机") || query.contains("鱼饵制造机") || query.contains("定向鱼饵")
-                || query.contains("蘑菇木桩") || query.contains("蘑菇木头") || query.contains("蘑菇桩");
+                || query.contains("蘑菇木桩") || query.contains("蘑菇木头") || query.contains("蘑菇桩")
+                || query.contains("洒水器") || query.contains("洒水设备") || query.contains("灌溉设备")
+                || query.contains("自动浇水") || query.contains("喷头")
+                || query.contains("炸弹") || query.contains("楼梯") || query.contains("跳层") || query.contains("矿洞设备")
+                || query.contains("箱子") || query.contains("储物箱") || query.contains("收纳箱")
+                || query.contains("储物设备")
+                || query.contains("标牌") || query.contains("木牌") || query.contains("石牌")
+                || query.contains("稻草人") || query.contains("防乌鸦")
+                || query.contains("重型熔炉") || query.contains("太阳能板") || query.contains("电池板")
+                || query.contains("史莱姆孵化器") || query.contains("史莱姆蛋压制机")
+                || query.contains("骨头磨坊") || query.contains("骨磨机")
+                || query.contains("晶球破开器") || query.contains("晶球破碎机") || query.contains("自动开晶球")
+                || query.contains("料斗") || query.contains("自动上料")
+                || query.contains("农场电脑");
     }
 
     private boolean looksLikeCookingQuery(String query) {
@@ -1224,7 +1347,20 @@ public class StardewGuideService {
         return machine.isPresent()
                 && (query.contains("材料") || query.contains("配方") || query.contains("加工") || query.contains("机器")
                 || query.contains("设备") || query.contains("产出") || query.contains("值钱")
-                || query.contains("收益"));
+                || query.contains("收益") || query.contains("怎么做") || query.contains("怎么制作")
+                || query.contains("能产"));
+    }
+
+    private boolean shouldPreferResourceOverMachine(
+            String query,
+            StardewData.ResourceGuide resource,
+            Optional<StardewData.Machine> machine
+    ) {
+        String normalizedQuery = StardewKnowledgeRepository.normalize(query);
+        if (machine.isPresent() && containsNormalized(normalizedQuery, machine.get().getName())) {
+            return false;
+        }
+        return resource != null && containsNormalized(normalizedQuery, resource.getName());
     }
 
     private boolean shouldPreferGuideOverCrop(String query, StardewData.GuideTopic guide) {
@@ -1312,7 +1448,10 @@ public class StardewGuideService {
     private boolean isBroadMachineQuery(String query) {
         return query.contains("机器有哪些") || query.contains("机器列表")
                 || query.contains("加工设备有哪些") || query.contains("工匠设备有哪些")
-                || query.contains("加工机器") || query.contains("赚钱机器推荐");
+                || query.contains("制作设备有哪些") || query.contains("加工机器")
+                || query.contains("赚钱机器推荐") || query.contains("储物设备")
+                || query.contains("矿洞设备") || query.contains("洒水设备")
+                || query.contains("灌溉设备") || query.contains("农场工具");
     }
 
     private String parseMachineCategory(String query) {
@@ -1326,6 +1465,27 @@ public class StardewGuideService {
                 || query.contains("诱饵") || query.contains("蘑菇")) {
             return "refining";
         }
+        if (query.contains("洒水") || query.contains("浇水") || query.contains("喷头")) {
+            return "irrigation";
+        }
+        if (query.contains("炸弹") || query.contains("楼梯") || query.contains("矿洞")
+                || query.contains("骷髅洞穴") || query.contains("跳层")) {
+            return "mining";
+        }
+        if (query.contains("箱子") || query.contains("储物") || query.contains("收纳")
+                || query.contains("标牌") || query.contains("牌子")) {
+            return "storage";
+        }
+        if (query.contains("稻草人") || query.contains("农场工具") || query.contains("农场电脑")
+                || query.contains("防乌鸦")) {
+            return "farm_utility";
+        }
+        if (query.contains("史莱姆")) {
+            return "slime";
+        }
+        if (query.contains("自动化") || query.contains("料斗") || query.contains("自动上料")) {
+            return "automation";
+        }
         return null;
     }
 
@@ -1333,6 +1493,12 @@ public class StardewGuideService {
         return switch (category) {
             case "artisan" -> "工匠/加工";
             case "refining" -> "精炼/资源";
+            case "irrigation" -> "洒水/灌溉";
+            case "mining" -> "矿洞/炸弹";
+            case "storage" -> "储物/标记";
+            case "farm_utility" -> "农场工具";
+            case "slime" -> "史莱姆";
+            case "automation" -> "自动化";
             default -> category;
         };
     }

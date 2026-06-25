@@ -6860,6 +6860,880 @@
         "https://stardewvalleywiki.com/Mushroom_Log",
         "https://zh.stardewvalleywiki.com/蘑菇木桩"
       ]
+    },
+    {
+      "id": "sprinkler",
+      "name": "洒水器",
+      "nameEn": "Sprinkler",
+      "aliases": [
+        "sprinkler",
+        "基础洒水器",
+        "普通洒水器",
+        "洒水器怎么做",
+        "自动浇水"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 2 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌上下左右 4 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖 4 个相邻格；不能浇花盆，不能放在沙地上。",
+      "recommendation": "前期可以少量过渡，但范围小；通常尽快升级到优质洒水器。",
+      "note": "也可偶尔从旅行货车买到。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Sprinkler",
+        "https://zh.stardewvalleywiki.com/%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "quality_sprinkler",
+      "name": "优质洒水器",
+      "nameEn": "Quality Sprinkler",
+      "aliases": [
+        "quality sprinkler",
+        "高级洒水器",
+        "优质喷头",
+        "优质洒水器怎么做",
+        "8格洒水器"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌周围 8 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖中心周围 3x3 的 8 格。",
+      "recommendation": "第一年夏秋非常实用；铁锭、金锭和精炼石英稳定后优先批量制作。",
+      "note": "可从谜之盒/金色谜之盒开出，也可偶尔从旅行货车买到。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://zh.stardewvalleywiki.com/%E4%BC%98%E8%B4%A8%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "iridium_sprinkler",
+      "name": "铱制洒水器",
+      "nameEn": "Iridium Sprinkler",
+      "aliases": [
+        "iridium sprinkler",
+        "铱洒水器",
+        "铱喷头",
+        "铱制洒水器怎么做",
+        "24格洒水器"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 9 级；科罗布斯每周五也会出售",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌周围 24 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖中心周围 5x5 的 24 格。",
+      "recommendation": "温室、姜岛和大田地的主力洒水器；铱锭紧张时可周五去科罗布斯处购买。",
+      "note": "可用压力喷嘴或施肥器进一步升级。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://zh.stardewvalleywiki.com/%E9%93%B1%E5%88%B6%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "cherry_bomb",
+      "name": "樱桃炸弹",
+      "nameEn": "Cherry Bomb",
+      "aliases": [
+        "cherry bomb",
+        "小炸弹",
+        "樱桃炸弹怎么做",
+        "小爆炸"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 1 级",
+      "materials": [
+        {
+          "name": "铜矿石",
+          "quantity": 4
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "小范围爆炸，破坏岩石和矿点"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 3 格。",
+      "recommendation": "前期清矿井小片石头可以用；大量下矿更推荐普通炸弹或超级炸弹。",
+      "note": "放下后要立刻走开，避免被炸伤。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Cherry_Bomb",
+        "https://zh.stardewvalleywiki.com/%E6%A8%B1%E6%A1%83%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "bomb",
+      "name": "炸弹",
+      "nameEn": "Bomb",
+      "aliases": [
+        "bomb",
+        "普通炸弹",
+        "炸弹怎么做",
+        "矿洞炸弹"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 6 级",
+      "materials": [
+        {
+          "name": "铁矿石",
+          "quantity": 4
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "中范围爆炸，快速清岩石和找楼梯/矿石"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 5 格。",
+      "recommendation": "骷髅洞穴和危险矿井的核心消耗品；煤炭紧张时可以从矮人处购买炸弹。",
+      "note": "炸弹会伤到玩家，也可能破坏农场上附近可破坏物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Bomb",
+        "https://zh.stardewvalleywiki.com/%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "mega_bomb",
+      "name": "超级炸弹",
+      "nameEn": "Mega Bomb",
+      "aliases": [
+        "mega bomb",
+        "大炸弹",
+        "巨型炸弹",
+        "超级炸弹怎么做"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 8 级",
+      "materials": [
+        {
+          "name": "金矿石",
+          "quantity": 4
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "大范围爆炸，快速清骷髅洞穴大面积岩石"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 6-8 格。",
+      "recommendation": "中后期冲骷髅洞穴深层效率最高；太阳精华/虚空精华不缺时优先带一组。",
+      "note": "范围很大，放下后尽快拉开距离。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Mega_Bomb",
+        "https://zh.stardewvalleywiki.com/%E8%B6%85%E7%BA%A7%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "staircase",
+      "name": "楼梯",
+      "nameEn": "Staircase",
+      "aliases": [
+        "staircase",
+        "梯子",
+        "楼梯怎么做",
+        "矿洞楼梯",
+        "骷髅洞穴楼梯",
+        "跳层"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 2 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 99
+        }
+      ],
+      "inputs": [
+        "在矿井/骷髅洞穴中使用"
+      ],
+      "outputs": [
+        "立即生成通往下一层的楼梯"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "每个楼梯消耗 99 石头；沙漠商人周日可用翡翠换楼梯。",
+      "recommendation": "骷髅洞穴冲 100 层、跳过怪层/螺旋层时很强；提前用宝石复制机复制翡翠更省石头。",
+      "note": "不能代替日常找矿收益，适合保命、冲层和跳低效层。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Staircase",
+        "https://zh.stardewvalleywiki.com/%E6%A5%BC%E6%A2%AF"
+      ]
+    },
+    {
+      "id": "chest",
+      "name": "箱子",
+      "nameEn": "Chest",
+      "aliases": [
+        "chest",
+        "木箱",
+        "箱子怎么做",
+        "储物箱",
+        "收纳箱"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供基础储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "用于分类保存物品；箱子可以放在很多户外区域，但 NPC 经过的格子可能影响摆放安全。",
+      "recommendation": "第一周就建议做多个箱子，按作物、矿物、鱼、任务物品分类。",
+      "note": "箱子本身不是出货箱；卖东西仍要放进农场出货箱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Chest",
+        "https://zh.stardewvalleywiki.com/%E7%AE%B1%E5%AD%90"
+      ]
+    },
+    {
+      "id": "big_chest",
+      "name": "大箱子",
+      "nameEn": "Big Chest",
+      "aliases": [
+        "big chest",
+        "大木箱",
+        "大箱子怎么做",
+        "大型箱子"
+      ],
+      "category": "storage",
+      "recipeSource": "木匠的商店购买配方，5,000g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 120
+        },
+        {
+          "name": "铜锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供接近普通箱子两倍的储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "可作为普通箱子的升级型储物方案。",
+      "recommendation": "中期物品爆仓后升级常用分类箱；铜锭紧张时先升级高频箱。",
+      "note": "适合矿物、作物、鱼类等数量多的分类。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Big_Chest",
+        "https://zh.stardewvalleywiki.com/%E5%A4%A7%E7%AE%B1%E5%AD%90"
+      ]
+    },
+    {
+      "id": "stone_chest",
+      "name": "石箱",
+      "nameEn": "Stone Chest",
+      "aliases": [
+        "stone chest",
+        "石头箱子",
+        "石箱怎么做",
+        "石制箱子"
+      ],
+      "category": "storage",
+      "recipeSource": "罗宾特别订单奖励配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供基础储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "功能类似普通箱子，主要消耗石头而不是木材。",
+      "recommendation": "木材紧张、石头富余时可用来扩储物。",
+      "note": "需要先完成罗宾相关特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Stone_Chest",
+        "https://zh.stardewvalleywiki.com/%E7%9F%B3%E7%AE%B1"
+      ]
+    },
+    {
+      "id": "big_stone_chest",
+      "name": "大石箱",
+      "nameEn": "Big Stone Chest",
+      "aliases": [
+        "big stone chest",
+        "大石头箱子",
+        "大石箱怎么做"
+      ],
+      "category": "storage",
+      "recipeSource": "矮人处购买配方，5,000g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 250
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供接近普通箱子两倍的储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "大容量石制储物方案。",
+      "recommendation": "后期石头很多时适合批量升级储物；下矿玩家通常比木材更容易攒石头。",
+      "note": "需要能和矮人交易。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Big_Stone_Chest",
+        "https://zh.stardewvalleywiki.com/%E5%A4%A7%E7%9F%B3%E7%AE%B1"
+      ]
+    },
+    {
+      "id": "wood_sign",
+      "name": "木牌",
+      "nameEn": "Wood Sign",
+      "aliases": [
+        "wood sign",
+        "木牌怎么做",
+        "木标牌",
+        "牌子",
+        "标牌"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "对木牌使用一个物品"
+      ],
+      "outputs": [
+        "显示物品图标且不消耗该物品"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "用于标记箱子、作物区、鱼塘或机器产线。",
+      "recommendation": "箱子多了以后很实用；用图标标记分类能减少翻箱时间。",
+      "note": "想写自定义文字可用文本标牌。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Wood_Sign",
+        "https://zh.stardewvalleywiki.com/%E6%9C%A8%E7%89%8C"
+      ]
+    },
+    {
+      "id": "scarecrow",
+      "name": "稻草人",
+      "nameEn": "Scarecrow",
+      "aliases": [
+        "scarecrow",
+        "稻草人怎么做",
+        "防乌鸦",
+        "乌鸦吃作物"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "耕种 1 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "放置在农田附近"
+      ],
+      "outputs": [
+        "防止范围内作物被乌鸦破坏"
+      ],
+      "processingTime": "放置后长期生效",
+      "formula": "普通稻草人半径约 8 格。",
+      "recommendation": "春季第一批作物后尽快做；大田地需要多个覆盖，别只放在边角。",
+      "note": "稀有稻草人主要是收藏；集齐稀有稻草人后可解锁豪华稻草人配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Scarecrow",
+        "https://zh.stardewvalleywiki.com/%E7%A8%BB%E8%8D%89%E4%BA%BA"
+      ]
+    },
+    {
+      "id": "deluxe_scarecrow",
+      "name": "豪华稻草人",
+      "nameEn": "Deluxe Scarecrow",
+      "aliases": [
+        "deluxe scarecrow",
+        "高级稻草人",
+        "豪华稻草人怎么做",
+        "16格稻草人"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "集齐全部稀有稻草人后次日邮件获得配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "纤维",
+          "quantity": 40
+        },
+        {
+          "name": "铱矿石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在农田附近"
+      ],
+      "outputs": [
+        "更大范围防乌鸦"
+      ],
+      "processingTime": "放置后长期生效",
+      "formula": "豪华稻草人半径约 16 格。",
+      "recommendation": "后期大田地减少稻草人数量和摆放压力；前期不必强追。",
+      "note": "需要先收集全套稀有稻草人。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Deluxe_Scarecrow",
+        "https://zh.stardewvalleywiki.com/%E8%B1%AA%E5%8D%8E%E7%A8%BB%E8%8D%89%E4%BA%BA"
+      ]
+    },
+    {
+      "id": "heavy_furnace",
+      "name": "重型熔炉",
+      "nameEn": "Heavy Furnace",
+      "aliases": [
+        "heavy furnace",
+        "大熔炉",
+        "重型熔炉怎么做",
+        "高级熔炉"
+      ],
+      "category": "refining",
+      "recipeSource": "采矿精通",
+      "materials": [
+        {
+          "name": "熔炉",
+          "quantity": 2
+        },
+        {
+          "name": "铁锭",
+          "quantity": 3
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "任意矿石 x25",
+        "煤炭 x3"
+      ],
+      "outputs": [
+        "金属锭"
+      ],
+      "processingTime": "和普通熔炉类似，按矿石类型不同",
+      "formula": "每次消耗 25 矿石和 3 煤炭，比普通熔炉更省煤炭。",
+      "recommendation": "后期批量烧矿时很省煤；精通前继续用普通熔炉阵列。",
+      "note": "需要采矿精通后才能制作。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Heavy_Furnace",
+        "https://zh.stardewvalleywiki.com/%E9%87%8D%E5%9E%8B%E7%86%94%E7%82%89"
+      ]
+    },
+    {
+      "id": "solar_panel",
+      "name": "太阳能板",
+      "nameEn": "Solar Panel",
+      "aliases": [
+        "solar panel",
+        "太阳能板怎么做",
+        "太阳能电池板",
+        "电池板"
+      ],
+      "category": "refining",
+      "recipeSource": "卡洛琳特别订单奖励配方",
+      "materials": [
+        {
+          "name": "精炼石英",
+          "quantity": 10
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        },
+        {
+          "name": "金锭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "放在阳光下"
+      ],
+      "outputs": [
+        "电池组"
+      ],
+      "processingTime": "晴天累计一段时间后产出电池组",
+      "formula": "需要放在室外有阳光的位置；不是雷雨天触发。",
+      "recommendation": "后期稳定补电池组，适合搭配铱制洒水器、宝石复制机等消耗。",
+      "note": "配方来自卡洛琳特别订单，不是技能升级直接解锁。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Solar_Panel",
+        "https://zh.stardewvalleywiki.com/%E5%A4%AA%E9%98%B3%E8%83%BD%E6%9D%BF"
+      ]
+    },
+    {
+      "id": "slime_incubator",
+      "name": "史莱姆孵化器",
+      "nameEn": "Slime Incubator",
+      "aliases": [
+        "slime incubator",
+        "史莱姆孵化器怎么做",
+        "孵史莱姆",
+        "史莱姆蛋孵化"
+      ],
+      "category": "slime",
+      "recipeSource": "战斗 8 级",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 2
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 100
+        }
+      ],
+      "inputs": [
+        "史莱姆蛋"
+      ],
+      "outputs": [
+        "孵化出史莱姆"
+      ],
+      "processingTime": "需要等待一段时间孵化",
+      "formula": "可在史莱姆屋或户外养史莱姆。",
+      "recommendation": "想经营史莱姆屋再做；普通进度优先级低于武器、防具和矿洞资源。",
+      "note": "户外养史莱姆前先考虑安全和围栏。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Slime_Incubator",
+        "https://zh.stardewvalleywiki.com/%E5%8F%B2%E8%8E%B1%E5%A7%86%E5%AD%B5%E5%8C%96%E5%99%A8"
+      ]
+    },
+    {
+      "id": "slime_egg_press",
+      "name": "史莱姆蛋压制机",
+      "nameEn": "Slime Egg-Press",
+      "aliases": [
+        "slime egg-press",
+        "slime egg press",
+        "史莱姆蛋压制机怎么做",
+        "史莱姆蛋机器"
+      ],
+      "category": "slime",
+      "recipeSource": "战斗 6 级",
+      "materials": [
+        {
+          "name": "煤炭",
+          "quantity": 25
+        },
+        {
+          "name": "火水晶",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "史莱姆 x100"
+      ],
+      "outputs": [
+        "史莱姆蛋"
+      ],
+      "processingTime": "加工后产出史莱姆蛋",
+      "formula": "把 100 个史莱姆压成 1 个史莱姆蛋。",
+      "recommendation": "史莱姆屋路线或卖史莱姆蛋时有用；前期煤炭紧张时别急着大量做。",
+      "note": "史莱姆蛋颜色和价值有差异。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Slime_Egg-Press",
+        "https://zh.stardewvalleywiki.com/%E5%8F%B2%E8%8E%B1%E5%A7%86%E8%9B%8B%E5%8E%8B%E5%88%B6%E6%9C%BA"
+      ]
+    },
+    {
+      "id": "bone_mill",
+      "name": "骨头磨坊",
+      "nameEn": "Bone Mill",
+      "aliases": [
+        "bone mill",
+        "骨磨机",
+        "骨头磨坊怎么做",
+        "骨头机器",
+        "骨头转肥料"
+      ],
+      "category": "refining",
+      "recipeSource": "冈瑟特别订单奖励配方",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 10
+        },
+        {
+          "name": "黏土",
+          "quantity": 3
+        },
+        {
+          "name": "石头",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "骨头类物品"
+      ],
+      "outputs": [
+        "肥料"
+      ],
+      "processingTime": "加工后产出肥料",
+      "formula": "把骨头类物品转成不同肥料。",
+      "recommendation": "姜岛/矿井刷到大量骨头碎片后，用来补高级肥料很舒服。",
+      "note": "需要完成冈瑟特别订单获得配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Bone_Mill",
+        "https://zh.stardewvalleywiki.com/%E9%AA%A8%E5%A4%B4%E7%A3%A8%E5%9D%8A"
+      ]
+    },
+    {
+      "id": "geode_crusher",
+      "name": "晶球破开器",
+      "nameEn": "Geode Crusher",
+      "aliases": [
+        "geode crusher",
+        "晶球破碎机",
+        "晶球破开器怎么做",
+        "自动开晶球",
+        "开晶球机器"
+      ],
+      "category": "refining",
+      "recipeSource": "克林特特别订单奖励配方",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 2
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        },
+        {
+          "name": "钻石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "晶球",
+        "冰封晶球",
+        "岩浆晶球",
+        "万象晶球"
+      ],
+      "outputs": [
+        "晶球内物品"
+      ],
+      "processingTime": "自动破开晶球",
+      "formula": "自动开晶球，但仍适合先去克林特处理关键缺口。",
+      "recommendation": "后期大量晶球处理省跑腿；博物馆缺具体矿物时仍要结合晶球类型选择。",
+      "note": "需要完成克林特特别订单获得配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Geode_Crusher",
+        "https://zh.stardewvalleywiki.com/%E6%99%B6%E7%90%83%E7%A0%B4%E5%BC%80%E5%99%A8"
+      ]
+    },
+    {
+      "id": "hopper",
+      "name": "料斗",
+      "nameEn": "Hopper",
+      "aliases": [
+        "hopper",
+        "料斗怎么做",
+        "自动上料",
+        "自动填机器"
+      ],
+      "category": "automation",
+      "recipeSource": "齐先生核桃房购买配方，50 齐钻",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "放射性锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放入待加工物品，并把机器放在前方"
+      ],
+      "outputs": [
+        "自动把物品送入前方机器"
+      ],
+      "processingTime": "持续辅助上料",
+      "formula": "只能自动装入机器，不能自动收取成品。",
+      "recommendation": "适合大规模加工线减点击；没有自动收成能力，仍要手动取成品。",
+      "note": "属于齐先生后期配方，材料也偏后期。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Hopper",
+        "https://zh.stardewvalleywiki.com/%E6%96%99%E6%96%97"
+      ]
+    },
+    {
+      "id": "farm_computer",
+      "name": "农场电脑",
+      "nameEn": "Farm Computer",
+      "aliases": [
+        "farm computer",
+        "农场电脑怎么做",
+        "农场信息",
+        "查看农场状态"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "德米特里厄斯特别订单奖励配方",
+      "materials": [
+        {
+          "name": "矮人小工具",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "在农场使用"
+      ],
+      "outputs": [
+        "显示农场作物、机器、建筑等状态摘要"
+      ],
+      "processingTime": "即时查看",
+      "formula": "用于快速查看农场上未收机器、未浇水作物等信息。",
+      "recommendation": "中后期农场规模变大后很实用；矮人小工具第一件通常先捐博物馆，第二件再做电脑。",
+      "note": "需要完成德米特里厄斯特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Farm_Computer",
+        "https://zh.stardewvalleywiki.com/%E5%86%9C%E5%9C%BA%E7%94%B5%E8%84%91"
+      ]
     }
   ],
   "shops": [

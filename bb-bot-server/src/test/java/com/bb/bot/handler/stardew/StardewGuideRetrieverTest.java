@@ -57,6 +57,47 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence)).contains("苹果获取方式", "苹果树", "饲料收集包");
     }
 
+    @Test
+    void machineIntentRetrievesCraftingDeviceDetails() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MACHINE, "优质洒水器材料"),
+                intent(StardewGuideIntent.MACHINE, "楼梯骷髅洞穴跳层")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("优质洒水器怎么做，楼梯怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.MACHINE);
+        assertThat(joinAnswers(evidence)).contains("优质洒水器", "铁锭 x1", "精炼石英 x1", "楼梯", "石头 x99");
+    }
+
+    @Test
+    void typedMachineIntentBypassesResourceRouteWhenNamesOverlap() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MACHINE, "晶球破开器怎么做"),
+                intent(StardewGuideIntent.MACHINE, "太阳能板怎么做，能产电池吗")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("晶球破开器和太阳能板怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("machine_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("晶球破开器", "克林特特别订单", "钻石 x1")
+                .contains("太阳能板", "卡洛琳特别订单", "电池组");
+    }
+
+    @Test
+    void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("恐龙蛋黄酱怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("resource");
+        assertThat(joinAnswers(evidence)).contains("恐龙蛋黄酱获取方式", "蛋黄酱机", "失踪的收集包");
+    }
+
     private StardewQueryPlan plan(StardewQueryPlan.PlannedIntent... intents) {
         StardewQueryPlan plan = new StardewQueryPlan();
         plan.setIntents(List.of(intents));

@@ -26,7 +26,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(17);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
-        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(16);
+        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(39);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(85);
@@ -202,6 +202,38 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(machine.getRecommendation()).isNotBlank();
                     assertThat(machine.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void expandedCraftingDevicesAreCovered() {
+        Set<String> machineIds = repository.machines().stream()
+                .map(StardewData.Machine::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(machineIds).contains(
+                "sprinkler",
+                "quality_sprinkler",
+                "iridium_sprinkler",
+                "cherry_bomb",
+                "bomb",
+                "mega_bomb",
+                "staircase",
+                "chest",
+                "big_chest",
+                "stone_chest",
+                "big_stone_chest",
+                "wood_sign",
+                "scarecrow",
+                "deluxe_scarecrow",
+                "heavy_furnace",
+                "solar_panel",
+                "slime_incubator",
+                "slime_egg_press",
+                "bone_mill",
+                "geode_crusher",
+                "hopper",
+                "farm_computer"
+        );
     }
 
     @Test
