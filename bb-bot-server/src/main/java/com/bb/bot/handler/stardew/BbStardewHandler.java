@@ -36,16 +36,6 @@ public class BbStardewHandler {
     }
 
     private String render(StardewGuideResult result) {
-        StringBuilder sb = new StringBuilder(result.getAnswer());
-        if (result.getSourceUrls() != null && !result.getSourceUrls().isEmpty()) {
-            sb.append("\n来源：").append(String.join(" / ", result.getSourceUrls()));
-        }
-        if (result.getGameVersion() != null) {
-            sb.append("\n数据版本：").append(result.getGameVersion());
-            if (result.getLastCheckedAt() != null) {
-                sb.append("，校验日期：").append(result.getLastCheckedAt());
-            }
-        }
-        return sb.toString();
+        return result.getAnswer();
     }
 }

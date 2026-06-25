@@ -59,12 +59,6 @@ public class StardewGuideService {
             return bundle.map(b -> bundleAnswer(query, b))
                     .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应收集包。可以试试：海鱼收集包、湖鱼收集包、工匠收集包、锅炉房。"));
         }
-        if (villager.isPresent() && looksLikeScheduleQuery(query)) {
-            return villagerAnswer(query, villager.get());
-        }
-        if (villager.isPresent() && looksLikeVillagerProfileQuery(query)) {
-            return villagerProfileAnswer(villager.get());
-        }
         if (tool.isPresent() || looksLikeToolQuery(query)) {
             if (tool.isPresent()) {
                 return toolUpgradeAnswer(query, tool.get());
@@ -77,17 +71,23 @@ public class StardewGuideService {
         if (looksLikeShopQuery(query) && shop.isPresent()) {
             return shopAnswer(shop.get());
         }
+        if (resource.isPresent() && looksLikeResourceQuery(query)
+                && !(fish.isPresent() && query.contains("果冻"))
+                && !isFishingQuestion(query) && !isMachineCraftingQuestion(query, machine)) {
+            return resourceAnswer(query, resource.get());
+        }
+        if (villager.isPresent() && looksLikeScheduleQuery(query)) {
+            return villagerAnswer(query, villager.get());
+        }
+        if (villager.isPresent() && looksLikeVillagerProfileQuery(query)) {
+            return villagerProfileAnswer(villager.get());
+        }
         if (building.isPresent() || looksLikeBuildingQuery(query)) {
             boolean broadBuildingQuery = isBroadBuildingQuery(query);
             if (building.isPresent() && !broadBuildingQuery) {
                 return buildingDetailAnswer(building.get());
             }
             return buildingListAnswer(query);
-        }
-        if (resource.isPresent() && looksLikeResourceQuery(query)
-                && !(fish.isPresent() && query.contains("果冻"))
-                && !isFishingQuestion(query) && !isMachineCraftingQuestion(query, machine)) {
-            return resourceAnswer(query, resource.get());
         }
         if (machine.isPresent() || looksLikeMachineQuery(query)) {
             boolean broadMachineQuery = isBroadMachineQuery(query);
@@ -882,16 +882,16 @@ public class StardewGuideService {
         }
         List<StardewWikiPage> pages = wikiClient.search(query, 3);
         if (pages == null || pages.isEmpty()) {
-            return result("wiki_fallback_empty", fallbackText + "\n官方 Wiki 兜底检索也没有找到可用结果。", List.of());
+            return result("wiki_fallback_empty", fallbackText + "\n我暂时没找到更匹配的资料，可以换个物品名、地点或机制关键词再问一次。", List.of());
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("本地结构化库暂无直接条目，已从官方 Wiki 检索：\n");
+        sb.append("我找到这些可能相关的内容：\n");
         for (int i = 0; i < pages.size(); i++) {
             StardewWikiPage page = pages.get(i);
             sb.append(i + 1).append(". ").append(page.getTitle()).append("\n");
             sb.append(trimExcerpt(page.getExcerpt())).append("\n");
         }
-        sb.append("提示：这是 Wiki 兜底摘要；复杂机制建议点来源继续看原页。");
+        sb.append("如果你告诉我当前季节、进度或具体目标，我可以继续帮你缩小到最该做的一步。");
         List<String> urls = pages.stream()
                 .map(StardewWikiPage::getUrl)
                 .filter(StringUtils::isNotBlank)
@@ -1215,8 +1215,7 @@ public class StardewGuideService {
 
     private boolean isMachineCraftingQuestion(String query, Optional<StardewData.Machine> machine) {
         return machine.isPresent()
-                && (query.contains("怎么做") || query.contains("制作") || query.contains("材料")
-                || query.contains("配方") || query.contains("加工") || query.contains("机器")
+                && (query.contains("材料") || query.contains("配方") || query.contains("加工") || query.contains("机器")
                 || query.contains("设备") || query.contains("产出") || query.contains("值钱")
                 || query.contains("收益"));
     }

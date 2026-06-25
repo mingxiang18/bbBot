@@ -10544,6 +10544,507 @@
         "https://zh.stardewvalleywiki.com/铁矿石",
         "https://zh.stardewvalleywiki.com/金矿石"
       ]
+    },
+    {
+      "id": "dinosaur_mayonnaise",
+      "name": "恐龙蛋黄酱",
+      "nameEn": "Dinosaur Mayonnaise",
+      "aliases": [
+        "恐龙蛋黄酱",
+        "恐龙蛋黄",
+        "dinosaur mayonnaise"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "把恐龙蛋放入蛋黄酱机，加工 3 小时获得恐龙蛋黄酱。"
+        },
+        {
+          "type": "前置",
+          "detail": "先获得恐龙蛋；如果是第一颗，通常建议先放大鸡舍孵化器孵恐龙，再稳定产蛋。"
+        }
+      ],
+      "recommendation": "主要用于废弃 Joja 超市“失踪的收集包”；第一颗恐龙蛋别急着做蛋黄酱，先孵化更稳。",
+      "usedIn": [
+        "失踪的收集包",
+        "售卖",
+        "收藏"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/恐龙蛋"
+      ]
+    },
+    {
+      "id": "dinosaur_egg",
+      "name": "恐龙蛋",
+      "nameEn": "Dinosaur Egg",
+      "aliases": [
+        "恐龙蛋",
+        "dinosaur egg",
+        "恐龙怎么养"
+      ],
+      "acquisitions": [
+        {
+          "type": "史前层",
+          "detail": "骷髅洞穴史前层可采集恐龙蛋，也能打霸王喷火龙获取。"
+        },
+        {
+          "type": "古物",
+          "detail": "深山/采石场远古斑点有低概率挖出。"
+        },
+        {
+          "type": "钓鱼",
+          "detail": "钓鱼宝箱有低概率开出。"
+        },
+        {
+          "type": "其他",
+          "detail": "电影院抓娃娃机、满好感宠物狗每日首次抚摸也可能给。"
+        }
+      ],
+      "recommendation": "第一颗恐龙蛋优先放入大鸡舍孵化器，12 天孵出恐龙；后续恐龙每 7 天产蛋，再补博物馆或做恐龙蛋黄酱。",
+      "usedIn": [
+        "孵恐龙",
+        "博物馆",
+        "恐龙蛋黄酱"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/恐龙蛋"
+      ]
+    },
+    {
+      "id": "dwarf_scrolls",
+      "name": "矮人卷轴",
+      "nameEn": "Dwarf Scrolls",
+      "aliases": [
+        "矮人卷轴",
+        "矮人语教程",
+        "dwarf scroll",
+        "dwarf scrolls"
+      ],
+      "acquisitions": [
+        {
+          "type": "卷轴 I",
+          "detail": "矿井或骷髅洞穴任意层锄地可出；蝙蝠、臭虫、苍蝇、掘地虫、绿色史莱姆、蛆、岩石蟹、石魔等也会低概率掉落。"
+        },
+        {
+          "type": "卷轴 II",
+          "detail": "常见于矿井较深层怪物掉落，优先刷冰层/熔岩层对应怪物；也可在矿井锄地。"
+        },
+        {
+          "type": "卷轴 III",
+          "detail": "蓝色史莱姆、骷髅、暗影怪、岩浆层怪物等低概率掉落。"
+        },
+        {
+          "type": "卷轴 IV",
+          "detail": "矿井 80 层以后锄地或击杀较高层怪物获取；95 层入口可反复锄地刷 I/IV。"
+        }
+      ],
+      "recommendation": "四卷都要捐给博物馆才能拿矮人语教程，之后才能正常和矮人交易；缺某一卷时按层数定点刷，比全矿井乱跑更快。",
+      "usedIn": [
+        "博物馆",
+        "矮人语教程",
+        "鬼鱼鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矮人卷轴_I"
+      ]
+    },
+    {
+      "id": "rabbit_foot",
+      "name": "兔子的脚",
+      "nameEn": "Rabbit's Foot",
+      "aliases": [
+        "兔脚",
+        "兔子的脚",
+        "rabbit foot",
+        "rabbit's foot"
+      ],
+      "acquisitions": [
+        {
+          "type": "动物",
+          "detail": "兔子高好感、高心情，并且当天基础运气较高时有概率产出。"
+        },
+        {
+          "type": "购买",
+          "detail": "旅行货车会随机出售；沙漠节期间贾斯商铺也可能出售限量兔子的脚。"
+        },
+        {
+          "type": "掉落",
+          "detail": "骷髅洞穴飞蛇有 0.8% 几率掉落。"
+        },
+        {
+          "type": "宠物",
+          "detail": "满好感宠物猫每日首次抚摸也可能掉落。"
+        }
+      ],
+      "recommendation": "为了布告栏魔法师收集包和万能最爱礼物，养兔子是最稳定路线；急用再看旅行货车或刷飞蛇。",
+      "usedIn": [
+        "魔法师收集包",
+        "送礼",
+        "秘密纸条 #20"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/兔子的脚"
+      ]
+    },
+    {
+      "id": "caviar",
+      "name": "鱼籽酱",
+      "nameEn": "Caviar",
+      "aliases": [
+        "鱼子酱",
+        "鱼籽酱",
+        "caviar"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "先把鲟鱼养进鱼塘获得鲟鱼鱼籽，再把鲟鱼鱼籽放入罐头瓶加工 6000 分钟。"
+        },
+        {
+          "type": "购买",
+          "detail": "旅行货车有概率出售鱼籽酱，价格较高。"
+        }
+      ],
+      "recommendation": "失踪的收集包需要鱼籽酱候选项；想稳定做，第一口鱼塘养鲟鱼很合适。",
+      "usedIn": [
+        "失踪的收集包",
+        "售卖",
+        "送礼"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鱼籽酱"
+      ]
+    },
+    {
+      "id": "nautilus_shell",
+      "name": "鹦鹉螺",
+      "nameEn": "Nautilus Shell",
+      "aliases": [
+        "鹦鹉螺",
+        "鹦鹉螺壳",
+        "nautilus shell"
+      ],
+      "acquisitions": [
+        {
+          "type": "采集",
+          "detail": "冬季沙滩可采集，注意不是古物“鹦鹉螺化石”。"
+        },
+        {
+          "type": "其他",
+          "detail": "德米特里厄斯可能邮寄；旅行货车也可能出售。"
+        }
+      ],
+      "recommendation": "布告栏田野调查收集包需要一枚；第一年冬季见到先留，不要和鹦鹉螺化石混淆。",
+      "usedIn": [
+        "田野调查收集包",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鹦鹉螺"
+      ]
+    },
+    {
+      "id": "red_cabbage",
+      "name": "红叶卷心菜",
+      "nameEn": "Red Cabbage",
+      "aliases": [
+        "红叶卷心菜",
+        "红甘蓝",
+        "red cabbage"
+      ],
+      "acquisitions": [
+        {
+          "type": "种植",
+          "detail": "第 2 年起皮埃尔杂货店出售红叶卷心菜种子，夏季种植。"
+        },
+        {
+          "type": "旅行货车",
+          "detail": "如果开了“确保第一年完成”选项，旅行货车会确保第一年出现红叶卷心菜种子或红叶卷心菜。"
+        },
+        {
+          "type": "其他",
+          "detail": "骷髅洞穴怪物、混合种子等有少量替代来源，但不如种植稳定。"
+        }
+      ],
+      "recommendation": "布告栏染料收集包卡第一年时优先看旅行货车；正常路线第二年夏种一颗即可。",
+      "usedIn": [
+        "染料收集包",
+        "红叶卷心菜沙拉",
+        "染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/红叶卷心菜"
+      ]
+    },
+    {
+      "id": "fiddlehead_fern",
+      "name": "蕨菜",
+      "nameEn": "Fiddlehead Fern",
+      "aliases": [
+        "蕨菜",
+        "fiddlehead fern"
+      ],
+      "acquisitions": [
+        {
+          "type": "采集",
+          "detail": "夏季秘密森林采集，是前中期最稳定来源。"
+        },
+        {
+          "type": "后期",
+          "detail": "姜岛丛林也可采集；史前层也可能刷到蕨菜。"
+        },
+        {
+          "type": "购买",
+          "detail": "旅行货车有概率出售。"
+        }
+      ],
+      "recommendation": "厨师收集包需要蕨菜；第一年夏天能进秘密森林就顺手留一份。",
+      "usedIn": [
+        "厨师收集包",
+        "蕨菜烩饭"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/蕨菜"
+      ]
+    },
+    {
+      "id": "truffle",
+      "name": "松露",
+      "nameEn": "Truffle",
+      "aliases": [
+        "松露",
+        "truffle"
+      ],
+      "acquisitions": [
+        {
+          "type": "动物",
+          "detail": "猪在户外觅食找到松露；需要豪华畜棚养猪。"
+        },
+        {
+          "type": "条件",
+          "detail": "冬季、雨天或猪留在室内时不会找松露；农场要有可用空地。"
+        },
+        {
+          "type": "加工",
+          "detail": "松露可放进产油机做松露油。"
+        }
+      ],
+      "recommendation": "厨师收集包要松露，工匠收集包要松露油；想走社区中心，豪华畜棚和猪要提前规划。",
+      "usedIn": [
+        "厨师收集包",
+        "松露油",
+        "售卖"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/松露"
+      ]
+    },
+    {
+      "id": "duck_feather",
+      "name": "鸭毛",
+      "nameEn": "Duck Feather",
+      "aliases": [
+        "鸭毛",
+        "鸭羽毛",
+        "duck feather"
+      ],
+      "acquisitions": [
+        {
+          "type": "动物",
+          "detail": "鸭子高好感、高心情时有概率产鸭毛。"
+        },
+        {
+          "type": "购买",
+          "detail": "旅行货车有概率出售。"
+        }
+      ],
+      "recommendation": "染料收集包需要鸭毛；养鸭后每天摸、喂食、别关在外面，稳定提升产出概率。",
+      "usedIn": [
+        "染料收集包",
+        "送礼",
+        "裁缝"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鸭毛"
+      ]
+    },
+    {
+      "id": "aquamarine",
+      "name": "海蓝宝石",
+      "nameEn": "Aquamarine",
+      "aliases": [
+        "海蓝宝石",
+        "aquamarine"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井中可敲海蓝宝石矿点，冰层以后更常见。"
+        },
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱、淘盘、垃圾桶等也可能获得。"
+        }
+      ],
+      "recommendation": "染料收集包需要海蓝宝石；普通矿井推进时见到先留一颗。",
+      "usedIn": [
+        "染料收集包",
+        "送礼",
+        "戒指/制作"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/海蓝宝石"
+      ]
+    },
+    {
+      "id": "void_salmon",
+      "name": "虚空鲑鱼",
+      "nameEn": "Void Salmon",
+      "aliases": [
+        "虚空鲑鱼",
+        "void salmon"
+      ],
+      "acquisitions": [
+        {
+          "type": "钓鱼",
+          "detail": "完成黑暗护身符任务后进入巫婆沼泽，在沼泽水域钓。"
+        },
+        {
+          "type": "品质",
+          "detail": "失踪的收集包要求金星虚空鲑鱼；用高钓鱼等级、鱼饵、渔具和料理提高品质。"
+        }
+      ],
+      "recommendation": "为电影院准备时，钓到金星再留；普通品质可做收藏或鱼塘。",
+      "usedIn": [
+        "失踪的收集包",
+        "鱼塘",
+        "收藏"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/虚空鲑鱼"
+      ]
+    },
+    {
+      "id": "squid_ink",
+      "name": "鱿鱼墨汁",
+      "nameEn": "Squid Ink",
+      "aliases": [
+        "鱿鱼墨汁",
+        "墨汁",
+        "squid ink"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物",
+          "detail": "矿井危险版或采石场矿井的鱿鱼娃会掉落。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "鱿鱼或午夜鱿鱼鱼塘可产出鱿鱼墨汁。"
+        }
+      ],
+      "recommendation": "主要用于料理和染色；如果只是缺墨汁，鱼塘比专门刷怪更稳定。",
+      "usedIn": [
+        "海泡布丁",
+        "鱿鱼墨汁意大利面",
+        "染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鱿鱼墨汁"
+      ]
+    },
+    {
+      "id": "ectoplasm",
+      "name": "灵外质",
+      "nameEn": "Ectoplasm",
+      "aliases": [
+        "灵外质",
+        "ectoplasm"
+      ],
+      "acquisitions": [
+        {
+          "type": "任务",
+          "detail": "法师特别订单“奇特物质”期间，从幽灵、碳幽灵、腐臭幽灵掉落。"
+        },
+        {
+          "type": "限制",
+          "detail": "只有接到对应特别订单时才会掉落，任务外不用刷。"
+        }
+      ],
+      "recommendation": "接到任务后去矿井幽灵层集中刷；没接任务时刷不到，别浪费时间。",
+      "usedIn": [
+        "奇特物质特别订单",
+        "迷你图腾尖塔配方"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/灵外质"
+      ]
+    },
+    {
+      "id": "radioactive_ore",
+      "name": "放射性矿石",
+      "nameEn": "Radioactive Ore",
+      "aliases": [
+        "放射性矿",
+        "放射性矿石",
+        "radioactive ore"
+      ],
+      "acquisitions": [
+        {
+          "type": "危险矿井",
+          "detail": "开启齐先生“深处的危险”或矿井危险开关后，危险矿井中会出现放射性矿点。"
+        },
+        {
+          "type": "危险骷髅洞穴",
+          "detail": "齐先生骷髅洞穴相关危险任务期间也能见到放射性矿点。"
+        }
+      ],
+      "recommendation": "这是后期齐先生内容材料；先完成姜岛核桃房解锁，再准备高战力、炸弹和楼梯刷危险矿井。",
+      "usedIn": [
+        "重型熔炉",
+        "高级洒水器/高级装备制作",
+        "售卖"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/放射性矿石"
+      ]
+    },
+    {
+      "id": "dragon_tooth",
+      "name": "龙牙",
+      "nameEn": "Dragon Tooth",
+      "aliases": [
+        "龙牙",
+        "dragon tooth"
+      ],
+      "acquisitions": [
+        {
+          "type": "火山地牢",
+          "detail": "姜岛火山地牢里龙骨附近可采集龙牙。"
+        },
+        {
+          "type": "怪物",
+          "detail": "熔岩潜伏怪有概率掉落龙牙。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "黄貂鱼鱼塘在较高数量时可能产出龙牙。"
+        }
+      ],
+      "recommendation": "岛屿图腾和姜岛建筑会用到；火山探索时看到龙骨旁边的小牙齿一定捡。",
+      "usedIn": [
+        "岛屿传送图腾",
+        "姜岛建筑",
+        "制作"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/龙牙"
+      ]
     }
   ],
   "guides": [

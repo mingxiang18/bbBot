@@ -29,7 +29,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(16);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(19);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(35);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(33);
     }
@@ -228,6 +228,45 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(recipe.getTags()).isNotEmpty();
                     assertThat(recipe.getRecommendation()).isNotBlank();
                     assertThat(recipe.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void rareResourceGuidesAreCovered() {
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).contains(
+                "dinosaur_egg",
+                "dinosaur_mayonnaise",
+                "dwarf_scrolls",
+                "rabbit_foot",
+                "caviar",
+                "nautilus_shell",
+                "red_cabbage",
+                "fiddlehead_fern",
+                "truffle",
+                "duck_feather",
+                "aquamarine",
+                "void_salmon",
+                "squid_ink",
+                "ectoplasm",
+                "radioactive_ore",
+                "dragon_tooth"
+        );
+    }
+
+    @Test
+    void allResourceGuidesHaveAcquisitionRecommendationAndSources() {
+        assertThat(repository.resources())
+                .allSatisfy(resource -> {
+                    assertThat(resource.getId()).isNotBlank();
+                    assertThat(resource.getName()).isNotBlank();
+                    assertThat(resource.getAcquisitions()).isNotEmpty();
+                    assertThat(resource.getRecommendation()).isNotBlank();
+                    assertThat(resource.getUsedIn()).isNotEmpty();
+                    assertThat(resource.getSourceUrls()).isNotEmpty();
                 });
     }
 }

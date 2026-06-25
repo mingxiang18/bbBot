@@ -28,7 +28,9 @@ public class StardewGuideTool {
                     + "机器/加工设备/小桶/罐头瓶/鱼熏机/脱水机/诱饵制造机的配方材料和加工建议、"
                     + "料理配方材料、食物/饮料 buff、骷髅洞穴/钓鱼/战斗/耕种推荐吃什么、"
                     + "技能/常见机制有什么推荐方式时调用。"
-                    + "不读取存档、不做随机预测；如果本地库未建模，会返回官方 Wiki 兜底摘要和来源。"
+                    + "这是检索证据工具，不是最终回复工具；可用用户原问题和你改写出的关键词多次查询，"
+                    + "再把有效证据整合成自然语言回复。不要告诉用户数据版本、日期、来源链接或 Wiki 字样；"
+                    + "不读取存档、不做随机预测。"
     )
     public Map<String, Object> guide(
             @AiToolParam(name = "query", description = "用户的星露谷攻略问题，保留季节、日期、时间、天气等条件")
@@ -36,12 +38,10 @@ public class StardewGuideTool {
     ) {
         StardewGuideResult result = guideService.answer(query);
         Map<String, Object> out = new LinkedHashMap<>();
+        out.put("query", query);
         out.put("intent", result.getIntent());
-        out.put("answer", result.getAnswer());
-        out.put("sourceUrls", result.getSourceUrls());
-        out.put("gameVersion", result.getGameVersion());
-        out.put("lastCheckedAt", result.getLastCheckedAt());
-        out.put("note", "请基于 answer 简短回复；不要扩写没有来源的数据；不要声称读取了用户存档。");
+        out.put("evidence", result.getAnswer());
+        out.put("replyInstruction", "请把 evidence 整合成自然、简洁、可执行的中文回复；不要提数据版本、校验日期、来源链接或 Wiki；不要声称读取了用户存档。");
         return out;
     }
 }

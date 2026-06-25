@@ -21,9 +21,9 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("电池组怎么获得");
 
         assertThat(result).containsEntry("intent", "resource");
-        assertThat(result.get("answer").toString()).contains("避雷针", "太阳能板");
-        assertThat(result).containsKey("sourceUrls");
-        assertThat(result.get("note").toString()).contains("不要声称读取了用户存档");
+        assertThat(result.get("evidence").toString()).contains("避雷针", "太阳能板");
+        assertThat(result.get("replyInstruction").toString()).contains("自然", "不要声称读取了用户存档");
+        assertThat(result).doesNotContainKeys("sourceUrls", "gameVersion", "lastCheckedAt", "note");
     }
 
     @Test
@@ -35,7 +35,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("喷壶升级需要多少钱和什么材料");
 
         assertThat(result).containsEntry("intent", "tool_upgrade_detail");
-        assertThat(result.get("answer").toString()).contains("铜喷壶", "2,000g", "钢喷壶", "5,000g");
+        assertThat(result.get("evidence").toString()).contains("铜喷壶", "2,000g", "钢喷壶", "5,000g");
     }
 
     @Test
@@ -47,7 +47,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("铱镐需要多少钱");
 
         assertThat(result).containsEntry("intent", "tool_upgrade_detail");
-        assertThat(result.get("answer").toString()).contains("铱镐需要：25,000g + 铱锭 x5", "前置：金镐");
+        assertThat(result.get("evidence").toString()).contains("铱镐需要：25,000g + 铱锭 x5", "前置：金镐");
     }
 
     @Test
@@ -59,7 +59,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("莉亚生日和喜欢什么");
 
         assertThat(result).containsEntry("intent", "villager_profile");
-        assertThat(result.get("answer").toString()).contains("冬季 23 日", "沙拉", "山羊奶酪");
+        assertThat(result.get("evidence").toString()).contains("冬季 23 日", "沙拉", "山羊奶酪");
     }
 
     @Test
@@ -71,7 +71,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("海莉生日和最爱礼物");
 
         assertThat(result).containsEntry("intent", "villager_profile");
-        assertThat(result.get("answer").toString()).contains("春季 14 日", "椰子", "粉红蛋糕", "向日葵");
+        assertThat(result.get("evidence").toString()).contains("春季 14 日", "椰子", "粉红蛋糕", "向日葵");
     }
 
     @Test
@@ -83,7 +83,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("背包升级多少钱");
 
         assertThat(result).containsEntry("intent", "shop_item");
-        assertThat(result.get("answer").toString()).contains("皮埃尔", "大背包", "2,000g", "豪华背包", "10,000g");
+        assertThat(result.get("evidence").toString()).contains("皮埃尔", "大背包", "2,000g", "豪华背包", "10,000g");
     }
 
     @Test
@@ -100,7 +100,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("姜岛金核桃怎么收集");
 
         assertThat(result).containsEntry("intent", "wiki_fallback");
-        assertThat(result.get("answer").toString()).contains("金核桃", "姜岛");
+        assertThat(result.get("evidence").toString()).contains("金核桃", "姜岛");
     }
 
     @Test
@@ -112,7 +112,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("我战斗等级低，战斗技能如何快速升级");
 
         assertThat(result).containsEntry("intent", "guide");
-        assertThat(result.get("answer").toString()).contains("击杀怪物", "战士", "野蛮人");
+        assertThat(result.get("evidence").toString()).contains("击杀怪物", "战士", "野蛮人");
     }
 
     @Test
@@ -124,7 +124,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("蟹笼能抓什么");
 
         assertThat(result).containsEntry("intent", "fish_available");
-        assertThat(result.get("answer").toString()).contains("龙虾", "小龙虾", "虾", "玉黍螺");
+        assertThat(result.get("evidence").toString()).contains("龙虾", "小龙虾", "虾", "玉黍螺");
     }
 
     @Test
@@ -136,7 +136,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("三种果冻怎么钓");
 
         assertThat(result).containsEntry("intent", "fish_available");
-        assertThat(result.get("answer").toString()).contains("海果冻", "河果冻", "洞穴果冻", "鱼熏机");
+        assertThat(result.get("evidence").toString()).contains("海果冻", "河果冻", "洞穴果冻", "鱼熏机");
     }
 
     @Test
@@ -148,7 +148,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("夏季种什么收益好");
 
         assertThat(result).containsEntry("intent", "crop_available");
-        assertThat(result.get("answer").toString()).contains("杨桃", "蓝莓", "甜瓜", "g/天");
+        assertThat(result.get("evidence").toString()).contains("杨桃", "蓝莓", "甜瓜", "g/天");
     }
 
     @Test
@@ -160,7 +160,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("豪华畜棚能养什么，多少钱");
 
         assertThat(result).containsEntry("intent", "building_detail");
-        assertThat(result.get("answer").toString()).contains("豪华畜棚", "25,000g", "猪", "自动喂食");
+        assertThat(result.get("evidence").toString()).contains("豪华畜棚", "25,000g", "猪", "自动喂食");
     }
 
     @Test
@@ -172,7 +172,7 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("鱼熏机需要什么材料，熏鱼值钱吗");
 
         assertThat(result).containsEntry("intent", "machine_detail");
-        assertThat(result.get("answer").toString()).contains("硬木 x10", "海果冻 x1", "售价为原鱼价格 x2");
+        assertThat(result.get("evidence").toString()).contains("硬木 x10", "海果冻 x1", "售价为原鱼价格 x2");
     }
 
     @Test
@@ -184,6 +184,6 @@ class StardewGuideToolTest {
         Map<String, Object> result = tool.guide("骷髅洞穴吃什么料理 buff 好");
 
         assertThat(result).containsEntry("intent", "cooking_available");
-        assertThat(result.get("answer").toString()).contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡");
+        assertThat(result.get("evidence").toString()).contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡");
     }
 }

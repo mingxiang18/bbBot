@@ -244,6 +244,43 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersRareItemResourceGuides() {
+        StardewGuideResult dinosaurEgg = service.answer("星露谷 恐龙蛋怎么获得");
+        StardewGuideResult dinosaurMayonnaise = service.answer("星露谷 恐龙蛋黄酱怎么做");
+        StardewGuideResult dwarfScroll = service.answer("星露谷 矮人卷轴在哪刷");
+        StardewGuideResult rabbitFoot = service.answer("星露谷 兔子的脚怎么获得");
+        StardewGuideResult caviar = service.answer("星露谷 鱼籽酱怎么做");
+
+        assertThat(dinosaurEgg.getIntent()).isEqualTo("resource");
+        assertThat(dinosaurEgg.getAnswer()).contains("史前层", "孵化器", "12 天");
+        assertThat(dinosaurMayonnaise.getIntent()).isEqualTo("resource");
+        assertThat(dinosaurMayonnaise.getAnswer()).contains("蛋黄酱机", "失踪的收集包", "先孵化");
+        assertThat(dwarfScroll.getIntent()).isEqualTo("resource");
+        assertThat(dwarfScroll.getAnswer()).contains("矮人语教程", "95 层", "四卷");
+        assertThat(rabbitFoot.getIntent()).isEqualTo("resource");
+        assertThat(rabbitFoot.getAnswer()).contains("兔子", "飞蛇", "0.8%", "魔法师收集包");
+        assertThat(caviar.getIntent()).isEqualTo("resource");
+        assertThat(caviar.getAnswer()).contains("鲟鱼", "鱼塘", "罐头瓶", "6000 分钟");
+    }
+
+    @Test
+    void answersLateGameAndSpecialOrderResourceGuides() {
+        StardewGuideResult redCabbage = service.answer("星露谷 红叶卷心菜第一年怎么拿");
+        StardewGuideResult ectoplasm = service.answer("星露谷 灵外质怎么刷");
+        StardewGuideResult radioactiveOre = service.answer("星露谷 放射性矿石怎么获得");
+        StardewGuideResult dragonTooth = service.answer("星露谷 龙牙哪里刷");
+
+        assertThat(redCabbage.getIntent()).isEqualTo("resource");
+        assertThat(redCabbage.getAnswer()).contains("旅行货车", "确保第一年完成", "染料收集包");
+        assertThat(ectoplasm.getIntent()).isEqualTo("resource");
+        assertThat(ectoplasm.getAnswer()).contains("奇特物质", "幽灵", "任务外不用刷");
+        assertThat(radioactiveOre.getIntent()).isEqualTo("resource");
+        assertThat(radioactiveOre.getAnswer()).contains("危险矿井", "齐先生", "放射性矿点");
+        assertThat(dragonTooth.getIntent()).isEqualTo("resource");
+        assertThat(dragonTooth.getAnswer()).contains("火山地牢", "熔岩潜伏怪", "黄貂鱼鱼塘");
+    }
+
+    @Test
     void answersCommonShopAndPurchaseQuestions() {
         StardewGuideResult backpack = service.answer("星露谷 背包升级多少钱");
         StardewGuideResult sprinkler = service.answer("星露谷 铱制洒水器在哪里买");
@@ -439,7 +476,8 @@ class StardewGuideServiceTest {
         StardewGuideResult result = wikiBacked.answer("星露谷 姜岛金核桃怎么收集");
 
         assertThat(result.getIntent()).isEqualTo("wiki_fallback");
-        assertThat(result.getAnswer()).contains("官方 Wiki", "姜岛", "金核桃");
+        assertThat(result.getAnswer()).contains("我找到这些可能相关的内容", "姜岛", "金核桃");
+        assertThat(result.getAnswer()).doesNotContain("官方 Wiki", "本地结构化库", "来源");
         assertThat(result.getSourceUrls()).contains("https://zh.stardewvalleywiki.com/姜岛");
     }
 

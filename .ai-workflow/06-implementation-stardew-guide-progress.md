@@ -202,6 +202,18 @@
 - `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：74 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 交互方向调整与稀有资源补充：
+
+- 产品方向从“确定性路由直接给最终答案”调整为“检索证据 + AI 自然整合”。`stardew_guide` 工具现在返回 `evidence` 和回复指令，不再返回 `sourceUrls`、`gameVersion`、`lastCheckedAt` 等内部字段给 AI 上层直接展示。
+- `/星露谷` 命令回复不再拼接来源、数据版本、校验日期；兜底文案也去掉“本地结构化库/官方 Wiki/来源”等内部措辞，改为自然说明“找到可能相关内容”。
+- 资源获取本地库从 19 项扩到 35 项，新增恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、鹦鹉螺、红叶卷心菜、蕨菜、松露、鸭毛、海蓝宝石、虚空鲑鱼、鱿鱼墨汁、灵外质、放射性矿石、龙牙等高频稀有/后期物品。
+- 路由优先级做了小幅收敛：工具/商店优先于资源，明确资源获取优先于居民和建筑，解决“矮人卷轴在哪刷”“恐龙蛋怎么获得”等被居民/建筑误抢的问题。
+
+本轮验证结果：
+
+- `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：78 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 工具升级结构化后再次执行本地环境验证：
 
 - `./scripts/dev/bb-dev.sh up --build`：build、mock OpenAI、bbBot 启动均成功，输出 `bbBot 已就绪`。

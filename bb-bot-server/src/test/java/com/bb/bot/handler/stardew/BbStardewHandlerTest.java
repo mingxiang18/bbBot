@@ -25,7 +25,7 @@ class BbStardewHandlerTest {
     private BbReplies replies;
 
     @Test
-    void commandRepliesWithAnswerSourcesAndVersion() {
+    void commandRepliesWithNaturalAnswerOnly() {
         BbStardewHandler handler = new BbStardewHandler(guideService, replies);
         BbReceiveMessage message = new BbReceiveMessage();
         message.setMessage("星露谷 斧头升级需要什么");
@@ -41,6 +41,7 @@ class BbStardewHandlerTest {
 
         ArgumentCaptor<String> text = ArgumentCaptor.forClass(String.class);
         verify(replies).atText(eq(message), text.capture());
-        assertThat(text.getValue()).contains("斧头升级", "来源：https://stardewvalleywiki.com/Tools", "数据版本：1.6.15");
+        assertThat(text.getValue()).contains("斧头升级", "铜斧 2,000g");
+        assertThat(text.getValue()).doesNotContain("来源：", "数据版本", "校验日期", "stardewvalleywiki.com");
     }
 }
