@@ -169,6 +169,21 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedSkillIntentRetrievesCombatLevelingEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SKILL, "战斗等级低怎么快速升级"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("我战斗等级低怎么快速升级", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SKILL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("战斗技能", "击杀怪物", "战斗季刊", "40-79 层")
+                .contains("怪物香水", "战士 -> 野蛮人");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 
@@ -182,14 +197,12 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
-    void unknownIntentStillAllowsSingleLookupFallback() {
+    void unknownIntentDoesNotUseLegacyFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.UNKNOWN, "鸡舍升级材料"));
 
         List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 鸡舍升级材料", plan);
 
-        assertThat(evidence).extracting(StardewGuideEvidence::type)
-                .containsOnly(StardewGuideIntent.UNKNOWN);
-        assertThat(joinAnswers(evidence)).contains("鸡舍", "建造/升级时间", "木材");
+        assertThat(evidence).isEmpty();
     }
 
     private StardewQueryPlan plan(StardewQueryPlan.PlannedIntent... intents) {

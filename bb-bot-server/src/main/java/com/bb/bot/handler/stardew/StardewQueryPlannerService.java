@@ -50,6 +50,7 @@ public class StardewQueryPlannerService {
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
+                        - 技能等级怎么升、快速升级、职业怎么选、战斗/采矿/钓鱼/耕种/觅食经验路线归为 SKILL。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
                         - 不要声称读取存档或当前真实游戏状态。
@@ -58,11 +59,14 @@ public class StardewQueryPlannerService {
         ), ModelTier.LIGHT);
         StardewQueryPlan plan = parsePlan(raw);
         if (plan == null || plan.getIntents() == null || plan.getIntents().isEmpty()) {
-            return StardewQueryPlan.fallback(cleanedQuery);
+            return localFallbackPlan(cleanedQuery);
         }
         for (StardewQueryPlan.PlannedIntent intent : plan.getIntents()) {
             if (intent.getType() == null) {
-                intent.setType(StardewGuideIntent.UNKNOWN);
+                String keyword = intent.getKeywords() == null || intent.getKeywords().isEmpty()
+                        ? cleanedQuery
+                        : intent.getKeywords().get(0);
+                intent.setType(inferIntent(keyword));
             }
             if (intent.getKeywords() == null || intent.getKeywords().isEmpty()) {
                 intent.setKeywords(List.of(cleanedQuery));
@@ -72,6 +76,87 @@ public class StardewQueryPlannerService {
             }
         }
         return plan;
+    }
+
+    private StardewQueryPlan localFallbackPlan(String query) {
+        StardewQueryPlan plan = new StardewQueryPlan();
+        StardewQueryPlan.PlannedIntent intent = new StardewQueryPlan.PlannedIntent();
+        intent.setType(inferIntent(query));
+        intent.setKeywords(List.of(query));
+        plan.setIntents(List.of(intent));
+        return plan;
+    }
+
+    private StardewGuideIntent inferIntent(String query) {
+        String q = StringUtils.defaultString(query).trim();
+        if (StringUtils.isBlank(q)) {
+            return StardewGuideIntent.UNKNOWN;
+        }
+        if (containsAny(q, "收集包", "献祭", "社区中心", "电影院", "失踪的包")) {
+            return StardewGuideIntent.BUNDLE;
+        }
+        if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
+            return StardewGuideIntent.MUSEUM;
+        }
+        if (containsAny(q, "在哪", "位置", "日程", "行程", "几点")
+                && !containsAny(q, "哪里买", "在哪里买", "怎么获得", "哪里刷", "在哪刷")) {
+            return StardewGuideIntent.VILLAGER_SCHEDULE;
+        }
+        if (containsAny(q, "喜欢", "讨厌", "礼物", "生日", "红心", "好感")) {
+            return StardewGuideIntent.VILLAGER_PROFILE;
+        }
+        if (containsAny(q, "斧头", "镐", "锄头", "水壶", "垃圾桶", "工具升级")
+                && containsAny(q, "升级", "多少钱", "材料", "需要", "条件")) {
+            return StardewGuideIntent.TOOL;
+        }
+        if (containsAny(q, "鸡舍", "畜棚", "筒仓", "马厩", "鱼塘", "史莱姆屋", "方尖塔", "黄金钟", "房屋升级", "社区升级", "罗宾")
+                || (containsAny(q, "建筑", "建造") && containsAny(q, "材料", "需要", "多少钱", "升级"))) {
+            return StardewGuideIntent.BUILDING;
+        }
+        if (containsAny(q, "技能", "战斗", "采矿", "耕种", "觅食")
+                && containsAny(q, "等级", "升级", "经验", "怎么练", "快速", "职业")) {
+            return StardewGuideIntent.SKILL;
+        }
+        if (containsAny(q, "果树", "树苗", "温室怎么种")) {
+            return StardewGuideIntent.FRUIT_TREE;
+        }
+        if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "恐龙", "猪", "心情", "大壶奶")) {
+            return StardewGuideIntent.ANIMAL_CARE;
+        }
+        if (containsAny(q, "料理", "食谱", "菜谱", "烹饪")) {
+            return StardewGuideIntent.COOKING;
+        }
+        if (containsAny(q, "商店", "哪里买", "在哪里买", "谁卖", "价格", "多少钱")
+                && !containsAny(q, "升级多少钱")) {
+            return StardewGuideIntent.SHOP;
+        }
+        if (containsAny(q, "洒水器", "小桶", "罐头瓶", "蛋黄酱机", "奶酪机", "织布机", "熔炉", "避雷针", "回收机", "晶球破开器", "楼梯", "鱼饵", "浮标", "戒指", "图腾")
+                && containsAny(q, "怎么做", "材料", "配方", "制作", "需要")) {
+            return StardewGuideIntent.MACHINE;
+        }
+        if (containsAny(q, "作物", "种什么", "种子", "几天成熟", "收益", "春季", "夏季", "秋季", "冬季")
+                && !containsAny(q, "钓", "鱼")) {
+            return StardewGuideIntent.CROP;
+        }
+        if (containsAny(q, "钓", "鱼", "蟹笼", "果冻")) {
+            return StardewGuideIntent.FISH;
+        }
+        if (containsAny(q, "怎么获得", "获取", "哪里刷", "在哪刷", "来源", "掉落", "怎么弄", "怎么拿", "哪里有")) {
+            return StardewGuideIntent.RESOURCE;
+        }
+        if (containsAny(q, "攻略", "推荐", "路线", "怎么玩", "怎么解锁")) {
+            return StardewGuideIntent.GUIDE;
+        }
+        return StardewGuideIntent.UNKNOWN;
+    }
+
+    private boolean containsAny(String query, String... words) {
+        for (String word : words) {
+            if (query.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private StardewQueryPlan parsePlan(String raw) {

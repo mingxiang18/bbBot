@@ -739,7 +739,10 @@ class StardewGuideServiceTest {
 
         assertThat(result.getIntent()).isEqualTo("guide");
         assertThat(result.getAnswer()).contains("战斗经验来自击杀怪物");
-        assertThat(result.getAnswer()).contains("矿井", "骷髅洞穴", "战士 -> 野蛮人");
+        assertThat(result.getAnswer()).contains("250 战斗经验", "10 级 15000", "农场怪物只给标准经验的 1/3");
+        assertThat(result.getAnswer()).contains("40-79 层", "70-79 层", "骷髅洞穴", "火山地牢");
+        assertThat(result.getAnswer()).contains("怪物香水", "块茎拼盘", "战士 -> 野蛮人");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Combat");
     }
 
     @Test

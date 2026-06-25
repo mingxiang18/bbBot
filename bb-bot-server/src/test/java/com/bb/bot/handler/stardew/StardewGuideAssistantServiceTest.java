@@ -89,7 +89,7 @@ class StardewGuideAssistantServiceTest {
     }
 
     @Test
-    void fallsBackToSingleLookupWhenPlanIsUnavailable() {
+    void fallsBackToTypedLookupWhenPlanIsUnavailable() {
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenReturn(null);
         when(aiChatService.chat(anyList(), eq(ModelTier.CHAT))).thenReturn(null);
 
@@ -99,7 +99,7 @@ class StardewGuideAssistantServiceTest {
     }
 
     @Test
-    void fallsBackToSingleLookupWhenAiThrows() {
+    void fallsBackToTypedLookupWhenAiThrows() {
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
 
         String answer = assistantService.answer("星露谷 斧头升级需要什么");
@@ -126,6 +126,28 @@ class StardewGuideAssistantServiceTest {
         assertThat(answer)
                 .contains("没找到这个资源")
                 .doesNotContain("罗宾", "建造费用", "升级费用");
+    }
+
+    @Test
+    void unknownPlanDoesNotUseLegacyFreeTextRoute() {
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"UNKNOWN","keywords":["鸡舍升级材料"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        String answer = assistantService.answer("星露谷 鸡舍升级材料");
+
+        assertThat(answer)
+                .contains("还没有查到足够确定的攻略内容")
+                .doesNotContain("罗宾", "建造费用", "木材");
+        verify(aiChatService).chat(anyList(), eq(ModelTier.LIGHT));
+        verify(aiChatService, never()).chat(anyList(), eq(ModelTier.CHAT));
     }
 
     private String textOf(ChatMessage message) {

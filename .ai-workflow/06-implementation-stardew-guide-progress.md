@@ -221,10 +221,10 @@
 
 2026-06-26 AI 分类检索边界收缩：
 
-- `StardewGuideRetriever` 不再在 typed plan 无证据时无条件回退到自由文本路由；只有 planner 没有可用 intent 或 intent 全部为 `UNKNOWN` 时，才允许 `StardewGuideService.answer(query)` 单次兜底。
+- `StardewGuideRetriever` 不再在 typed plan 无证据时无条件回退到自由文本路由；后续又进一步收紧为 `UNKNOWN` intent 也不再调用 `StardewGuideService.answer(query)` 旧自由判断链路。
 - `StardewGuideAssistantService` 在已取得 typed evidence 但 CHAT 档整合失败时，优先返回已检索证据答案，不再重新走自由文本路由，降低“用户问 A、旧规则答 B”的风险。
 - 对 typed plan miss 增加回归测试：例如 AI 把“鸡舍升级材料”分类成 `RESOURCE` 时，只返回资源未命中提示，不会再被自由文本规则改答成鸡舍建筑升级。
-- 保留 `UNKNOWN` 兜底路径：当 AI 分类不可用或无法分类时，仍可单次使用旧自由文本查询，保证离线/降级情况下 `/星露谷 斧头升级需要什么`、`鸡舍升级材料` 等常见问题可回答。
+- 旧结论曾保留 `UNKNOWN` 单次兜底；当前实现已改为 AI 不可用时由 planner 生成 typed fallback plan，仍然保持“分类 -> 关键词 -> typed 检索”路径。
 
 本轮验证结果：
 
@@ -403,6 +403,27 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：108 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 战斗技能快速升级攻略加厚：
+
+- 针对用户目标里的“战斗等级低想知道战斗技能如何快速升级”补强本地结构化 `combat_skill` 攻略，不再只是概览。
+- 按官方 Combat/Skills/Weapons/Adventurer's Guild/Combat Quarterly/Roots Platter 资料补充 5 个小节：经验和等级、分阶段升级路线、刷法和效率、装备和食物、职业选择。
+- 补充明确事实：战斗经验来自击杀怪物，农场怪物只给标准经验 1/3，读《战斗季刊》或《星之书》给 250 战斗经验，技能 1-10 级总经验阈值，战斗等级对生命值和武器体力消耗的影响。
+- 补充分阶段路线：第 5 天矿井开放后从 1-40 层起步，40-79 层刷煤尘精灵/冰霜蝙蝠/材料，80-120 层和骷髅洞穴提高经验效率，姜岛火山用于后期补战斗等级和材料。
+- 补充效率建议：电梯反复刷怪物密集层、怪物香水、探险家公会讨伐目标、把战斗经验和材料目标绑定。
+- 补充装备/料理建议：武器伤害优先于硬磨，矿井底后可买熔岩武士刀，五彩碎片优先换银河剑，块茎拼盘/香辣鳗鱼/蟹黄糕/南瓜汤/咖啡等按阶段使用。
+- `StardewQueryPlannerService` prompt 增加分类规则：技能等级怎么升、快速升级、职业怎么选、五大技能经验路线归为 `SKILL`。
+- AI tool 描述补充技能等级快速升级、战斗等级低怎么练、技能职业选择、战斗季刊/星之书触发词。
+- 测试补充：加深 `StardewGuideServiceTest` 战斗快速升级断言，新增 `StardewGuideRetrieverTest` typed `SKILL` 检索测试，新增 `StardewQueryPlannerServiceTest` SKILL intent 解析测试。
+- 检索框架收口：`StardewGuideService` 继续保留为本地知识库查询和证据格式化层，但 `StardewGuideAssistantService`/`StardewGuideRetriever` 不再在证据缺失或 `UNKNOWN` intent 时回退到旧的 `answer(String)` 自由判断链路。
+- AI 规划失败或 JSON 无效时，`StardewQueryPlannerService` 只生成一个很薄的本地 typed fallback plan；兜底也保持“分类 -> 关键词 -> typed 检索”，避免重新陷入旧关键词命中地狱。
+- 新增 UNKNOWN 边界测试：当 AI 明确返回 `UNKNOWN` 时，`鸡舍升级材料` 不会被旧自由文本路由误答成建筑升级；当 AI 挂掉时，`斧头升级需要什么` 仍通过 typed TOOL fallback 查到工具升级资料。
+
+本轮聚焦验证结果：
+
+- 首次执行 Stardew 相关测试时发现本地 fallback 将“矮人卷轴在哪刷”误判为居民位置；已修正为博物馆/卷轴优先归 `MUSEUM`，并排除“在哪刷”触发居民日程。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：112 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -427,7 +448,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，但附魔、锻造、鱼竿浮标/鱼饵搭配和特殊工具还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 

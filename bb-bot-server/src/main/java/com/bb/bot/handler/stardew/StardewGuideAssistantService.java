@@ -42,10 +42,7 @@ public class StardewGuideAssistantService {
         List<StardewGuideEvidence> evidenceItems = retriever.retrieve(query, plan);
         String evidence = formatEvidence(evidenceItems);
         if (StringUtils.isBlank(evidence)) {
-            if (!allowsFreeTextFallback(plan)) {
-                return noReliableEvidenceAnswer();
-            }
-            return guideService.answer(query).getAnswer();
+            return noReliableEvidenceAnswer();
         }
 
         String finalAnswer = synthesizeAnswer(query, evidence);
@@ -55,9 +52,6 @@ public class StardewGuideAssistantService {
         String evidenceAnswer = firstEvidenceAnswer(evidenceItems);
         if (StringUtils.isNotBlank(evidenceAnswer)) {
             return evidenceAnswer;
-        }
-        if (allowsFreeTextFallback(plan)) {
-            return guideService.answer(query).getAnswer();
         }
         return noReliableEvidenceAnswer();
     }
@@ -76,16 +70,6 @@ public class StardewGuideAssistantService {
                     .append(evidence.answer()).append("\n\n");
         }
         return sb.toString().trim();
-    }
-
-    private boolean allowsFreeTextFallback(StardewQueryPlan plan) {
-        if (plan == null || plan.getIntents() == null || plan.getIntents().isEmpty()) {
-            return true;
-        }
-        return plan.getIntents().stream()
-                .allMatch(intent -> intent == null
-                        || intent.getType() == null
-                        || intent.getType() == StardewGuideIntent.UNKNOWN);
     }
 
     private String firstEvidenceAnswer(List<StardewGuideEvidence> evidenceItems) {
