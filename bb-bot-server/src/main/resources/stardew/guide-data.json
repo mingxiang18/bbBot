@@ -11045,6 +11045,738 @@
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/龙牙"
       ]
+    },
+    {
+      "id": "artifact_spot",
+      "name": "远古斑点",
+      "nameEn": "Artifact Spot",
+      "aliases": [
+        "古物点",
+        "蚯蚓点",
+        "远古点",
+        "地上的虫子",
+        "会动的草",
+        "蚯蚓"
+      ],
+      "acquisitions": [
+        {
+          "type": "识别",
+          "detail": "地面上三根会动的小枝/虫子样标记，用锄头挖掘。"
+        },
+        {
+          "type": "分布",
+          "detail": "农场、镇上、森林、深山、海滩、公交车站、沙漠等区域都有不同古物池。"
+        },
+        {
+          "type": "季节",
+          "detail": "冬季远古斑点更常见，是集中补古物和遗失之书的好时机。"
+        }
+      ],
+      "recommendation": "看到就挖；如果在补博物馆，优先每天扫海滩、深山、森林、镇上和公交车站。",
+      "usedIn": [
+        "古物获取",
+        "遗失之书",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "artifact_trove",
+      "name": "古物宝藏",
+      "nameEn": "Artifact Trove",
+      "aliases": [
+        "古物箱",
+        "文物宝藏",
+        "文物箱",
+        "artifact trove"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠商人",
+          "detail": "可用万象晶球兑换古物宝藏，适合后期集中补缺失古物。"
+        },
+        {
+          "type": "开启",
+          "detail": "带去铁匠铺让克林特打开，产出多种古物。"
+        },
+        {
+          "type": "适用场景",
+          "detail": "当普通远古斑点和钓鱼宝箱迟迟不出最后几件古物时，用古物宝藏补池子。"
+        }
+      ],
+      "recommendation": "前中期万象晶球更常用于开矿物；后期矿物差不多齐了，再换古物宝藏补博物馆。",
+      "usedIn": [
+        "博物馆捐赠",
+        "古物补全"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "geode",
+      "name": "晶球",
+      "nameEn": "Geode",
+      "aliases": [
+        "普通晶球",
+        "geode",
+        "晶洞"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井浅层敲石头和矿点可获得普通晶球。"
+        },
+        {
+          "type": "开启",
+          "detail": "在铁匠铺找克林特打开，也可用晶球破开器。"
+        },
+        {
+          "type": "产出",
+          "detail": "主要补早期晶球矿物，也可能开出部分资源。"
+        }
+      ],
+      "recommendation": "缺早期矿物时集中刷矿井浅层；如果问具体矿物，优先查矿物名。",
+      "usedIn": [
+        "矿物收集",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/晶球"
+      ]
+    },
+    {
+      "id": "frozen_geode",
+      "name": "冰封晶球",
+      "nameEn": "Frozen Geode",
+      "aliases": [
+        "冰晶球",
+        "frozen geode"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井冰冻层更常见，适合顺路刷冰泪晶等矿物。"
+        },
+        {
+          "type": "开启",
+          "detail": "在铁匠铺或晶球破开器打开。"
+        }
+      ],
+      "recommendation": "缺冰冻层相关矿物时刷 40-79 层，同时顺手打煤尘精灵刷煤。",
+      "usedIn": [
+        "矿物收集",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/晶球"
+      ]
+    },
+    {
+      "id": "magma_geode",
+      "name": "岩浆晶球",
+      "nameEn": "Magma Geode",
+      "aliases": [
+        "熔岩晶球",
+        "magma geode"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井深层更常见，可用于补火水晶和多种深层矿物。"
+        },
+        {
+          "type": "开启",
+          "detail": "在铁匠铺或晶球破开器打开。"
+        }
+      ],
+      "recommendation": "缺深层矿物时刷 80 层以后；顺路准备金矿、火水晶和战斗掉落。",
+      "usedIn": [
+        "矿物收集",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/晶球"
+      ]
+    },
+    {
+      "id": "omni_geode",
+      "name": "万象晶球",
+      "nameEn": "Omni Geode",
+      "aliases": [
+        "全能晶球",
+        "五彩晶球",
+        "omni geode"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井/骷髅洞穴",
+          "detail": "深层采矿、骷髅洞穴和矿点都能积累万象晶球。"
+        },
+        {
+          "type": "钓鱼/淘盘/怪物",
+          "detail": "钓鱼宝箱、淘盘和部分怪物也可能获得。"
+        },
+        {
+          "type": "用途",
+          "detail": "可打开补矿物，也可在沙漠商人处兑换古物宝藏。"
+        }
+      ],
+      "recommendation": "前期优先打开补矿物；后期矿物接近齐全后再兑换古物宝藏补古物。",
+      "usedIn": [
+        "矿物收集",
+        "古物宝藏",
+        "沙漠商人兑换"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/晶球"
+      ]
+    },
+    {
+      "id": "quartz",
+      "name": "石英",
+      "aliases": [
+        "quartz"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井 1-120 层地面可直接拾取。"
+        },
+        {
+          "type": "垃圾桶",
+          "detail": "翻垃圾桶偶尔能找到。"
+        }
+      ],
+      "recommendation": "地理学家收集包需要，早期看到就留一块。",
+      "usedIn": [
+        "地理学家的收集包",
+        "博物馆捐赠",
+        "精炼石英"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "earth_crystal",
+      "name": "地晶",
+      "aliases": [
+        "earth crystal",
+        "地之水晶"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井浅层常见，可直接拾取或从晶球获得。"
+        },
+        {
+          "type": "怪物",
+          "detail": "掘地虫等矿井怪物可能掉落。"
+        }
+      ],
+      "recommendation": "地理学家收集包和蛋黄酱机都常用，早期别全卖。",
+      "usedIn": [
+        "地理学家的收集包",
+        "蛋黄酱机",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "frozen_tear",
+      "name": "冰泪晶",
+      "aliases": [
+        "冰封泪晶",
+        "frozen tear"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井冰冻层可拾取，也可从冰封晶球获得。"
+        },
+        {
+          "type": "怪物",
+          "detail": "冰冻层怪物可能掉落。"
+        }
+      ],
+      "recommendation": "地理学家收集包需要，也是不少居民喜欢/爱的礼物之一。",
+      "usedIn": [
+        "地理学家的收集包",
+        "博物馆捐赠",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "fire_quartz",
+      "name": "火水晶",
+      "aliases": [
+        "fire quartz",
+        "火石英"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "矿井深层可拾取，也可从岩浆晶球获得。"
+        },
+        {
+          "type": "加工",
+          "detail": "可放入熔炉烧成精炼石英。"
+        }
+      ],
+      "recommendation": "地理学家收集包需要；多余的可以转精炼石英。",
+      "usedIn": [
+        "地理学家的收集包",
+        "精炼石英",
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "amethyst",
+      "name": "紫水晶",
+      "aliases": [
+        "amethyst"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "紫水晶矿点、宝石矿点和晶球都可能获得。"
+        },
+        {
+          "type": "复制",
+          "detail": "有宝石复制机后可复制，用作礼物或交易。"
+        }
+      ],
+      "recommendation": "阿比盖尔等居民很喜欢，第一颗先看博物馆需求。",
+      "usedIn": [
+        "博物馆捐赠",
+        "礼物",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "jade",
+      "name": "翡翠",
+      "aliases": [
+        "jade"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "翡翠矿点、宝石矿点和晶球都可能获得。"
+        },
+        {
+          "type": "复制",
+          "detail": "宝石复制机复制后可稳定兑换楼梯。"
+        }
+      ],
+      "recommendation": "后期非常推荐复制；星期日可在沙漠商人处用翡翠换楼梯。",
+      "usedIn": [
+        "楼梯兑换",
+        "博物馆捐赠",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "ruby",
+      "name": "红宝石",
+      "aliases": [
+        "ruby"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "红宝石矿点、宝石矿点和晶球都可能获得。"
+        },
+        {
+          "type": "兑换",
+          "detail": "沙漠商人可用红宝石换香辣鳗鱼。"
+        }
+      ],
+      "recommendation": "冲骷髅洞穴时可复制红宝石换香辣鳗鱼。",
+      "usedIn": [
+        "香辣鳗鱼",
+        "博物馆捐赠",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "diamond",
+      "name": "钻石",
+      "aliases": [
+        "diamond"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "钻石矿点、宝石矿点和晶球都可能获得。"
+        },
+        {
+          "type": "复制",
+          "detail": "宝石复制机可复制，售价和送礼价值都高。"
+        }
+      ],
+      "recommendation": "第一颗优先捐或留礼物；有宝石复制机后可长期复制。",
+      "usedIn": [
+        "博物馆捐赠",
+        "礼物",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "dwarf_gadget",
+      "name": "矮人小工具",
+      "aliases": [
+        "dwarf gadget",
+        "矮人装置",
+        "矮人机器"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井锄地",
+          "detail": "矿井 40-79 层锄地有低概率获得。"
+        },
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球、万象晶球和古物宝藏都可能开出。"
+        }
+      ],
+      "recommendation": "既要捐博物馆，也用于制作农场电脑；第一件通常先捐，第二件留制作。",
+      "usedIn": [
+        "博物馆捐赠",
+        "农场电脑"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "rare_disc",
+      "name": "稀有圆盘",
+      "aliases": [
+        "rare disc",
+        "稀有圆盘"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物",
+          "detail": "蝙蝠、暗影狂徒、暗影萨满、蜘蛛等有低概率掉落。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "属于较烦人的古物缺口；后期可刷对应怪物或用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "烧焦的祭品奖励条件"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "ancient_drum",
+      "name": "古代鼓",
+      "aliases": [
+        "ancient drum",
+        "古鼓"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "公交车站、森林和小镇的远古斑点可能挖到。"
+        },
+        {
+          "type": "晶球",
+          "detail": "冰封晶球、万象晶球和古物宝藏可能开出。"
+        }
+      ],
+      "recommendation": "捐赠古代鼓并满足古物数量条件可拿鼓块。",
+      "usedIn": [
+        "博物馆捐赠",
+        "鼓块"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "bone_flute",
+      "name": "骨笛",
+      "aliases": [
+        "bone flute"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "深山、森林、小镇远古斑点可能挖到。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "捐赠骨笛并满足古物数量条件可拿长笛块。",
+      "usedIn": [
+        "博物馆捐赠",
+        "长笛块"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "chicken_statue_artifact",
+      "name": "鸡雕像",
+      "aliases": [
+        "chicken statue",
+        "鸡雕像古物"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "农场远古斑点较常见。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "捐赠后可获得鸡雕像家具；农场远古斑点看到就挖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "鸡雕像家具"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "golden_mask",
+      "name": "黄金面具",
+      "aliases": [
+        "golden mask",
+        "金面具"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠",
+          "detail": "沙漠远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "沙漠解锁后每天顺路看远古斑点；缺沙漠古物时用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "golden_relic",
+      "name": "黄金遗物",
+      "aliases": [
+        "golden relic",
+        "金遗物"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠",
+          "detail": "沙漠远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "部分鱼塘任务会要黄金遗物；第一件先捐，后续留一件备用。",
+      "usedIn": [
+        "博物馆捐赠",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "dried_starfish",
+      "name": "干海星",
+      "aliases": [
+        "dried starfish",
+        "干燥海星"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩",
+          "detail": "海滩远古斑点较常见。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "部分鱼塘任务可能需要；第一件先捐，之后可留一件。",
+      "usedIn": [
+        "博物馆捐赠",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "anchor_artifact",
+      "name": "锚",
+      "aliases": [
+        "anchor",
+        "船锚"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩",
+          "detail": "海滩远古斑点可能挖到。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "海滩古物缺口之一；冬季扫海滩效率更高。",
+      "usedIn": [
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "glass_shards",
+      "name": "玻璃碎片",
+      "aliases": [
+        "glass shards",
+        "碎玻璃"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩",
+          "detail": "海滩远古斑点可能挖到。"
+        },
+        {
+          "type": "其他",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "海滩古物缺口之一；第一件捐博物馆即可。",
+      "usedIn": [
+        "博物馆捐赠"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "prehistoric_skull",
+      "name": "史前头骨",
+      "aliases": [
+        "prehistoric skull"
+      ],
+      "acquisitions": [
+        {
+          "type": "骨头矿",
+          "detail": "姜岛挖骨头矿可获得多种史前骨头。"
+        },
+        {
+          "type": "怪物",
+          "detail": "骷髅等怪物也可能掉落相关骨头。"
+        }
+      ],
+      "recommendation": "史前骨头类捐赠会给树懒骨架组件；姜岛骨头矿是后期补骨头的好路线。",
+      "usedIn": [
+        "博物馆捐赠",
+        "树懒骨架"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "skeletal_hand",
+      "name": "手部骨骼",
+      "aliases": [
+        "skeletal hand",
+        "手骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "海滩、森林等区域远古斑点可能挖到。"
+        },
+        {
+          "type": "骨头矿",
+          "detail": "骨头矿和古物宝藏可作为补充来源。"
+        }
+      ],
+      "recommendation": "骨头类第一件先捐，重复可进碎骨机。",
+      "usedIn": [
+        "博物馆捐赠",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
+    },
+    {
+      "id": "prehistoric_rib",
+      "name": "史前肋骨",
+      "aliases": [
+        "prehistoric rib"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "小镇、农场等区域远古斑点可能挖到。"
+        },
+        {
+          "type": "骨头矿",
+          "detail": "姜岛骨头矿可补史前骨头类。"
+        }
+      ],
+      "recommendation": "史前骨头类缺口可集中挖骨头矿补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "树懒骨架"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物"
+      ]
     }
   ],
   "guides": [
@@ -12041,37 +12773,72 @@
         "博物馆",
         "捐赠",
         "冈瑟",
-        "museum"
+        "museum",
+        "古物",
+        "文物",
+        "矿物",
+        "矿石捐赠",
+        "博物馆奖励",
+        "缺古物",
+        "缺矿物",
+        "全套收集"
       ],
       "keywords": [
         "捐",
         "奖励",
         "古物",
         "矿物",
-        "收集"
+        "收集",
+        "远古斑点",
+        "晶球",
+        "万象晶球",
+        "古物宝藏",
+        "缺口",
+        "查漏补缺",
+        "星之果实",
+        "生锈的钥匙"
       ],
       "sections": [
         {
-          "title": "来源",
+          "title": "目标",
           "lines": [
-            "矿物主要来自晶球、矿井、骷髅洞穴和火山地牢。",
-            "古物可通过蚯蚓点、钓鱼宝箱、怪物掉落、古物宝藏和特定地点挖掘获得。",
-            "第一次拿到的可捐赠物品建议先捐博物馆，重复品再出售或使用。"
+            "博物馆总共可捐 95 件：42 件古物和 53 件矿物。",
+            "同一种藏品只需要捐 1 次；第一次拿到的可捐物通常先捐，重复品再卖、送礼或加工。",
+            "捐满 60 件会获得生锈的钥匙；捐满 95 件获得星之果实并完成全套收集。"
           ]
         },
         {
-          "title": "推进方式",
+          "title": "矿物补缺",
           "lines": [
-            "矿物缺口优先刷晶球；古物缺口看具体来源，不同地图掉落池不同。",
-            "升级锄头和留意蚯蚓点能提高日常收集效率。",
-            "后期可用古物宝藏补缺失古物。"
+            "可采集矿物和宝石主要来自矿井、骷髅洞穴、采石场、宝石矿点、怪物、钓鱼宝箱和晶球。",
+            "晶球矿物主要靠普通晶球、冰封晶球、岩浆晶球、万象晶球；缺哪类就刷对应矿井层数。",
+            "万象晶球前期优先打开补矿物，矿物接近齐全后再考虑换古物宝藏。"
+          ]
+        },
+        {
+          "title": "古物补缺",
+          "lines": [
+            "古物主要来自远古斑点、矿井/骷髅洞穴沙地锄地、怪物掉落、钓鱼宝箱、秘密纸条、骨头矿、古物宝藏和少量晶球。",
+            "不同地图远古斑点的古物池不同；缺海滩、沙漠、深山、森林、小镇物品时要去对应区域挖。",
+            "冬季远古斑点更多，适合每天扫图补古物；后期用古物宝藏处理最后几个随机缺口。"
+          ]
+        },
+        {
+          "title": "特殊奖励",
+          "lines": [
+            "古代种子捐赠后给上古种子配方和种子包。",
+            "四个矮人卷轴都捐后解锁矮人语教程。",
+            "古代鼓、骨笛、鸡雕像、稀有圆盘、矮人小工具和史前骨头类会触发对应装饰/家具奖励。"
           ]
         }
       ],
-      "recommendation": "博物馆是长期收集目标；想查某个古物来源时直接问物品名，未建模会走 Wiki 兜底。",
+      "recommendation": "补博物馆时先按“矿物缺口刷晶球、古物缺口查地图/怪物/古物宝藏”的思路推进；问具体物品名可以直接返回来源。",
       "sourceUrls": [
         "https://stardewvalleywiki.com/Museum",
-        "https://zh.stardewvalleywiki.com/博物馆"
+        "https://zh.stardewvalleywiki.com/博物馆",
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://zh.stardewvalleywiki.com/晶球"
       ]
     },
     {

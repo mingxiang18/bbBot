@@ -105,7 +105,18 @@ public class StardewKnowledgeRepository {
     public Optional<StardewData.ResourceGuide> findResource(String query) {
         String q = normalize(query);
         return resources().stream()
-                .filter(r -> matches(q, r.getName(), r.getNameEn(), r.getAliases()))
+                .map(r -> new ResourceMatch(r,
+                        scoreSearchable(q, r.getName(), r.getNameEn(), r.getAliases()),
+                        firstSearchableIndex(q, r.getName(), r.getNameEn(), r.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> {
+                    int score = Integer.compare(b.score(), a.score());
+                    if (score != 0) {
+                        return score;
+                    }
+                    return Integer.compare(a.firstIndex(), b.firstIndex());
+                })
+                .map(ResourceMatch::resource)
                 .findFirst();
     }
 
@@ -226,6 +237,27 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int firstSearchableIndex(String q, String name, String en, List<String> aliases) {
+        List<String> names = new ArrayList<>();
+        names.add(name);
+        names.add(en);
+        if (aliases != null) {
+            names.addAll(aliases);
+        }
+        int first = Integer.MAX_VALUE;
+        for (String n : names) {
+            String normalized = normalize(n);
+            if (normalized.length() < 2) {
+                continue;
+            }
+            int index = q.indexOf(normalized);
+            if (index >= 0 && index < first) {
+                first = index;
+            }
+        }
+        return first;
+    }
+
     private int scoreGuide(String q, StardewData.GuideTopic guide) {
         List<String> names = new ArrayList<>();
         names.add(guide.getName());
@@ -296,5 +328,8 @@ public class StardewKnowledgeRepository {
     }
 
     private record CookingRecipeMatch(StardewData.CookingRecipe recipe, int score) {
+    }
+
+    private record ResourceMatch(StardewData.ResourceGuide resource, int score, int firstIndex) {
     }
 }

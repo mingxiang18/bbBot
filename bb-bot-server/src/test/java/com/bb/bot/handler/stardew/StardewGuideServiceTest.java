@@ -281,6 +281,29 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersMuseumArtifactMineralAndGeodeQuestions() {
+        StardewGuideResult museum = service.answer("星露谷 博物馆缺古物和矿物怎么补");
+        StardewGuideResult omniGeode = service.answer("星露谷 万象晶球怎么刷，开还是换古物宝藏");
+        StardewGuideResult artifactTrove = service.answer("星露谷 古物宝藏怎么获得");
+        StardewGuideResult dwarfGadget = service.answer("星露谷 矮人小工具怎么获得");
+        StardewGuideResult diamond = service.answer("星露谷 钻石怎么获得");
+        StardewGuideResult goldenRelic = service.answer("星露谷 黄金遗物哪里刷");
+
+        assertThat(museum.getIntent()).isEqualTo("guide");
+        assertThat(museum.getAnswer()).contains("95 件", "42 件古物", "53 件矿物", "星之果实");
+        assertThat(omniGeode.getIntent()).isEqualTo("resource");
+        assertThat(omniGeode.getAnswer()).contains("骷髅洞穴", "古物宝藏", "前期优先打开");
+        assertThat(artifactTrove.getIntent()).isEqualTo("resource");
+        assertThat(artifactTrove.getAnswer()).contains("沙漠商人", "万象晶球", "补缺失古物");
+        assertThat(dwarfGadget.getIntent()).isEqualTo("resource");
+        assertThat(dwarfGadget.getAnswer()).contains("40-79 层", "岩浆晶球", "农场电脑");
+        assertThat(diamond.getIntent()).isEqualTo("resource");
+        assertThat(diamond.getAnswer()).contains("钻石矿点", "宝石复制机", "礼物");
+        assertThat(goldenRelic.getIntent()).isEqualTo("resource");
+        assertThat(goldenRelic.getAnswer()).contains("沙漠", "古物宝藏", "鱼塘任务");
+    }
+
+    @Test
     void answersCommonShopAndPurchaseQuestions() {
         StardewGuideResult backpack = service.answer("星露谷 背包升级多少钱");
         StardewGuideResult sprinkler = service.answer("星露谷 铱制洒水器在哪里买");

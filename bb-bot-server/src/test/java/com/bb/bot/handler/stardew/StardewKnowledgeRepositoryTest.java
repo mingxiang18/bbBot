@@ -29,7 +29,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(16);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(35);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(62);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(33);
     }
@@ -255,6 +255,48 @@ class StardewKnowledgeRepositoryTest {
                 "radioactive_ore",
                 "dragon_tooth"
         );
+    }
+
+    @Test
+    void museumArtifactMineralAndGeodeGuidesAreCovered() {
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+        Set<String> guideAliases = repository.guides().stream()
+                .filter(guide -> "museum_donations".equals(guide.getId()))
+                .flatMap(guide -> guide.getAliases().stream())
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).contains(
+                "artifact_spot",
+                "artifact_trove",
+                "geode",
+                "frozen_geode",
+                "magma_geode",
+                "omni_geode",
+                "quartz",
+                "earth_crystal",
+                "frozen_tear",
+                "fire_quartz",
+                "amethyst",
+                "jade",
+                "ruby",
+                "diamond",
+                "dwarf_gadget",
+                "rare_disc",
+                "ancient_drum",
+                "bone_flute",
+                "chicken_statue_artifact",
+                "golden_mask",
+                "golden_relic",
+                "dried_starfish",
+                "anchor_artifact",
+                "glass_shards",
+                "prehistoric_skull",
+                "skeletal_hand",
+                "prehistoric_rib"
+        );
+        assertThat(guideAliases).contains("古物", "文物", "矿物", "缺古物", "缺矿物", "全套收集");
     }
 
     @Test

@@ -116,6 +116,20 @@ class StardewGuideToolTest {
     }
 
     @Test
+    void toolCoversMuseumArtifactAndMineralCompletionLocally() {
+        StardewKnowledgeRepository repository = new StardewKnowledgeRepository();
+        repository.load();
+        StardewGuideTool tool = new StardewGuideTool(new StardewGuideService(repository));
+
+        Map<String, Object> result = tool.guide("博物馆最后缺古物和矿物怎么补");
+
+        assertThat(result).containsEntry("intent", "guide");
+        assertThat(result.get("evidence").toString())
+                .contains("95 件", "古物宝藏", "晶球", "星之果实");
+        assertThat(result).doesNotContainKeys("sourceUrls", "gameVersion", "lastCheckedAt");
+    }
+
+    @Test
     void toolCoversCrabPotQuestions() {
         StardewKnowledgeRepository repository = new StardewKnowledgeRepository();
         repository.load();
