@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 @BootEventHandler(botType = BotType.BB, name = "星露谷攻略")
 public class BbStardewHandler {
 
-    private final StardewGuideService guideService;
+    private final StardewGuideAssistantService guideAssistantService;
     private final BbReplies replies;
 
-    public BbStardewHandler(StardewGuideService guideService, BbReplies replies) {
-        this.guideService = guideService;
+    public BbStardewHandler(StardewGuideAssistantService guideAssistantService, BbReplies replies) {
+        this.guideAssistantService = guideAssistantService;
         this.replies = replies;
     }
 
@@ -27,15 +27,11 @@ public class BbStardewHandler {
             keyword = {"^/?星露谷", "^/?stardew"}, name = "星露谷攻略查询")
     public void guide(BbReceiveMessage message) {
         try {
-            StardewGuideResult result = guideService.answer(message.getMessage());
-            replies.atText(message, render(result));
+            String answer = guideAssistantService.answer(message.getMessage());
+            replies.atText(message, answer);
         } catch (Exception e) {
             log.warn("星露谷攻略查询失败 message={}", message.getMessage(), e);
             replies.atText(message, "星露谷攻略查询失败：" + e.getMessage());
         }
-    }
-
-    private String render(StardewGuideResult result) {
-        return result.getAnswer();
     }
 }

@@ -269,6 +269,20 @@ mysql(misu-mysql-local) Up
 - `./scripts/dev/bb-dev.sh test`：仍为 19/20 通过；唯一失败仍是既有 Splatoon3 A13 专用工具路由场景。
 - 验证后已执行 `./scripts/dev/bb-dev.sh down`，mock/bot 停止；MySQL 容器保持运行。
 
+2026-06-26 `/星露谷` 命令接入 AI 检索整合链路：
+
+- 新增 `StardewGuideAssistantService`，命令入口现在和 AI tool 一样走“关键词扩展 -> 多次攻略检索 -> 证据整合 -> 自然语言回复”的路径。
+- 关键词扩展通过 `AiChatService` 的 LIGHT 档完成，要求保留季节、地点、天气、时间、居民名、物品名、建筑名，以及“怎么获得/怎么做/升级材料/在哪里”等动作信息。
+- 证据整合通过 `AiChatService` 的 CHAT 档完成，系统提示要求只根据检索资料回答，回复自然、简洁、可执行，并且不提证据、关键词、数据版本、校验日期、来源链接、Wiki 或本地库。
+- `/星露谷` handler 不再直接调用 `StardewGuideService`，改为调用 `StardewGuideAssistantService`；命令回复不再拼接来源、数据版本、校验日期。
+- AI 关键词输出支持 JSON 字符串数组和宽松编号列表；AI 返回空或抛异常时，回退到单次本地攻略检索，避免命令入口直接失败。
+- 新增详细 QA 测试方案：`.ai-workflow/09-qa-stardew-guide-ai-retrieval-test-plan.md`。
+
+本轮验证结果：
+
+- `StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：82 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
