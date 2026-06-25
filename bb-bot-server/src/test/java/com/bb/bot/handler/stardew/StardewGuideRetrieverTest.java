@@ -184,6 +184,22 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedSkillIntentRetrievesFishingLevelingEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SKILL, "钓鱼等级低怎么快速升级"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("我钓鱼等级低怎么快速升级", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SKILL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("钓鱼技能", "训练用鱼竿", "气泡点", "完美钓鱼")
+                .contains("海泡布丁", "渔夫 -> 垂钓者")
+                .doesNotContain("夏季鱼类");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

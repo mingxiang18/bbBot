@@ -113,7 +113,7 @@ public class StardewQueryPlannerService {
                 || (containsAny(q, "建筑", "建造") && containsAny(q, "材料", "需要", "多少钱", "升级"))) {
             return StardewGuideIntent.BUILDING;
         }
-        if (containsAny(q, "技能", "战斗", "采矿", "耕种", "觅食")
+        if (containsAny(q, "技能", "战斗", "采矿", "耕种", "觅食", "钓鱼")
                 && containsAny(q, "等级", "升级", "经验", "怎么练", "快速", "职业")) {
             return StardewGuideIntent.SKILL;
         }

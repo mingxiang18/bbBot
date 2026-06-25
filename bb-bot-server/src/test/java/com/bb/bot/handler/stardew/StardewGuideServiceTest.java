@@ -746,6 +746,19 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFishingLevelingLocally() {
+        StardewGuideResult result = service.answer("星露谷 钓鱼等级低怎么快速升级");
+
+        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getAnswer()).contains("钓鱼经验来自鱼竿钓到物品", "250 钓鱼经验");
+        assertThat(result.getAnswer()).contains("完美钓鱼会让经验 x2.4", "10 级总经验阈值");
+        assertThat(result.getAnswer()).contains("训练用鱼竿", "玻璃纤维鱼竿", "铱金鱼竿");
+        assertThat(result.getAnswer()).contains("气泡点", "高级鱼饵", "海泡布丁");
+        assertThat(result.getAnswer()).contains("渔夫 -> 垂钓者", "不确定雕像");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Fishing");
+    }
+
+    @Test
     void answersSkillProfessionChoice() {
         StardewGuideResult result = service.answer("星露谷 钓鱼职业怎么选");
 

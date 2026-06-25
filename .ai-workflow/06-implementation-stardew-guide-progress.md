@@ -424,6 +424,22 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：112 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 钓鱼技能快速升级攻略加厚：
+
+- 针对“钓鱼等级低怎么快速升级/钓鱼职业怎么选/钓鱼工具怎么搭配”补强本地结构化 `fishing_skill` 攻略。
+- 按官方 Fishing/Skills/Fishing Rod/Bait And Bobber/Seafoam Pudding 资料补充 5 个小节：经验和等级、分阶段升级路线、效率技巧、装备和食物、职业选择。
+- 补充明确事实：钓鱼经验来自鱼竿、蟹笼、鱼塘和技能书；非鱼物品 3 XP，蟹笼 5 XP，读《鱼饵和浮标》或《星之书》250 XP，宝箱经验 x2.2，完美钓鱼经验 x2.4，传说鱼经验 x5。
+- 补充分阶段路线：0-2 级用训练用鱼竿稳成功率，2 级玻璃纤维鱼竿 + 鱼饵提高上钩次数，3 级蟹笼补低操作经验，6 级铱金鱼竿配钓具，9 级海泡布丁挑战高难鱼。
+- 补充效率建议：气泡点咬钩约快 4 倍，远离岸边减少垃圾并提高鱼尺寸/品质，普通鱼饵/高级鱼饵减少等待时间，软木塞/陷阱浮标和加钓鱼料理降低小游戏压力。
+- 本地 fallback 分类器补充“钓鱼 + 等级/升级/经验/怎么练/快速/职业”归 `SKILL`，避免 AI 不可用时把“钓鱼等级低”误归为 `FISH` 鱼列表。
+- 测试补充：新增 `StardewGuideServiceTest` 钓鱼快速升级断言，新增 `StardewGuideRetrieverTest` typed `SKILL` 检索测试并断言不返回夏季鱼类，新增 `StardewQueryPlannerServiceTest` 本地 fallback 分类测试。
+
+本轮聚焦验证结果：
+
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest`：82 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：115 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -445,10 +461,10 @@ mysql(misu-mysql-local) Up
 - 居民已做到 34 位送礼资料和首批结构化日程全覆盖；节日、姜岛度假、婚后、好感剧情、绿雨、沙漠节等复杂覆盖规则还未逐条精确建模。
 - 商店已优先覆盖 9 个高频购买/兑换入口；赌场、绿洲、探险家公会全量武器/戒指、姜岛/火山/齐钻商店等偏后期商店还未完整结构化。
 - 建筑已扩到 27 个核心/后期条目，已覆盖方尖塔、黄金钟、祝尼魔小屋、潘姆房屋和城镇捷径社区升级；多人小屋不同样式、宠物碗、岛屿农舍、温室、特殊场景建筑等仍未完整结构化。
-- 工具升级已结构化首批 6 类工具，但附魔、锻造、鱼竿浮标/鱼饵搭配和特殊工具还未完整结构化。
+- 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补耕种/采矿/觅食快速升级细分路线、具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 
