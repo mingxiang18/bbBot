@@ -130,6 +130,30 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence)).contains("恐龙蛋黄酱获取方式", "蛋黄酱机", "失踪的收集包");
     }
 
+    @Test
+    void typedIntentMissDoesNotFallBackToFreeTextRouting() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 鸡舍升级材料", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.RESOURCE);
+        assertThat(joinAnswers(evidence))
+                .contains("没找到这个资源")
+                .doesNotContain("鸡舍", "建造费用", "罗宾");
+    }
+
+    @Test
+    void unknownIntentStillAllowsSingleLookupFallback() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.UNKNOWN, "鸡舍升级材料"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 鸡舍升级材料", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.UNKNOWN);
+        assertThat(joinAnswers(evidence)).contains("鸡舍", "建造/升级时间", "木材");
+    }
+
     private StardewQueryPlan plan(StardewQueryPlan.PlannedIntent... intents) {
         StardewQueryPlan plan = new StardewQueryPlan();
         plan.setIntents(List.of(intents));

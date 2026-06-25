@@ -218,6 +218,18 @@
 - 资源获取本地库从 19 项扩到 35 项，新增恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、鹦鹉螺、红叶卷心菜、蕨菜、松露、鸭毛、海蓝宝石、虚空鲑鱼、鱿鱼墨汁、灵外质、放射性矿石、龙牙等高频稀有/后期物品。
 - 路由优先级做了小幅收敛：工具/商店优先于资源，明确资源获取优先于居民和建筑，解决“矮人卷轴在哪刷”“恐龙蛋怎么获得”等被居民/建筑误抢的问题。
 
+2026-06-26 AI 分类检索边界收缩：
+
+- `StardewGuideRetriever` 不再在 typed plan 无证据时无条件回退到自由文本路由；只有 planner 没有可用 intent 或 intent 全部为 `UNKNOWN` 时，才允许 `StardewGuideService.answer(query)` 单次兜底。
+- `StardewGuideAssistantService` 在已取得 typed evidence 但 CHAT 档整合失败时，优先返回已检索证据答案，不再重新走自由文本路由，降低“用户问 A、旧规则答 B”的风险。
+- 对 typed plan miss 增加回归测试：例如 AI 把“鸡舍升级材料”分类成 `RESOURCE` 时，只返回资源未命中提示，不会再被自由文本规则改答成鸡舍建筑升级。
+- 保留 `UNKNOWN` 兜底路径：当 AI 分类不可用或无法分类时，仍可单次使用旧自由文本查询，保证离线/降级情况下 `/星露谷 斧头升级需要什么`、`鸡舍升级材料` 等常见问题可回答。
+
+本轮验证结果：
+
+- `StardewGuideRetrieverTest,StardewGuideAssistantServiceTest`：15 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：100 tests, 0 failures。
+
 本轮验证结果：
 
 - `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：78 tests, 0 failures。

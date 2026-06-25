@@ -42,6 +42,9 @@ public class StardewGuideAssistantService {
         List<StardewGuideEvidence> evidenceItems = retriever.retrieve(query, plan);
         String evidence = formatEvidence(evidenceItems);
         if (StringUtils.isBlank(evidence)) {
+            if (!allowsFreeTextFallback(plan)) {
+                return noReliableEvidenceAnswer();
+            }
             return guideService.answer(query).getAnswer();
         }
 
@@ -49,7 +52,14 @@ public class StardewGuideAssistantService {
         if (StringUtils.isNotBlank(finalAnswer)) {
             return finalAnswer.trim();
         }
-        return guideService.answer(query).getAnswer();
+        String evidenceAnswer = firstEvidenceAnswer(evidenceItems);
+        if (StringUtils.isNotBlank(evidenceAnswer)) {
+            return evidenceAnswer;
+        }
+        if (allowsFreeTextFallback(plan)) {
+            return guideService.answer(query).getAnswer();
+        }
+        return noReliableEvidenceAnswer();
     }
 
     private String formatEvidence(List<StardewGuideEvidence> evidenceItems) {
@@ -66,6 +76,31 @@ public class StardewGuideAssistantService {
                     .append(evidence.answer()).append("\n\n");
         }
         return sb.toString().trim();
+    }
+
+    private boolean allowsFreeTextFallback(StardewQueryPlan plan) {
+        if (plan == null || plan.getIntents() == null || plan.getIntents().isEmpty()) {
+            return true;
+        }
+        return plan.getIntents().stream()
+                .allMatch(intent -> intent == null
+                        || intent.getType() == null
+                        || intent.getType() == StardewGuideIntent.UNKNOWN);
+    }
+
+    private String firstEvidenceAnswer(List<StardewGuideEvidence> evidenceItems) {
+        if (evidenceItems == null) {
+            return null;
+        }
+        return evidenceItems.stream()
+                .filter(evidence -> evidence != null && StringUtils.isNotBlank(evidence.answer()))
+                .map(evidence -> evidence.answer().trim())
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String noReliableEvidenceAnswer() {
+        return "这个问题我还没有查到足够确定的攻略内容。可以补充具体物品、居民、地点、季节或游戏内时间后再问。";
     }
 
     private String synthesizeAnswer(String query, String evidence) {

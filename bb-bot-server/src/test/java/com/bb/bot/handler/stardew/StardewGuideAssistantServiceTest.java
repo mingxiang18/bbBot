@@ -107,6 +107,27 @@ class StardewGuideAssistantServiceTest {
         assertThat(answer).contains("斧头", "铜斧", "铜锭 x5", "铁匠铺");
     }
 
+    @Test
+    void typedPlanMissDoesNotFallBackToFreeTextRouteWhenSynthesisFails() {
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"RESOURCE","keywords":["鸡舍升级材料"],"constraints":{}}
+                          ]
+                        }
+                        """);
+        when(aiChatService.chat(anyList(), eq(ModelTier.CHAT))).thenReturn(null);
+
+        String answer = assistantService.answer("星露谷 鸡舍升级材料");
+
+        assertThat(answer)
+                .contains("没找到这个资源")
+                .doesNotContain("罗宾", "建造费用", "升级费用");
+    }
+
     private String textOf(ChatMessage message) {
         return message.getContents().stream()
                 .map(content -> content.getValue() == null ? "" : content.getValue())

@@ -23,6 +23,7 @@ public class StardewGuideRetriever {
         if (effectivePlan == null || effectivePlan.getIntents() == null || effectivePlan.getIntents().isEmpty()) {
             effectivePlan = StardewQueryPlan.fallback(query);
         }
+        boolean allowFreeTextFallback = allowsFreeTextFallback(effectivePlan);
         List<StardewGuideEvidence> evidence = new ArrayList<>();
         Set<String> seenQueries = new LinkedHashSet<>();
         for (StardewQueryPlan.PlannedIntent intent : effectivePlan.getIntents()) {
@@ -38,13 +39,23 @@ public class StardewGuideRetriever {
                 evidence.add(new StardewGuideEvidence(type, searchQuery, result.getIntent(), result.getAnswer()));
             }
         }
-        if (evidence.isEmpty() && StringUtils.isNotBlank(query)) {
+        if (evidence.isEmpty() && allowFreeTextFallback && StringUtils.isNotBlank(query)) {
             StardewGuideResult result = guideService.answer(query);
             if (result != null && StringUtils.isNotBlank(result.getAnswer())) {
                 evidence.add(new StardewGuideEvidence(StardewGuideIntent.UNKNOWN, query, result.getIntent(), result.getAnswer()));
             }
         }
         return evidence;
+    }
+
+    private boolean allowsFreeTextFallback(StardewQueryPlan plan) {
+        if (plan == null || plan.getIntents() == null || plan.getIntents().isEmpty()) {
+            return true;
+        }
+        return plan.getIntents().stream()
+                .allMatch(intent -> intent == null
+                        || intent.getType() == null
+                        || intent.getType() == StardewGuideIntent.UNKNOWN);
     }
 
     private List<String> searchQueries(String originalQuery, StardewQueryPlan.PlannedIntent intent) {
