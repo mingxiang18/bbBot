@@ -11777,6 +11777,670 @@
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/古物"
       ]
+    },
+    {
+      "id": "egg",
+      "name": "鸡蛋",
+      "aliases": [
+        "蛋",
+        "白鸡蛋",
+        "棕鸡蛋",
+        "egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "鸡",
+          "detail": "成年鸡在鸡舍中通常每天产 1 个鸡蛋，产品会出现在地面。"
+        },
+        {
+          "type": "购买动物",
+          "detail": "鸡可在玛妮牧场购买，需要鸡舍。"
+        },
+        {
+          "type": "加工",
+          "detail": "鸡蛋可放入蛋黄酱机制作蛋黄酱。"
+        }
+      ],
+      "recommendation": "前期动物路线最基础产品；收集包和蛋黄酱机收益都常用。",
+      "usedIn": [
+        "动物收集包",
+        "蛋黄酱",
+        "烹饪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "large_egg",
+      "name": "大鸡蛋",
+      "aliases": [
+        "大鸡蛋",
+        "大型鸡蛋",
+        "large egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "鸡",
+          "detail": "成年鸡好感和心情较高时有机会产出大鸡蛋。"
+        },
+        {
+          "type": "照顾",
+          "detail": "每天抚摸、喂食、晴天吃草、冬天放加热器可提高心情和好感。"
+        }
+      ],
+      "recommendation": "动物收集包常用；想稳定出大鸡蛋先把鸡好感养上去。",
+      "usedIn": [
+        "动物收集包",
+        "蛋黄酱"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "duck_egg",
+      "name": "鸭蛋",
+      "aliases": [
+        "duck egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "鸭",
+          "detail": "成年鸭住在大鸡舍及以上建筑，通常隔天产鸭蛋。"
+        },
+        {
+          "type": "购买动物",
+          "detail": "升级到大鸡舍后可在玛妮牧场购买鸭。"
+        }
+      ],
+      "recommendation": "鸭蛋可做鸭蛋黄酱；如果只为收集包，鸭毛通常比鸭蛋更关键。",
+      "usedIn": [
+        "鸭蛋黄酱",
+        "烹饪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "void_egg",
+      "name": "虚空蛋",
+      "aliases": [
+        "void egg",
+        "黑蛋"
+      ],
+      "acquisitions": [
+        {
+          "type": "虚空鸡",
+          "detail": "孵化虚空蛋得到虚空鸡，成年后会产虚空蛋。"
+        },
+        {
+          "type": "购买",
+          "detail": "下水道解锁后可在科罗布斯处购买虚空蛋。"
+        },
+        {
+          "type": "随机事件",
+          "detail": "女巫夜间事件也可能把鸡蛋变成虚空蛋。"
+        }
+      ],
+      "recommendation": "想稳定拿虚空蛋，买一个后放进大鸡舍孵化器孵虚空鸡。",
+      "usedIn": [
+        "虚空蛋黄酱",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "golden_egg",
+      "name": "金蛋",
+      "aliases": [
+        "黄金蛋",
+        "golden egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "完美度",
+          "detail": "达成完美后可通过玛妮、齐先生核桃房等后期渠道获得金蛋。"
+        },
+        {
+          "type": "金鸡",
+          "detail": "金蛋孵化成金鸡后，成年金鸡会产金蛋。"
+        }
+      ],
+      "recommendation": "这是完美度后的后期内容；前中期不用规划，先完成社区中心、姜岛和博物馆。",
+      "usedIn": [
+        "金鸡",
+        "后期收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "milk",
+      "name": "牛奶",
+      "aliases": [
+        "milk",
+        "小壶牛奶"
+      ],
+      "acquisitions": [
+        {
+          "type": "奶牛",
+          "detail": "成年奶牛住在畜棚，用挤奶桶挤奶。"
+        },
+        {
+          "type": "购买动物",
+          "detail": "建好畜棚后可在玛妮牧场购买奶牛。"
+        },
+        {
+          "type": "加工",
+          "detail": "牛奶可放入奶酪压制机制作奶酪。"
+        }
+      ],
+      "recommendation": "牛奶是动物路线核心原料；先买挤奶桶，再考虑奶酪压制机。",
+      "usedIn": [
+        "动物收集包",
+        "奶酪",
+        "烹饪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "large_milk",
+      "name": "大壶牛奶",
+      "aliases": [
+        "large milk",
+        "大牛奶"
+      ],
+      "acquisitions": [
+        {
+          "type": "奶牛",
+          "detail": "奶牛好感和心情较高时，用挤奶桶有机会得到大壶牛奶。"
+        },
+        {
+          "type": "照顾",
+          "detail": "每天抚摸、喂食、晴天吃草、冬季加热器能提升产出高级产品的概率。"
+        }
+      ],
+      "recommendation": "动物收集包常用；如果迟迟不出，优先检查是否每天喂食和抚摸。",
+      "usedIn": [
+        "动物收集包",
+        "金星奶酪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "goat_milk",
+      "name": "羊奶",
+      "aliases": [
+        "山羊奶",
+        "goat milk"
+      ],
+      "acquisitions": [
+        {
+          "type": "山羊",
+          "detail": "成年山羊住在大畜棚及以上建筑，用挤奶桶挤奶，通常隔天产出。"
+        },
+        {
+          "type": "购买动物",
+          "detail": "升级到大畜棚后可在玛妮牧场购买山羊。"
+        }
+      ],
+      "recommendation": "羊奶可做山羊奶酪，售价不错；但建筑门槛比奶牛更高。",
+      "usedIn": [
+        "山羊奶酪",
+        "烹饪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "large_goat_milk",
+      "name": "大壶羊奶",
+      "aliases": [
+        "大羊奶",
+        "large goat milk"
+      ],
+      "acquisitions": [
+        {
+          "type": "山羊",
+          "detail": "山羊好感和心情较高时，用挤奶桶有机会得到大壶羊奶。"
+        },
+        {
+          "type": "照顾",
+          "detail": "稳定喂食、抚摸和高心情是关键。"
+        }
+      ],
+      "recommendation": "做高品质山羊奶酪更值钱；追求稳定前先把山羊好感养满。",
+      "usedIn": [
+        "山羊奶酪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "wool",
+      "name": "羊毛",
+      "aliases": [
+        "wool"
+      ],
+      "acquisitions": [
+        {
+          "type": "绵羊",
+          "detail": "成年绵羊住在豪华畜棚，用剪刀剪羊毛。"
+        },
+        {
+          "type": "兔子",
+          "detail": "成年兔子住在豪华鸡舍，也可能产出羊毛。"
+        },
+        {
+          "type": "加工",
+          "detail": "羊毛可放入织布机制作布料。"
+        }
+      ],
+      "recommendation": "如果只是要布料，兔子和绵羊都能提供；规模化布料更推荐绵羊加织布机。",
+      "usedIn": [
+        "布料",
+        "织布机",
+        "缝纫"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "ostrich_egg",
+      "name": "鸵鸟蛋",
+      "aliases": [
+        "ostrich egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "姜岛",
+          "detail": "可通过姜岛相关探索获得第一颗鸵鸟蛋，例如日记残页线索和稀有宝箱。"
+        },
+        {
+          "type": "孵化",
+          "detail": "鸵鸟蛋要用鸵鸟孵化器在畜棚中孵化；鸵鸟成年后会继续产鸵鸟蛋。"
+        }
+      ],
+      "recommendation": "鸵鸟是后期动物；拿到第一颗蛋时别急着加工，优先考虑孵化建立稳定来源。",
+      "usedIn": [
+        "鸵鸟",
+        "蛋黄酱"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "cheese",
+      "name": "奶酪",
+      "aliases": [
+        "cheese"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "把牛奶或大壶牛奶放入奶酪压制机制作奶酪。"
+        },
+        {
+          "type": "动物路线",
+          "detail": "先有奶牛和挤奶桶，再做奶酪压制机。"
+        }
+      ],
+      "recommendation": "奶酪是前中期优秀回血食物和稳定收益品；牛奶多了优先加工。",
+      "usedIn": [
+        "食物",
+        "出售",
+        "烹饪"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "goat_cheese",
+      "name": "山羊奶酪",
+      "aliases": [
+        "goat cheese"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "把羊奶或大壶羊奶放入奶酪压制机制作山羊奶酪。"
+        },
+        {
+          "type": "动物路线",
+          "detail": "需要山羊稳定产奶，山羊需要大畜棚。"
+        }
+      ],
+      "recommendation": "山羊奶酪价值高，也是不少送礼路线的好物品。",
+      "usedIn": [
+        "出售",
+        "礼物",
+        "食物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "duck_mayonnaise",
+      "name": "鸭蛋黄酱",
+      "aliases": [
+        "鸭蛋黄酱",
+        "duck mayonnaise"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "把鸭蛋放入蛋黄酱机制作鸭蛋黄酱。"
+        },
+        {
+          "type": "前置",
+          "detail": "需要大鸡舍养鸭，并制作蛋黄酱机。"
+        }
+      ],
+      "recommendation": "鸭蛋如果不用来送礼或烹饪，通常加工成鸭蛋黄酱更省心。",
+      "usedIn": [
+        "出售",
+        "工匠品"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "void_mayonnaise",
+      "name": "虚空蛋黄酱",
+      "aliases": [
+        "void mayonnaise"
+      ],
+      "acquisitions": [
+        {
+          "type": "加工",
+          "detail": "把虚空蛋放入蛋黄酱机制作虚空蛋黄酱。"
+        },
+        {
+          "type": "任务",
+          "detail": "进入女巫沼泽相关流程时会用到虚空蛋黄酱。"
+        }
+      ],
+      "recommendation": "虚空蛋先留一颗孵虚空鸡，之后再稳定加工。",
+      "usedIn": [
+        "女巫沼泽",
+        "出售"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "apricot",
+      "name": "杏子",
+      "aliases": [
+        "apricot"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "杏子树苗成熟后在春季每天产出 1 个杏子；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "杏子树苗可从皮埃尔杂货店购买，价格 2,000g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "春季果树，价格低，主要用于收集包/料理；赚钱优先级不如桃子、石榴、香蕉。",
+      "usedIn": [
+        "工匠收集包",
+        "水果沙拉",
+        "新鲜水果任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "cherry",
+      "name": "樱桃",
+      "aliases": [
+        "cherry"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "樱桃树苗成熟后在春季每天产出 1 个樱桃；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "樱桃树苗可从皮埃尔杂货店购买，价格 3,400g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "春季果树；如果只是补工匠收集包，可以六种果树水果任选其一。",
+      "usedIn": [
+        "工匠收集包"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "orange",
+      "name": "橙子",
+      "aliases": [
+        "orange"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "橙子树苗成熟后在夏季每天产出 1 个橙子；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "橙子树苗可从皮埃尔杂货店购买，价格 4,000g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "夏季果树；温室边缘种下后全年稳定产水果。",
+      "usedIn": [
+        "工匠收集包",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "peach",
+      "name": "桃子",
+      "aliases": [
+        "peach"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "桃子树苗成熟后在夏季每天产出 1 个桃子；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "桃子树苗可从皮埃尔杂货店购买，价格 6,000g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "夏季高价果树之一，温室/姜岛长期收益更舒服。",
+      "usedIn": [
+        "工匠收集包",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "apple",
+      "name": "苹果",
+      "aliases": [
+        "apple"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "苹果树苗成熟后在秋季每天产出 1 个苹果；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "苹果树苗可从皮埃尔杂货店购买，价格 4,000g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "饲料收集包需要 3 个苹果；如果走社区中心，最晚夏末前种或放温室/姜岛。",
+      "usedIn": [
+        "工匠收集包",
+        "饲料收集包",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "pomegranate",
+      "name": "石榴",
+      "aliases": [
+        "pomegranate"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "石榴树苗成熟后在秋季每天产出 1 个石榴；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "石榴树苗可从皮埃尔杂货店购买，价格 6,000g；旅行货车也可能出售。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "魔法师收集包需要石榴；社区中心路线建议提前规划。",
+      "usedIn": [
+        "工匠收集包",
+        "魔法师收集包",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "banana",
+      "name": "香蕉",
+      "aliases": [
+        "banana"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "香蕉树苗成熟后在夏季每天产出 1 个香蕉；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "香蕉树苗主要来自姜岛相关渠道或旅行货车。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "香蕉树主要是姜岛阶段内容；种在姜岛可全年结果。",
+      "usedIn": [
+        "姜岛",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "mango",
+      "name": "芒果",
+      "aliases": [
+        "mango"
+      ],
+      "acquisitions": [
+        {
+          "type": "果树",
+          "detail": "芒果树苗成熟后在夏季每天产出 1 个芒果；果树从树苗到成熟共 28 天。"
+        },
+        {
+          "type": "树苗",
+          "detail": "芒果树苗主要来自姜岛相关渠道或旅行货车。"
+        },
+        {
+          "type": "温室/姜岛",
+          "detail": "成熟果树种在温室或姜岛后全年结果，不受季节限制。"
+        }
+      ],
+      "recommendation": "芒果树主要是姜岛阶段内容；姜岛全年结果，适合作为后期稳定水果。",
+      "usedIn": [
+        "姜岛",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
     }
   ],
   "guides": [
@@ -13186,6 +13850,123 @@
       "sourceUrls": [
         "https://stardewvalleywiki.com/Food",
         "https://stardewvalleywiki.com/Buffs"
+      ]
+    },
+    {
+      "id": "animal_care",
+      "name": "动物养殖",
+      "category": "animals",
+      "aliases": [
+        "动物怎么养",
+        "养动物",
+        "动物产品",
+        "动物心情",
+        "动物好感",
+        "喂动物",
+        "牧场动物",
+        "鸡舍动物",
+        "畜棚动物"
+      ],
+      "keywords": [
+        "鸡舍",
+        "畜棚",
+        "干草",
+        "草地",
+        "抚摸",
+        "心情",
+        "好感",
+        "加热器",
+        "自动采集器",
+        "大壶牛奶",
+        "大鸡蛋",
+        "动物饼干"
+      ],
+      "sections": [
+        {
+          "title": "基础循环",
+          "lines": [
+            "动物需要对应建筑：鸡舍养鸡、鸭、兔、恐龙；畜棚养牛、山羊、绵羊、猪；鸵鸟住畜棚但需要鸵鸟孵化器。",
+            "每天摸动物、确保吃到干草或室外草；没喂食当天不会产出。",
+            "晴天可开门让动物外出吃草，草能提升心情；雨天和冬季不要指望外出吃草。"
+          ]
+        },
+        {
+          "title": "产出",
+          "lines": [
+            "鸡、鸭、兔、恐龙和鸵鸟的产品会出现在建筑地面；牛和山羊要用挤奶桶；绵羊要用剪刀；猪外出会拱出松露。",
+            "幼年动物要先长大才会产出；牛和鸡通常每天产出，山羊通常隔天产出。",
+            "大壶牛奶、大鸡蛋、兔子的脚、鸭毛等高级/稀有产物受动物好感和心情影响。"
+          ]
+        },
+        {
+          "title": "提升产量",
+          "lines": [
+            "优先建筒仓存干草，再升级鸡舍/畜棚；冬季在建筑里放加热器。",
+            "自动采集器能省掉挤奶、剪羊毛和捡多数动物产品的操作；猪的松露仍要在户外捡。",
+            "1.6 的金色动物饼干可永久让多数动物产出翻倍，但不能给猪使用。"
+          ]
+        }
+      ],
+      "recommendation": "前期建议筒仓 -> 鸡舍/畜棚 -> 稳定草地和干草 -> 再追求高级动物产品；要查某个产品直接问“牛奶/羊毛/虚空蛋怎么获得”。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/动物",
+        "https://stardewvalleywiki.com/Animals"
+      ]
+    },
+    {
+      "id": "fruit_trees",
+      "name": "果树",
+      "category": "crops",
+      "aliases": [
+        "水果树",
+        "果树怎么种",
+        "树苗",
+        "果树布局",
+        "温室果树",
+        "姜岛果树"
+      ],
+      "keywords": [
+        "28天",
+        "3x3",
+        "温室",
+        "姜岛",
+        "苹果",
+        "石榴",
+        "香蕉",
+        "芒果",
+        "皮埃尔",
+        "旅行货车"
+      ],
+      "sections": [
+        {
+          "title": "种植规则",
+          "lines": [
+            "果树需要种在未开垦地面上，树苗周围 3x3 范围在成熟前必须保持清空。",
+            "果树之间的 3x3 区域不能重叠；种太近游戏会阻止。",
+            "成熟前被杂物、地板、路径或物品挡住会停止生长；成熟后周围可铺地板或放东西。"
+          ]
+        },
+        {
+          "title": "成熟和结果",
+          "lines": [
+            "普通树苗总共 28 天成熟；成熟后按季节每天产 1 个果实。",
+            "温室和姜岛上的成熟果树全年结果，不受季节限制。",
+            "成熟后每过一年果实品质提升一档，最高铱星。"
+          ]
+        },
+        {
+          "title": "季节",
+          "lines": [
+            "春季：杏子、樱桃。",
+            "夏季：橙子、桃子、香蕉、芒果。",
+            "秋季：苹果、石榴。"
+          ]
+        }
+      ],
+      "recommendation": "普通农场想补收集包可提前 28 天种对应季节果树；长期收益和省心优先考虑温室边缘或姜岛全年结果。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees"
       ]
     }
   ],

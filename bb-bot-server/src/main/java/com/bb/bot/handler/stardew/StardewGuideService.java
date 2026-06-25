@@ -55,7 +55,8 @@ public class StardewGuideService {
 
         boolean bundleIntent = query.contains("收集包") || query.contains("献祭")
                 || (bundle.isPresent() && (query.contains("要") || query.contains("需要") || query.contains("交") || query.contains("包")));
-        if (bundleIntent && (bundle.isPresent() || (crop.isEmpty() && building.isEmpty()))) {
+        if (bundleIntent && !(resource.isPresent() && looksLikeResourceQuery(query))
+                && (bundle.isPresent() || (crop.isEmpty() && building.isEmpty()))) {
             return bundle.map(b -> bundleAnswer(query, b))
                     .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应收集包。可以试试：海鱼收集包、湖鱼收集包、工匠收集包、锅炉房。"));
         }
@@ -71,6 +72,9 @@ public class StardewGuideService {
         if (looksLikeShopQuery(query) && shop.isPresent()) {
             return shopAnswer(shop.get());
         }
+        if (guide.isPresent() && shouldPreferGuideOverResource(query, guide.get())) {
+            return guideAnswer(guide.get());
+        }
         if (resource.isPresent() && looksLikeResourceQuery(query)
                 && !(fish.isPresent() && query.contains("果冻"))
                 && !isFishingQuestion(query) && !isMachineCraftingQuestion(query, machine)) {
@@ -81,6 +85,9 @@ public class StardewGuideService {
         }
         if (villager.isPresent() && looksLikeVillagerProfileQuery(query)) {
             return villagerProfileAnswer(villager.get());
+        }
+        if (guide.isPresent() && shouldPreferGuideOverBuilding(query, guide.get())) {
+            return guideAnswer(guide.get());
         }
         if (building.isPresent() || looksLikeBuildingQuery(query)) {
             boolean broadBuildingQuery = isBroadBuildingQuery(query);
@@ -1229,6 +1236,25 @@ public class StardewGuideService {
         }
         return query.contains("怎么") || query.contains("解锁") || query.contains("修")
                 || query.contains("准备") || query.contains("路线") || query.contains("攻略");
+    }
+
+    private boolean shouldPreferGuideOverBuilding(String query, StardewData.GuideTopic guide) {
+        if (guide == null || !"animals".equals(guide.getCategory())) {
+            return false;
+        }
+        return query.contains("怎么养") || query.contains("照顾") || query.contains("喂")
+                || query.contains("喂食") || query.contains("心情") || query.contains("好感")
+                || query.contains("动物产品") || query.contains("动物养殖");
+    }
+
+    private boolean shouldPreferGuideOverResource(String query, StardewData.GuideTopic guide) {
+        if (guide == null || !"fruit_trees".equals(guide.getId())) {
+            return false;
+        }
+        return (query.contains("果树") || query.contains("树苗") || query.contains("水果树"))
+                && (query.contains("怎么种") || query.contains("温室") || query.contains("布局")
+                || query.contains("间隔") || query.contains("3x3") || query.contains("3×3")
+                || query.contains("几天成熟") || query.contains("成熟"));
     }
 
     private boolean looksLikeGuideQuery(String query) {

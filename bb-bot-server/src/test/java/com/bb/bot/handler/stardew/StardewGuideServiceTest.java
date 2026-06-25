@@ -304,6 +304,46 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersAnimalCareAndAnimalProductQuestions() {
+        StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
+        StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");
+        StardewGuideResult wool = service.answer("星露谷 羊毛怎么获得");
+        StardewGuideResult voidEgg = service.answer("星露谷 虚空蛋怎么获得");
+        StardewGuideResult ostrichEgg = service.answer("星露谷 鸵鸟蛋拿到后怎么办");
+        StardewGuideResult coop = service.answer("星露谷 鸡舍升级材料");
+
+        assertThat(care.getIntent()).isEqualTo("guide");
+        assertThat(care.getAnswer()).contains("每天摸动物", "干草", "金色动物饼干");
+        assertThat(milk.getIntent()).isEqualTo("resource");
+        assertThat(milk.getAnswer()).contains("奶牛", "挤奶桶", "好感");
+        assertThat(wool.getIntent()).isEqualTo("resource");
+        assertThat(wool.getAnswer()).contains("绵羊", "兔子", "织布机");
+        assertThat(voidEgg.getIntent()).isEqualTo("resource");
+        assertThat(voidEgg.getAnswer()).contains("科罗布斯", "虚空鸡", "孵化器");
+        assertThat(ostrichEgg.getIntent()).isEqualTo("resource");
+        assertThat(ostrichEgg.getAnswer()).contains("姜岛", "鸵鸟孵化器", "优先考虑孵化");
+        assertThat(coop.getIntent()).isEqualTo("building_detail");
+        assertThat(coop.getAnswer()).contains("鸡舍", "木材", "石头");
+    }
+
+    @Test
+    void answersFruitTreeAndFruitQuestions() {
+        StardewGuideResult fruitTrees = service.answer("星露谷 果树怎么种，温室能种吗");
+        StardewGuideResult apple = service.answer("星露谷 苹果怎么获得，收集包要几个");
+        StardewGuideResult pomegranate = service.answer("星露谷 石榴怎么获得");
+        StardewGuideResult banana = service.answer("星露谷 香蕉怎么获得");
+
+        assertThat(fruitTrees.getIntent()).isEqualTo("guide");
+        assertThat(fruitTrees.getAnswer()).contains("28 天", "3x3", "温室", "姜岛");
+        assertThat(apple.getIntent()).isEqualTo("resource");
+        assertThat(apple.getAnswer()).contains("苹果树苗", "秋季", "饲料收集包需要 3 个苹果");
+        assertThat(pomegranate.getIntent()).isEqualTo("resource");
+        assertThat(pomegranate.getAnswer()).contains("石榴树苗", "秋季", "魔法师收集包");
+        assertThat(banana.getIntent()).isEqualTo("resource");
+        assertThat(banana.getAnswer()).contains("香蕉树苗", "姜岛", "全年结果");
+    }
+
+    @Test
     void answersCommonShopAndPurchaseQuestions() {
         StardewGuideResult backpack = service.answer("星露谷 背包升级多少钱");
         StardewGuideResult sprinkler = service.answer("星露谷 铱制洒水器在哪里买");

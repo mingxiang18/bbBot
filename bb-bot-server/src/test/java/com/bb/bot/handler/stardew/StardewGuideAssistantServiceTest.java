@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,13 +29,25 @@ class StardewGuideAssistantServiceTest {
         repository.load();
         guideService = new StardewGuideService(repository);
         aiChatService = mock(AiChatService.class);
-        assistantService = new StardewGuideAssistantService(guideService, aiChatService);
+        StardewQueryPlannerService plannerService = new StardewQueryPlannerService(aiChatService);
+        StardewGuideRetriever retriever = new StardewGuideRetriever(guideService);
+        assistantService = new StardewGuideAssistantService(guideService, plannerService, retriever, aiChatService);
     }
 
     @Test
-    void expandsKeywordsRetrievesEvidenceAndSynthesizesNaturalAnswer() {
+    void plansTypedQueriesRetrievesEvidenceAndSynthesizesNaturalAnswer() {
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
-                .thenReturn("[\"恐龙蛋怎么获得\", \"恐龙蛋黄酱怎么做\", \"失踪的收集包\"]");
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"RESOURCE","keywords":["恐龙蛋怎么获得"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["恐龙蛋黄酱怎么做"],"constraints":{}},
+                            {"type":"BUNDLE","keywords":["失踪的收集包"],"constraints":{}}
+                          ]
+                        }
+                        """);
         when(aiChatService.chat(anyList(), eq(ModelTier.CHAT)))
                 .thenReturn("第一颗恐龙蛋先放进大鸡舍孵化器孵恐龙，之后再用蛋黄酱机做恐龙蛋黄酱补电影院。");
 
@@ -45,31 +58,38 @@ class StardewGuideAssistantServiceTest {
         ArgumentCaptor<List<ChatMessage>> promptCaptor = ArgumentCaptor.forClass(List.class);
         verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.LIGHT));
         verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.CHAT));
+        String plannerPrompt = textOf(promptCaptor.getAllValues().get(0).get(0));
         String synthesisPrompt = textOf(promptCaptor.getAllValues().get(1).get(1));
+        assertThat(plannerPrompt).contains("type 只能从这些枚举中选择", "RESOURCE", "BUNDLE");
         assertThat(synthesisPrompt)
                 .contains("用户问题", "检索到的资料")
-                .contains("恐龙蛋黄酱获取方式", "恐龙蛋获取方式", "失踪的收集包");
+                .contains("类型：RESOURCE", "查询：恐龙蛋怎么获得", "恐龙蛋获取方式")
+                .contains("类型：BUNDLE", "查询：失踪的收集包", "失踪的收集包");
         assertThat(synthesisPrompt).doesNotContain("sourceUrls", "gameVersion", "lastCheckedAt");
     }
 
     @Test
-    void acceptsLineBasedKeywordOutput() {
+    void returnsClarificationWhenSchedulePlanNeedsGameTime() {
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
-                .thenReturn("1. 矮人卷轴\n2. 矮人语教程");
-        when(aiChatService.chat(anyList(), eq(ModelTier.CHAT)))
-                .thenReturn("矮人卷轴可以按层数刷，四卷都捐给博物馆后拿矮人语教程。");
+                .thenReturn("""
+                        {
+                          "needMoreInfo": true,
+                          "clarificationQuestion": "要判断海莉现在在哪，请补充游戏内时间；有季节、日期、星期、天气会更准。",
+                          "intents": [
+                            {"type":"VILLAGER_SCHEDULE","keywords":["海莉在哪"],"constraints":{"villager":"海莉"}}
+                          ]
+                        }
+                        """);
 
-        String answer = assistantService.answer("星露谷 矮人卷轴在哪刷");
+        String answer = assistantService.answer("海莉现在在哪");
 
-        assertThat(answer).contains("矮人卷轴", "矮人语教程");
-        ArgumentCaptor<List<ChatMessage>> promptCaptor = ArgumentCaptor.forClass(List.class);
-        verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.LIGHT));
-        verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.CHAT));
-        assertThat(textOf(promptCaptor.getAllValues().get(1).get(1))).contains("矮人卷轴获取方式");
+        assertThat(answer).contains("请补充游戏内时间", "季节", "天气");
+        verify(aiChatService).chat(anyList(), eq(ModelTier.LIGHT));
+        verify(aiChatService, never()).chat(anyList(), eq(ModelTier.CHAT));
     }
 
     @Test
-    void fallsBackToSingleLookupWhenAiIsUnavailable() {
+    void fallsBackToSingleLookupWhenPlanIsUnavailable() {
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenReturn(null);
         when(aiChatService.chat(anyList(), eq(ModelTier.CHAT))).thenReturn(null);
 

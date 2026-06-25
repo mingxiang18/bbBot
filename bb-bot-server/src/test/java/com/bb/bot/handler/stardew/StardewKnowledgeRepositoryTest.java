@@ -29,9 +29,9 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(16);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(62);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(85);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
-        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(33);
+        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
     }
 
     @Test
@@ -49,7 +49,8 @@ class StardewKnowledgeRepositoryTest {
                 "progression",
                 "collection",
                 "mining",
-                "crafting"
+                "crafting",
+                "animals"
         );
     }
 
@@ -297,6 +298,43 @@ class StardewKnowledgeRepositoryTest {
                 "prehistoric_rib"
         );
         assertThat(guideAliases).contains("古物", "文物", "矿物", "缺古物", "缺矿物", "全套收集");
+    }
+
+    @Test
+    void animalProductAndFruitTreeGuidesAreCovered() {
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+        Set<String> guideIds = repository.guides().stream()
+                .map(StardewData.GuideTopic::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).contains(
+                "egg",
+                "large_egg",
+                "duck_egg",
+                "void_egg",
+                "golden_egg",
+                "milk",
+                "large_milk",
+                "goat_milk",
+                "large_goat_milk",
+                "wool",
+                "ostrich_egg",
+                "cheese",
+                "goat_cheese",
+                "duck_mayonnaise",
+                "void_mayonnaise",
+                "apricot",
+                "cherry",
+                "orange",
+                "peach",
+                "apple",
+                "pomegranate",
+                "banana",
+                "mango"
+        );
+        assertThat(guideIds).contains("animal_care", "fruit_trees");
     }
 
     @Test

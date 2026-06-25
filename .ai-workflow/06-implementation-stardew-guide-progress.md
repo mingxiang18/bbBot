@@ -22,7 +22,11 @@
 
 ### 检索策略
 
-1. 优先使用本地结构化知识库：
+1. `/星露谷` 命令和 `stardew_guide` AI tool 统一走 `StardewGuideAssistantService`：
+   - 先由 `StardewQueryPlannerService` 调用 `AiChatService` LIGHT 档，把用户问题规划为 1-4 个 intent。
+   - 每个 intent 都包含类型、类型内检索关键词和季节/地点/天气/时间/居民等约束。
+   - 再由 `StardewGuideRetriever` 按类型添加检索 hint，分别检索证据，最后由 `AiChatService` CHAT 档整合成自然回复。
+2. 优先使用本地结构化知识库：
    - 鱼类
    - 收集包
    - 作物成熟天数、季节、收益、收集包用途
@@ -34,7 +38,7 @@
    - 居民生日和礼物偏好
    - 资源获取
    - 通用攻略条目，如工具升级、建筑、作物推荐、技能、进度解锁、烹饪/制作
-2. 本地结构化知识库未命中时，走官方中文 Wiki API 兜底：
+3. 本地结构化知识库未命中时，走官方中文 Wiki API 兜底：
    - `query&list=search`
    - `parse&prop=text|displaytitle`
    - 对自然语言查询做核心词改写，例如 `战斗技能如何快速升级` -> `战斗`
@@ -51,8 +55,8 @@
 - 机器/加工设备：17 个，覆盖小桶、罐头瓶、蛋黄酱机、奶酪压制机、织布机、产油机、蜂房、熔炉、木炭窑、回收机、种子生产器、宝石复制机、避雷针，以及 1.6 的鱼熏机、脱水机、诱饵制造机、蘑菇木桩
 - 商店/商人：9 个高频条目，覆盖皮埃尔、铁匠、罗宾、玛妮、威利、科罗布斯、旅行货车、沙漠商人、书商，以及背包、干草、铱制洒水器、楼梯、鱼竿/鱼饵、技能书等常问商品/兑换
 - 居民：34 位可送礼居民资料均已有本地结构化日程；覆盖普通日程、常驻居民、高频雨天/星期/上课/诊所规则，并保留节日、姜岛度假、婚后、好感剧情等覆盖风险提示
-- 资源获取：62 项，覆盖硬木、电池组、铱矿石、五彩碎片、上古种子、布料、三种钓鱼果冻，煤炭、黏土、纤维、苔藓、精炼石英、三类树液采集物、干草、海草/绿藻、树液、铜铁金矿石等高频材料，以及恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、龙牙、远古斑点、古物宝藏、四类晶球、基础矿物/宝石和一批高频博物馆古物
-- 通用攻略：33 项
+- 资源获取：85 项，覆盖硬木、电池组、铱矿石、五彩碎片、上古种子、布料、三种钓鱼果冻，煤炭、黏土、纤维、苔藓、精炼石英、三类树液采集物、干草、海草/绿藻、树液、铜铁金矿石等高频材料，以及恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、龙牙、远古斑点、古物宝藏、四类晶球、基础矿物/宝石、一批高频博物馆古物、动物产品和果树水果
+- 通用攻略：35 项，新增动物养殖和果树种植规则
 
 这不是完整星露谷数据集。当前靠 Wiki 兜底补足未建模问题。
 
@@ -101,7 +105,7 @@
 - 五大技能结构化攻略：耕种、采矿、觅食、钓鱼、战斗
 - 技能攻略包含经验来源、快速升级路线、5/10 级职业选择建议
 - “战斗技能如何快速升级”已改为本地结构化答案，不再只靠 Wiki 兜底
-- handler 回复包含答案、来源、数据版本
+- handler 和 AI tool 回复自然答案，不展示数据版本、校验日期、来源链接、Wiki 或本地库等内部信息
 - Wiki API 搜索结果解析、相关性排序、正文和表格摘要提取
 
 ## 验证命令
@@ -294,6 +298,21 @@ mysql(misu-mysql-local) Up
 本轮验证结果：
 
 - `StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：85 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
+2026-06-26 AI 分类规划与 typed retrieval 重构：
+
+- 用户反馈旧实现会陷入“命中测试地狱”，容易把新问题误判到错误路由。本轮把助手链路从“AI 生成关键词数组 -> 逐个撞 `StardewGuideService`”改为“AI 分类规划 -> 类型内关键词检索 -> typed evidence -> AI 自然整合”。
+- 新增 `StardewGuideIntent`、`StardewQueryPlan`、`StardewQueryPlannerService`、`StardewGuideRetriever`、`StardewGuideEvidence`。
+- 规划器要求 AI 输出 JSON：`needMoreInfo`、`clarificationQuestion`、`intents[].type`、`intents[].keywords`、`intents[].constraints`。类型覆盖鱼类、收集包、居民位置、居民资料、资源、动物、果树、作物、工具、建筑、机器、商店、料理、技能、博物馆、通用攻略和未知。
+- 居民“现在在哪”类问题如果缺少游戏内时间，规划层直接返回澄清问题，不再让后续检索或自然语言整合猜答案。
+- `StardewGuideRetriever` 根据 intent 添加轻量类型 hint，例如 `FRUIT_TREE` 补“果树”、`BUNDLE` 补“收集包”、`RESOURCE` 补“怎么获得”，减少“苹果树”被苹果资源抢走、“收集包 + 资源”混问互相抢路由的问题。
+- `stardew_guide` AI tool 已改为调用 `StardewGuideAssistantService`，和 `/星露谷` 命令共享同一条“规划 -> 检索 -> 整合”路径。
+- 本轮同时补充动物养殖、动物产品、果树和水果结构化数据；资源获取扩到 85 项，通用攻略扩到 35 项。
+
+本轮验证结果：
+
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：80 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
 ## 真实网络验证
