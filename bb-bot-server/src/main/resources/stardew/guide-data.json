@@ -2730,6 +2730,1012 @@
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/收集包"
       ]
+    },
+    {
+      "id": "fall_foraging",
+      "name": "秋季采集收集包",
+      "room": "工艺室",
+      "aliases": [
+        "秋季采集",
+        "秋天采集",
+        "fall foraging bundle"
+      ],
+      "reward": "秋季种子（30）",
+      "items": [
+        {
+          "name": "普通蘑菇",
+          "quantity": 1,
+          "hint": "秋季采集；秘密森林春/秋也可采；蘑菇洞/蘑菇树也可获得"
+        },
+        {
+          "name": "野梅",
+          "quantity": 1,
+          "hint": "秋季采集"
+        },
+        {
+          "name": "榛子",
+          "quantity": 1,
+          "hint": "秋季采集"
+        },
+        {
+          "name": "黑莓",
+          "quantity": 1,
+          "hint": "秋季采集；果蝠洞也可能产出"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "winter_foraging",
+      "name": "冬季采集收集包",
+      "room": "工艺室",
+      "aliases": [
+        "冬季采集",
+        "冬天采集",
+        "winter foraging bundle"
+      ],
+      "reward": "冬季种子（30）",
+      "items": [
+        {
+          "name": "冬根",
+          "quantity": 1,
+          "hint": "冬季锄地/古物点；矿井 41-79 层蓝色史莱姆也可能掉落"
+        },
+        {
+          "name": "水晶果",
+          "quantity": 1,
+          "hint": "冬季采集；矿井 41-79 层灰尘精灵也可能掉落"
+        },
+        {
+          "name": "雪山药",
+          "quantity": 1,
+          "hint": "冬季锄地或古物点"
+        },
+        {
+          "name": "番红花",
+          "quantity": 1,
+          "hint": "冬季采集"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "exotic_foraging",
+      "name": "异国情调采集收集包",
+      "room": "工艺室",
+      "aliases": [
+        "异国情调采集",
+        "异国采集",
+        "exotic foraging bundle"
+      ],
+      "reward": "秋日恩赐（5）",
+      "items": [
+        {
+          "name": "椰子",
+          "quantity": 1,
+          "hint": "沙漠采集；旅行货车也可能出售"
+        },
+        {
+          "name": "仙人掌果子",
+          "quantity": 1,
+          "hint": "沙漠采集；旅行货车也可能出售"
+        },
+        {
+          "name": "山洞萝卜",
+          "quantity": 1,
+          "hint": "矿井箱子/锄地；常见于矿井"
+        },
+        {
+          "name": "红蘑菇",
+          "quantity": 1,
+          "hint": "矿井、秘密森林、蘑菇洞或蘑菇树"
+        },
+        {
+          "name": "紫蘑菇",
+          "quantity": 1,
+          "hint": "矿井、蘑菇洞或森林农场秋季采集"
+        },
+        {
+          "name": "枫糖浆",
+          "quantity": 1,
+          "hint": "树液采集器挂枫树"
+        },
+        {
+          "name": "橡树树脂",
+          "quantity": 1,
+          "hint": "树液采集器挂橡树"
+        },
+        {
+          "name": "松焦油",
+          "quantity": 1,
+          "hint": "树液采集器挂松树"
+        },
+        {
+          "name": "羊肚菌",
+          "quantity": 1,
+          "hint": "春季秘密森林；蘑菇洞也可能产出"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "spring_crops",
+      "name": "春季作物收集包",
+      "room": "茶水间",
+      "aliases": [
+        "春季作物",
+        "春天作物",
+        "spring crops bundle"
+      ],
+      "reward": "生长激素（20）",
+      "items": [
+        {
+          "name": "防风草",
+          "quantity": 1,
+          "hint": "春季作物"
+        },
+        {
+          "name": "青豆",
+          "quantity": 1,
+          "hint": "春季作物"
+        },
+        {
+          "name": "花椰菜",
+          "quantity": 1,
+          "hint": "春季作物"
+        },
+        {
+          "name": "土豆",
+          "quantity": 1,
+          "hint": "春季作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "summer_crops",
+      "name": "夏季作物收集包",
+      "room": "茶水间",
+      "aliases": [
+        "夏季作物",
+        "夏天作物",
+        "summer crops bundle"
+      ],
+      "reward": "优质洒水器（1）",
+      "items": [
+        {
+          "name": "西红柿",
+          "quantity": 1,
+          "hint": "夏季作物"
+        },
+        {
+          "name": "辣椒",
+          "quantity": 1,
+          "hint": "夏季作物"
+        },
+        {
+          "name": "蓝莓",
+          "quantity": 1,
+          "hint": "夏季作物"
+        },
+        {
+          "name": "甜瓜",
+          "quantity": 1,
+          "hint": "夏季作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "fall_crops",
+      "name": "秋季作物收集包",
+      "room": "茶水间",
+      "aliases": [
+        "秋季作物",
+        "秋天作物",
+        "fall crops bundle"
+      ],
+      "reward": "蜂房（1）",
+      "items": [
+        {
+          "name": "玉米",
+          "quantity": 1,
+          "hint": "夏/秋两季作物"
+        },
+        {
+          "name": "茄子",
+          "quantity": 1,
+          "hint": "秋季作物"
+        },
+        {
+          "name": "南瓜",
+          "quantity": 1,
+          "hint": "秋季作物"
+        },
+        {
+          "name": "山药",
+          "quantity": 1,
+          "hint": "秋季作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "animal",
+      "name": "动物收集包",
+      "room": "茶水间",
+      "aliases": [
+        "动物",
+        "畜产品",
+        "animal bundle"
+      ],
+      "reward": "压酪机（1）",
+      "items": [
+        {
+          "name": "大壶牛奶",
+          "quantity": 1,
+          "hint": "牛高好感后产出；5 选 5"
+        },
+        {
+          "name": "棕色大鸡蛋",
+          "quantity": 1,
+          "hint": "棕色鸡高好感后产出；5 选 5"
+        },
+        {
+          "name": "大鸡蛋",
+          "quantity": 1,
+          "hint": "白色鸡高好感后产出；5 选 5"
+        },
+        {
+          "name": "大瓶羊奶",
+          "quantity": 1,
+          "hint": "山羊高好感后产出；5 选 5"
+        },
+        {
+          "name": "动物毛",
+          "quantity": 1,
+          "hint": "绵羊或兔子产出；5 选 5"
+        },
+        {
+          "name": "鸭蛋",
+          "quantity": 1,
+          "hint": "鸭子产出；5 选 5"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "crab_pot",
+      "name": "蟹笼收集包",
+      "room": "鱼缸",
+      "aliases": [
+        "蟹笼",
+        "蟹笼鱼",
+        "crab pot bundle"
+      ],
+      "reward": "蟹笼（3）",
+      "items": [
+        {
+          "name": "龙虾",
+          "quantity": 1,
+          "hint": "海水蟹笼；10 选 5"
+        },
+        {
+          "name": "小龙虾",
+          "quantity": 1,
+          "hint": "淡水蟹笼；10 选 5"
+        },
+        {
+          "name": "螃蟹",
+          "quantity": 1,
+          "hint": "海水蟹笼；岩石蟹/熔岩蟹也会掉落；10 选 5"
+        },
+        {
+          "name": "鸟蛤",
+          "quantity": 1,
+          "hint": "海水蟹笼或沙滩采集；10 选 5"
+        },
+        {
+          "name": "蚌",
+          "quantity": 1,
+          "hint": "海水蟹笼或沙滩采集；10 选 5"
+        },
+        {
+          "name": "虾",
+          "quantity": 1,
+          "hint": "海水蟹笼；10 选 5"
+        },
+        {
+          "name": "蜗牛",
+          "quantity": 1,
+          "hint": "淡水蟹笼；10 选 5"
+        },
+        {
+          "name": "玉黍螺",
+          "quantity": 1,
+          "hint": "淡水蟹笼；10 选 5"
+        },
+        {
+          "name": "牡蛎",
+          "quantity": 1,
+          "hint": "海水蟹笼或沙滩采集；10 选 5"
+        },
+        {
+          "name": "蛤",
+          "quantity": 1,
+          "hint": "海水蟹笼或沙滩采集；10 选 5"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "blacksmith",
+      "name": "铁匠的收集包",
+      "room": "锅炉房",
+      "aliases": [
+        "铁匠收集包",
+        "铁匠",
+        "blacksmith bundle"
+      ],
+      "reward": "熔炉（1）",
+      "items": [
+        {
+          "name": "铜锭",
+          "quantity": 1,
+          "hint": "熔炉熔炼铜矿石"
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1,
+          "hint": "熔炉熔炼铁矿石；也可用“熔炼（铁）”配方"
+        },
+        {
+          "name": "金锭",
+          "quantity": 1,
+          "hint": "熔炉熔炼黄金矿石；也可用“熔炼（金）”配方"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "geologist",
+      "name": "地理学家的收集包",
+      "room": "锅炉房",
+      "aliases": [
+        "地理学家收集包",
+        "地理学家",
+        "geologist bundle"
+      ],
+      "reward": "万象晶球（5）",
+      "items": [
+        {
+          "name": "石英",
+          "quantity": 1,
+          "hint": "矿井任意层采集"
+        },
+        {
+          "name": "地晶",
+          "quantity": 1,
+          "hint": "矿井 1-39 层采集；晶球/掘地虫也可获得"
+        },
+        {
+          "name": "泪晶",
+          "quantity": 1,
+          "hint": "矿井 40-79 层采集；冰封晶球/灰尘精灵也可获得"
+        },
+        {
+          "name": "火水晶",
+          "quantity": 1,
+          "hint": "矿井 80-120 层采集；岩浆晶球/万象晶球也可获得"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "adventurer",
+      "name": "冒险家的收集包",
+      "room": "锅炉房",
+      "aliases": [
+        "冒险家收集包",
+        "冒险家",
+        "adventurer bundle"
+      ],
+      "reward": "小型磁铁戒指（1）",
+      "items": [
+        {
+          "name": "史莱姆泥",
+          "quantity": 99,
+          "hint": "史莱姆掉落"
+        },
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 10,
+          "hint": "矿井蝙蝠掉落"
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1,
+          "hint": "幽灵/鱿鱼娃/金属大头/木乃伊等掉落"
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 1,
+          "hint": "暗影怪或骷髅洞穴飞蛇掉落"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "chef",
+      "name": "厨师收集包",
+      "room": "布告栏",
+      "aliases": [
+        "厨师",
+        "chef bundle"
+      ],
+      "reward": "粉红蛋糕（3）",
+      "items": [
+        {
+          "name": "枫糖浆",
+          "quantity": 1,
+          "hint": "树液采集器挂枫树"
+        },
+        {
+          "name": "蕨菜",
+          "quantity": 1,
+          "hint": "夏季秘密森林采集"
+        },
+        {
+          "name": "松露",
+          "quantity": 1,
+          "hint": "猪在户外找到"
+        },
+        {
+          "name": "虞美人花",
+          "quantity": 1,
+          "hint": "夏季作物"
+        },
+        {
+          "name": "生鱼寿司",
+          "quantity": 1,
+          "hint": "烹饪；菜谱来自酱料女皇或星之果实餐吧"
+        },
+        {
+          "name": "煎鸡蛋",
+          "quantity": 1,
+          "hint": "烹饪；鸡蛋 x1"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "dye",
+      "name": "染料收集包",
+      "room": "布告栏",
+      "aliases": [
+        "染料",
+        "dye bundle"
+      ],
+      "reward": "种子生产器（1）",
+      "items": [
+        {
+          "name": "红蘑菇",
+          "quantity": 1,
+          "hint": "矿井、秘密森林、蘑菇洞或蘑菇树"
+        },
+        {
+          "name": "海胆",
+          "quantity": 1,
+          "hint": "修复海滩木桥后右侧沙滩采集"
+        },
+        {
+          "name": "向日葵",
+          "quantity": 1,
+          "hint": "夏/秋作物"
+        },
+        {
+          "name": "鸭毛",
+          "quantity": 1,
+          "hint": "鸭子高好感后产出"
+        },
+        {
+          "name": "海蓝宝石",
+          "quantity": 1,
+          "hint": "矿井海蓝宝石矿或箱子"
+        },
+        {
+          "name": "红叶卷心菜",
+          "quantity": 1,
+          "hint": "第 2 年起皮埃尔出售种子；开启“确保第一年完成”时旅行货车可能补"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "field_research",
+      "name": "田野调查收集包",
+      "room": "布告栏",
+      "aliases": [
+        "土地研究收集包",
+        "田野调查",
+        "field research bundle"
+      ],
+      "reward": "回收机（1）",
+      "items": [
+        {
+          "name": "紫蘑菇",
+          "quantity": 1,
+          "hint": "矿井、蘑菇洞或森林农场秋季采集"
+        },
+        {
+          "name": "鹦鹉螺",
+          "quantity": 1,
+          "hint": "冬季沙滩采集；不是鹦鹉螺化石"
+        },
+        {
+          "name": "鲢鱼",
+          "quantity": 1,
+          "hint": "任意季节，山湖和河流"
+        },
+        {
+          "name": "冰封晶球",
+          "quantity": 1,
+          "hint": "矿井 40-79 层"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "fodder",
+      "name": "饲料收集包",
+      "room": "布告栏",
+      "aliases": [
+        "饲料",
+        "fodder bundle"
+      ],
+      "reward": "加热器（1）",
+      "items": [
+        {
+          "name": "小麦",
+          "quantity": 10,
+          "hint": "夏/秋作物"
+        },
+        {
+          "name": "干草",
+          "quantity": 10,
+          "hint": "玛妮牧场购买；有筒仓后割草收集"
+        },
+        {
+          "name": "苹果",
+          "quantity": 3,
+          "hint": "秋季苹果树；果蝠洞也可能产出"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "enchanter",
+      "name": "魔法师收集包",
+      "room": "布告栏",
+      "aliases": [
+        "魔法师",
+        "巫师收集包",
+        "enchanter bundle"
+      ],
+      "reward": "金锭（5）",
+      "items": [
+        {
+          "name": "橡树树脂",
+          "quantity": 1,
+          "hint": "树液采集器挂橡树"
+        },
+        {
+          "name": "果酒",
+          "quantity": 1,
+          "hint": "任意水果进小桶"
+        },
+        {
+          "name": "兔子的脚",
+          "quantity": 1,
+          "hint": "兔子高好感后产出；骷髅洞穴飞蛇也可能掉落"
+        },
+        {
+          "name": "石榴",
+          "quantity": 1,
+          "hint": "秋季石榴树；果蝠洞也可能产出"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "vault_2500",
+      "name": "2,500金收集包",
+      "room": "金库",
+      "aliases": [
+        "2500金",
+        "2500g",
+        "两千五",
+        "金库2500"
+      ],
+      "reward": "巧克力蛋糕（3）",
+      "items": [
+        {
+          "name": "金币",
+          "quantity": 2500,
+          "hint": "点击金库购买按钮缴纳 2,500g"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "vault_5000",
+      "name": "5,000金收集包",
+      "room": "金库",
+      "aliases": [
+        "5000金",
+        "5000g",
+        "五千",
+        "金库5000"
+      ],
+      "reward": "高级肥料（30）",
+      "items": [
+        {
+          "name": "金币",
+          "quantity": 5000,
+          "hint": "点击金库购买按钮缴纳 5,000g"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "vault_10000",
+      "name": "10,000金收集包",
+      "room": "金库",
+      "aliases": [
+        "10000金",
+        "10000g",
+        "一万",
+        "金库10000"
+      ],
+      "reward": "避雷针（1）",
+      "items": [
+        {
+          "name": "金币",
+          "quantity": 10000,
+          "hint": "点击金库购买按钮缴纳 10,000g"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "vault_25000",
+      "name": "25,000金收集包",
+      "room": "金库",
+      "aliases": [
+        "25000金",
+        "25000g",
+        "两万五",
+        "金库25000"
+      ],
+      "reward": "宝石复制机（1）",
+      "items": [
+        {
+          "name": "金币",
+          "quantity": 25000,
+          "hint": "点击金库购买按钮缴纳 25,000g"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "missing",
+      "name": "失踪的收集包",
+      "room": "废弃Joja超市",
+      "aliases": [
+        "失踪收集包",
+        "电影院收集包",
+        "the missing bundle"
+      ],
+      "reward": "电影院",
+      "items": [
+        {
+          "name": "果酒",
+          "quantity": 1,
+          "quality": "银星",
+          "hint": "任意水果酒放木桶陈酿到银星品质；6 选 5"
+        },
+        {
+          "name": "恐龙蛋黄酱",
+          "quantity": 1,
+          "hint": "恐龙蛋进蛋黄酱机；6 选 5"
+        },
+        {
+          "name": "五彩碎片",
+          "quantity": 1,
+          "hint": "采矿/骷髅洞穴/万象晶球等；6 选 5"
+        },
+        {
+          "name": "上古水果",
+          "quantity": 5,
+          "quality": "金星",
+          "hint": "上古种子种植；6 选 5"
+        },
+        {
+          "name": "虚空鲑鱼",
+          "quantity": 1,
+          "quality": "金星",
+          "hint": "巫婆沼泽钓鱼；6 选 5"
+        },
+        {
+          "name": "鱼籽酱",
+          "quantity": 1,
+          "hint": "鲟鱼鱼籽进罐头瓶；6 选 5"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "crafts_room",
+      "name": "工艺室收集包",
+      "room": "工艺室",
+      "aliases": [
+        "工艺室",
+        "桥梁修理",
+        "采石场桥",
+        "crafts room"
+      ],
+      "reward": "桥梁修理，解锁采石场",
+      "items": [
+        {
+          "name": "春季采集收集包",
+          "quantity": 1,
+          "hint": "野山葵、黄水仙、韭葱、蒲公英"
+        },
+        {
+          "name": "夏季采集收集包",
+          "quantity": 1,
+          "hint": "葡萄、香味浆果、甜豌豆"
+        },
+        {
+          "name": "秋季采集收集包",
+          "quantity": 1,
+          "hint": "普通蘑菇、野梅、榛子、黑莓"
+        },
+        {
+          "name": "冬季采集收集包",
+          "quantity": 1,
+          "hint": "冬根、水晶果、雪山药、番红花"
+        },
+        {
+          "name": "建筑收集包",
+          "quantity": 1,
+          "hint": "木材、石头、硬木"
+        },
+        {
+          "name": "异国情调采集收集包",
+          "quantity": 1,
+          "hint": "椰子、仙人掌果子、蘑菇、树液采集物等 9 选 5"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "pantry_room",
+      "name": "茶水间收集包",
+      "room": "茶水间",
+      "aliases": [
+        "茶水间",
+        "温室收集包",
+        "修温室",
+        "pantry"
+      ],
+      "reward": "修复温室",
+      "items": [
+        {
+          "name": "春季作物收集包",
+          "quantity": 1,
+          "hint": "防风草、青豆、花椰菜、土豆"
+        },
+        {
+          "name": "夏季作物收集包",
+          "quantity": 1,
+          "hint": "西红柿、辣椒、蓝莓、甜瓜"
+        },
+        {
+          "name": "秋季作物收集包",
+          "quantity": 1,
+          "hint": "玉米、茄子、南瓜、山药"
+        },
+        {
+          "name": "高品质作物收集包",
+          "quantity": 1,
+          "hint": "金星防风草、甜瓜、南瓜、玉米，4 选 3"
+        },
+        {
+          "name": "动物收集包",
+          "quantity": 1,
+          "hint": "大壶牛奶、大鸡蛋、大瓶羊奶、动物毛、鸭蛋等 6 选 5"
+        },
+        {
+          "name": "工匠收集包",
+          "quantity": 1,
+          "hint": "加工品和果树水果 12 选 6"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "fish_tank_room",
+      "name": "鱼缸收集包",
+      "room": "鱼缸",
+      "aliases": [
+        "鱼缸",
+        "闪闪发光的巨石",
+        "淘盘",
+        "fish tank"
+      ],
+      "reward": "移除矿井入口左侧闪闪发光的巨石，并获得淘盘",
+      "items": [
+        {
+          "name": "河鱼收集包",
+          "quantity": 1,
+          "hint": "太阳鱼、鲶鱼、西鲱、虎纹鳟鱼"
+        },
+        {
+          "name": "湖鱼收集包",
+          "quantity": 1,
+          "hint": "大嘴鲈鱼、鲤鱼、大头鱼、鲟鱼"
+        },
+        {
+          "name": "海鱼收集包",
+          "quantity": 1,
+          "hint": "沙丁鱼、金枪鱼、红鲷鱼、罗非鱼"
+        },
+        {
+          "name": "夜间垂钓收集包",
+          "quantity": 1,
+          "hint": "大眼鱼、鲷鱼、鳗鱼"
+        },
+        {
+          "name": "蟹笼收集包",
+          "quantity": 1,
+          "hint": "蟹笼产物 10 选 5"
+        },
+        {
+          "name": "特色鱼类收集包",
+          "quantity": 1,
+          "hint": "河豚、鬼鱼、沙鱼、木跃鱼"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "bulletin_board_room",
+      "name": "布告栏收集包",
+      "room": "布告栏",
+      "aliases": [
+        "布告栏",
+        "公告板",
+        "村民好感",
+        "bulletin board"
+      ],
+      "reward": "全部非单身村民好感 +2 心",
+      "items": [
+        {
+          "name": "厨师收集包",
+          "quantity": 1,
+          "hint": "枫糖浆、蕨菜、松露、虞美人花、生鱼寿司、煎鸡蛋"
+        },
+        {
+          "name": "染料收集包",
+          "quantity": 1,
+          "hint": "红蘑菇、海胆、向日葵、鸭毛、海蓝宝石、红叶卷心菜"
+        },
+        {
+          "name": "田野调查收集包",
+          "quantity": 1,
+          "hint": "紫蘑菇、鹦鹉螺、鲢鱼、冰封晶球"
+        },
+        {
+          "name": "饲料收集包",
+          "quantity": 1,
+          "hint": "小麦 x10、干草 x10、苹果 x3"
+        },
+        {
+          "name": "魔法师收集包",
+          "quantity": 1,
+          "hint": "橡树树脂、果酒、兔子的脚、石榴"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
+    },
+    {
+      "id": "vault_room",
+      "name": "金库收集包",
+      "room": "金库",
+      "aliases": [
+        "金库",
+        "巴士收集包",
+        "修巴士",
+        "沙漠解锁",
+        "vault"
+      ],
+      "reward": "修理巴士，解锁沙漠",
+      "items": [
+        {
+          "name": "2,500金收集包",
+          "quantity": 1,
+          "hint": "缴纳 2,500g，奖励巧克力蛋糕（3）"
+        },
+        {
+          "name": "5,000金收集包",
+          "quantity": 1,
+          "hint": "缴纳 5,000g，奖励高级肥料（30）"
+        },
+        {
+          "name": "10,000金收集包",
+          "quantity": 1,
+          "hint": "缴纳 10,000g，奖励避雷针（1）"
+        },
+        {
+          "name": "25,000金收集包",
+          "quantity": 1,
+          "hint": "缴纳 25,000g，奖励宝石复制机（1）；总计 42,500g"
+        }
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/收集包"
+      ]
     }
   ],
   "crops": [

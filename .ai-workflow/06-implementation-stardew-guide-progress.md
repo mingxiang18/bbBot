@@ -190,6 +190,18 @@
 - `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：71 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 社区中心收集包结构化补齐：
+
+- 本地库收集包从 11 个扩展到 37 个，覆盖 30 个普通社区中心收集包、废弃 Joja 超市“失踪的收集包”，以及工艺室、茶水间、鱼缸、锅炉房、布告栏、金库等房间级概览问法。
+- 补齐此前缺失的秋/冬/异国情调采集、春/夏/秋作物、动物、蟹笼、锅炉房三小包、布告栏五小包、金库四金额包和电影院相关物品。
+- 新增查询覆盖：“秋季作物收集包需要什么”“蟹笼收集包交哪几个”“布告栏染料收集包需要什么”“金库一共要多少钱”“电影院收集包要什么”。
+- 仓库测试现在强制校验普通社区中心包、失踪收集包和房间概览包的 id 覆盖，以及每个收集包都有房间、奖励、物品和来源。
+
+本轮验证结果：
+
+- `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：74 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 工具升级结构化后再次执行本地环境验证：
 
 - `./scripts/dev/bb-dev.sh up --build`：build、mock OpenAI、bbBot 启动均成功，输出 `bbBot 已就绪`。

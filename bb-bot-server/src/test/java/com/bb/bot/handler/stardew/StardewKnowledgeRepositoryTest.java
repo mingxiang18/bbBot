@@ -22,7 +22,7 @@ class StardewKnowledgeRepositoryTest {
     void loadsBroadLocalKnowledgeBase() {
         assertThat(repository.gameVersion()).isEqualTo("1.6.15");
         assertThat(repository.fish()).hasSizeGreaterThanOrEqualTo(74);
-        assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(11);
+        assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(37);
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(17);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
@@ -61,6 +61,65 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(guide.getName()).isNotBlank();
                     assertThat(guide.getSections()).isNotEmpty();
                     assertThat(guide.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void normalCommunityCenterBundlesAreCovered() {
+        Set<String> bundleIds = repository.bundles().stream()
+                .map(StardewData.Bundle::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(bundleIds).contains(
+                "spring_foraging",
+                "summer_foraging",
+                "fall_foraging",
+                "winter_foraging",
+                "construction",
+                "exotic_foraging",
+                "spring_crops",
+                "summer_crops",
+                "fall_crops",
+                "quality_crops",
+                "animal",
+                "artisan",
+                "river_fish",
+                "lake_fish",
+                "ocean_fish",
+                "night_fishing",
+                "crab_pot",
+                "specialty_fish",
+                "blacksmith",
+                "geologist",
+                "adventurer",
+                "chef",
+                "dye",
+                "field_research",
+                "fodder",
+                "enchanter",
+                "vault_2500",
+                "vault_5000",
+                "vault_10000",
+                "vault_25000",
+                "crafts_room",
+                "pantry_room",
+                "fish_tank_room",
+                "bulletin_board_room",
+                "vault_room",
+                "missing"
+        );
+    }
+
+    @Test
+    void allBundlesHaveItemsRewardsAndSources() {
+        assertThat(repository.bundles())
+                .allSatisfy(bundle -> {
+                    assertThat(bundle.getId()).isNotBlank();
+                    assertThat(bundle.getName()).isNotBlank();
+                    assertThat(bundle.getRoom()).isNotBlank();
+                    assertThat(bundle.getReward()).isNotBlank();
+                    assertThat(bundle.getItems()).isNotEmpty();
+                    assertThat(bundle.getSourceUrls()).isNotEmpty();
                 });
     }
 

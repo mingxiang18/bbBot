@@ -135,6 +135,26 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersExpandedCommunityCenterBundleRequirements() {
+        StardewGuideResult fallCrops = service.answer("星露谷 秋季作物收集包需要什么");
+        StardewGuideResult crabPot = service.answer("星露谷 蟹笼收集包交哪几个");
+        StardewGuideResult dye = service.answer("星露谷 布告栏染料收集包需要什么");
+        StardewGuideResult vault = service.answer("星露谷 金库一共要多少钱");
+        StardewGuideResult missing = service.answer("星露谷 电影院收集包要什么");
+
+        assertThat(fallCrops.getIntent()).isEqualTo("bundle");
+        assertThat(fallCrops.getAnswer()).contains("玉米", "茄子", "南瓜", "山药", "蜂房");
+        assertThat(crabPot.getIntent()).isEqualTo("bundle");
+        assertThat(crabPot.getAnswer()).contains("龙虾", "小龙虾", "螃蟹", "10 选 5", "蟹笼（3）");
+        assertThat(dye.getIntent()).isEqualTo("bundle");
+        assertThat(dye.getAnswer()).contains("红蘑菇", "海胆", "向日葵", "鸭毛", "红叶卷心菜");
+        assertThat(vault.getIntent()).isEqualTo("bundle");
+        assertThat(vault.getAnswer()).contains("2,500", "巧克力蛋糕");
+        assertThat(missing.getIntent()).isEqualTo("bundle");
+        assertThat(missing.getAnswer()).contains("恐龙蛋黄酱", "五彩碎片", "上古水果", "鱼籽酱", "电影院");
+    }
+
+    @Test
     void resolvesVillagerLocationWithConditions() {
         StardewGuideResult result = service.answer("星露谷 阿比盖尔 夏季 12日 15:00 晴天在哪");
 
