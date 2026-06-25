@@ -174,4 +174,16 @@ class StardewGuideToolTest {
         assertThat(result).containsEntry("intent", "machine_detail");
         assertThat(result.get("answer").toString()).contains("硬木 x10", "海果冻 x1", "售价为原鱼价格 x2");
     }
+
+    @Test
+    void toolCoversCookingBuffQuestions() {
+        StardewKnowledgeRepository repository = new StardewKnowledgeRepository();
+        repository.load();
+        StardewGuideTool tool = new StardewGuideTool(new StardewGuideService(repository));
+
+        Map<String, Object> result = tool.guide("骷髅洞穴吃什么料理 buff 好");
+
+        assertThat(result).containsEntry("intent", "cooking_available");
+        assertThat(result.get("answer").toString()).contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡");
+    }
 }

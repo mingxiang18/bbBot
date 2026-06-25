@@ -50,6 +50,7 @@ public class StardewGuideService {
         Optional<StardewData.Shop> shop = repository.findShop(query);
         Optional<ShopStockMatch> shopItem = findShopStock(query);
         Optional<StardewData.ResourceGuide> resource = repository.findResource(query);
+        Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
 
         boolean bundleIntent = query.contains("收集包") || query.contains("献祭")
@@ -94,6 +95,12 @@ public class StardewGuideService {
                 return machineDetailAnswer(machine.get());
             }
             return machineListAnswer(query);
+        }
+        if (cookingRecipe.isPresent() && looksLikeCookingQuery(query) && !isBroadCookingQuery(query)) {
+            return cookingRecipeAnswer(cookingRecipe.get());
+        }
+        if (looksLikeCookingQuery(query)) {
+            return cookingListAnswer(query, cookingRecipe);
         }
         if (guide.isPresent() && shouldPreferGuideOverCrop(query, guide.get())) {
             return guideAnswer(guide.get());
@@ -620,6 +627,128 @@ public class StardewGuideService {
         return result("resource", sb.toString().trim(), r.getSourceUrls());
     }
 
+    private StardewGuideResult cookingRecipeAnswer(StardewData.CookingRecipe recipe) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(recipe.getName()).append("：\n")
+                .append("材料：").append(formatMaterials(recipe.getIngredients())).append("\n")
+                .append("配方来源：").append(StringUtils.defaultIfBlank(recipe.getRecipeSource(), "暂未记录")).append("\n");
+        if (StringUtils.isNotBlank(recipe.getEffect())) {
+            sb.append("效果：").append(recipe.getEffect()).append("\n");
+        }
+        if (recipe.getBuffs() != null && !recipe.getBuffs().isEmpty()) {
+            sb.append("增益：").append(formatFoodBuffs(recipe.getBuffs())).append("\n");
+        }
+        if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+            sb.append("适合：").append(String.join("、", recipe.getTags())).append("\n");
+        }
+        if (StringUtils.isNotBlank(recipe.getRecommendation())) {
+            sb.append("建议：").append(recipe.getRecommendation()).append("\n");
+        }
+        if (StringUtils.isNotBlank(recipe.getNote())) {
+            sb.append("提示：").append(recipe.getNote()).append("\n");
+        }
+        return result("cooking_recipe", sb.toString().trim(), recipe.getSourceUrls());
+    }
+
+    private StardewGuideResult cookingListAnswer(String query, Optional<StardewData.CookingRecipe> directMatch) {
+        List<StardewData.CookingRecipe> matched = repository.cookingRecipes().stream()
+                .filter(recipe -> matchesCookingContext(recipe, query))
+                .toList();
+        if (matched.isEmpty() && directMatch.isPresent()) {
+            matched = List.of(directMatch.get());
+        }
+        if (matched.isEmpty()) {
+            matched = repository.cookingRecipes();
+        }
+        if (matched.isEmpty()) {
+            return wikiFallbackAnswer(query, "本地还没有结构化料理数据。可以试试：香辣鳗鱼、幸运午餐、海泡布丁、蟹黄糕。");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("推荐料理/配方：\n");
+        int limit = Math.min(12, matched.size());
+        for (int i = 0; i < limit; i++) {
+            StardewData.CookingRecipe recipe = matched.get(i);
+            sb.append(i + 1).append(". ").append(recipe.getName())
+                    .append("：材料 ").append(formatMaterials(recipe.getIngredients()));
+            if (StringUtils.isNotBlank(recipe.getEffect())) {
+                sb.append("；").append(recipe.getEffect());
+            }
+            if (recipe.getBuffs() != null && !recipe.getBuffs().isEmpty()) {
+                sb.append("；增益 ").append(formatFoodBuffs(recipe.getBuffs()));
+            }
+            if (StringUtils.isNotBlank(recipe.getRecipeSource())) {
+                sb.append("；配方 ").append(recipe.getRecipeSource());
+            }
+            if (StringUtils.isNotBlank(recipe.getRecommendation())) {
+                sb.append("；建议 ").append(recipe.getRecommendation());
+            }
+            sb.append("\n");
+        }
+        if (matched.size() > limit) {
+            sb.append("还有 ").append(matched.size() - limit).append(" 个匹配料理，可加“运气/速度/钓鱼/战斗/菜名”缩小范围。\n");
+        }
+        sb.append("提示：同类食物 buff 通常会互相覆盖；饮料类速度 buff 可与食物 buff 叠加。");
+        return result("cooking_available", sb.toString().trim(), collectCookingSources(matched));
+    }
+
+    private boolean matchesCookingContext(StardewData.CookingRecipe recipe, String query) {
+        if (recipe == null) {
+            return false;
+        }
+        String q = StardewKnowledgeRepository.normalize(query);
+        if (containsNormalized(q, recipe.getName())
+                || containsNormalized(q, recipe.getNameEn())
+                || recipe.getAliases().stream().anyMatch(alias -> containsNormalized(q, alias))) {
+            return true;
+        }
+        List<String> wanted = new ArrayList<>();
+        if (query.contains("骷髅") || query.contains("头骨") || query.contains("矿洞") || query.contains("矿井")
+                || query.contains("火山") || query.contains("下矿") || query.contains("冲层")) {
+            wanted.addAll(List.of("mining", "skull_cavern", "luck", "speed", "defense"));
+        }
+        if (query.contains("钓鱼") || query.contains("鱼")) {
+            wanted.add("fishing");
+        }
+        if (query.contains("战斗") || query.contains("打怪") || query.contains("怪物")) {
+            wanted.addAll(List.of("combat", "attack", "defense"));
+        }
+        if (query.contains("耕种") || query.contains("种地") || query.contains("农业")) {
+            wanted.add("farming");
+        }
+        if (query.contains("觅食") || query.contains("采集")) {
+            wanted.add("foraging");
+        }
+        if (query.contains("速度")) {
+            wanted.add("speed");
+        }
+        if (query.contains("运气") || query.contains("幸运")) {
+            wanted.add("luck");
+        }
+        if (query.contains("防御")) {
+            wanted.add("defense");
+        }
+        if (query.contains("磁力") || query.contains("吸")) {
+            wanted.add("magnetism");
+        }
+        if (wanted.isEmpty()) {
+            return isBroadCookingQuery(query);
+        }
+        Set<String> tags = new LinkedHashSet<>();
+        if (recipe.getTags() != null) {
+            recipe.getTags().stream().map(StardewKnowledgeRepository::normalize).forEach(tags::add);
+        }
+        if (recipe.getBuffs() != null) {
+            recipe.getBuffs().stream()
+                    .map(StardewData.FoodBuff::getName)
+                    .map(StardewKnowledgeRepository::normalize)
+                    .forEach(tags::add);
+        }
+        return wanted.stream()
+                .map(StardewKnowledgeRepository::normalize)
+                .anyMatch(tags::contains);
+    }
+
     private Optional<ShopStockMatch> findShopStock(String query) {
         String q = StardewKnowledgeRepository.normalize(query);
         ShopStockMatch best = null;
@@ -1059,6 +1188,22 @@ public class StardewGuideService {
                 || query.contains("蘑菇木桩") || query.contains("蘑菇木头") || query.contains("蘑菇桩");
     }
 
+    private boolean looksLikeCookingQuery(String query) {
+        return query.contains("烹饪") || query.contains("料理") || query.contains("做饭")
+                || query.contains("食谱") || query.contains("菜谱") || query.contains("菜")
+                || query.contains("吃什么") || query.contains("食物")
+                || query.contains("buff") || query.contains("增益")
+                || query.contains("香辣鳗鱼") || query.contains("幸运午餐") || query.contains("海泡布丁")
+                || query.contains("蟹黄糕") || query.contains("南瓜汤") || query.contains("魔法糖冰棍")
+                || query.contains("三倍浓缩咖啡") || query.contains("咖啡") || query.contains("姜汁汽水");
+    }
+
+    private boolean isBroadCookingQuery(String query) {
+        return query.contains("吃什么") || query.contains("推荐") || query.contains("哪些")
+                || query.contains("有什么") || query.contains("列表") || query.contains("料理")
+                || query.contains("烹饪") || query.contains("buff") || query.contains("增益");
+    }
+
     private boolean looksLikeShopQuery(String query) {
         return query.contains("买") || query.contains("购买") || query.contains("哪里卖")
                 || query.contains("在哪里买") || query.contains("哪里买")
@@ -1219,6 +1364,24 @@ public class StardewGuideService {
         return String.join("、", parts);
     }
 
+    private String formatFoodBuffs(List<StardewData.FoodBuff> buffs) {
+        if (buffs == null || buffs.isEmpty()) {
+            return "无特殊技能增益";
+        }
+        List<String> parts = new ArrayList<>();
+        for (StardewData.FoodBuff buff : buffs) {
+            StringBuilder part = new StringBuilder(buff.getName());
+            if (buff.getValue() != null) {
+                part.append(buff.getValue() > 0 ? " +" : " ").append(buff.getValue());
+            }
+            if (StringUtils.isNotBlank(buff.getDuration())) {
+                part.append("（").append(buff.getDuration()).append("）");
+            }
+            parts.add(part.toString());
+        }
+        return String.join("、", parts);
+    }
+
     private boolean containsNormalized(String query, String value) {
         String normalized = StardewKnowledgeRepository.normalize(value);
         return StringUtils.isNotBlank(normalized) && query.contains(normalized);
@@ -1295,6 +1458,16 @@ public class StardewGuideService {
         return new ArrayList<>(urls);
     }
 
+    private List<String> collectCookingSources(List<StardewData.CookingRecipe> recipes) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.CookingRecipe recipe : recipes) {
+            if (recipe.getSourceUrls() != null) {
+                urls.addAll(recipe.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
     private StardewGuideResult result(String intent, String answer, List<String> urls) {
         return StardewGuideResult.builder()
                 .intent(intent)
@@ -1323,6 +1496,8 @@ public class StardewGuideService {
                 + "- 星露谷 解锁猪需要什么\n"
                 + "- 星露谷 鱼熏机需要什么\n"
                 + "- 星露谷 小桶和罐头瓶怎么做\n"
+                + "- 星露谷 幸运午餐怎么做\n"
+                + "- 星露谷 骷髅洞穴吃什么料理 buff 好\n"
                 + "- 星露谷 夏季种什么收益好\n"
                 + "- 星露谷 蓝莓几天成熟";
     }

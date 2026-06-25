@@ -19,6 +19,7 @@ public class StardewData {
     private List<Shop> shops = new ArrayList<>();
     private List<Villager> villagers = new ArrayList<>();
     private List<ResourceGuide> resources = new ArrayList<>();
+    private List<CookingRecipe> cookingRecipes = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
     @Data
@@ -226,6 +227,29 @@ public class StardewData {
     public static class Acquisition {
         private String type;
         private String detail;
+    }
+
+    @Data
+    public static class CookingRecipe {
+        private String id;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private List<MaterialCost> ingredients = new ArrayList<>();
+        private String recipeSource;
+        private String effect;
+        private List<FoodBuff> buffs = new ArrayList<>();
+        private List<String> tags = new ArrayList<>();
+        private String recommendation;
+        private String note;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class FoodBuff {
+        private String name;
+        private Integer value;
+        private String duration;
     }
 
     @Data

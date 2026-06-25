@@ -455,8 +455,31 @@ class StardewGuideServiceTest {
     void answersSkillFoodBuffQuestions() {
         StardewGuideResult result = service.answer("星露谷 骷髅洞穴吃什么料理 buff 好");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
-        assertThat(result.getAnswer()).contains("速度", "运气", "咖啡", "三倍浓缩咖啡");
+        assertThat(result.getIntent()).isEqualTo("cooking_available");
+        assertThat(result.getAnswer()).contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡");
+        assertThat(result.getAnswer()).contains("速度", "运气", "饮料类速度 buff 可与食物 buff 叠加");
+    }
+
+    @Test
+    void answersCookingRecipeDetails() {
+        StardewGuideResult luckyLunch = service.answer("星露谷 幸运午餐怎么做");
+        StardewGuideResult spicyEel = service.answer("星露谷 香辣鳗鱼材料和效果");
+
+        assertThat(luckyLunch.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(luckyLunch.getAnswer()).contains("海参 x1", "玉米饼 x1", "蓝爵 x1", "运气 +3");
+        assertThat(spicyEel.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(spicyEel.getAnswer()).contains("鳗鱼 x1", "辣椒 x1", "速度 +1", "运气 +1", "红宝石兑换");
+    }
+
+    @Test
+    void answersCookingBuffRecommendationLists() {
+        StardewGuideResult fishing = service.answer("星露谷 钓鱼料理有哪些");
+        StardewGuideResult combat = service.answer("星露谷 战斗等级低吃什么食物");
+
+        assertThat(fishing.getIntent()).isEqualTo("cooking_available");
+        assertThat(fishing.getAnswer()).contains("海泡布丁", "海之菜肴", "龙虾浓汤", "钓鱼 +");
+        assertThat(combat.getIntent()).isEqualTo("cooking_available");
+        assertThat(combat.getAnswer()).contains("块茎拼盘", "攻击 +3");
     }
 
     @Test

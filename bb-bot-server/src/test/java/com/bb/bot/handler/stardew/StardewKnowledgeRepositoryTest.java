@@ -30,6 +30,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(19);
+        assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(33);
     }
 
@@ -154,6 +155,20 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(shop.getStock()).isNotEmpty();
                     assertThat(shop.getRecommendation()).isNotBlank();
                     assertThat(shop.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void allCookingRecipesHaveIngredientsEffectsAndSources() {
+        assertThat(repository.cookingRecipes())
+                .allSatisfy(recipe -> {
+                    assertThat(recipe.getId()).isNotBlank();
+                    assertThat(recipe.getName()).isNotBlank();
+                    assertThat(recipe.getRecipeSource()).isNotBlank();
+                    assertThat(recipe.getEffect()).isNotBlank();
+                    assertThat(recipe.getTags()).isNotEmpty();
+                    assertThat(recipe.getRecommendation()).isNotBlank();
+                    assertThat(recipe.getSourceUrls()).isNotEmpty();
                 });
     }
 }

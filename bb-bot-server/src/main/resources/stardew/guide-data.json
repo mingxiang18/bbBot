@@ -10914,5 +10914,844 @@
         "https://stardewvalleywiki.com/Buffs"
       ]
     }
+  ],
+  "cookingRecipes": [
+    {
+      "id": "spicy_eel",
+      "name": "香辣鳗鱼",
+      "nameEn": "Spicy Eel",
+      "aliases": [
+        "spicy eel",
+        "辣鳗鱼",
+        "矿洞速度料理",
+        "骷髅洞穴料理"
+      ],
+      "ingredients": [
+        {
+          "name": "鳗鱼",
+          "quantity": 1
+        },
+        {
+          "name": "辣椒",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "乔治 7 心邮件；也可由飞蛇掉落或沙漠商人用红宝石兑换",
+      "effect": "恢复体力/生命，并提供速度和运气增益",
+      "buffs": [
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "运气",
+          "value": 1,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "mining",
+        "skull_cavern",
+        "speed",
+        "luck",
+        "combat"
+      ],
+      "recommendation": "骷髅洞穴冲层的常用食物，红宝石换取比自己做更省心。",
+      "note": "食物类速度可与咖啡/三倍浓缩咖啡的饮料速度叠加。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Spicy_Eel",
+        "https://zh.stardewvalleywiki.com/香辣鳗鱼"
+      ]
+    },
+    {
+      "id": "lucky_lunch",
+      "name": "幸运午餐",
+      "nameEn": "Lucky Lunch",
+      "aliases": [
+        "lucky lunch",
+        "幸运餐",
+        "加运气料理"
+      ],
+      "ingredients": [
+        {
+          "name": "海参",
+          "quantity": 1
+        },
+        {
+          "name": "玉米饼",
+          "quantity": 1
+        },
+        {
+          "name": "蓝爵",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年春季 28 日；之后可重播补配方",
+      "effect": "提供高额运气增益",
+      "buffs": [
+        {
+          "name": "运气",
+          "value": 3,
+          "duration": "约 11 分钟"
+        }
+      ],
+      "tags": [
+        "luck",
+        "skull_cavern",
+        "mining",
+        "fishing"
+      ],
+      "recommendation": "想刷矿洞、钓宝箱或做高运气日活动时很好；材料要提前规划蓝爵和海参。",
+      "note": "只有运气，不提供速度；下矿通常搭配咖啡或三倍浓缩咖啡。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lucky_Lunch",
+        "https://zh.stardewvalleywiki.com/幸运午餐"
+      ]
+    },
+    {
+      "id": "pumpkin_soup",
+      "name": "南瓜汤",
+      "nameEn": "Pumpkin Soup",
+      "aliases": [
+        "pumpkin soup",
+        "防御运气料理"
+      ],
+      "ingredients": [
+        {
+          "name": "南瓜",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "罗宾 7 心邮件",
+      "effect": "兼顾防御和运气",
+      "buffs": [
+        {
+          "name": "防御",
+          "value": 2,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "运气",
+          "value": 2,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "luck",
+        "defense",
+        "mining",
+        "combat"
+      ],
+      "recommendation": "比幸运午餐更偏稳健，适合战斗压力大的矿洞/火山。",
+      "note": "南瓜只能秋季种，建议留一些。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pumpkin_Soup",
+        "https://zh.stardewvalleywiki.com/南瓜汤"
+      ]
+    },
+    {
+      "id": "crab_cakes",
+      "name": "蟹黄糕",
+      "nameEn": "Crab Cakes",
+      "aliases": [
+        "crab cakes",
+        "蟹饼",
+        "长时间速度料理"
+      ],
+      "ingredients": [
+        {
+          "name": "螃蟹",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在部分事件/商店获得成品",
+      "effect": "长时间速度和防御增益",
+      "buffs": [
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 16 分钟"
+        },
+        {
+          "name": "防御",
+          "value": 1,
+          "duration": "约 16 分钟"
+        }
+      ],
+      "tags": [
+        "speed",
+        "defense",
+        "mining",
+        "skull_cavern"
+      ],
+      "recommendation": "持续时间很长，适合整天跑图或矿洞；螃蟹可用蟹笼/矿井怪物补。",
+      "note": "如果只是冲层，香辣鳗鱼更容易通过沙漠商人量产。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crab_Cakes",
+        "https://zh.stardewvalleywiki.com/蟹黄糕"
+      ]
+    },
+    {
+      "id": "magic_rock_candy",
+      "name": "魔法糖冰棍",
+      "nameEn": "Magic Rock Candy",
+      "aliases": [
+        "magic rock candy",
+        "糖冰棍",
+        "最强矿洞料理"
+      ],
+      "ingredients": [],
+      "recipeSource": "非烹饪配方；博物馆奖励、沙漠商人星期四用五彩碎片 x3 兑换等",
+      "effect": "强力综合矿洞增益",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 2,
+          "duration": "约 8 分钟"
+        },
+        {
+          "name": "运气",
+          "value": 5,
+          "duration": "约 8 分钟"
+        },
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 8 分钟"
+        },
+        {
+          "name": "防御",
+          "value": 5,
+          "duration": "约 8 分钟"
+        },
+        {
+          "name": "攻击",
+          "value": 5,
+          "duration": "约 8 分钟"
+        }
+      ],
+      "tags": [
+        "mining",
+        "skull_cavern",
+        "luck",
+        "speed",
+        "combat",
+        "defense"
+      ],
+      "recommendation": "很强但成本极高，适合关键冲层或稀有资源目标。",
+      "note": "不是厨房制作料理，但属于食物 buff 查询的核心答案。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Magic_Rock_Candy",
+        "https://zh.stardewvalleywiki.com/魔法糖冰棍"
+      ]
+    },
+    {
+      "id": "triple_shot_espresso",
+      "name": "三倍浓缩咖啡",
+      "nameEn": "Triple Shot Espresso",
+      "aliases": [
+        "triple shot espresso",
+        "三倍咖啡",
+        "咖啡速度"
+      ],
+      "ingredients": [
+        {
+          "name": "咖啡",
+          "quantity": 3
+        }
+      ],
+      "recipeSource": "星之果实酒吧购买配方；沙漠商人也可用钻石兑换成品",
+      "effect": "饮料类速度增益",
+      "buffs": [
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 4 分钟"
+        }
+      ],
+      "tags": [
+        "speed",
+        "drink",
+        "mining",
+        "skull_cavern",
+        "farming"
+      ],
+      "recommendation": "几乎所有高效率活动都能喝，且可与食物 buff 叠加。",
+      "note": "饮料 buff 会被其他饮料覆盖，但不覆盖食物 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Triple_Shot_Espresso",
+        "https://zh.stardewvalleywiki.com/三倍浓缩咖啡"
+      ]
+    },
+    {
+      "id": "coffee",
+      "name": "咖啡",
+      "nameEn": "Coffee",
+      "aliases": [
+        "coffee",
+        "普通咖啡"
+      ],
+      "ingredients": [
+        {
+          "name": "咖啡豆",
+          "quantity": 5
+        }
+      ],
+      "recipeSource": "小桶加工咖啡豆；也可在星之果实酒吧购买成品",
+      "effect": "短时间饮料速度增益",
+      "buffs": [
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 1 分钟"
+        }
+      ],
+      "tags": [
+        "speed",
+        "drink",
+        "early_game"
+      ],
+      "recommendation": "前中期跑图很好用；后续升级为三倍浓缩咖啡。",
+      "note": "由小桶制作，不是厨房料理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Coffee",
+        "https://zh.stardewvalleywiki.com/咖啡"
+      ]
+    },
+    {
+      "id": "ginger_ale",
+      "name": "姜汁汽水",
+      "nameEn": "Ginger Ale",
+      "aliases": [
+        "ginger ale",
+        "姜汁啤酒",
+        "运气饮料"
+      ],
+      "ingredients": [
+        {
+          "name": "姜",
+          "quantity": 3
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "姜岛火山地牢矮人商店购买配方",
+      "effect": "饮料类运气增益",
+      "buffs": [
+        {
+          "name": "运气",
+          "value": 1,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "luck",
+        "drink",
+        "mining",
+        "fishing"
+      ],
+      "recommendation": "可与幸运午餐、南瓜汤等食物 buff 叠加运气。",
+      "note": "饮料类会和咖啡/三倍浓缩咖啡互相覆盖，想要速度时要取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Ale",
+        "https://zh.stardewvalleywiki.com/姜汁汽水"
+      ]
+    },
+    {
+      "id": "seafoam_pudding",
+      "name": "海泡布丁",
+      "nameEn": "Seafoam Pudding",
+      "aliases": [
+        "seafoam pudding",
+        "钓鱼加4",
+        "最强钓鱼料理"
+      ],
+      "ingredients": [
+        {
+          "name": "比目鱼",
+          "quantity": 1
+        },
+        {
+          "name": "午夜鲤鱼",
+          "quantity": 1
+        },
+        {
+          "name": "鱿鱼墨汁",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "钓鱼 9 级",
+      "effect": "大幅提升钓鱼等级",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 4,
+          "duration": "约 3 分钟"
+        }
+      ],
+      "tags": [
+        "fishing"
+      ],
+      "recommendation": "钓传说鱼、章鱼、岩浆鳗鱼等高难鱼时优先。",
+      "note": "材料偏后期，鱿鱼墨汁要提前准备。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Seafoam_Pudding",
+        "https://zh.stardewvalleywiki.com/海泡布丁"
+      ]
+    },
+    {
+      "id": "dish_o_the_sea",
+      "name": "海之菜肴",
+      "nameEn": "Dish O' The Sea",
+      "aliases": [
+        "dish o the sea",
+        "dish o' the sea",
+        "钓鱼加3"
+      ],
+      "ingredients": [
+        {
+          "name": "沙丁鱼",
+          "quantity": 2
+        },
+        {
+          "name": "薯饼",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "钓鱼 3 级",
+      "effect": "提升钓鱼等级",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 3,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "fishing",
+        "early_game"
+      ],
+      "recommendation": "前中期钓难鱼的性价比选择。",
+      "note": "薯饼本身也需要配方和材料。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dish_O%27_The_Sea",
+        "https://zh.stardewvalleywiki.com/海之菜肴"
+      ]
+    },
+    {
+      "id": "fish_stew",
+      "name": "鱼肉炖汤",
+      "nameEn": "Fish Stew",
+      "aliases": [
+        "fish stew",
+        "鱼汤",
+        "钓鱼炖汤"
+      ],
+      "ingredients": [
+        {
+          "name": "小龙虾",
+          "quantity": 1
+        },
+        {
+          "name": "蚌",
+          "quantity": 1
+        },
+        {
+          "name": "玉黍螺",
+          "quantity": 1
+        },
+        {
+          "name": "番茄",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "威利 7 心邮件",
+      "effect": "提升钓鱼等级",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 3,
+          "duration": "约 16 分钟"
+        }
+      ],
+      "tags": [
+        "fishing"
+      ],
+      "recommendation": "持续时间长，适合整天钓鱼；蟹笼路线很容易备料。",
+      "note": "需要威利好感。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Stew",
+        "https://zh.stardewvalleywiki.com/鱼肉炖汤"
+      ]
+    },
+    {
+      "id": "lobster_bisque",
+      "name": "龙虾浓汤",
+      "nameEn": "Lobster Bisque",
+      "aliases": [
+        "lobster bisque",
+        "龙虾汤"
+      ],
+      "ingredients": [
+        {
+          "name": "龙虾",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；或威利 9 心邮件",
+      "effect": "提升钓鱼等级并增加最大能量",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 3,
+          "duration": "约 16 分钟"
+        },
+        {
+          "name": "最大能量",
+          "value": 50,
+          "duration": "约 16 分钟"
+        }
+      ],
+      "tags": [
+        "fishing"
+      ],
+      "recommendation": "持续时间很长，适合传说鱼和全天钓鱼。",
+      "note": "龙虾来自海水蟹笼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lobster_Bisque",
+        "https://zh.stardewvalleywiki.com/龙虾浓汤"
+      ]
+    },
+    {
+      "id": "miners_treat",
+      "name": "矿工特供",
+      "nameEn": "Miner's Treat",
+      "aliases": [
+        "miners treat",
+        "miner's treat",
+        "采矿料理",
+        "磁力料理"
+      ],
+      "ingredients": [
+        {
+          "name": "山洞萝卜",
+          "quantity": 2
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "采矿 3 级",
+      "effect": "提升采矿和磁力",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 3,
+          "duration": "约 5 分钟"
+        },
+        {
+          "name": "磁力",
+          "value": 32,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "mining",
+        "magnetism"
+      ],
+      "recommendation": "普通矿井采矿很好用；骷髅洞穴冲层通常更看重速度/运气。",
+      "note": "山洞萝卜在矿井中较容易获得。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Miner%27s_Treat",
+        "https://zh.stardewvalleywiki.com/矿工特供"
+      ]
+    },
+    {
+      "id": "roots_platter",
+      "name": "块茎拼盘",
+      "nameEn": "Roots Platter",
+      "aliases": [
+        "roots platter",
+        "攻击料理"
+      ],
+      "ingredients": [
+        {
+          "name": "山洞萝卜",
+          "quantity": 1
+        },
+        {
+          "name": "冬根",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "战斗 3 级",
+      "effect": "提升攻击",
+      "buffs": [
+        {
+          "name": "攻击",
+          "value": 3,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "combat",
+        "attack"
+      ],
+      "recommendation": "战斗等级低或武器偏弱时可以吃，材料相对容易。",
+      "note": "冬根可冬季采集/种冬季种子获得。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Roots_Platter",
+        "https://zh.stardewvalleywiki.com/块茎拼盘"
+      ]
+    },
+    {
+      "id": "eggplant_parmesan",
+      "name": "茄子干酪",
+      "nameEn": "Eggplant Parmesan",
+      "aliases": [
+        "eggplant parmesan",
+        "茄子奶酪",
+        "防御采矿料理"
+      ],
+      "ingredients": [
+        {
+          "name": "茄子",
+          "quantity": 1
+        },
+        {
+          "name": "番茄",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "刘易斯 7 心邮件",
+      "effect": "提升采矿和防御",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 1,
+          "duration": "约 5 分钟"
+        },
+        {
+          "name": "防御",
+          "value": 3,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "mining",
+        "defense",
+        "combat"
+      ],
+      "recommendation": "想稳一点下矿时好用；秋季茄子可反复收。",
+      "note": "需要刘易斯好感。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Eggplant_Parmesan",
+        "https://zh.stardewvalleywiki.com/茄子干酪"
+      ]
+    },
+    {
+      "id": "pepper_poppers",
+      "name": "爆炒青椒",
+      "nameEn": "Pepper Poppers",
+      "aliases": [
+        "pepper poppers",
+        "辣椒奶酪",
+        "耕种速度料理"
+      ],
+      "ingredients": [
+        {
+          "name": "辣椒",
+          "quantity": 1
+        },
+        {
+          "name": "奶酪",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "谢恩 3 心邮件",
+      "effect": "提升耕种并提供速度",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 2,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "farming",
+        "speed"
+      ],
+      "recommendation": "农场工作和跑图两用，夏季辣椒很好量产。",
+      "note": "也是谢恩最爱礼物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pepper_Poppers",
+        "https://zh.stardewvalleywiki.com/爆炒青椒"
+      ]
+    },
+    {
+      "id": "farmers_lunch",
+      "name": "农夫午餐",
+      "nameEn": "Farmer's Lunch",
+      "aliases": [
+        "farmers lunch",
+        "farmer's lunch",
+        "耕种加3"
+      ],
+      "ingredients": [
+        {
+          "name": "煎蛋卷",
+          "quantity": 1
+        },
+        {
+          "name": "防风草",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "耕种 3 级",
+      "effect": "提升耕种等级",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 3,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "farming"
+      ],
+      "recommendation": "需要高品质作物、浇水或收作物前吃可以临时提高耕种等级。",
+      "note": "煎蛋卷需要鸡蛋和牛奶。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farmer%27s_Lunch",
+        "https://zh.stardewvalleywiki.com/农夫午餐"
+      ]
+    },
+    {
+      "id": "survival_burger",
+      "name": "生存汉堡",
+      "nameEn": "Survival Burger",
+      "aliases": [
+        "survival burger",
+        "觅食汉堡"
+      ],
+      "ingredients": [
+        {
+          "name": "面包",
+          "quantity": 1
+        },
+        {
+          "name": "山洞萝卜",
+          "quantity": 1
+        },
+        {
+          "name": "茄子",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "觅食 2 级",
+      "effect": "提升觅食等级",
+      "buffs": [
+        {
+          "name": "觅食",
+          "value": 3,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "foraging"
+      ],
+      "recommendation": "砍树、采集、收集高品质采集物时可用。",
+      "note": "材料跨季节，提前留茄子。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Survival_Burger",
+        "https://zh.stardewvalleywiki.com/生存汉堡"
+      ]
+    },
+    {
+      "id": "maple_bar",
+      "name": "枫糖棒",
+      "nameEn": "Maple Bar",
+      "aliases": [
+        "maple bar",
+        "多技能料理"
+      ],
+      "ingredients": [
+        {
+          "name": "枫糖浆",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "同时提升耕种、钓鱼、采矿",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 1,
+          "duration": "约 16 分钟"
+        },
+        {
+          "name": "钓鱼",
+          "value": 1,
+          "duration": "约 16 分钟"
+        },
+        {
+          "name": "采矿",
+          "value": 1,
+          "duration": "约 16 分钟"
+        }
+      ],
+      "tags": [
+        "farming",
+        "fishing",
+        "mining"
+      ],
+      "recommendation": "持续时间长，适合一天内做多种活动；枫糖浆要靠树液采集器。",
+      "note": "也是山姆最爱礼物之一。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Maple_Bar",
+        "https://zh.stardewvalleywiki.com/枫糖棒"
+      ]
+    }
   ]
 }

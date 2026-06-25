@@ -178,6 +178,18 @@
 - `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：67 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-25 料理配方与食物 buff 结构化检索补充：
+
+- 本地库新增 19 个高频料理/饮品条目，覆盖骷髅洞穴、幸运、移速、钓鱼、采矿、战斗、耕种、觅食等常问场景。
+- 新增料理详情路由，支持“幸运午餐怎么做”“香辣鳗鱼材料和效果”等问题，返回材料、配方来源、buff、推荐用法和来源。
+- 新增料理推荐列表路由，支持“骷髅洞穴吃什么料理 buff 好”“钓鱼料理有哪些”“战斗等级低吃什么食物”等泛问法。
+- AI tool 描述补充料理配方、食物/饮料 buff、骷髅洞穴/钓鱼/战斗/耕种推荐吃什么。
+
+本轮验证结果：
+
+- `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：71 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 工具升级结构化后再次执行本地环境验证：
 
 - `./scripts/dev/bb-dev.sh up --build`：build、mock OpenAI、bbBot 启动均成功，输出 `bbBot 已就绪`。
