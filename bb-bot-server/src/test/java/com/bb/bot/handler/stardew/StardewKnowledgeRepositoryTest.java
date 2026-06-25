@@ -26,7 +26,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(17);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
-        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(65);
+        assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(85);
@@ -269,6 +269,31 @@ class StardewKnowledgeRepositoryTest {
                 "glowstone_ring",
                 "iridium_band",
                 "wedding_ring"
+        );
+    }
+
+    @Test
+    void expandedFishingBaitTackleAndCrabPotCraftablesAreCovered() {
+        Set<String> machineIds = repository.machines().stream()
+                .map(StardewData.Machine::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(machineIds).contains(
+                "spinner",
+                "trap_bobber",
+                "sonar_bobber",
+                "cork_bobber",
+                "quality_bobber",
+                "treasure_hunter",
+                "dressed_spinner",
+                "barbed_hook",
+                "magnet",
+                "bait",
+                "deluxe_bait",
+                "wild_bait",
+                "magic_bait",
+                "challenge_bait",
+                "crab_pot_item"
         );
     }
 

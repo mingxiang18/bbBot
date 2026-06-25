@@ -104,6 +104,22 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedMachineIntentRetrievesFishingTackleAndBaitCraftingEvidence() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MACHINE, "魔法鱼饵怎么做"),
+                intent(StardewGuideIntent.MACHINE, "陷阱浮标怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("魔法鱼饵和陷阱浮标怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("machine_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("魔法鱼饵", "放射性矿石 x1", "虫肉 x3")
+                .contains("陷阱浮标", "钓鱼 6 级", "树液 x10");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

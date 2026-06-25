@@ -97,7 +97,7 @@ public class StardewGuideService {
             }
             return buildingListAnswer(query);
         }
-        if (machine.isPresent() || looksLikeMachineQuery(query)) {
+        if ((machine.isPresent() || looksLikeMachineQuery(query)) && !isCrabPotCatchQuery(query)) {
             boolean broadMachineQuery = isBroadMachineQuery(query);
             if (machine.isPresent() && !broadMachineQuery) {
                 return machineDetailAnswer(machine.get());
@@ -1322,7 +1322,13 @@ public class StardewGuideService {
                 || query.contains("宝藏图腾") || query.contains("怪物香水") || query.contains("仙尘")
                 || query.contains("戒指") || query.contains("铱环") || query.contains("尤巴戒指")
                 || query.contains("约巴戒指") || query.contains("光辉戒指") || query.contains("荆棘戒指")
-                || query.contains("结婚戒指");
+                || query.contains("结婚戒指")
+                || query.contains("钓具") || query.contains("鱼饵") || query.contains("魔法鱼饵")
+                || query.contains("高级鱼饵") || query.contains("野性鱼饵") || query.contains("挑战鱼饵")
+                || query.contains("浮标") || query.contains("旋式鱼饵") || query.contains("精装旋式鱼饵")
+                || query.contains("寻宝器") || query.contains("宝藏猎人") || query.contains("倒刺钩")
+                || query.contains("磁铁") || query.contains("蟹笼怎么做") || query.contains("蟹笼材料")
+                || query.contains("蟹笼配方");
     }
 
     private boolean looksLikeCookingQuery(String query) {
@@ -1463,10 +1469,17 @@ public class StardewGuideService {
                 || query.contains("保湿土壤有哪些") || query.contains("生长激素有哪些")
                 || query.contains("图腾有哪些") || query.contains("传送图腾有哪些")
                 || query.contains("戒指有哪些") || query.contains("戒指列表")
-                || query.contains("消耗品有哪些");
+                || query.contains("消耗品有哪些")
+                || query.contains("钓具有哪些") || query.contains("鱼饵有哪些")
+                || query.contains("钓鱼装备有哪些") || query.contains("钓鱼制作有哪些");
     }
 
     private String parseMachineCategory(String query) {
+        if (query.contains("鱼饵") || query.contains("钓具") || query.contains("浮标")
+                || query.contains("旋式") || query.contains("寻宝") || query.contains("宝藏猎人")
+                || query.contains("倒刺钩") || query.contains("磁铁") || query.contains("蟹笼")) {
+            return "fishing";
+        }
         if (query.contains("肥料") || query.contains("保湿土壤") || query.contains("保湿土")
                 || query.contains("生长激素") || query.contains("树肥")) {
             return "fertilizer";
@@ -1529,8 +1542,20 @@ public class StardewGuideService {
             case "totem" -> "图腾/传送";
             case "ring" -> "戒指";
             case "consumable" -> "一次性消耗品";
+            case "fishing" -> "钓鱼装备";
             default -> category;
         };
+    }
+
+    private boolean isCrabPotCatchQuery(String query) {
+        return query.contains("蟹笼")
+                && !query.contains("怎么做")
+                && !query.contains("怎么制作")
+                && !query.contains("材料")
+                && !query.contains("配方")
+                && (query.contains("能抓") || query.contains("可抓") || query.contains("抓什么")
+                || query.contains("能捕") || query.contains("可捕") || query.contains("产物")
+                || query.contains("淡水") || query.contains("海水"));
     }
 
     private String parseBuildingCategory(String query) {

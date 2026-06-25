@@ -553,6 +553,40 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFishingBaitTackleAndCrabPotCraftingDetails() {
+        StardewGuideResult magicBait = service.answer("星露谷 魔法鱼饵怎么做");
+        StardewGuideResult trapBobber = service.answer("星露谷 陷阱浮标怎么做");
+        StardewGuideResult crabPot = service.answer("星露谷 蟹笼怎么做");
+
+        assertThat(magicBait.getIntent()).isEqualTo("machine_detail");
+        assertThat(magicBait.getAnswer()).contains("魔法鱼饵", "齐先生", "放射性矿石 x1", "虫肉 x3", "任意季节/时间/天气");
+        assertThat(trapBobber.getIntent()).isEqualTo("machine_detail");
+        assertThat(trapBobber.getAnswer()).contains("陷阱浮标", "钓鱼 6 级", "铜锭 x1", "树液 x10", "逃脱速度变慢");
+        assertThat(crabPot.getIntent()).isEqualTo("machine_detail");
+        assertThat(crabPot.getAnswer()).contains("蟹笼", "钓鱼 3 级", "木材 x40", "铁锭 x3", "捕猎者职业");
+    }
+
+    @Test
+    void answersFishingEquipmentCategoryList() {
+        StardewGuideResult tackle = service.answer("星露谷 钓具有哪些");
+        StardewGuideResult bait = service.answer("星露谷 鱼饵有哪些");
+
+        assertThat(tackle.getIntent()).isEqualTo("machine_available");
+        assertThat(tackle.getAnswer()).contains("钓鱼装备", "陷阱浮标", "声呐浮标", "寻宝器", "倒刺钩");
+        assertThat(bait.getIntent()).isEqualTo("machine_available");
+        assertThat(bait.getAnswer()).contains("钓鱼装备", "鱼饵", "高级鱼饵", "野性鱼饵", "魔法鱼饵", "挑战鱼饵");
+    }
+
+    @Test
+    void keepsCrabPotCatchQueriesOnFishRouteAfterCrabPotCraftableIsAdded() {
+        StardewGuideResult catchList = service.answer("星露谷 蟹笼能抓什么");
+
+        assertThat(catchList.getIntent()).isEqualTo("fish_available");
+        assertThat(catchList.getAnswer()).contains("龙虾", "小龙虾", "螃蟹", "虾", "蜗牛", "玉黍螺");
+        assertThat(catchList.getAnswer()).doesNotContain("钓鱼 3 级", "木材 x40", "铁锭 x3");
+    }
+
+    @Test
     void answersMachineListQueriesAndKeepsResourceRouting() {
         StardewGuideResult machines = service.answer("星露谷 加工机器有哪些");
         StardewGuideResult battery = service.answer("星露谷 电池组怎么获得");

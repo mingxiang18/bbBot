@@ -8713,6 +8713,554 @@
       "sourceUrls": [
         "https://stardewvalleywiki.com/Crafting"
       ]
+    },
+    {
+      "id": "spinner",
+      "name": "旋式鱼饵",
+      "nameEn": "Spinner",
+      "aliases": [
+        "spinner",
+        "旋式钓具",
+        "旋式鱼饵怎么做",
+        "增加咬钩率"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "稍微提高鱼咬钩速度"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "缩短等待鱼上钩的时间。",
+      "recommendation": "普通钓鱼刷量时可用；想冲宝箱则优先寻宝器，想稳难鱼则优先陷阱浮标。",
+      "note": "玻璃纤维鱼竿不能装钓具，需要铱金鱼竿或高级铱金鱼竿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "trap_bobber",
+      "name": "陷阱浮标",
+      "nameEn": "Trap Bobber",
+      "aliases": [
+        "trap bobber",
+        "陷阱浮漂",
+        "陷阱钓具",
+        "陷阱浮标怎么做",
+        "鱼逃得慢"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "鱼离开钓鱼条时逃脱速度变慢"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "降低不收线时鱼逃跑的速度，给玩家更多纠错时间。",
+      "recommendation": "钓传说鱼、章鱼、岩浆鳗鱼等高难鱼时优先级很高。",
+      "note": "树液消耗不小，别把树液全卖光。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "sonar_bobber",
+      "name": "声呐浮标",
+      "nameEn": "Sonar Bobber",
+      "aliases": [
+        "sonar bobber",
+        "声纳浮标",
+        "声呐浮标怎么做",
+        "显示上钩鱼"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "在捕获前显示上钩的鱼"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "能提前判断是否值得继续钓这一条。",
+      "recommendation": "刷特定鱼、任务鱼或用魔法鱼饵时有用；追求稳钓难鱼时不如陷阱浮标。",
+      "note": "1.6 后适合减少无效拉杆。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cork_bobber",
+      "name": "软木塞浮标",
+      "nameEn": "Cork Bobber",
+      "aliases": [
+        "cork bobber",
+        "软木浮标",
+        "软木塞浮标怎么做",
+        "增加钓鱼条"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 7 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 10
+        },
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "略微增加钓鱼条大小"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "让鱼更容易保持在钓鱼条内。",
+      "recommendation": "钓鱼等级还不高、料理 buff 不足时很好用；难鱼也可和高级铱金鱼竿第二钓具搭配。",
+      "note": "硬木前期珍贵，先保证钢斧和建筑需求。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_bobber",
+      "name": "优质浮标",
+      "nameEn": "Quality Bobber",
+      "aliases": [
+        "quality bobber",
+        "品质浮标",
+        "优质浮标怎么做",
+        "提高鱼品质"
+      ],
+      "category": "fishing",
+      "recipeSource": "完成威利特别订单后获得配方",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 20
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "提高钓到鱼的品质"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "提高鱼品质，适合卖鱼或补高品质鱼需求。",
+      "recommendation": "钓鱼赚钱流和补金星鱼时很好；如果鱼本身很难，先考虑陷阱浮标保证钓上来。",
+      "note": "配方来自威利特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "treasure_hunter",
+      "name": "寻宝器",
+      "nameEn": "Treasure Hunter",
+      "aliases": [
+        "treasure hunter",
+        "宝藏猎人",
+        "寻宝钓具",
+        "寻宝器怎么做",
+        "钓鱼宝箱"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 7 级",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "收宝箱时鱼不会逃脱",
+        "略微提高宝箱出现概率"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "让钓鱼宝箱更容易安全拿到。",
+      "recommendation": "刷古物、矿物、武器或前期资源时很舒服；纯赚钱刷鱼时不一定最优。",
+      "note": "和海盗职业、磁铁、好运加成搭配更偏宝箱流。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "dressed_spinner",
+      "name": "精装旋式鱼饵",
+      "nameEn": "Dressed Spinner",
+      "aliases": [
+        "dressed spinner",
+        "高级旋式鱼饵",
+        "精装旋式鱼饵怎么做",
+        "更快咬钩"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 8 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        },
+        {
+          "name": "布料",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "提高鱼咬钩速度"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "比普通旋式鱼饵更偏效率。",
+      "recommendation": "刷大量普通鱼、冲钓鱼经验或想减少等待时间时使用。",
+      "note": "布料也常用于任务、衣物和建筑，前期别全做钓具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "barbed_hook",
+      "name": "倒刺钩",
+      "nameEn": "Barbed Hook",
+      "aliases": [
+        "barbed hook",
+        "倒钩",
+        "倒刺钩怎么做",
+        "鱼钩贴鱼"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 8 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "钓鱼条会尝试贴住鱼"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "对移动慢、幅度小的鱼效果较好。",
+      "recommendation": "不推荐拿来钓乱窜的高难鱼；慢鱼或低操作需求场景可以用。",
+      "note": "高难鱼通常陷阱浮标更稳。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "magnet",
+      "name": "磁铁",
+      "nameEn": "Magnet",
+      "aliases": [
+        "magnet",
+        "磁铁鱼饵",
+        "磁铁怎么做",
+        "宝箱鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 9 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 3 个磁铁",
+        "提高钓鱼宝箱出现概率"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "替代普通鱼饵，偏宝箱收益。",
+      "recommendation": "配海盗职业、寻宝器和好运日刷宝箱；单纯刷鱼咬钩不如普通/高级鱼饵。",
+      "note": "鱼不太喜欢这个味道，定位是宝箱流。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "bait",
+      "name": "鱼饵",
+      "nameEn": "Bait",
+      "aliases": [
+        "bait",
+        "普通鱼饵",
+        "鱼饵怎么做"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 2 级",
+      "materials": [
+        {
+          "name": "虫肉",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个鱼饵",
+        "加快鱼咬钩"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "鱼竿使用时减少等待咬钩时间；蟹笼通常需要放鱼饵后次日收获。",
+      "recommendation": "升到钓鱼 2 后尽快换玻璃纤维鱼竿并挂鱼饵，体验会明显变好。",
+      "note": "竹鱼竿不能挂鱼饵。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_bait",
+      "name": "高级鱼饵",
+      "nameEn": "Deluxe Bait",
+      "aliases": [
+        "deluxe bait",
+        "高级鱼饵怎么做",
+        "豪华鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 4 级",
+      "materials": [
+        {
+          "name": "鱼饵",
+          "quantity": 5
+        },
+        {
+          "name": "苔藓",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个高级鱼饵",
+        "更快咬钩并增加钓鱼条大小"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "兼顾咬钩速度和钓鱼条手感。",
+      "recommendation": "1.6 后很适合常规钓鱼；苔藓富余时比普通鱼饵更舒服。",
+      "note": "苔藓还会用于一些 1.6 配方，按库存分配。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wild_bait",
+      "name": "野性鱼饵",
+      "nameEn": "Wild Bait",
+      "aliases": [
+        "wild bait",
+        "万能鱼饵",
+        "野性鱼饵怎么做",
+        "莱纳斯鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "莱纳斯 4 心事件获得配方",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 10
+        },
+        {
+          "name": "虫肉",
+          "quantity": 5
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个野性鱼饵",
+        "有机会一次钓到两条鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "保留加快咬钩效果，并有双鱼机会。",
+      "recommendation": "材料够时刷鱼赚钱和经验很强；纤维、虫肉、史莱姆都要提前囤。",
+      "note": "需要触发莱纳斯 4 心剧情。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "magic_bait",
+      "name": "魔法鱼饵",
+      "nameEn": "Magic Bait",
+      "aliases": [
+        "magic bait",
+        "魔法鱼饵怎么做",
+        "不限季节鱼饵",
+        "任意季节鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "齐先生核桃房购买配方，20 齐钻",
+      "materials": [
+        {
+          "name": "放射性矿石",
+          "quantity": 1
+        },
+        {
+          "name": "虫肉",
+          "quantity": 3
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 5 个魔法鱼饵",
+        "允许在对应水域钓到任意季节/时间/天气的鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "不改变水域类型；海鱼仍要在海里，河鱼仍要在河流/对应水域。",
+      "recommendation": "补全鱼图鉴、错过季节鱼、夜市潜艇鱼替代方案时很强；放射性矿石成本较高。",
+      "note": "不会让所有鱼在任意地点出现，地点限制仍要满足。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "challenge_bait",
+      "name": "挑战鱼饵",
+      "nameEn": "Challenge Bait",
+      "aliases": [
+        "challenge bait",
+        "挑战鱼饵怎么做",
+        "三倍鱼饵",
+        "完美钓鱼鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼精通",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 5
+        },
+        {
+          "name": "苔藓",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 5 个挑战鱼饵",
+        "完美捕获可获得三倍鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "鱼离开钓鱼条会减少最终捕获数量；完美捕获收益最高。",
+      "recommendation": "适合高钓鱼等级、低难度高价值鱼或熟练玩家刷量；高难鱼不稳时别硬上。",
+      "note": "需要钓鱼精通。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "crab_pot_item",
+      "name": "蟹笼",
+      "nameEn": "Crab Pot",
+      "aliases": [
+        "crab pot",
+        "蟹笼怎么做",
+        "蟹笼材料",
+        "蟹笼配方"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 3 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 40
+        },
+        {
+          "name": "铁锭",
+          "quantity": 3
+        }
+      ],
+      "inputs": [
+        "放进水里并装入鱼饵，次日收获"
+      ],
+      "outputs": [
+        "淡水/海水蟹笼产物",
+        "垃圾"
+      ],
+      "processingTime": "通常次日可收",
+      "formula": "捕猎者职业会降低制作成本：木材 x25 + 铜锭 x2。",
+      "recommendation": "适合低操作量补钓鱼经验和蟹笼收集包；水手职业可避免垃圾，诱饵大师职业蟹笼不再需要鱼饵。",
+      "note": "想查能抓什么时问“蟹笼能抓什么”；淡水和海水产物不同。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
     }
   ],
   "shops": [
