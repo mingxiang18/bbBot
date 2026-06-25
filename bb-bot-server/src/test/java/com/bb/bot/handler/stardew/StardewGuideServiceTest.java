@@ -786,6 +786,20 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersForagingLevelingLocally() {
+        StardewGuideResult result = service.answer("星露谷 觅食等级低怎么快速升级");
+
+        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getAnswer()).contains("250 觅食经验", "普通地面采集物通常给 7 觅食经验");
+        assertThat(result.getAnswer()).contains("砍倒一棵树给 14 觅食经验", "大型树桩和大圆木给 25");
+        assertThat(result.getAnswer()).contains("秘密森林", "6 个大型树桩", "150 觅食经验");
+        assertThat(result.getAnswer()).contains("冬季野种子", "炸弹炸倒树不给觅食经验");
+        assertThat(result.getAnswer()).contains("煎饼", "觅食汉堡", "热带咖喱");
+        assertThat(result.getAnswer()).contains("收集者 -> 植物学家", "不确定雕像");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Foraging");
+    }
+
+    @Test
     void answersSkillProfessionChoice() {
         StardewGuideResult result = service.answer("星露谷 钓鱼职业怎么选");
 

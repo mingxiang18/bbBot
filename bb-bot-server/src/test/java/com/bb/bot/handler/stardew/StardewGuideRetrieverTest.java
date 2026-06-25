@@ -232,6 +232,22 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedSkillIntentRetrievesForagingLevelingEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SKILL, "觅食等级低怎么快速升级"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("我觅食等级低怎么快速升级", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SKILL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("觅食技能", "秘密森林", "冬季野种子", "炸弹炸倒树不给觅食经验")
+                .contains("收集者 -> 植物学家")
+                .doesNotContain("夏季鱼类", "春季作物：", "硬木怎么获取：");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 
