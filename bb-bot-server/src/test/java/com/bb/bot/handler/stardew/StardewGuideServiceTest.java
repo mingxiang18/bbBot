@@ -439,6 +439,48 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersLateGameMagicBuildingDetails() {
+        StardewGuideResult desert = service.answer("星露谷 沙漠方尖塔需要什么");
+        StardewGuideResult goldClock = service.answer("星露谷 黄金钟多少钱，有什么用");
+        StardewGuideResult junimo = service.answer("星露谷 祝尼魔小屋多少钱材料");
+        StardewGuideResult farmObelisk = service.answer("星露谷 农场方尖塔怎么建");
+
+        assertThat(desert.getIntent()).isEqualTo("building_detail");
+        assertThat(desert.getAnswer()).contains("沙漠方尖塔", "1,000,000g", "铱锭 x20", "椰子 x10", "仙人掌果子 x10");
+        assertThat(desert.getAnswer()).contains("魔法墨水", "传送到沙漠");
+        assertThat(goldClock.getIntent()).isEqualTo("building_detail");
+        assertThat(goldClock.getAnswer()).contains("黄金钟", "10,000,000g", "防止农场出现杂物", "防止栅栏腐烂");
+        assertThat(junimo.getIntent()).isEqualTo("building_detail");
+        assertThat(junimo.getAnswer()).contains("祝尼魔小屋", "20,000g", "石头 x200", "杨桃 x9", "纤维 x100", "收获");
+        assertThat(farmObelisk.getIntent()).isEqualTo("building_detail");
+        assertThat(farmObelisk.getAnswer()).contains("农场方尖塔", "无固定金币花费", "金核桃 x20", "岛屿农舍", "不能移动");
+    }
+
+    @Test
+    void answersCommunityUpgradeDetails() {
+        StardewGuideResult pamHouse = service.answer("星露谷 潘姆房子社区升级需要什么");
+        StardewGuideResult shortcuts = service.answer("星露谷 城镇捷径多少钱");
+
+        assertThat(pamHouse.getIntent()).isEqualTo("building_detail");
+        assertThat(pamHouse.getAnswer()).contains("潘姆房屋社区升级", "500,000g", "木材 x950", "房屋完全升级", "社区中心");
+        assertThat(pamHouse.getAnswer()).contains("3 天", "多人游戏中只有主机玩家");
+        assertThat(shortcuts.getIntent()).isEqualTo("building_detail");
+        assertThat(shortcuts.getAnswer()).contains("城镇捷径社区升级", "300,000g", "完成第一次社区升级", "3 天");
+        assertThat(shortcuts.getAnswer()).contains("煤矿森林到海滩捷径", "巴士站到后山捷径");
+    }
+
+    @Test
+    void answersLateGameBuildingCategoryLists() {
+        StardewGuideResult magic = service.answer("星露谷 魔法建筑有哪些");
+        StardewGuideResult community = service.answer("星露谷 社区升级有哪些");
+
+        assertThat(magic.getIntent()).isEqualTo("building_available");
+        assertThat(magic.getAnswer()).contains("可建/可升级建筑（魔法/后期）", "祝尼魔小屋", "沙漠方尖塔", "黄金钟", "农场方尖塔");
+        assertThat(community.getIntent()).isEqualTo("building_available");
+        assertThat(community.getAnswer()).contains("可建/可升级建筑（社区升级）", "潘姆房屋社区升级", "城镇捷径社区升级");
+    }
+
+    @Test
     void answersMachineCraftingDetails() {
         StardewGuideResult keg = service.answer("星露谷 小桶怎么做，酿酒收益怎么样");
         StardewGuideResult smoker = service.answer("星露谷 鱼熏机需要什么材料");

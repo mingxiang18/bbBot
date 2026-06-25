@@ -131,6 +131,24 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedBuildingIntentRetrievesLateGameAndCommunityBuildingEvidence() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.BUILDING, "沙漠方尖塔需要什么"),
+                intent(StardewGuideIntent.BUILDING, "潘姆房子社区升级需要什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("沙漠方尖塔和潘姆房子需要什么", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.BUILDING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("building_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("沙漠方尖塔", "铱锭 x20", "仙人掌果子 x10")
+                .contains("潘姆房屋社区升级", "500,000g", "木材 x950");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

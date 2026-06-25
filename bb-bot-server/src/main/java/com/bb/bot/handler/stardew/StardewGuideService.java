@@ -1280,6 +1280,11 @@ public class StardewGuideService {
                 || query.contains("小屋") || query.contains("出货箱") || query.contains("谷仓")
                 || query.contains("大鸡舍") || query.contains("豪华鸡舍") || query.contains("大畜棚")
                 || query.contains("豪华畜棚") || query.contains("升级房子") || query.contains("房屋升级")
+                || query.contains("方尖塔") || query.contains("方尖碑") || query.contains("黄金钟")
+                || query.contains("黄金时钟") || query.contains("金钟") || query.contains("祝尼魔小屋")
+                || query.contains("祝尼魔屋") || query.contains("自动收菜") || query.contains("魔法建筑")
+                || query.contains("法师塔建筑") || query.contains("社区升级") || query.contains("潘姆房")
+                || query.contains("潘姆房子") || query.contains("城镇捷径") || query.contains("小镇捷径")
                 || query.contains("扩建房子") || query.contains("解锁猪") || query.contains("养猪")
                 || query.contains("养兔") || query.contains("养鸭") || query.contains("养山羊")
                 || query.contains("养绵羊") || query.contains("养牛") || query.contains("养鸡")
@@ -1455,7 +1460,10 @@ public class StardewGuideService {
     private boolean isBroadBuildingQuery(String query) {
         return query.contains("农场建筑") || query.contains("建筑有哪些") || query.contains("建筑列表")
                 || query.contains("能建什么") || query.contains("可以建什么")
-                || query.contains("哪些建筑") || query.contains("建筑推荐");
+                || query.contains("哪些建筑") || query.contains("建筑推荐")
+                || query.contains("方尖塔有哪些") || query.contains("方尖碑有哪些")
+                || query.contains("魔法建筑有哪些") || query.contains("后期建筑有哪些")
+                || query.contains("特殊建筑有哪些") || query.contains("社区升级有哪些");
     }
 
     private boolean isBroadMachineQuery(String query) {
@@ -1562,6 +1570,10 @@ public class StardewGuideService {
         if (query.contains("动物") || query.contains("鸡舍") || query.contains("畜棚") || query.contains("养")) {
             return "animals";
         }
+        if (query.contains("社区升级") || query.contains("潘姆房") || query.contains("潘姆房子")
+                || query.contains("城镇捷径") || query.contains("小镇捷径") || query.contains("社区捷径")) {
+            return "community";
+        }
         if (query.contains("房屋") || query.contains("房子") || query.contains("地窖")) {
             return "housing";
         }
@@ -1570,6 +1582,11 @@ public class StardewGuideService {
         }
         if (query.contains("储存") || query.contains("筒仓") || query.contains("出货")) {
             return "storage";
+        }
+        if (query.contains("方尖塔") || query.contains("方尖碑") || query.contains("黄金钟")
+                || query.contains("黄金时钟") || query.contains("金钟") || query.contains("祝尼魔")
+                || query.contains("法师塔") || query.contains("魔法建筑") || query.contains("后期建筑")) {
+            return "magic";
         }
         if (query.contains("马厩") || query.contains("传送") || query.contains("交通")) {
             return "transport";
@@ -1584,12 +1601,14 @@ public class StardewGuideService {
             case "processing" -> "加工设施";
             case "storage" -> "储存/出货";
             case "transport" -> "交通";
+            case "magic" -> "魔法/后期";
+            case "community" -> "社区升级";
             default -> category;
         };
     }
 
     private String formatGold(Integer gold) {
-        if (gold == null) {
+        if (gold == null || gold == 0) {
             return "无固定金币花费";
         }
         return String.format(Locale.ROOT, "%,dg", gold);

@@ -24,7 +24,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.fish()).hasSizeGreaterThanOrEqualTo(74);
         assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(37);
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
-        assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(17);
+        assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
@@ -176,6 +176,25 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(building.getRecommendation()).isNotBlank();
                     assertThat(building.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void lateGameMagicAndCommunityBuildingsAreCovered() {
+        Set<String> buildingIds = repository.buildings().stream()
+                .map(StardewData.Building::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(buildingIds).contains(
+                "earth_obelisk",
+                "water_obelisk",
+                "desert_obelisk",
+                "island_obelisk",
+                "farm_obelisk",
+                "junimo_hut",
+                "gold_clock",
+                "community_upgrade_pam_house",
+                "town_shortcuts"
+        );
     }
 
     @Test

@@ -5587,6 +5587,420 @@
         "https://stardewvalleywiki.com/Farmhouse",
         "https://zh.stardewvalleywiki.com/农舍"
       ]
+    },
+    {
+      "id": "earth_obelisk",
+      "name": "地球方尖塔",
+      "nameEn": "Earth Obelisk",
+      "aliases": [
+        "earth obelisk",
+        "地方尖塔",
+        "地之方尖塔",
+        "山岭方尖塔",
+        "山地方尖塔",
+        "山区传送塔",
+        "山岭传送塔"
+      ],
+      "category": "magic",
+      "cost": 500000,
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 10
+        },
+        {
+          "name": "地晶",
+          "quantity": 10
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水后，在法师塔魔法书购买",
+      "unlocks": [
+        "传送到山区"
+      ],
+      "houses": [
+        "永久传送建筑"
+      ],
+      "tags": [
+        "后期",
+        "传送",
+        "魔法建筑"
+      ],
+      "recommendation": "经常去矿山、采石场、冒险家公会或罗宾家时很省时间；价格比沙漠/姜岛方尖塔低。",
+      "note": "方尖塔不消耗使用次数，适合后期把日常跑图压到最短。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "water_obelisk",
+      "name": "水之方尖塔",
+      "nameEn": "Water Obelisk",
+      "aliases": [
+        "water obelisk",
+        "水方尖塔",
+        "水之方尖塔",
+        "海滩方尖塔",
+        "海边方尖塔",
+        "海滩传送塔",
+        "海边传送塔"
+      ],
+      "category": "magic",
+      "cost": 500000,
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 5
+        },
+        {
+          "name": "蛤",
+          "quantity": 10
+        },
+        {
+          "name": "珊瑚",
+          "quantity": 10
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水后，在法师塔魔法书购买",
+      "unlocks": [
+        "传送到海滩"
+      ],
+      "houses": [
+        "永久传送建筑"
+      ],
+      "tags": [
+        "后期",
+        "传送",
+        "魔法建筑"
+      ],
+      "recommendation": "常跑海滩、潮汐池、威利鱼店或蟹笼线时很舒服；材料相对容易准备。",
+      "note": "配合回城/回农场手段可以大幅减少海滩往返时间。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "desert_obelisk",
+      "name": "沙漠方尖塔",
+      "nameEn": "Desert Obelisk",
+      "aliases": [
+        "desert obelisk",
+        "沙漠方尖塔",
+        "沙漠传送塔",
+        "沙漠图腾柱",
+        "骷髅洞穴传送",
+        "去沙漠的方尖塔"
+      ],
+      "category": "magic",
+      "cost": 1000000,
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 20
+        },
+        {
+          "name": "椰子",
+          "quantity": 10
+        },
+        {
+          "name": "仙人掌果子",
+          "quantity": 10
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水后，在法师塔魔法书购买",
+      "unlocks": [
+        "传送到沙漠"
+      ],
+      "houses": [
+        "永久传送建筑"
+      ],
+      "tags": [
+        "后期",
+        "传送",
+        "魔法建筑",
+        "骷髅洞穴"
+      ],
+      "recommendation": "骷髅洞穴冲层、刷铱和刷五彩碎片很实用；如果经常下沙漠矿洞，优先级很高。",
+      "note": "造价高但能省掉等巴士的时间，适合后期矿洞日。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "island_obelisk",
+      "name": "姜岛方尖塔",
+      "nameEn": "Island Obelisk",
+      "aliases": [
+        "island obelisk",
+        "岛屿方尖塔",
+        "姜岛方尖塔",
+        "姜岛传送塔",
+        "岛屿传送塔",
+        "去姜岛的方尖塔"
+      ],
+      "category": "magic",
+      "cost": 1000000,
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 10
+        },
+        {
+          "name": "龙牙",
+          "quantity": 10
+        },
+        {
+          "name": "香蕉",
+          "quantity": 10
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水，且解锁姜岛后，在法师塔魔法书购买",
+      "unlocks": [
+        "传送到姜岛"
+      ],
+      "houses": [
+        "永久传送建筑"
+      ],
+      "tags": [
+        "后期",
+        "传送",
+        "魔法建筑",
+        "姜岛"
+      ],
+      "recommendation": "姜岛农场、火山和金核桃收集进入日常后非常值得；龙牙和香蕉要提前规划。",
+      "note": "姜岛解锁后才会出现在法师塔建筑菜单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "farm_obelisk",
+      "name": "农场方尖塔",
+      "nameEn": "Farm Obelisk",
+      "aliases": [
+        "farm obelisk",
+        "农场图腾柱",
+        "农场方尖塔",
+        "姜岛回农场",
+        "岛上回农场",
+        "农场传送塔"
+      ],
+      "category": "magic",
+      "cost": 0,
+      "materials": [
+        {
+          "name": "金核桃",
+          "quantity": 20
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "在姜岛解锁岛屿农舍和邮箱后，向岛屿农舍西侧的鹦鹉购买",
+      "unlocks": [
+        "从姜岛农场传送回本岛农场图腾落点"
+      ],
+      "houses": [
+        "姜岛永久传送建筑"
+      ],
+      "tags": [
+        "后期",
+        "传送",
+        "姜岛",
+        "金核桃"
+      ],
+      "recommendation": "姜岛农场开始常驻后很方便，尤其适合白天在岛上干活、晚上快速回本岛。",
+      "note": "花费是 20 个金核桃，不是金币；建好后不能移动，骑马时不能互动。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Obelisk",
+        "https://zh.stardewvalleywiki.com/农场图腾柱"
+      ]
+    },
+    {
+      "id": "junimo_hut",
+      "name": "祝尼魔小屋",
+      "nameEn": "Junimo Hut",
+      "aliases": [
+        "junimo hut",
+        "祝尼魔屋",
+        "祝尼魔小屋",
+        "自动收菜",
+        "自动收作物",
+        "自动收获",
+        "祝尼魔收菜"
+      ],
+      "category": "magic",
+      "cost": 20000,
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 200
+        },
+        {
+          "name": "杨桃",
+          "quantity": 9
+        },
+        {
+          "name": "纤维",
+          "quantity": 100
+        }
+      ],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水后，在法师塔魔法书购买",
+      "unlocks": [
+        "祝尼魔会收获小屋周围成熟作物"
+      ],
+      "houses": [
+        "农场自动收获辅助"
+      ],
+      "tags": [
+        "后期",
+        "自动化",
+        "魔法建筑",
+        "作物"
+      ],
+      "recommendation": "适合大面积季节作物或远古水果农场，能省掉大量收菜时间；放置前先规划覆盖范围。",
+      "note": "小屋负责收获，不负责浇水、种植或重新播种。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "gold_clock",
+      "name": "黄金钟",
+      "nameEn": "Gold Clock",
+      "aliases": [
+        "gold clock",
+        "黄金钟",
+        "金钟",
+        "黄金时钟",
+        "防杂草",
+        "防杂物",
+        "栅栏不坏",
+        "栅栏不腐烂"
+      ],
+      "category": "magic",
+      "cost": 10000000,
+      "materials": [],
+      "size": "3x2",
+      "buildTime": "即时完成",
+      "prerequisite": "完成法师任务“哥布林问题”并取回魔法墨水后，在法师塔魔法书购买",
+      "unlocks": [
+        "防止农场出现杂物",
+        "防止栅栏腐烂"
+      ],
+      "houses": [
+        "农场维护"
+      ],
+      "tags": [
+        "后期",
+        "完美",
+        "魔法建筑"
+      ],
+      "recommendation": "这是超后期/完美路线的大额目标；先保证农场产线、传送和关键建筑齐全再考虑。",
+      "note": "只需要金币，不需要额外材料。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "community_upgrade_pam_house",
+      "name": "潘姆房屋社区升级",
+      "nameEn": "Community Upgrade: Trailer",
+      "aliases": [
+        "community upgrade",
+        "社区升级",
+        "潘姆房子",
+        "潘姆房屋",
+        "给潘姆盖房子",
+        "拖车升级",
+        "潘妮房子",
+        "潘姆新房"
+      ],
+      "category": "community",
+      "cost": 500000,
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 950
+        }
+      ],
+      "size": "社区升级",
+      "buildTime": "3 天",
+      "prerequisite": "房屋完全升级，并完成社区中心或 Joja 仓库后，在木匠铺购买",
+      "unlocks": [
+        "罗宾为潘姆和潘妮建造新房"
+      ],
+      "houses": [
+        "潘姆",
+        "潘妮"
+      ],
+      "tags": [
+        "后期",
+        "社区升级",
+        "木匠铺"
+      ],
+      "recommendation": "偏剧情和城镇改善，收益不是现金回报；资金宽裕后做，后续才能解锁城镇捷径升级。",
+      "note": "多人游戏中只有主机玩家能购买这个升级。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Carpenter%27s_Shop",
+        "https://zh.stardewvalleywiki.com/木匠的商店"
+      ]
+    },
+    {
+      "id": "town_shortcuts",
+      "name": "城镇捷径社区升级",
+      "nameEn": "Town Shortcuts",
+      "aliases": [
+        "town shortcuts",
+        "城镇捷径",
+        "小镇捷径",
+        "社区捷径",
+        "罗宾捷径",
+        "第二次社区升级",
+        "捷径升级"
+      ],
+      "category": "community",
+      "cost": 300000,
+      "materials": [],
+      "size": "城镇捷径",
+      "buildTime": "3 天",
+      "prerequisite": "完成第一次社区升级（潘姆房屋）后，在木匠铺购买",
+      "unlocks": [
+        "煤矿森林到海滩捷径",
+        "山区到城镇捷径",
+        "城镇到海滩捷径",
+        "巴士站到后山捷径",
+        "山区到冒险家公会捷径"
+      ],
+      "houses": [
+        "城镇跑图效率"
+      ],
+      "tags": [
+        "后期",
+        "社区升级",
+        "交通",
+        "木匠铺"
+      ],
+      "recommendation": "适合后期日常跑图，尤其常去海滩、山区、冒险家公会时会明显省时间。",
+      "note": "这是第二个社区升级，需要先完成潘姆房屋。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Carpenter%27s_Shop",
+        "https://zh.stardewvalleywiki.com/木匠的商店"
+      ]
     }
   ],
   "tools": [
