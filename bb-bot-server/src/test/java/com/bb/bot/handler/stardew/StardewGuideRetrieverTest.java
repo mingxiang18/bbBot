@@ -131,6 +131,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedResourceIntentRetrievesMonsterLootEvidence() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.RESOURCE, "太阳精华哪里刷"),
+                intent(StardewGuideIntent.RESOURCE, "蝙蝠翅膀哪里刷"),
+                intent(StardewGuideIntent.RESOURCE, "骨头碎片怎么刷")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("太阳精华、蝙蝠翅膀和骨头碎片哪里刷", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("resource");
+        assertThat(joinAnswers(evidence))
+                .contains("太阳精华", "科罗布斯", "80g")
+                .contains("蝙蝠翅膀", "31-39", "81-119")
+                .contains("骨头碎片", "71-79", "姜岛");
+    }
+
+    @Test
     void typedBuildingIntentRetrievesLateGameAndCommunityBuildingEvidence() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.BUILDING, "沙漠方尖塔需要什么"),

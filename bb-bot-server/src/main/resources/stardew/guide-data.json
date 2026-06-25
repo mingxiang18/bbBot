@@ -12920,37 +12920,322 @@
       "aliases": [
         "煤",
         "coal",
-        "缺煤"
+        "缺煤",
+        "刷煤",
+        "刷煤炭",
+        "煤尘精灵",
+        "煤尘精灵刷煤",
+        "煤炭哪里刷",
+        "煤炭怎么获得"
       ],
       "acquisitions": [
         {
           "type": "刷怪",
-          "detail": "矿井 41-79 层煤尘精灵是前中期最稳定来源，也顺便刷怪物讨伐目标。"
+          "detail": "矿井 41-79 层煤尘精灵有 50% 概率掉落煤炭；可用电梯反复刷 40/45/50/55 等冰冻层，怪物香水和窃贼戒指会更高效。"
+        },
+        {
+          "type": "采矿/探索",
+          "detail": "敲普通石头、煤矿点、矿车、矿工背包、木箱木桶、晶球、淘盘和钓鱼宝箱都可能获得煤炭。"
         },
         {
           "type": "机器",
-          "detail": "木炭窑可将 10 木材转为 1 煤炭。"
+          "detail": "木炭窑可将 10 木材转为 1 煤炭；垃圾和浮木也可用回收机转出煤炭。"
+        },
+        {
+          "type": "购买/交换",
+          "detail": "克林特第 1 年卖 150g，第 2 年起 250g；书商可用 20 煤炭换《采矿月刊》，旅行货车和沙漠节也可能出现煤炭。"
+        }
+      ],
+      "recommendation": "前中期缺煤优先刷矿井 41-79 层煤尘精灵，同时推进 500 只煤尘精灵讨伐；木材充足时用木炭窑补，后期赶时间可以直接找克林特买。",
+      "usedIn": [
+        "熔炉/重型熔炉冶炼",
+        "炸弹",
+        "罐头瓶",
+        "蜂房",
+        "鱼熏机",
+        "稻草人和多种照明/制作配方"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Coal",
+        "https://stardewvalleywiki.com/Dust_Sprite"
+      ]
+    },
+    {
+      "id": "solar_essence",
+      "name": "太阳精华",
+      "nameEn": "Solar Essence",
+      "aliases": [
+        "solar essence",
+        "日光精华",
+        "太阳精",
+        "太阳精华哪里刷",
+        "太阳精华怎么获得",
+        "幽灵掉落",
+        "木乃伊掉落"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "幽灵、铱蝠、金属大头、闹鬼骷髅、鱿鱼娃、木乃伊、火焰头、蓝鱿鱼等会掉落太阳精华。"
         },
         {
           "type": "购买",
-          "detail": "克林特处可购买煤炭，价格会在第 2 年上涨。"
+          "detail": "科罗布斯每天出售 10 个太阳精华，每个 80g。"
         },
         {
-          "type": "采集",
-          "detail": "矿车、背包、木箱木桶、钓鱼宝箱、蟹笼垃圾回收等可能获得。"
+          "type": "鱼塘",
+          "detail": "太阳鱼鱼塘数量达到 10 后，可能随机产出太阳精华。"
+        },
+        {
+          "type": "刷法",
+          "detail": "急缺少量可买；要做超级炸弹或铱环时，配合刷矿井/骷髅洞穴/火山地牢怪物并使用窃贼戒指更顺。"
         }
       ],
-      "recommendation": "前期缺煤优先刷煤尘精灵；木材不缺时再用木炭窑补。",
+      "recommendation": "前期少量需求直接去科罗布斯买最省心；大量需求优先配合刷怪路线积累，尤其是后期做超级炸弹、铱环和高级生长激素时。",
       "usedIn": [
-        "熔炉",
-        "罐头瓶",
-        "蜂房",
-        "炸弹",
-        "鱼熏机"
+        "探险家收集包",
+        "超级炸弹",
+        "铱环",
+        "光辉戒指",
+        "优质浮标",
+        "迷你图腾柱",
+        "高级生长激素",
+        "神秘齐任务"
       ],
       "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/煤炭",
-        "https://stardewvalleywiki.com/Coal"
+        "https://stardewvalleywiki.com/Solar_Essence",
+        "https://stardewvalleywiki.com/Monster_Loot"
+      ]
+    },
+    {
+      "id": "void_essence",
+      "name": "虚空精华",
+      "nameEn": "Void Essence",
+      "aliases": [
+        "void essence",
+        "虚空精",
+        "暗影精华",
+        "虚空精华哪里刷",
+        "虚空精华怎么获得",
+        "暗影怪掉落"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "暗影狂徒、暗影萨满、暗影狙击手、闹鬼骷髅、飞蛇和蜘蛛等会掉落虚空精华。"
+        },
+        {
+          "type": "购买",
+          "detail": "科罗布斯每天出售 10 个虚空精华，每个 100g。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "虚空鲑鱼鱼塘数量达到 8 后，可能产出 5-10 个虚空精华。"
+        },
+        {
+          "type": "兑换/用途相关",
+          "detail": "和科罗布斯 10 心后，可用 200 个虚空精华在沙漠商人处购买虚空幽灵吊坠。"
+        }
+      ],
+      "recommendation": "急用买科罗布斯；中后期刷矿井深层暗影怪、骷髅洞穴飞蛇或鱼塘都能补，做铱环和超级炸弹前最好提前屯。",
+      "usedIn": [
+        "探险家收集包",
+        "超级炸弹",
+        "铱环",
+        "虚空幽灵吊坠",
+        "法师冬季任务",
+        "虚空鲑鱼鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Void_Essence",
+        "https://stardewvalleywiki.com/Monster_Loot"
+      ]
+    },
+    {
+      "id": "bat_wing",
+      "name": "蝙蝠翅膀",
+      "nameEn": "Bat Wing",
+      "aliases": [
+        "bat wing",
+        "蝙蝠翼",
+        "蝙蝠翅",
+        "蝙蝠翅膀哪里刷",
+        "蝙蝠翅膀怎么获得",
+        "避雷针材料"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "普通蝙蝠、冰霜蝙蝠和熔岩蝙蝠会掉落蝙蝠翅膀；铱蝠不掉蝙蝠翅膀而是可能掉太阳精华。"
+        },
+        {
+          "type": "刷点",
+          "detail": "普通蝙蝠在矿井 31-39 层，冰霜蝙蝠在 41-79 层，熔岩蝙蝠在 81-119 层和骷髅洞穴 20/40 层。"
+        },
+        {
+          "type": "购买",
+          "detail": "科罗布斯每周日出售 10 个蝙蝠翅膀，每个 30g。"
+        },
+        {
+          "type": "宠物",
+          "detail": "满好感猫有机会赠送蝙蝠翅膀。"
+        }
+      ],
+      "recommendation": "做避雷针时直接刷矿井蝙蝠层很快；大量做怪物香水可刷 41-79 或 81-119 层，周日顺手买科罗布斯库存。",
+      "usedIn": [
+        "探险家收集包",
+        "重混万灵节收集包",
+        "避雷针",
+        "怪物香水",
+        "暗黑标牌",
+        "蝴蝶笼兑换",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bat_Wing",
+        "https://stardewvalleywiki.com/Bats",
+        "https://stardewvalleywiki.com/Monster_Loot"
+      ]
+    },
+    {
+      "id": "slime",
+      "name": "史莱姆泥",
+      "nameEn": "Slime",
+      "aliases": [
+        "slime",
+        "史莱姆",
+        "史莱姆球",
+        "史莱姆泥",
+        "史莱姆粘液",
+        "缺史莱姆",
+        "史莱姆哪里刷"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "击杀史莱姆会掉落史莱姆泥，单只最多掉 2 个。"
+        },
+        {
+          "type": "建筑/产出",
+          "detail": "史莱姆屋里的史莱姆球可以产出史莱姆泥；史莱姆压蛋器可把 100 个史莱姆泥压成史莱姆蛋。"
+        },
+        {
+          "type": "购买",
+          "detail": "科罗布斯每周一最多出售 50 个史莱姆泥，每个 10g；旅行货车也可能出售。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "史莱姆鱼鱼塘数量达到 9 后，可能每天产出 10/30/50 个史莱姆泥。"
+        }
+      ],
+      "recommendation": "前期刷矿井低层史莱姆就够用；大量需求优先考虑史莱姆屋、史莱姆鱼鱼塘，或者周一买科罗布斯库存。",
+      "usedIn": [
+        "探险家收集包",
+        "史莱姆蛋",
+        "史莱姆孵化器",
+        "产油机",
+        "软木塞浮标",
+        "野性鱼饵",
+        "坚固戒指",
+        "怪物香水"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Slime",
+        "https://stardewvalleywiki.com/Monster_Loot"
+      ]
+    },
+    {
+      "id": "bug_meat",
+      "name": "虫肉",
+      "nameEn": "Bug Meat",
+      "aliases": [
+        "bug meat",
+        "虫子肉",
+        "虫肉哪里刷",
+        "虫肉怎么获得",
+        "鱼饵材料",
+        "威利虫肉任务"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "虫、洞穴蝇、蛆、变异苍蝇、变异蛆和装甲虫等昆虫类怪物会掉落虫肉。"
+        },
+        {
+          "type": "刷点",
+          "detail": "矿井 1-39 层有虫，15-29 层有蛆；虫掉落率约 76%，蛆约 60%，洞穴蝇约 90%。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "鲯鳅、蛇齿单线鱼或狗鱼鱼塘数量达到 9 后，可能产出 20 个虫肉。"
+        },
+        {
+          "type": "节日购买",
+          "detail": "沙漠节期间文森特商店可用印花蛋购买虫肉。"
+        }
+      ],
+      "recommendation": "做鱼饵和威利“需要多汁虫子！”特别订单时，优先刷矿井 15-29 层，蛆和洞穴蝇密度高；有怪物香水后效率更好。",
+      "usedIn": [
+        "鱼饵",
+        "野性鱼饵",
+        "魔法鱼饵",
+        "坚固戒指",
+        "虫肉牛排",
+        "鱼塘任务",
+        "威利特别订单"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bug_Meat",
+        "https://stardewvalleywiki.com/Bug",
+        "https://stardewvalleywiki.com/Grub",
+        "https://stardewvalleywiki.com/Monster_Loot"
+      ]
+    },
+    {
+      "id": "bone_fragment",
+      "name": "骨头碎片",
+      "nameEn": "Bone Fragment",
+      "aliases": [
+        "bone fragment",
+        "骨头",
+        "骨片",
+        "骨头碎片哪里刷",
+        "骨头碎片怎么获得",
+        "骨头磨坊材料"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "骷髅和熔岩潜伏怪会掉落骨头碎片；普通骷髅在矿井 71-79 层。"
+        },
+        {
+          "type": "姜岛",
+          "detail": "姜岛骨头矿点是稳定来源，也可用于长期补骨头碎片。"
+        },
+        {
+          "type": "探索",
+          "detail": "骷髅洞穴木箱木桶、古物点和淘盘都可能获得骨头碎片。"
+        },
+        {
+          "type": "宠物",
+          "detail": "满好感狗有机会赠送骨头碎片。"
+        }
+      ],
+      "recommendation": "未到姜岛前刷矿井 71-79 层骷髅；解锁姜岛后优先敲骨头矿点。做冈瑟 100 个骨头碎片特别订单时，提前规划矿井或姜岛路线。",
+      "usedIn": [
+        "重混探险家收集包",
+        "骨头磨坊",
+        "鸵鸟孵化器",
+        "荆棘戒指",
+        "暗黑标牌",
+        "高级生长激素",
+        "超级生长激素",
+        "挑战鱼饵",
+        "冈瑟特别订单"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bone_Fragment",
+        "https://stardewvalleywiki.com/Skeleton"
       ]
     },
     {

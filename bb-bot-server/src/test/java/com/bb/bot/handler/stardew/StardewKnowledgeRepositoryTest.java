@@ -29,7 +29,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(85);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
     }
@@ -447,6 +447,23 @@ class StardewKnowledgeRepositoryTest {
                 "mango"
         );
         assertThat(guideIds).contains("animal_care", "fruit_trees");
+    }
+
+    @Test
+    void commonMonsterLootResourceGuidesAreCovered() {
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).contains(
+                "coal",
+                "solar_essence",
+                "void_essence",
+                "bat_wing",
+                "slime",
+                "bug_meat",
+                "bone_fragment"
+        );
     }
 
     @Test

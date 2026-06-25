@@ -244,6 +244,32 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersMonsterLootResourceGuides() {
+        StardewGuideResult coal = service.answer("星露谷 煤尘精灵刷煤炭怎么刷");
+        StardewGuideResult solarEssence = service.answer("星露谷 太阳精华哪里刷");
+        StardewGuideResult voidEssence = service.answer("星露谷 虚空精华怎么获得");
+        StardewGuideResult batWing = service.answer("星露谷 蝙蝠翅膀哪里刷");
+        StardewGuideResult slime = service.answer("星露谷 史莱姆泥怎么获得");
+        StardewGuideResult bugMeat = service.answer("星露谷 虫肉哪里刷");
+        StardewGuideResult boneFragment = service.answer("星露谷 骨头碎片怎么刷");
+
+        assertThat(coal.getIntent()).isEqualTo("resource");
+        assertThat(coal.getAnswer()).contains("煤炭获取方式", "煤尘精灵", "41-79", "50%", "木炭窑");
+        assertThat(solarEssence.getIntent()).isEqualTo("resource");
+        assertThat(solarEssence.getAnswer()).contains("太阳精华获取方式", "科罗布斯", "80g", "幽灵", "木乃伊");
+        assertThat(voidEssence.getIntent()).isEqualTo("resource");
+        assertThat(voidEssence.getAnswer()).contains("虚空精华获取方式", "暗影", "科罗布斯", "100g", "虚空鲑鱼");
+        assertThat(batWing.getIntent()).isEqualTo("resource");
+        assertThat(batWing.getAnswer()).contains("蝙蝠翅膀获取方式", "31-39", "41-79", "81-119", "科罗布斯");
+        assertThat(slime.getIntent()).isEqualTo("resource");
+        assertThat(slime.getAnswer()).contains("史莱姆泥获取方式", "史莱姆", "科罗布斯", "每周一", "史莱姆鱼");
+        assertThat(bugMeat.getIntent()).isEqualTo("resource");
+        assertThat(bugMeat.getAnswer()).contains("虫肉获取方式", "矿井 1-39", "15-29", "鱼饵");
+        assertThat(boneFragment.getIntent()).isEqualTo("resource");
+        assertThat(boneFragment.getAnswer()).contains("骨头碎片获取方式", "71-79", "姜岛", "骨头矿点", "骨头磨坊");
+    }
+
+    @Test
     void answersRareItemResourceGuides() {
         StardewGuideResult dinosaurEgg = service.answer("星露谷 恐龙蛋怎么获得");
         StardewGuideResult dinosaurMayonnaise = service.answer("星露谷 恐龙蛋黄酱怎么做");
