@@ -20,15 +20,29 @@ public class SplatoonImageFetcher {
     private ResourcesUtils resourcesUtils;
 
     public File getImageFile(String url, String type) {
+        String path = stripUrlSuffix(url);
         String fileName;
 
         if ("festival".equals(type)) {
-            fileName = url.substring(url.lastIndexOf("/", url.lastIndexOf("/") - 1)).replace("/", "");
+            fileName = path.substring(path.lastIndexOf("/", path.lastIndexOf("/") - 1)).replace("/", "");
         } else {
-            fileName = url.substring(url.lastIndexOf("/"));
+            fileName = path.substring(path.lastIndexOf("/") + 1);
         }
 
         String fileSubPath = "splatoon/" + type + "/" + fileName;
         return resourcesUtils.getOrAddStaticResourceFromNet(fileSubPath, url);
+    }
+
+    private String stripUrlSuffix(String url) {
+        int queryIndex = url.indexOf('?');
+        int fragmentIndex = url.indexOf('#');
+        int endIndex = url.length();
+        if (queryIndex >= 0) {
+            endIndex = Math.min(endIndex, queryIndex);
+        }
+        if (fragmentIndex >= 0) {
+            endIndex = Math.min(endIndex, fragmentIndex);
+        }
+        return url.substring(0, endIndex);
     }
 }
