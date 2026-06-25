@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -62,18 +63,23 @@ public class Splatoon3ApiCaller {
         translateRid.put("CoopHistoryDetailQuery", "f2d55873a9281213ae27edc171e2b19131b3021a2ae263757543cdd3bf015cc8");
         translateRid.put("MyOutfitCommonDataEquipmentsQuery", "45a4c343d973864f7bb9e9efac404182be1d48cf2181619505e9b7cd3b56a6e8");
         translateRid.put("FriendsList", "ea1297e9bb8e52404f52d89ac821e1d73b726ceef2fd9cc8d6b38ab253428fb3");
-        translateRid.put("HistorySummary", "0a62c0152f27c4218cf6c87523377521c2cff76a4ef0373f2da3300079bf0388");
+        translateRid.put("HistorySummary", "b51ef6f758787210b2dfa832edb8f4eb26758e5c83dda469c3cd31cb4293a73d");
         translateRid.put("TotalQuery", "2a9302bdd09a13f8b344642d4ed483b9464f20889ac17401e993dfa5c2bb3607");
-        translateRid.put("XRankingQuery", "a5331ed228dbf2e904168efe166964e2be2b00460c578eee49fc0bc58b4b899c");
+        translateRid.put("XRankingQuery", "b5b2b330269dc29181fc55e297cd759a36fc02270c879fab6362c3084fff78b2");
         translateRid.put("ScheduleQuery", "9b6b90568f990b2a14f04c25dd6eb53b35cc12ac815db85ececfccee64215edd");
         translateRid.put("StageRecordsQuery", "c8b31c491355b4d889306a22bd9003ac68f8ce31b2d5345017cdd30a2c8056f3");
         translateRid.put("EventBattleHistoriesQuery", "e47f9aac5599f75c842335ef0ab8f4c640e8bf2afe588a3b1d4b480ee79198ac");
         translateRid.put("EventListQuery", "875a827a6e460c3cd6b1921e6a0872d8b95a1fce6d52af79df67734c5cc8b527");
+        translateRid.put("EventMatchRankingPaginationQuery", "2af24574aa0a883f8ce3eabb740816d2129feceb0a62f95ec46dc0bfe1b8aeb8");
         translateRid.put("EventBoardQuery", "ad4097d5fb900b01f12dffcb02228ef6c20ddbfba41f0158bb91e845335c708e");
         translateRid.put("CoopPagerLatestCoopQuery", "bc8a3d48e91d5d695ef52d52ae466920670d4f4381cb288cd570dc8160250457");
         translateRid.put("PagerLatestVsDetailQuery", "73462e18d464acfdf7ac36bde08a1859aa2872a90ed0baed69c94864c20de046");
         translateRid.put("CoopStatistics", "56f989a59643642e0799c90d3f6d0457f5f5f72d4444dfae87043c4a23d13043");
         translateRid.put("XRanking500Query", "90932ee3357eadab30eb11e9d6b4fe52d6b35fde91b5c6fd92ba4d6159ea1cb7");
+        translateRid.put("DetailTabViewXRankingArRefetchQuery", "0dc7b908c6d7ad925157a7fa60915523dab4613e6902f8b3359ae96be1ba175f");
+        translateRid.put("DetailTabViewXRankingClRefetchQuery", "485e5decc718feeccf6dffddfe572455198fdd373c639d68744ee81507df1a48");
+        translateRid.put("DetailTabViewXRankingGlRefetchQuery", "6ab0299d827378d2cae1e608d349168cd4db21dd11164c542d405ed689c9f622");
+        translateRid.put("DetailTabViewXRankingLfRefetchQuery", "ca55206629f2c9fab38d74e49dda3c5452a83dd02a5a7612a2520a1fc77ae228");
     }
 
     @Autowired
@@ -81,6 +87,15 @@ public class Splatoon3ApiCaller {
 
     @Autowired
     private NsoApiCaller nsoApiCaller;
+
+    /**
+     * SplatNet 首页基础信息。
+     */
+    public JSONObject getHome(String bulletToken, String webServiceToken, JSONObject userInfo) {
+        Object data = genGraphqlBody(translateRid.get("HomeQuery"), null, null);
+        JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
+        return response;
+    }
 
     /**
      * 斯普拉顿3最近对战查询
@@ -150,6 +165,22 @@ public class Splatoon3ApiCaller {
      */
     public JSONObject getXRanking500(String bulletToken, String webServiceToken, JSONObject userInfo, String topId) {
         Object data = genGraphqlBody(translateRid.get("XRanking500Query"), "id", topId);
+        JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
+        return response;
+    }
+
+    /**
+     * X 排名指定模式前若干名。
+     */
+    public JSONObject getXRankingTop(String bulletToken, String webServiceToken, JSONObject userInfo,
+                                     String modeCode, String seasonId, int first) {
+        String queryName = "DetailTabViewXRanking" + modeCode + "RefetchQuery";
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("id", seasonId);
+        variables.put("first", first);
+        variables.put("page", 1);
+        variables.put("cursor", null);
+        Object data = genGraphqlBody(translateRid.get(queryName), variables);
         JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
         return response;
     }
@@ -226,10 +257,37 @@ public class Splatoon3ApiCaller {
     }
 
     /**
+     * 舞台记录。
+     */
+    public JSONObject getStageRecords(String bulletToken, String webServiceToken, JSONObject userInfo) {
+        Object data = genGraphqlBody(translateRid.get("StageRecordsQuery"), null, null);
+        JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
+        return response;
+    }
+
+    /**
+     * 武器和装备收藏数据。
+     */
+    public JSONObject getMyOutfitCommonDataEquipments(String bulletToken, String webServiceToken, JSONObject userInfo) {
+        Object data = genGraphqlBody(translateRid.get("MyOutfitCommonDataEquipmentsQuery"), null, null);
+        JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
+        return response;
+    }
+
+    /**
      * 获取活动条目
      */
     public JSONObject getEventList(String bulletToken, String webServiceToken, JSONObject userInfo) {
         Object data = genGraphqlBody(translateRid.get("EventListQuery"), null, null);
+        JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
+        return response;
+    }
+
+    /**
+     * 活动比赛排行榜时段列表。
+     */
+    public JSONObject getEventMatchRankingPagination(String bulletToken, String webServiceToken, JSONObject userInfo) {
+        Object data = genGraphqlBody(translateRid.get("EventMatchRankingPaginationQuery"), null, null);
         JSONObject response = callSplatoon3Api(data, bulletToken, webServiceToken, userInfo);
         return response;
     }
@@ -470,18 +528,28 @@ public class Splatoon3ApiCaller {
      * 封装splatoon3的web界面api的请求体
      */
     public static Map<String, Object> genGraphqlBody(String sha256Hash, String varName, String varValue) {
+        if (varName == null || varValue == null) {
+            return genGraphqlBody(sha256Hash, Collections.emptyMap());
+        }
+        Map<String, Object> variables = new HashMap<>();
+        variables.put(varName, varValue);
+        return genGraphqlBody(sha256Hash, variables);
+    }
+
+    /**
+     * 封装支持多变量的 SplatNet GraphQL persisted query 请求体。
+     */
+    public static Map<String, Object> genGraphqlBody(String sha256Hash, Map<String, Object> variables) {
         Map<String, Object> greatPassage = new HashMap<>();
         Map<String, Object> extensions = new HashMap<>();
         Map<String, Object> persistedQuery = new HashMap<>();
-        Map<String, Object> variables = new HashMap<>();
 
         persistedQuery.put("sha256Hash", sha256Hash);
         persistedQuery.put("version", 1);
         extensions.put("persistedQuery", persistedQuery);
         greatPassage.put("extensions", extensions);
 
-        if (varName != null && varValue != null) {
-            variables.put(varName, varValue);
+        if (variables != null && !variables.isEmpty()) {
             greatPassage.put("variables", variables);
         }
 

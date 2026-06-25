@@ -1,5 +1,7 @@
 package com.bb.bot.handler.splatoon.render;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.bb.bot.common.util.FileUtils;
 import com.bb.bot.common.util.ResourcesUtils;
 import com.bb.bot.database.splatoon.entity.SplatoonBattleRecord;
@@ -20,6 +22,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,12 +46,17 @@ public class SplatoonHtmlRenderer {
     @Autowired
     private ResourcesUtils resourcesUtils;
 
+    @Autowired
+    private SplatoonImageFetcher imageFetcher;
+
     private static final DateTimeFormatter TF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final ZoneId ZONE = ZoneId.of("Asia/Shanghai");
 
     // 配色(与 demo 一致)
     private static final String BG = "#0d1020", CARD = "#1b2138", CARD2 = "#232a47", CHIP = "#2c3457";
     private static final String WIN = "#eaff3a", LOSE = "#aeb4c8", INK = "#e8ebf5", SUB = "#8b91a8";
     private static final String C_MY = "#39c6b4", C_EN = "#e85a8a", COOP = "#e07b00", GRADE = "#ffcf3f";
+    private static final String SOFT = "#d6de72", GOLD = "#e2b95c", CYAN = "#6de1d2";
 
     /** 模式 id → {中文名, 左条颜色, 模式图标}；规则图标表、升降箭头表均收敛至 {@link SplatoonStyleConfig}。 */
     private static final Map<String, String[]> MODE = new HashMap<>();
@@ -511,6 +520,210 @@ public class SplatoonHtmlRenderer {
         return render(sb.toString(), 760, 1800);
     }
 
+    /* ============================ SplatNet 扩展页面 ============================ */
+
+    public File renderOverview(JSONObject home, JSONObject historySummary, JSONObject total) {
+        JSONObject play = obj(obj(total, "data"), "playHistory");
+        JSONObject historyPlay = obj(obj(historySummary, "data"), "playHistory");
+        JSONObject currentPlayer = obj(obj(home, "data"), "currentPlayer");
+        JSONObject weapon = obj(currentPlayer, "weapon");
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("喷喷概览", "SplatNet 当前账号"));
+        sb.append("<div class='card' style='padding:16px;'>")
+                .append("<table><tr><td style='width:92px;text-align:center;'>").append(remoteImg(imgUrl(weapon), "weapon", 74, 74)).append("</td>")
+                .append("<td><div style='font-size:23px;color:").append(INK).append(";'>").append(esc(or(currentPlayer.getString("name"), "当前玩家"))).append("</div>")
+                .append("<div class='sub'>").append(esc(or(str(weapon, "name"), "SplatNet 3"))).append("</div></td>")
+                .append("<td style='width:190px;text-align:right;'><div class='sub'>开始游玩</div><div style='font-size:16px;color:").append(SOFT).append(";'>")
+                .append(esc(fmtTime(play.getString("gameStartTime")))).append("</div></td></tr></table></div>");
+        sb.append(metricGrid(new String[][]{
+                {"对战场数", fmtInt(play.get("battleNumTotal"))},
+                {"累计涂地", fmtInt(play.get("paintPointTotal")) + "p"},
+                {"最高段位", or(play.getString("udemaeMax"), "-")},
+                {"活动比赛", fmtInt(num(obj(historyPlay, "leagueMatchPlayHistory"), "attend"))}
+        }));
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>X 最高排名</div>")
+                .append("<table><tr>").append(xModeCell(historyPlay, "区域", "xMatchMaxAr")).append(xModeCell(historyPlay, "塔楼", "xMatchMaxLf"))
+                .append("</tr></table><table style='margin-top:7px;'><tr>").append(xModeCell(historyPlay, "鱼虎", "xMatchMaxGl")).append(xModeCell(historyPlay, "蛤蜊", "xMatchMaxCl")).append("</tr></table></div>");
+        return render(sb.toString(), 760, 900);
+    }
+
+    public File renderCoopStatistics(JSONObject coopStatistics) {
+        JSONObject data = obj(obj(coopStatistics, "data"), "coopRecord");
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("打工统计", "舞台 / 头目 / 大型跑"));
+        JSONArray stages = arr(data, "stageHighestRecords");
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>舞台最高评价</div>");
+        for (int i = 0; i < Math.min(6, stages.size()); i++) {
+            JSONObject item = stages.getJSONObject(i);
+            JSONObject stage = obj(item, "coopStage");
+            JSONObject grade = obj(item, "grade");
+            sb.append(row(remoteImg(imgUrl(stage), "coop_stage", 46, 46), str(stage, "name"),
+                    or(str(grade, "name"), "-") + " " + fmtInt(item.get("gradePoint")), GOLD));
+        }
+        sb.append("</div>");
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>头目鲑鱼击倒</div><table>");
+        JSONArray bosses = arr(data, "defeatBossRecords");
+        for (int i = 0; i < Math.min(6, bosses.size()); i++) {
+            JSONObject item = bosses.getJSONObject(i);
+            JSONObject enemy = obj(item, "enemy");
+            sb.append("<tr><td style='width:44px;padding:5px;'>").append(remoteImg(imgUrl(enemy), "coop_enemy", 34, 34)).append("</td>")
+                    .append("<td style='font-size:13px;'>").append(esc(str(enemy, "name"))).append("</td>")
+                    .append("<td style='text-align:right;font-size:17px;color:").append(SOFT).append(";'>").append(fmtInt(item.get("defeatCount"))).append("</td></tr>");
+        }
+        sb.append("</table></div>");
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>大型跑 / 团队打工</div>");
+        JSONArray bigRuns = arr(obj(obj(data, "bigRunRecord"), "records"), "edges");
+        for (int i = 0; i < Math.min(3, bigRuns.size()); i++) {
+            JSONObject node = obj(bigRuns.getJSONObject(i), "node");
+            JSONObject stage = obj(node, "coopStage");
+            sb.append(row(remoteImg(imgUrl(stage), "coop_stage", 52, 30), str(stage, "name"),
+                    "最高 " + fmtInt(node.get("highestJobScore")) + " / " + fmtRankPercentile(node), SOFT));
+        }
+        JSONObject teamContest = obj(data, "teamContestRecord");
+        sb.append("<div style='margin-top:8px;'>").append(chipRow(List.of(
+                "金 " + fmtInt(teamContest.get("gold")),
+                "银 " + fmtInt(teamContest.get("silver")),
+                "铜 " + fmtInt(teamContest.get("bronze")),
+                "参加 " + fmtInt(teamContest.get("attend"))))).append("</div></div>");
+        return render(sb.toString(), 760, 1300);
+    }
+
+    public File renderXRankingHub(JSONObject xRanking) {
+        JSONObject ranking = obj(obj(xRanking, "data"), "xRanking");
+        JSONObject season = obj(ranking, "currentSeason");
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("X 排名", or(str(season, "name"), "当前赛季") + " · ATLANTIC"));
+        sb.append("<div class='card' style='padding:14px 16px;'>")
+                .append("<div class='sub'>榜单更新时间</div><div style='font-size:17px;color:").append(SOFT).append(";'>")
+                .append(esc(fmtTime(season.getString("lastUpdateTime")))).append("</div></div>");
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>各模式榜首</div>");
+        sb.append(xTopOne(season, "区域", "xRankingAr"));
+        sb.append(xTopOne(season, "塔楼", "xRankingLf"));
+        sb.append(xTopOne(season, "鱼虎", "xRankingGl"));
+        sb.append(xTopOne(season, "蛤蜊", "xRankingCl"));
+        sb.append("</div>");
+        return render(sb.toString(), 760, 820);
+    }
+
+    public File renderXRankingMode(String modeName, String region, JSONArray holders) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("X 排名 · " + modeName, region + " 前十名"));
+        sb.append("<div class='card' style='padding:10px 14px;'>");
+        for (int i = 0; i < holders.size(); i++) {
+            JSONObject node = holders.getJSONObject(i);
+            JSONObject weapon = obj(node, "weapon");
+            sb.append("<table style='background:").append(i < 3 ? "#242c4b" : CARD2).append(";border-radius:10px;margin-bottom:6px;'><tr>")
+                    .append("<td style='width:54px;text-align:center;color:").append(i < 3 ? GOLD : SOFT).append(";font-size:19px;'>#").append(fmtInt(node.get("rank"))).append("</td>")
+                    .append("<td style='width:52px;text-align:center;'>").append(remoteImg(imgUrl(weapon), "weapon", 40, 40)).append("</td>")
+                    .append("<td><div style='font-size:15px;'>").append(esc(str(node, "name"))).append("</div><div class='sub'>")
+                    .append(esc(str(node, "nameId"))).append(" · ").append(esc(str(weapon, "name"))).append("</div></td>")
+                    .append("<td style='width:110px;text-align:right;padding-right:10px;color:").append(SOFT).append(";font-size:18px;'>")
+                    .append(fmtOne(node.get("xPower"))).append("</td></tr></table>");
+        }
+        sb.append("</div>");
+        return render(sb.toString(), 760, 1180);
+    }
+
+    public File renderEventBoard(JSONObject rankingPeriod) {
+        JSONObject setting = obj(rankingPeriod, "leagueMatchSetting");
+        JSONObject event = obj(setting, "leagueMatchEvent");
+        JSONObject rule = obj(setting, "vsRule");
+        JSONArray stages = arr(setting, "vsStages");
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("活动比赛榜单", str(event, "name")));
+        sb.append("<div class='card' style='padding:14px 16px;'>")
+                .append("<div style='font-size:18px;color:").append(GOLD).append(";'>").append(esc(str(event, "name"))).append("</div>")
+                .append("<div class='sub' style='margin-top:5px;'>").append(esc(str(event, "desc"))).append("</div>")
+                .append("<div style='margin-top:8px;'>").append(chipRow(List.of(or(str(rule, "name"), "活动规则"), fmtTime(rankingPeriod.getString("startTime"))))).append("</div>")
+                .append("<table style='margin-top:10px;'><tr>");
+        for (int i = 0; i < stages.size(); i++) {
+            JSONObject stage = stages.getJSONObject(i);
+            sb.append("<td style='width:50%;padding-right:6px;'>").append(remoteImg(imgUrl(stage), "stage", 170, 55))
+                    .append("<div class='sub'>").append(esc(str(stage, "name"))).append("</div></td>");
+        }
+        sb.append("</tr></table></div>");
+        JSONArray teams = arr(rankingPeriod, "teams");
+        for (int i = 0; i < teams.size(); i++) {
+            JSONObject team = teams.getJSONObject(i);
+            sb.append("<div class='card' style='padding:12px 14px;'><div style='font-size:16px;color:").append(GOLD).append(";margin-bottom:7px;'>")
+                    .append(eventTeamName(team.getString("teamComposition"))).append("</div>");
+            JSONArray details = arr(obj(team, "details"), "nodes");
+            for (int j = 0; j < Math.min(10, details.size()); j++) {
+                JSONObject node = details.getJSONObject(j);
+                sb.append("<table style='background:").append(CARD2).append(";border-radius:9px;margin-bottom:5px;'><tr>")
+                        .append("<td style='width:50px;text-align:center;color:").append(j < 3 ? GOLD : SOFT).append(";'>#").append(fmtInt(node.get("rank"))).append("</td>")
+                        .append("<td style='width:78px;color:").append(SOFT).append(";font-size:15px;'>").append(fmtOne(node.get("power"))).append("</td>")
+                        .append("<td>").append(eventPlayers(arr(node, "players"))).append("</td></tr></table>");
+            }
+            sb.append("</div>");
+        }
+        return render(sb.toString(), 820, 2200);
+    }
+
+    public File renderStageGear(JSONObject stageRecords, JSONObject equipments) {
+        JSONObject data = obj(stageRecords, "data");
+        JSONObject equipData = obj(equipments, "data");
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("场地与装备", "舞台胜率 / 武器收藏"));
+        JSONArray stages = arr(obj(data, "stageRecords"), "nodes");
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>场地记录</div>");
+        for (int i = 0; i < Math.min(8, stages.size()); i++) {
+            JSONObject stage = stages.getJSONObject(i);
+            JSONObject stats = obj(stage, "stats");
+            sb.append("<table style='background:").append(CARD2).append(";border-radius:10px;margin-bottom:6px;'><tr>")
+                    .append("<td style='width:120px;text-align:center;'>").append(remoteImg(imgUrl(stage), "stage", 104, 35)).append("</td>")
+                    .append("<td><div style='font-size:14px;'>").append(esc(str(stage, "name"))).append("</div><div class='sub'>最后游玩 ")
+                    .append(esc(fmtTime(stats.getString("lastPlayedTime")))).append("</div></td>")
+                    .append("<td style='width:190px;text-align:right;padding-right:10px;'>")
+                    .append("<span style='color:").append(SOFT).append(";'>区域 ").append(fmtPct(stats.get("winRateAr"))).append("</span><br/>")
+                    .append("<span class='sub'>塔楼 ").append(fmtPct(stats.get("winRateLf"))).append(" 鱼虎 ").append(fmtPct(stats.get("winRateGl"))).append(" 蛤蜊 ").append(fmtPct(stats.get("winRateCl"))).append("</span></td></tr></table>");
+        }
+        sb.append("</div>");
+        JSONArray weapons = arr(obj(equipData, "weapons"), "nodes");
+        weapons.sort((a, b) -> Integer.compare(num(obj((JSONObject) b, "stats"), "paint"), num(obj((JSONObject) a, "stats"), "paint")));
+        sb.append("<div class='card' style='padding:14px 16px;'><div style='font-size:17px;color:").append(GOLD).append(";margin-bottom:8px;'>常用武器</div>");
+        for (int i = 0; i < Math.min(8, weapons.size()); i++) {
+            JSONObject weapon = weapons.getJSONObject(i);
+            JSONObject stats = obj(weapon, "stats");
+            sb.append(row(remoteImg(imgUrl(weapon), "weapon", 42, 42), str(weapon, "name"), fmtInt(stats.get("paint")) + "p", SOFT));
+        }
+        sb.append("</div>");
+        sb.append(metricGrid(new String[][]{
+                {"武器", String.valueOf(weapons.size())},
+                {"头饰", String.valueOf(arr(obj(equipData, "headGears"), "nodes").size())},
+                {"衣服", String.valueOf(arr(obj(equipData, "clothingGears"), "nodes").size())},
+                {"鞋子", String.valueOf(arr(obj(equipData, "shoesGears"), "nodes").size())}
+        }));
+        return render(sb.toString(), 820, 1700);
+    }
+
+    public File renderFriends(JSONObject friends) {
+        JSONArray nodes = arr(obj(obj(friends, "data"), "friends"), "nodes");
+        int active = 0;
+        for (int i = 0; i < nodes.size(); i++) {
+            String state = nodes.getJSONObject(i).getString("onlineState");
+            if (!"OFFLINE".equals(state)) {
+                active++;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(title("喷喷好友", "在线/游玩中 " + active + " / " + nodes.size()));
+        sb.append("<div class='card' style='padding:10px 12px;'>");
+        for (int i = 0; i < Math.min(22, nodes.size()); i++) {
+            JSONObject node = nodes.getJSONObject(i);
+            String state = onlineState(node.getString("onlineState"));
+            String accent = state.contains("中") ? SOFT : ("在线".equals(state) ? CYAN : SUB);
+            String mode = or(str(obj(node, "vsMode"), "name"), or(node.getString("coopRule"), ""));
+            sb.append("<table style='background:").append(CARD2).append(";border-radius:10px;margin-bottom:6px;'><tr>")
+                    .append("<td style='width:48px;text-align:center;'>").append(remoteImg(imgUrl(node.getJSONObject("userIcon")), "friend", 36, 36)).append("</td>")
+                    .append("<td><div style='font-size:14px;'>").append(esc(or(node.getString("nickname"), node.getString("playerName")))).append("</div>")
+                    .append("<div class='sub'>").append(esc(mode)).append("</div></td>")
+                    .append("<td style='width:86px;text-align:right;padding-right:10px;color:").append(accent).append(";'>").append(esc(state)).append("</td></tr></table>");
+        }
+        sb.append("</div>");
+        return render(sb.toString(), 560, 1500);
+    }
+
     /* ============================ 小工具 ============================ */
 
     private String title(String t, String sub) {
@@ -569,5 +782,216 @@ public class SplatoonHtmlRenderer {
             case 2: return "满潮";
             default: return "普通";
         }
+    }
+
+    private JSONObject obj(JSONObject parent, String key) {
+        if (parent == null) {
+            return new JSONObject();
+        }
+        JSONObject object = parent.getJSONObject(key);
+        return object == null ? new JSONObject() : object;
+    }
+
+    private JSONArray arr(JSONObject parent, String key) {
+        if (parent == null) {
+            return new JSONArray();
+        }
+        JSONArray array = parent.getJSONArray(key);
+        return array == null ? new JSONArray() : array;
+    }
+
+    private String str(JSONObject parent, String key) {
+        return parent == null ? "" : or(parent.getString(key), "");
+    }
+
+    private String or(String value, String fallback) {
+        return StringUtils.isBlank(value) ? fallback : value;
+    }
+
+    private int num(JSONObject parent, String key) {
+        if (parent == null) {
+            return 0;
+        }
+        Number value = parent.getObject(key, Number.class);
+        return value == null ? 0 : value.intValue();
+    }
+
+    private String imgUrl(JSONObject node) {
+        if (node == null) {
+            return "";
+        }
+        if (StringUtils.isNotBlank(node.getString("url"))) {
+            return node.getString("url");
+        }
+        JSONObject image = node.getJSONObject("image");
+        return image == null ? "" : or(image.getString("url"), "");
+    }
+
+    private String remoteImg(String url, String type, int w, int h) {
+        if (StringUtils.isBlank(url)) {
+            return "";
+        }
+        try {
+            File file = imageFetcher.getImageFile(url, type);
+            if (file != null && file.exists()) {
+                return "<img src='" + file.toURI() + "' style='width:" + w + "px;height:" + h + "px;vertical-align:middle;'/>";
+            }
+        } catch (Exception e) {
+            log.debug("splatoon remote image cache failed: {}", url, e);
+        }
+        return "<img src='" + esc(url) + "' style='width:" + w + "px;height:" + h + "px;vertical-align:middle;'/>";
+    }
+
+    private String fmtInt(Object value) {
+        if (value == null) {
+            return "0";
+        }
+        try {
+            long n = value instanceof Number ? ((Number) value).longValue() : Long.parseLong(String.valueOf(value));
+            return String.format("%,d", n);
+        } catch (Exception e) {
+            return String.valueOf(value);
+        }
+    }
+
+    private String fmtOne(Object value) {
+        if (value == null) {
+            return "-";
+        }
+        try {
+            double n = value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(String.valueOf(value));
+            return String.format("%.1f", n);
+        } catch (Exception e) {
+            return String.valueOf(value);
+        }
+    }
+
+    private String fmtPct(Object value) {
+        if (value == null) {
+            return "-";
+        }
+        try {
+            double n = value instanceof Number ? ((Number) value).doubleValue() : Double.parseDouble(String.valueOf(value));
+            if (n > 0 && n <= 1) {
+                n *= 100;
+            }
+            return String.format("%.0f%%", n);
+        } catch (Exception e) {
+            return String.valueOf(value);
+        }
+    }
+
+    private String fmtTime(String iso) {
+        if (StringUtils.isBlank(iso)) {
+            return "-";
+        }
+        try {
+            return Instant.parse(iso).atZone(ZONE).format(TF);
+        } catch (Exception e) {
+            return iso;
+        }
+    }
+
+    private String fmtRankPercentile(JSONObject node) {
+        Object rank = node == null ? null : node.get("rankPercentile");
+        if (rank == null) {
+            rank = node == null ? null : node.get("trophy");
+        }
+        return rank == null ? "-" : String.valueOf(rank);
+    }
+
+    private String metricGrid(String[][] metrics) {
+        StringBuilder sb = new StringBuilder("<div class='card' style='padding:14px 12px;'><table><tr>");
+        for (String[] metric : metrics) {
+            sb.append("<td style='width:25%;text-align:center;padding:6px 4px;'><div class='sub'>").append(esc(metric[0]))
+                    .append("</div><div style='font-size:19px;color:").append(SOFT).append(";'>").append(esc(metric[1])).append("</div></td>");
+        }
+        return sb.append("</tr></table></div>").toString();
+    }
+
+    private String row(String image, String name, String value, String color) {
+        return "<table style='background:" + CARD2 + ";border-radius:10px;margin-bottom:6px;'><tr>"
+                + "<td style='width:64px;text-align:center;padding:5px;'>" + image + "</td>"
+                + "<td><div style='font-size:14px;'>" + esc(name) + "</div></td>"
+                + "<td style='width:170px;text-align:right;padding-right:10px;color:" + color + ";font-size:15px;'>" + esc(value) + "</td>"
+                + "</tr></table>";
+    }
+
+    private String xRankCell(JSONObject play, String label, String key) {
+        JSONObject rank = obj(play, key);
+        return "<tr><td style='width:50%;background:" + CARD2 + ";border-radius:10px;padding:9px 12px;'>"
+                + "<div class='sub'>" + label + "</div><div style='font-size:18px;color:" + SOFT + ";'>#" + esc(or(rank.getString("rank"), "-")) + "</div></td>"
+                + "<td style='width:50%;background:" + CARD2 + ";border-radius:10px;padding:9px 12px;'>"
+                + "<div class='sub'>X Power</div><div style='font-size:18px;color:" + SOFT + ";'>" + fmtOne(rank.get("xPower")) + "</div></td></tr>";
+    }
+
+    private String xModeCell(JSONObject play, String label, String key) {
+        JSONObject rank = obj(play, key);
+        String rankText = rank.get("rank") == null ? "-" : "#" + fmtInt(rank.get("rank"));
+        String powerText = rank.get("power") == null ? "-" : fmtOne(rank.get("power"));
+        String season = str(rank, "rankUpdateSeasonName");
+        return "<td style='width:50%;background:" + CARD2 + ";border-radius:10px;padding:10px 12px;'>"
+                + "<div class='sub'>" + esc(label) + "</div>"
+                + "<div style='font-size:18px;color:" + SOFT + ";'>" + esc(rankText) + "</div>"
+                + "<div class='sub'>XP " + esc(powerText) + (StringUtils.isBlank(season) ? "" : " · " + esc(season)) + "</div>"
+                + "</td>";
+    }
+
+    private String xTopOne(JSONObject ranking, String modeName, String key) {
+        JSONArray nodes = arr(obj(ranking, key), "nodes");
+        JSONObject node = nodes.isEmpty() ? new JSONObject() : nodes.getJSONObject(0);
+        JSONObject weapon = obj(node, "weapon");
+        return "<table style='background:" + CARD2 + ";border-radius:10px;margin-bottom:7px;'><tr>"
+                + "<td style='width:54px;text-align:center;color:" + GOLD + ";font-size:16px;'>" + esc(modeName) + "</td>"
+                + "<td style='width:50px;text-align:center;'>" + remoteImg(imgUrl(weapon), "weapon", 38, 38) + "</td>"
+                + "<td><div style='font-size:14px;'>" + esc(str(node, "name")) + "</div><div class='sub'>" + esc(str(weapon, "name")) + "</div></td>"
+                + "<td style='width:105px;text-align:right;padding-right:10px;color:" + SOFT + ";font-size:17px;'>" + fmtOne(node.get("xPower")) + "</td></tr></table>";
+    }
+
+    private String eventTeamName(String composition) {
+        if ("SOLO".equals(composition)) {
+            return "单人榜";
+        }
+        if ("PAIR".equals(composition)) {
+            return "双人榜";
+        }
+        if ("TEAM".equals(composition)) {
+            return "四人榜";
+        }
+        return or(composition, "榜单");
+    }
+
+    private String eventPlayers(JSONArray players) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < players.size(); i++) {
+            JSONObject player = players.getJSONObject(i);
+            JSONObject weapon = obj(player, "weapon");
+            sb.append("<span style='white-space:nowrap;margin-right:8px;'>")
+                    .append(remoteImg(imgUrl(weapon), "weapon", 24, 24))
+                    .append(" ").append(esc(str(player, "name"))).append("</span>");
+        }
+        return sb.toString();
+    }
+
+    private String onlineState(String state) {
+        if ("VS_MODE_FIGHTING".equals(state)) {
+            return "比赛中";
+        }
+        if ("VS_MODE_MATCHING".equals(state)) {
+            return "比赛匹配中";
+        }
+        if ("COOP_MODE_FIGHTING".equals(state)) {
+            return "打工中";
+        }
+        if ("COOP_MODE_MATCHING".equals(state)) {
+            return "打工匹配中";
+        }
+        if ("ONLINE".equals(state)) {
+            return "在线";
+        }
+        if ("OFFLINE".equals(state)) {
+            return "离线";
+        }
+        return or(state, "未知");
     }
 }

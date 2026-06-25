@@ -37,7 +37,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -265,6 +267,123 @@ public class BbSplatoonUserHandler {
             BbMessageContent.buildTextContent(returnMessage.toString()))
         );
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    /**
+     * SplatNet 概览图。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"喷喷概览", "/喷喷概览"}, name = "喷喷概览")
+    public void getSplatoonOverview(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject home = splatoon3ApiCaller.getHome(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        JSONObject historySummary = splatoon3ApiCaller.getHistorySummary(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        JSONObject total = splatoon3ApiCaller.getTotalQuery(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderOverview(home, historySummary, total));
+    }
+
+    /**
+     * 打工统计图。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"打工统计", "/打工统计"}, name = "打工统计")
+    public void getSplatoonCoopStatistics(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject coopStatistics = splatoon3ApiCaller.getCoopStatistics(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderCoopStatistics(coopStatistics));
+    }
+
+    /**
+     * X 排名总览。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"X排名", "/X排名", "x排名", "/x排名"}, name = "X排名总览")
+    public void getSplatoonXRankingHub(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject xRanking = splatoon3ApiCaller.getXRanking(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo(), "ATLANTIC");
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderXRankingHub(xRanking));
+    }
+
+    /**
+     * X 排名分模式前十。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.REGEX, keyword = {"^/?[Xx]排名(区域|塔楼|鱼虎|蛤蜊)$"}, name = "X排名前十")
+    public void getSplatoonXRankingTop(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        Matcher matcher = Pattern.compile("^/?[Xx]排名(区域|塔楼|鱼虎|蛤蜊)$").matcher(bbReceiveMessage.getMessage());
+        if (!matcher.find()) {
+            bbReplies.atText(bbReceiveMessage, "格式：X排名区域 / X排名塔楼 / X排名鱼虎 / X排名蛤蜊");
+            return;
+        }
+        String modeName = matcher.group(1);
+        Map<String, String> modeCodes = new HashMap<>();
+        modeCodes.put("区域", "Ar");
+        modeCodes.put("塔楼", "Lf");
+        modeCodes.put("鱼虎", "Gl");
+        modeCodes.put("蛤蜊", "Cl");
+
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject xRanking = splatoon3ApiCaller.getXRanking(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo(), "ATLANTIC");
+        String seasonId = xRanking.getJSONObject("data").getJSONObject("xRanking").getJSONObject("currentSeason").getString("id");
+        if (seasonId == null) {
+            bbReplies.atText(bbReceiveMessage, "没拿到当前 X 赛季信息，稍后再试试");
+            return;
+        }
+        String modeCode = modeCodes.get(modeName);
+        JSONObject xTop = splatoon3ApiCaller.getXRankingTop(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo(), modeCode, seasonId, 10);
+        JSONArray edges = xTop.getJSONObject("data").getJSONObject("node").getJSONObject("xRanking" + modeCode).getJSONArray("edges");
+        JSONArray holders = new JSONArray();
+        for (int i = 0; i < edges.size(); i++) {
+            holders.add(edges.getJSONObject(i).getJSONObject("node"));
+        }
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderXRankingMode(modeName, "ATLANTIC", holders));
+    }
+
+    /**
+     * 活动比赛榜单。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"活动榜单", "/活动榜单", "活动比赛榜单", "/活动比赛榜单"}, name = "活动比赛榜单")
+    public void getSplatoonEventBoard(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject pagination = splatoon3ApiCaller.getEventMatchRankingPagination(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        String periodId = latestEventPeriodId(pagination);
+        if (periodId == null) {
+            bbReplies.atText(bbReceiveMessage, "当前没有可展示的活动比赛榜单");
+            return;
+        }
+        JSONObject eventBoard = splatoon3ApiCaller.getEventItems(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo(), periodId);
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderEventBoard(eventBoard.getJSONObject("data").getJSONObject("rankingPeriod")));
+    }
+
+    /**
+     * 场地记录与装备收藏。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"场地装备", "/场地装备", "舞台装备", "/舞台装备"}, name = "场地装备")
+    public void getSplatoonStageGear(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject stageRecords = splatoon3ApiCaller.getStageRecords(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        JSONObject equipments = splatoon3ApiCaller.getMyOutfitCommonDataEquipments(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderStageGear(stageRecords, equipments));
+    }
+
+    /**
+     * 好友状态图。文本版「喷喷好友」保留原分页行为。
+     */
+    @SneakyThrows
+    @Rule(eventType = EventType.MESSAGE, needAtMe = true, ruleType = RuleType.MATCH, keyword = {"喷喷好友图", "/喷喷好友图", "好友状态图", "/好友状态图"}, name = "喷喷好友状态图")
+    public void getSplatoonFriendsImage(BbReceiveMessage bbReceiveMessage) {
+        if (!requireBound(bbReceiveMessage)) { return; }
+        TokenInfo tokenInfo = checkAndGetSplatoon3UserToken(bbReceiveMessage.getUserId());
+        JSONObject friends = splatoon3ApiCaller.getFriends(tokenInfo.getBulletToken(), tokenInfo.getWebServiceToken(), tokenInfo.getUserInfo());
+        sendSplatoonImage(bbReceiveMessage, splatoonHtmlRenderer.renderFriends(friends));
     }
 
     /**
@@ -582,6 +701,35 @@ public class BbSplatoonUserHandler {
                 BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
                 BbMessageContent.buildLocalImageMessageContent(imageFile)));
         bbMessageApi.sendMessage(bbSendMessage);
+    }
+
+    private void sendSplatoonImage(BbReceiveMessage bbReceiveMessage, File imageFile) {
+        bbReplies.send(bbReceiveMessage, Arrays.asList(
+                BbMessageContent.buildAtMessageContent(bbReceiveMessage.getUserId()),
+                BbMessageContent.buildLocalImageMessageContent(imageFile)));
+    }
+
+    private String latestEventPeriodId(JSONObject pagination) {
+        JSONObject data = pagination == null ? null : pagination.getJSONObject("data");
+        JSONObject seasons = data == null ? null : data.getJSONObject("leagueMatchRankingSeasons");
+        JSONArray seasonEdges = seasons == null ? null : seasons.getJSONArray("edges");
+        if (seasonEdges == null || seasonEdges.isEmpty()) {
+            return null;
+        }
+        JSONObject season = seasonEdges.getJSONObject(0).getJSONObject("node");
+        JSONObject groups = season == null ? null : season.getJSONObject("leagueMatchRankingTimePeriodGroups");
+        JSONArray groupEdges = groups == null ? null : groups.getJSONArray("edges");
+        if (groupEdges == null || groupEdges.isEmpty()) {
+            return null;
+        }
+        for (int i = 0; i < groupEdges.size(); i++) {
+            JSONObject group = groupEdges.getJSONObject(i).getJSONObject("node");
+            JSONArray timePeriods = group == null ? null : group.getJSONArray("timePeriods");
+            if (timePeriods != null && !timePeriods.isEmpty()) {
+                return timePeriods.getJSONObject(0).getString("id");
+            }
+        }
+        return null;
     }
 
     /** 仅绑定用户可用喷喷战绩功能;未绑定则回提示并返回 false。 */
