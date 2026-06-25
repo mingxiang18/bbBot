@@ -440,6 +440,22 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：115 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 采矿技能快速升级攻略加厚：
+
+- 针对“采矿等级低怎么快速升级/挖矿技能怎么练/采矿职业怎么选”补强本地结构化 `mining_skill` 攻略。
+- 按官方 Mining/Skills/The Mines/Skull Cavern/Pickaxes 资料补充 5 个小节：经验和等级、分阶段升级路线、效率技巧、装备和食物、职业选择。
+- 纠正旧资料错误：用镐子或炸弹破坏岩石/矿点都给采矿经验，但怪物破坏岩石不给经验。
+- 补充明确事实：读《采矿月刊》或《星之书》给 250 采矿经验，淘盘每个铜/铁/金/铱矿石 1 XP，铜矿点 5、铁矿点 12、金矿点 18、铱矿点 50、万象晶球节点 64、钻石节点/神秘石 150。
+- 补充分阶段路线：春 5 矿井开放后先推每 5 层电梯；1-39 层铜矿，40-79 层铁矿/煤尘精灵，80-120 层金矿/岩浆晶球/头骨钥匙，骷髅洞穴用炸弹、楼梯、好运日和速度/运气食物刷深层。
+- 补充效率建议：普通石头在矿井里通常不给额外经验，优先矿点/晶球节点/宝石节点；推层数和刷资源要分目标；背包、食物、炸弹、楼梯比硬敲普通石头更关键。
+- 测试补充：新增 `StardewGuideServiceTest` 采矿快速升级断言，新增 `StardewGuideRetrieverTest` typed `SKILL` 检索测试并断言不跑到鸡舍/鱼类，新增 `StardewQueryPlannerServiceTest` 本地 fallback 分类测试。
+
+本轮聚焦验证结果：
+
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest`：85 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：118 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -464,7 +480,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补耕种/采矿/觅食快速升级细分路线、具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补耕种/觅食快速升级细分路线、具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 

@@ -200,6 +200,22 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedSkillIntentRetrievesMiningLevelingEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SKILL, "采矿等级低怎么快速升级"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("我采矿等级低怎么快速升级", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SKILL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("采矿技能", "怪物破坏岩石不给经验", "40-79 层", "骷髅洞穴")
+                .contains("矿工特供", "矿工 -> 勘探者")
+                .doesNotContain("鸡舍", "夏季鱼类");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

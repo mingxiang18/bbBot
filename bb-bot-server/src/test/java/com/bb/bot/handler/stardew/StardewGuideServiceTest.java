@@ -759,6 +759,20 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersMiningLevelingLocally() {
+        StardewGuideResult result = service.answer("星露谷 采矿等级低怎么快速升级");
+
+        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getAnswer()).contains("怪物破坏岩石不给经验", "250 采矿经验");
+        assertThat(result.getAnswer()).contains("铜矿点 5", "铁矿点 12", "金矿点 18", "铱矿点 50");
+        assertThat(result.getAnswer()).contains("每 5 层电梯", "40-79 层", "80-120 层", "头骨钥匙");
+        assertThat(result.getAnswer()).contains("炸弹", "矿工特供", "魔法糖冰棍");
+        assertThat(result.getAnswer()).contains("矿工 -> 勘探者", "地质学家 -> 挖掘者");
+        assertThat(result.getAnswer()).doesNotContain("怪物破坏都可以");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Mining");
+    }
+
+    @Test
     void answersSkillProfessionChoice() {
         StardewGuideResult result = service.answer("星露谷 钓鱼职业怎么选");
 
