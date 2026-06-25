@@ -103,6 +103,19 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFarmingLevelingQueriesAsSkill() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("耕种等级低怎么快速升级");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SKILL);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("耕种等级低怎么快速升级");
+    }
+
+    @Test
     void parsesSkillIntentForCombatLevelingQuestions() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))

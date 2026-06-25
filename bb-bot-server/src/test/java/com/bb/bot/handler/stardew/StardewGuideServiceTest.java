@@ -773,6 +773,19 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFarmingLevelingLocally() {
+        StardewGuideResult result = service.answer("星露谷 耕种等级低怎么快速升级");
+
+        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getAnswer()).contains("250 耕种经验", "单纯锄地或浇水不会给耕种经验");
+        assertThat(result.getAnswer()).contains("松露给觅食经验", "13 个防风草", "8 个土豆", "5 个花椰菜");
+        assertThat(result.getAnswer()).contains("春季", "夏季", "秋季", "洒水器");
+        assertThat(result.getAnswer()).contains("农夫午餐", "品质是在收获时决定的");
+        assertThat(result.getAnswer()).contains("农耕人 -> 工匠", "不确定雕像");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Farming");
+    }
+
+    @Test
     void answersSkillProfessionChoice() {
         StardewGuideResult result = service.answer("星露谷 钓鱼职业怎么选");
 

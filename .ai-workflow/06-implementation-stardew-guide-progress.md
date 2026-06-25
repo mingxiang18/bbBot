@@ -456,6 +456,21 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：118 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 耕种技能快速升级攻略加厚：
+
+- 针对“耕种等级低怎么快速升级/耕种职业怎么选/洒水器前怎么练”补强本地结构化 `farming_skill` 攻略。
+- 按官方 Farming/Skills/Crops/Animals/Stardew Valley Almanac 资料补充 5 个小节：经验和等级、分阶段升级路线、效率技巧、装备和食物、职业选择。
+- 补充明确事实：作物经验因作物而异，多次收获每次给经验，但蓝莓/蔓越莓/土豆这类一次多产只按第一份给经验；动物互动/拾取产品各 5 XP；松露给觅食经验；年鉴/星之书 250 XP；锄地/浇水不给经验。
+- 补充分阶段路线：0-2 级用防风草/土豆/花椰菜起步；春季花椰菜和草莓，夏季蓝莓/甜瓜，秋季蔓越莓/南瓜；洒水器成型后扩大规模。
+- 补充效率建议：耕种等级低的核心是提高可收获格子数，肥料影响品质和售价但不直接加经验；作物成熟当天才给经验，月底避免种来不及成熟作物。
+- 测试补充：新增 `StardewGuideServiceTest` 耕种快速升级断言，新增 `StardewGuideRetrieverTest` typed `SKILL` 检索测试并断言不跑到作物/鱼类列表，新增 `StardewQueryPlannerServiceTest` 本地 fallback 分类测试。
+
+本轮聚焦验证结果：
+
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest`：88 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：121 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -480,7 +495,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补耕种/觅食快速升级细分路线、具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补觅食快速升级细分路线、具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 
