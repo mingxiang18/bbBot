@@ -341,10 +341,12 @@ class StardewGuideRetrieverTest {
                 intent(StardewGuideIntent.COOKING, "巧克力蛋糕怎么做"),
                 intent(StardewGuideIntent.COOKING, "鱼肉卷材料和效果"),
                 intent(StardewGuideIntent.COOKING, "粉红蛋糕怎么做"),
-                intent(StardewGuideIntent.COOKING, "红之盛宴材料和效果")
+                intent(StardewGuideIntent.COOKING, "红之盛宴材料和效果"),
+                intent(StardewGuideIntent.COOKING, "香蕉布丁怎么做"),
+                intent(StardewGuideIntent.COOKING, "墨汁意大利饺效果")
         );
 
-        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 巧克力蛋糕、鱼肉卷、粉红蛋糕和红之盛宴怎么做", plan);
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 巧克力蛋糕、鱼肉卷、粉红蛋糕、红之盛宴、香蕉布丁和墨汁意大利饺怎么做", plan);
 
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.COOKING);
@@ -355,7 +357,9 @@ class StardewGuideRetrieverTest {
                 .contains("鱼肉卷", "金枪鱼 x1", "玉米饼 x1", "钓鱼 +2")
                 .contains("粉红蛋糕", "甜瓜 x1")
                 .contains("红之盛宴", "红叶卷心菜 x1", "最大体力 +50")
-                .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+                .contains("香蕉布丁", "香蕉 x1", "骨头碎片 x30")
+                .contains("墨汁意大利饺", "鱿鱼墨汁 x1", "免疫负面效果")
+                .doesNotContain("夏季鱼类", "鸡舍", "工具升级", "怎么获得");
     }
 
     @Test

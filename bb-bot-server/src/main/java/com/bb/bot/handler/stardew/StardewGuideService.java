@@ -886,6 +886,9 @@ public class StardewGuideService {
                 || query.contains("做其他料理")) {
             wanted.add("ingredient_dish");
         }
+        if (query.contains("姜岛") || query.contains("岛上") || query.contains("热带")) {
+            wanted.add("island");
+        }
         if (wanted.isEmpty()) {
             return isBroadCookingQuery(query);
         }
@@ -1399,7 +1402,12 @@ public class StardewGuideService {
                 || query.contains("千层酥") || query.contains("红之盛宴") || query.contains("秋日恩赐")
                 || query.contains("超级大餐") || query.contains("蔓越莓酱") || query.contains("填料")
                 || query.contains("蘸酱") || query.contains("炒菜") || query.contains("烤榛子")
-                || query.contains("脆皮饼") || query.contains("糖果");
+                || query.contains("脆皮饼") || query.contains("糖果") || query.contains("烤面包")
+                || query.contains("炖饭") || query.contains("烩饭") || query.contains("松糕")
+                || query.contains("杂烩汤") || query.contains("浓汤") || query.contains("田螺")
+                || query.contains("蜗牛") || query.contains("虾鸡尾酒") || query.contains("芒果糯米饭")
+                || query.contains("芋泥") || query.contains("咖喱") || query.contains("墨汁意大利饺")
+                || query.contains("意大利饺") || query.contains("苔藓汤");
     }
 
     private boolean isBroadCookingQuery(String query) {

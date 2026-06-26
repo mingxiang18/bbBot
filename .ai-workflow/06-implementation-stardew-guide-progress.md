@@ -56,7 +56,7 @@
 - 商店/商人：9 个高频条目，覆盖皮埃尔、铁匠、罗宾、玛妮、威利、科罗布斯、旅行货车、沙漠商人、书商，以及背包、干草、铱制洒水器、楼梯、鱼竿/鱼饵、技能书等常问商品/兑换
 - 居民：34 位可送礼居民资料均已有本地结构化日程；覆盖普通日程、常驻居民、高频雨天/星期/上课/诊所规则，并保留节日、姜岛度假、婚后、好感剧情等覆盖风险提示
 - 资源获取：91 项，覆盖硬木、电池组、铱矿石、五彩碎片、上古种子、布料、三种钓鱼果冻，煤炭、黏土、纤维、苔藓、精炼石英、三类树液采集物、干草、海草/绿藻、树液、铜铁金矿石等高频材料，以及太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、龙牙、远古斑点、古物宝藏、四类晶球、基础矿物/宝石、一批高频博物馆古物、动物产品和果树水果
-- 料理/饮品：70 道，覆盖骷髅洞穴/钓鱼/采矿/战斗/耕种/觅食高频 buff 料理，以及煎蛋、煎蛋卷、沙拉、披萨、面包、生鱼片、鱼肉卷、巧克力蛋糕、粉红蛋糕、南瓜派、红之盛宴、秋日恩赐、蔓越莓酱等早期/基础/普通回复和常问配方料理
+- 料理/饮品：83 道，覆盖官方 81 种可烹饪菜品，并额外保留咖啡、魔法糖冰棍等玩家常问但不属于厨房烹饪的实用食物/饮品条目；支持骷髅洞穴/钓鱼/采矿/战斗/耕种/觅食/姜岛料理、普通回复、配方材料、buff 效果等查询
 - 通用攻略：35 项，新增动物养殖和果树种植规则
 
 这不是完整星露谷数据集。当前靠 Wiki 兜底补足未建模问题。
@@ -194,6 +194,7 @@
 - 本地库新增 19 个高频料理/饮品条目，覆盖骷髅洞穴、幸运、移速、钓鱼、采矿、战斗、耕种、觅食等常问场景。
 - 新增料理详情路由，支持“幸运午餐怎么做”“香辣鳗鱼材料和效果”等问题，返回材料、配方来源、buff、推荐用法和来源。
 - 第二批常问料理详情已覆盖“粉红蛋糕怎么做”“红之盛宴效果”“秋日恩赐材料和效果”“南瓜派怎么做”“蔓越莓酱效果”等问法；新增 typed evidence 测试，确保 COOKING intent 不跑到鱼类、建筑或工具。
+- 剩余常规烹饪已补齐，新增“海鲜杂烩汤材料和效果”“香蕉布丁怎么做”“墨汁意大利饺效果”“姜岛料理有哪些”等 typed evidence 和列表问法覆盖。
 - 新增料理推荐列表路由，支持“骷髅洞穴吃什么料理 buff 好”“钓鱼料理有哪些”“战斗等级低吃什么食物”等泛问法。
 - AI tool 描述补充料理配方、食物/饮料 buff、骷髅洞穴/钓鱼/战斗/耕种推荐吃什么。
 
@@ -262,6 +263,26 @@
 本轮验证结果：
 
 - JSON 轻量校验：`cookingRecipes=70`，重复 id 为空，关键新增 id 无缺失。
+- `git diff --check`：无 whitespace 问题。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest,StardewKnowledgeRepositoryTest`：130 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：141 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
+2026-06-26 常规烹饪全量补齐：
+
+- 本地料理/饮品数据从 70 条扩展到 83 条；覆盖官方 81 种可烹饪菜品，并额外保留咖啡、魔法糖冰棍等常问实用食物/饮品条目。
+- 新增 13 个剩余烹饪条目：意式烤面包、卷心菜沙拉、意式蕨菜炖饭、虞美人籽松糕、海鲜杂烩汤、法式田螺、虾鸡尾酒、香蕉布丁、芒果糯米饭、夏威夷芋泥、热带咖喱、墨汁意大利饺、苔藓汤。
+- `StardewGuideService` 的料理列表筛选新增 `island` 标签识别，支持“姜岛料理有哪些”这类泛问法。
+- `StardewQueryPlannerService` 和 `StardewGuideService` 本地 fallback 菜名识别补齐“墨汁意大利饺、芒果糯米饭、苔藓汤、虾鸡尾酒、海鲜杂烩汤”等词根，AI 分类不可用时仍能归入 `COOKING`。
+- 新增/扩展测试覆盖：
+  - 仓库数据规模不少于 83 条，并强制校验剩余 13 个料理 id。
+  - typed `answerEvidence(COOKING, ...)` 可返回海鲜杂烩汤、香蕉布丁、墨汁意大利饺详情。
+  - `StardewGuideRetriever` 多关键词 COOKING plan 可返回后期/姜岛/特殊效果料理证据，不串到资源获取、鱼类、建筑或工具。
+  - “姜岛料理有哪些”列表问法可召回香蕉布丁、芒果糯米饭、夏威夷芋泥、热带咖喱。
+
+本轮验证结果：
+
+- JSON 轻量校验：`cookingRecipes=83`，重复 id 为空，关键新增 id 无缺失。
 - `git diff --check`：无 whitespace 问题。
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest,StardewKnowledgeRepositoryTest`：130 tests, 0 failures。
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：141 tests, 0 failures。

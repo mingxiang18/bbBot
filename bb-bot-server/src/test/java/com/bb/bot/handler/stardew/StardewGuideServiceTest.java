@@ -891,6 +891,9 @@ class StardewGuideServiceTest {
         StardewGuideResult pinkCake = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 粉红蛋糕怎么做");
         StardewGuideResult redPlate = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 红之盛宴效果");
         StardewGuideResult autumnsBounty = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 秋日恩赐材料和效果");
+        StardewGuideResult chowder = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 海鲜杂烩汤材料和效果");
+        StardewGuideResult bananaPudding = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 香蕉布丁怎么做");
+        StardewGuideResult squidInkRavioli = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 墨汁意大利饺效果");
 
         assertThat(pinkCake.getIntent()).isEqualTo("cooking_recipe");
         assertThat(pinkCake.getAnswer()).contains("甜瓜 x1", "小麦粉 x1", "糖 x1", "鸡蛋 x1");
@@ -898,6 +901,12 @@ class StardewGuideServiceTest {
         assertThat(redPlate.getAnswer()).contains("红叶卷心菜 x1", "萝卜 x1", "最大体力 +50");
         assertThat(autumnsBounty.getIntent()).isEqualTo("cooking_recipe");
         assertThat(autumnsBounty.getAnswer()).contains("山药 x1", "南瓜 x1", "觅食 +2", "防御 +2");
+        assertThat(chowder.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(chowder.getAnswer()).contains("蛤 x1", "牛奶 x1", "钓鱼 +1", "约 16 分钟 47 秒");
+        assertThat(bananaPudding.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(bananaPudding.getAnswer()).contains("香蕉 x1", "任意牛奶 x1", "骨头碎片 x30", "采矿 +1", "运气 +1", "防御 +1");
+        assertThat(squidInkRavioli.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(squidInkRavioli.getAnswer()).contains("鱿鱼墨汁 x1", "西红柿 x1", "免疫负面效果 +1");
     }
 
     @Test
@@ -905,6 +914,7 @@ class StardewGuideServiceTest {
         StardewGuideResult fishing = service.answer("星露谷 钓鱼料理有哪些");
         StardewGuideResult combat = service.answer("星露谷 战斗等级低吃什么食物");
         StardewGuideResult earlyHealing = service.answer("星露谷 前期回血普通料理有哪些");
+        StardewGuideResult island = service.answer("星露谷 姜岛料理有哪些");
 
         assertThat(fishing.getIntent()).isEqualTo("cooking_available");
         assertThat(fishing.getAnswer()).contains("海泡布丁", "海之菜肴", "龙虾浓汤", "鱼肉卷", "钓鱼 +");
@@ -913,6 +923,8 @@ class StardewGuideServiceTest {
         assertThat(earlyHealing.getIntent()).isEqualTo("cooking_available");
         assertThat(earlyHealing.getAnswer()).contains("煎蛋", "沙拉", "烤鱼", "恢复体力和生命");
         assertThat(earlyHealing.getAnswer()).doesNotContain("夏季鱼类", "鸡舍升级", "工具升级");
+        assertThat(island.getIntent()).isEqualTo("cooking_available");
+        assertThat(island.getAnswer()).contains("香蕉布丁", "芒果糯米饭", "夏威夷芋泥", "热带咖喱");
     }
 
     @Test

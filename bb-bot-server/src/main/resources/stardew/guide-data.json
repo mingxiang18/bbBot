@@ -20113,6 +20113,517 @@
       "sourceUrls": [
         "https://stardewvalleywiki.com/Cranberry_Candy"
       ]
+    },
+    {
+      "id": "bruschetta",
+      "name": "意式烤面包",
+      "nameEn": "Bruschetta",
+      "aliases": [
+        "bruschetta",
+        "布鲁斯凯塔",
+        "烤面包"
+      ],
+      "ingredients": [
+        {
+          "name": "面包",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        },
+        {
+          "name": "西红柿",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年冬季 21 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "ingredient_dish",
+        "summer"
+      ],
+      "recommendation": "需要先做面包，番茄多时适合补料理图鉴。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bruschetta"
+      ]
+    },
+    {
+      "id": "coleslaw",
+      "name": "卷心菜沙拉",
+      "nameEn": "Coleslaw",
+      "aliases": [
+        "coleslaw",
+        "凉拌卷心菜",
+        "卷心菜色拉"
+      ],
+      "ingredients": [
+        {
+          "name": "红叶卷心菜",
+          "quantity": 1
+        },
+        {
+          "name": "醋",
+          "quantity": 1
+        },
+        {
+          "name": "蛋黄酱",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年春季 14 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "summer"
+      ],
+      "recommendation": "红叶卷心菜通常第 2 年稳定获得，适合中期补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Coleslaw"
+      ]
+    },
+    {
+      "id": "fiddlehead_risotto",
+      "name": "意式蕨菜炖饭",
+      "nameEn": "Fiddlehead Risotto",
+      "aliases": [
+        "fiddlehead risotto",
+        "蕨菜烩饭",
+        "蕨菜炖饭"
+      ],
+      "ingredients": [
+        {
+          "name": "油",
+          "quantity": 1
+        },
+        {
+          "name": "蕨菜",
+          "quantity": 1
+        },
+        {
+          "name": "蒜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年秋季 28 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "foraging",
+        "summer"
+      ],
+      "recommendation": "蕨菜来自秘密森林夏季采集或姜岛等来源，想全料理要提前留。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fiddlehead_Risotto"
+      ]
+    },
+    {
+      "id": "poppyseed_muffin",
+      "name": "虞美人籽松糕",
+      "nameEn": "Poppyseed Muffin",
+      "aliases": [
+        "poppyseed muffin",
+        "虞美人松糕",
+        "罂粟籽松糕"
+      ],
+      "ingredients": [
+        {
+          "name": "虞美人花",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年冬季 7 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "summer"
+      ],
+      "recommendation": "夏季种虞美人花后留一朵即可补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Poppyseed_Muffin"
+      ]
+    },
+    {
+      "id": "chowder",
+      "name": "海鲜杂烩汤",
+      "nameEn": "Chowder",
+      "aliases": [
+        "chowder",
+        "蛤蜊浓汤",
+        "杂烩汤"
+      ],
+      "ingredients": [
+        {
+          "name": "蛤",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "威利 3 心邮件",
+      "effect": "提升钓鱼",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 1,
+          "duration": "约 16 分钟 47 秒"
+        }
+      ],
+      "tags": [
+        "fishing",
+        "healing",
+        "crab_pot"
+      ],
+      "recommendation": "持续时间很长，蛤和牛奶稳定后适合低成本钓鱼日使用。",
+      "note": "钓鱼加成低于海之菜肴/龙虾浓汤，但持续时间很友好。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Chowder"
+      ]
+    },
+    {
+      "id": "escargot",
+      "name": "法式田螺",
+      "nameEn": "Escargot",
+      "aliases": [
+        "escargot",
+        "法式蜗牛",
+        "田螺"
+      ],
+      "ingredients": [
+        {
+          "name": "蜗牛",
+          "quantity": 1
+        },
+        {
+          "name": "蒜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "威利 5 心邮件",
+      "effect": "提升钓鱼",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 2,
+          "duration": "约 16 分钟 47 秒"
+        }
+      ],
+      "tags": [
+        "fishing",
+        "healing",
+        "crab_pot"
+      ],
+      "recommendation": "适合蟹笼产出稳定后做长时间钓鱼 buff。",
+      "note": "需要第 2 年春季蒜或其他来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Escargot"
+      ]
+    },
+    {
+      "id": "shrimp_cocktail",
+      "name": "虾鸡尾酒",
+      "nameEn": "Shrimp Cocktail",
+      "aliases": [
+        "shrimp cocktail",
+        "虾仁鸡尾酒"
+      ],
+      "ingredients": [
+        {
+          "name": "西红柿",
+          "quantity": 1
+        },
+        {
+          "name": "虾",
+          "quantity": 1
+        },
+        {
+          "name": "野山葵",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年冬季 28 日",
+      "effect": "提升钓鱼和运气",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 1,
+          "duration": "约 10 分钟"
+        },
+        {
+          "name": "运气",
+          "value": 1,
+          "duration": "约 10 分钟"
+        }
+      ],
+      "tags": [
+        "fishing",
+        "luck",
+        "crab_pot"
+      ],
+      "recommendation": "同时要钓鱼和一点运气时可用，材料横跨春季采集、夏季作物和蟹笼。",
+      "note": "不是饮料，会覆盖其他食物 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shrimp_Cocktail"
+      ]
+    },
+    {
+      "id": "banana_pudding",
+      "name": "香蕉布丁",
+      "nameEn": "Banana Pudding",
+      "aliases": [
+        "banana pudding",
+        "香蕉甜点"
+      ],
+      "ingredients": [
+        {
+          "name": "香蕉",
+          "quantity": 1
+        },
+        {
+          "name": "任意牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "姜岛商人：骨头碎片 x30 兑换",
+      "effect": "提升采矿、运气和防御",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 1,
+          "duration": "约 5 分钟 1 秒"
+        },
+        {
+          "name": "运气",
+          "value": 1,
+          "duration": "约 5 分钟 1 秒"
+        },
+        {
+          "name": "防御",
+          "value": 1,
+          "duration": "约 5 分钟 1 秒"
+        }
+      ],
+      "tags": [
+        "mining",
+        "luck",
+        "defense",
+        "island"
+      ],
+      "recommendation": "姜岛后期料理，适合下矿或火山探索时兼顾运气和防御。",
+      "note": "需要香蕉和姜岛商人配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Banana_Pudding"
+      ]
+    },
+    {
+      "id": "mango_sticky_rice",
+      "name": "芒果糯米饭",
+      "nameEn": "Mango Sticky Rice",
+      "aliases": [
+        "mango sticky rice",
+        "芒果饭"
+      ],
+      "ingredients": [
+        {
+          "name": "芒果",
+          "quantity": 1
+        },
+        {
+          "name": "椰子",
+          "quantity": 1
+        },
+        {
+          "name": "大米",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "雷欧 7 心邮件",
+      "effect": "提升防御",
+      "buffs": [
+        {
+          "name": "防御",
+          "value": 3,
+          "duration": "约 5 分钟 1 秒"
+        }
+      ],
+      "tags": [
+        "defense",
+        "combat",
+        "island"
+      ],
+      "recommendation": "防御 +3 很适合战斗压力大的火山或矿洞日。",
+      "note": "需要姜岛水果体系。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mango_Sticky_Rice"
+      ]
+    },
+    {
+      "id": "poi",
+      "name": "夏威夷芋泥",
+      "nameEn": "Poi",
+      "aliases": [
+        "poi",
+        "芋泥"
+      ],
+      "ingredients": [
+        {
+          "name": "芋头",
+          "quantity": 4
+        }
+      ],
+      "recipeSource": "雷欧 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "island"
+      ],
+      "recommendation": "姜岛种芋头后成本简单，主要用于补全料理图鉴。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Poi"
+      ]
+    },
+    {
+      "id": "tropical_curry",
+      "name": "热带咖喱",
+      "nameEn": "Tropical Curry",
+      "aliases": [
+        "tropical curry",
+        "姜岛咖喱"
+      ],
+      "ingredients": [
+        {
+          "name": "椰子",
+          "quantity": 1
+        },
+        {
+          "name": "菠萝",
+          "quantity": 1
+        },
+        {
+          "name": "辣椒",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "姜岛度假村格斯出售成品",
+      "effect": "提升采集",
+      "buffs": [
+        {
+          "name": "采集",
+          "value": 4,
+          "duration": "约 5 分钟 1 秒"
+        }
+      ],
+      "tags": [
+        "foraging",
+        "island"
+      ],
+      "recommendation": "采集 +4 很高，适合需要采集等级门槛或高质量采集物时使用。",
+      "note": "配方/成品和姜岛度假村相关。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Tropical_Curry"
+      ]
+    },
+    {
+      "id": "squid_ink_ravioli",
+      "name": "墨汁意大利饺",
+      "nameEn": "Squid Ink Ravioli",
+      "aliases": [
+        "squid ink ravioli",
+        "鱿鱼墨汁意式饺",
+        "墨汁饺"
+      ],
+      "ingredients": [
+        {
+          "name": "鱿鱼墨汁",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "西红柿",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "战斗 9 级",
+      "effect": "提升采矿，并短时间免疫负面效果",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 1,
+          "duration": "约 4 分钟 39 秒"
+        },
+        {
+          "name": "免疫负面效果",
+          "value": 1,
+          "duration": "约 2 分钟 59 秒"
+        }
+      ],
+      "tags": [
+        "mining",
+        "combat",
+        "debuff_immunity"
+      ],
+      "recommendation": "适合被负面效果烦到的矿洞/战斗场景，但需要鱿鱼墨汁和战斗等级。",
+      "note": "免疫效果持续时间短于采矿 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Squid_Ink_Ravioli"
+      ]
+    },
+    {
+      "id": "moss_soup",
+      "name": "苔藓汤",
+      "nameEn": "Moss Soup",
+      "aliases": [
+        "moss soup",
+        "青苔汤"
+      ],
+      "ingredients": [
+        {
+          "name": "苔藓",
+          "quantity": 20
+        }
+      ],
+      "recipeSource": "采集 3 级",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "foraging",
+        "early_game"
+      ],
+      "recommendation": "1.6 后苔藓富余时可作为很低成本的回复料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Moss_Soup"
+      ]
     }
   ]
 }
