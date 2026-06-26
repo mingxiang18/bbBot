@@ -11213,6 +11213,684 @@
         "https://stardewvalleywiki.com/The_Stardrop_Saloon",
         "https://zh.stardewvalleywiki.com/星之果实餐吧"
       ]
+    },
+    {
+      "id": "harveys_clinic",
+      "name": "哈维的诊所",
+      "nameEn": "Harvey's Clinic",
+      "aliases": [
+        "哈维诊所",
+        "哈维的诊所",
+        "医院",
+        "诊所",
+        "harvey clinic",
+        "clinic",
+        "能量滋补水",
+        "肌肉回复药",
+        "体力药在哪里买"
+      ],
+      "location": "鹈鹕镇中心，皮埃尔杂货店旁边",
+      "openHours": "09:00-15:00；必须哈维或玛鲁在柜台后才能买医疗用品",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "能量滋补水",
+          "aliases": [
+            "energy tonic",
+            "体力药",
+            "能量药"
+          ],
+          "price": 1000,
+          "availability": "柜台有人时",
+          "note": "恢复大量体力；作为礼物通常很糟"
+        },
+        {
+          "name": "肌肉回复药",
+          "aliases": [
+            "muscle remedy",
+            "肌肉药",
+            "疲惫药"
+          ],
+          "price": 1000,
+          "availability": "柜台有人时",
+          "note": "移除疲惫状态，也可少量回血/回体"
+        }
+      ],
+      "recommendation": "诊所药品适合救急；长期下矿更建议带料理、咖啡和生命药水，不要把医疗用品当常规礼物。",
+      "note": "很多居民会按季节去诊所体检，问居民位置时诊所也是重要地点。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Harvey%27s_Clinic",
+        "https://zh.stardewvalleywiki.com/哈维的诊所"
+      ]
+    },
+    {
+      "id": "jojamart",
+      "name": "Joja超市",
+      "nameEn": "JojaMart",
+      "aliases": [
+        "Joja",
+        "joja",
+        "jojamart",
+        "Joja超市",
+        "乔家超市",
+        "joja会员",
+        "乔家会员",
+        "自动抚摸机在哪里买",
+        "社区发展项目"
+      ],
+      "location": "鹈鹕镇东侧，铁匠铺北边",
+      "openHours": "09:00-23:00",
+      "closed": "完成社区中心后关闭",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "Joja会员",
+          "aliases": [
+            "joja membership",
+            "乔家会员",
+            "joja线"
+          ],
+          "price": 5000,
+          "availability": "解锁社区中心后可买",
+          "note": "购买后社区中心变为 Joja 仓库，改走付费社区发展项目"
+        },
+        {
+          "name": "矿车修复",
+          "aliases": [
+            "minecarts",
+            "矿车"
+          ],
+          "price": 15000,
+          "availability": "Joja会员后",
+          "note": "修复矿车系统"
+        },
+        {
+          "name": "淘盘解锁",
+          "aliases": [
+            "panning",
+            "移除闪闪发光的巨石"
+          ],
+          "price": 20000,
+          "availability": "Joja会员后",
+          "note": "移除矿井入口附近巨石，解锁淘盘"
+        },
+        {
+          "name": "采石场桥",
+          "aliases": [
+            "bridge",
+            "采石场",
+            "修桥"
+          ],
+          "price": 25000,
+          "availability": "Joja会员后",
+          "note": "修复通往采石场的桥"
+        },
+        {
+          "name": "温室修复",
+          "aliases": [
+            "greenhouse",
+            "温室"
+          ],
+          "price": 35000,
+          "availability": "Joja会员后",
+          "note": "修复农场温室"
+        },
+        {
+          "name": "巴士修复",
+          "aliases": [
+            "bus",
+            "沙漠巴士"
+          ],
+          "price": 40000,
+          "availability": "Joja会员后",
+          "note": "修复前往卡利科沙漠的巴士"
+        },
+        {
+          "name": "Joja可乐",
+          "aliases": [
+            "joja cola",
+            "可乐"
+          ],
+          "price": 75,
+          "availability": "常驻",
+          "note": "也可从自动售货机或钓鱼垃圾获得"
+        },
+        {
+          "name": "草籽",
+          "aliases": [
+            "grass starter",
+            "草种"
+          ],
+          "price": 125,
+          "availability": "常驻；会员后价格与皮埃尔接近",
+          "note": "多数情况下皮埃尔更划算，Joja 胜在营业时间长"
+        },
+        {
+          "name": "葵花种子",
+          "aliases": [
+            "sunflower seeds",
+            "向日葵种子"
+          ],
+          "price": 125,
+          "availability": "夏/秋",
+          "note": "Joja 的葵花种子通常比皮埃尔便宜；会员后更便宜"
+        },
+        {
+          "name": "自动抚摸机",
+          "aliases": [
+            "auto-petter",
+            "自动摸摸机",
+            "自动抚摸器"
+          ],
+          "price": 50000,
+          "availability": "选择 Joja 路线后",
+          "note": "自动提升动物心情，但不能完全替代手动抚摸"
+        }
+      ],
+      "recommendation": "社区中心路线通常别买会员；Joja 路线优势是用钱快速解锁温室/巴士/矿车，以及后期可买自动抚摸机。",
+      "note": "未买会员时，多数种子和食材价格通常比皮埃尔贵，但营业到 23:00 且周三也开。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/JojaMart",
+        "https://zh.stardewvalleywiki.com/Joja超市"
+      ]
+    },
+    {
+      "id": "casino",
+      "name": "赌场",
+      "nameEn": "Casino",
+      "aliases": [
+        "赌场",
+        "casino",
+        "齐币",
+        "qi coin",
+        "齐币怎么换",
+        "赌场商店",
+        "无尽财富雕像",
+        "稀有稻草人3",
+        "赌场怎么进"
+      ],
+      "location": "卡利科沙漠，绿洲后门",
+      "openHours": "09:00-23:50",
+      "closed": "不关闭",
+      "unlockCondition": "完成“神秘的齐”任务后，保镖才会让路",
+      "currency": "齐币 / gold",
+      "stock": [
+        {
+          "name": "齐币兑换",
+          "aliases": [
+            "qi coin exchange",
+            "齐币",
+            "赌场币"
+          ],
+          "currency": "1,000g 可换 100 齐币",
+          "availability": "赌场解锁后",
+          "note": "齐币可用于赌博和赌场商店，不能换回金币"
+        },
+        {
+          "name": "无尽财富雕像",
+          "aliases": [
+            "statue of endless fortune",
+            "财富雕像"
+          ],
+          "price": 1000000,
+          "availability": "赌场右上角神秘商人出售",
+          "note": "每天产出物品；生日当天会产对应居民最爱礼物之一"
+        },
+        {
+          "name": "稀有稻草人 #3",
+          "aliases": [
+            "rarecrow 3",
+            "赌场稻草人"
+          ],
+          "currency": "10,000 齐币",
+          "availability": "赌场商店",
+          "note": "稀有稻草人收藏项"
+        },
+        {
+          "name": "高顶礼帽",
+          "aliases": [
+            "top hat",
+            "礼帽"
+          ],
+          "currency": "8,000 齐币",
+          "availability": "赌场商店",
+          "note": "装饰帽子"
+        },
+        {
+          "name": "农场传送图腾",
+          "aliases": [
+            "warp totem farm",
+            "农场图腾"
+          ],
+          "currency": "1,000 齐币",
+          "availability": "赌场商店限量",
+          "note": "消耗品，传送回农场"
+        },
+        {
+          "name": "磁铁",
+          "aliases": [
+            "magnet",
+            "钓鱼磁铁"
+          ],
+          "currency": "1,000 齐币",
+          "availability": "赌场商店限量",
+          "note": "提高钓鱼宝箱概率"
+        }
+      ],
+      "recommendation": "赌场主要是后期收集、稀有稻草人和财富雕像；想进赌场先做神秘的齐任务线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Casino",
+        "https://zh.stardewvalleywiki.com/赌场"
+      ]
+    },
+    {
+      "id": "volcano_dwarf_shop",
+      "name": "火山矮人商店",
+      "nameEn": "Volcano Dwarf",
+      "aliases": [
+        "火山矮人",
+        "火山矮人商店",
+        "volcano dwarf",
+        "火山商店",
+        "姜岛火山商店",
+        "岛屿图腾配方",
+        "姜汁汽水配方",
+        "煤渣小丑鞋",
+        "钻石猎人"
+      ],
+      "location": "姜岛火山地牢第 5 层",
+      "openHours": "进入火山第 5 层后可交易",
+      "unlockCondition": "需要矮人语教程；进入火山地牢并到达第 5 层",
+      "currency": "gold / 火山晶石 / 钻石",
+      "stock": [
+        {
+          "name": "煤渣小丑鞋",
+          "aliases": [
+            "cinderclown shoes",
+            "火山鞋"
+          ],
+          "currency": "火山晶石 x100",
+          "availability": "常驻",
+          "note": "高阶鞋子"
+        },
+        {
+          "name": "钻石猎人",
+          "aliases": [
+            "the diamond hunter",
+            "钻石猎人书"
+          ],
+          "currency": "钻石 x10",
+          "availability": "常驻",
+          "note": "读后手动采石有机会掉钻石"
+        },
+        {
+          "name": "樱桃炸弹",
+          "aliases": [
+            "cherry bomb"
+          ],
+          "price": 450,
+          "availability": "常驻",
+          "note": "小范围爆破"
+        },
+        {
+          "name": "炸弹",
+          "aliases": [
+            "bomb"
+          ],
+          "price": 1000,
+          "availability": "常驻",
+          "note": "火山和矿洞都常用"
+        },
+        {
+          "name": "超级炸弹",
+          "aliases": [
+            "mega bomb"
+          ],
+          "price": 1600,
+          "availability": "常驻",
+          "note": "大范围爆破"
+        },
+        {
+          "name": "块茎拼盘",
+          "aliases": [
+            "roots platter"
+          ],
+          "price": 1200,
+          "availability": "每日有 50% 概率出售",
+          "note": "攻击增益料理"
+        },
+        {
+          "name": "超级大餐",
+          "aliases": [
+            "super meal"
+          ],
+          "price": 1200,
+          "availability": "每日有 50% 概率出售",
+          "note": "速度和最大体力增益料理"
+        },
+        {
+          "name": "粉红蝴蝶结",
+          "aliases": [
+            "pink bow"
+          ],
+          "price": 10000,
+          "availability": "常驻",
+          "note": "装饰帽子"
+        },
+        {
+          "name": "岛屿传送图腾配方",
+          "aliases": [
+            "warp totem island recipe",
+            "姜岛图腾配方",
+            "岛屿图腾配方"
+          ],
+          "price": 10000,
+          "availability": "未购买前常驻",
+          "note": "制作去姜岛的传送图腾"
+        },
+        {
+          "name": "姜汁汽水配方",
+          "aliases": [
+            "ginger ale recipe",
+            "姜汁汽水"
+          ],
+          "price": 1000,
+          "availability": "未购买前常驻",
+          "note": "饮料类运气增益配方"
+        }
+      ],
+      "recommendation": "第一次推进火山时优先记住第 5 层可补炸弹、料理和水；后期补岛屿图腾配方、姜汁汽水配方和钻石猎人。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Volcano_Dungeon",
+        "https://zh.stardewvalleywiki.com/火山地牢"
+      ]
+    },
+    {
+      "id": "wizards_tower",
+      "name": "法师塔",
+      "nameEn": "Wizard's Tower",
+      "aliases": [
+        "法师塔",
+        "巫师塔",
+        "wizard tower",
+        "wizard's tower",
+        "幻觉神龛",
+        "改名",
+        "改外观",
+        "魔法建筑在哪里买",
+        "方尖塔在哪里买"
+      ],
+      "location": "煤矿森林西侧",
+      "openHours": "06:00-23:00",
+      "unlockCondition": "进入社区中心并阅读工艺室金色卷轴后，收到法师来信；或购买 Joja 会员后触发",
+      "currency": "gold / 建筑材料",
+      "stock": [
+        {
+          "name": "幻觉神龛",
+          "aliases": [
+            "shrine of illusions",
+            "改名",
+            "改外观",
+            "改性别"
+          ],
+          "price": 500,
+          "availability": "与法师达到 4 心后进入地下室",
+          "note": "每次可花 500g 修改名字、性别、最喜欢的东西和初始外观"
+        },
+        {
+          "name": "地球方尖塔",
+          "aliases": [
+            "earth obelisk",
+            "山地方尖塔"
+          ],
+          "currency": "500,000g + 铱锭 x10 + 地晶 x10",
+          "availability": "取回魔法墨水后",
+          "note": "传送到山区"
+        },
+        {
+          "name": "水之方尖塔",
+          "aliases": [
+            "water obelisk",
+            "海滩方尖塔"
+          ],
+          "currency": "500,000g + 铱锭 x5 + 蛤 x10 + 珊瑚 x10",
+          "availability": "取回魔法墨水后",
+          "note": "传送到海滩"
+        },
+        {
+          "name": "沙漠方尖塔",
+          "aliases": [
+            "desert obelisk",
+            "沙漠传送塔"
+          ],
+          "currency": "1,000,000g + 铱锭 x20 + 椰子 x10 + 仙人掌果子 x10",
+          "availability": "取回魔法墨水后",
+          "note": "传送到沙漠"
+        },
+        {
+          "name": "姜岛方尖塔",
+          "aliases": [
+            "island obelisk",
+            "岛屿方尖塔"
+          ],
+          "currency": "1,000,000g + 铱锭 x10 + 龙牙 x10 + 香蕉 x10",
+          "availability": "取回魔法墨水并解锁姜岛后",
+          "note": "传送到姜岛"
+        },
+        {
+          "name": "祝尼魔小屋",
+          "aliases": [
+            "junimo hut",
+            "祝尼魔屋"
+          ],
+          "currency": "20,000g + 石头 x200 + 杨桃 x9 + 纤维 x100",
+          "availability": "取回魔法墨水后",
+          "note": "附近祝尼魔会帮忙收作物"
+        },
+        {
+          "name": "黄金钟",
+          "aliases": [
+            "gold clock",
+            "金钟"
+          ],
+          "price": 10000000,
+          "availability": "取回魔法墨水后",
+          "note": "防止农场杂物生成并让栅栏不腐烂"
+        }
+      ],
+      "recommendation": "法师塔的魔法建筑多为后期目标；如果只是问建筑材料，也可以直接问“沙漠方尖塔需要什么”。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wizard%27s_Tower",
+        "https://zh.stardewvalleywiki.com/法师塔"
+      ]
+    },
+    {
+      "id": "ice_cream_stand",
+      "name": "冰淇淋摊",
+      "nameEn": "Ice Cream Stand",
+      "aliases": [
+        "冰淇淋摊",
+        "冰激凌摊",
+        "冰淇淋",
+        "ice cream stand",
+        "alex ice cream",
+        "亚历克斯冰淇淋"
+      ],
+      "location": "博物馆旁边，通往铁匠铺桥东侧",
+      "openHours": "夏季非雨天 13:00-17:00",
+      "closed": "周三、雨天、非夏季；如果玩家与亚历克斯结婚，他不再上班",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "冰淇淋",
+          "aliases": [
+            "ice cream",
+            "冰激凌"
+          ],
+          "price": 250,
+          "availability": "夏季非雨天、非周三，亚历克斯在柜台后",
+          "note": "多数居民喜欢，夏季找海莉也常会路过这里"
+        }
+      ],
+      "recommendation": "冰淇淋适合夏季顺手补能量或送礼；不是稳定全年商店，别把它当常规补给来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ice_Cream_Stand",
+        "https://zh.stardewvalleywiki.com/冰淇淋摊"
+      ]
+    },
+    {
+      "id": "abandoned_house",
+      "name": "废弃屋帽子店",
+      "nameEn": "Abandoned House",
+      "aliases": [
+        "废弃屋",
+        "废弃屋帽子店",
+        "帽子店",
+        "帽子鼠",
+        "hat mouse",
+        "abandoned house",
+        "ruined house",
+        "帽子在哪里买"
+      ],
+      "location": "煤矿森林南部",
+      "openHours": "全天",
+      "closed": "不关闭",
+      "unlockCondition": "获得第一个成就后，帽子鼠开店",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "成就帽子",
+          "aliases": [
+            "hats",
+            "帽子",
+            "成就帽"
+          ],
+          "currency": "价格随帽子变化，常见 1,000g-10,000g，少数更贵",
+          "availability": "获得第一个成就后开店；之后获得对应成就后加入库存",
+          "note": "纯装饰；获得新成就会解锁新帽子"
+        },
+        {
+          "name": "草帽",
+          "aliases": [
+            "straw hat"
+          ],
+          "price": 1000,
+          "availability": "赢得复活节彩蛋节找蛋比赛后",
+          "note": "节日奖励帽子，帽子店解锁后可买"
+        },
+        {
+          "name": "水手帽",
+          "aliases": [
+            "sailor's cap"
+          ],
+          "price": 1000,
+          "availability": "赢得冰雪节钓鱼比赛后",
+          "note": "节日奖励帽子"
+        },
+        {
+          "name": "纸帽",
+          "aliases": [
+            "paper hat"
+          ],
+          "price": 10000,
+          "availability": "到达姜岛成就后",
+          "note": "1.6 新增帽子之一"
+        },
+        {
+          "name": "书童帽",
+          "aliases": [
+            "pageboy cap"
+          ],
+          "price": 5000,
+          "availability": "读完所有书后",
+          "note": "阅读相关成就帽子"
+        }
+      ],
+      "recommendation": "帽子店主要是装饰和成就收藏，不影响收益路线；想补全外观收藏时再集中买。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Abandoned_House",
+        "https://zh.stardewvalleywiki.com/废弃的房屋"
+      ]
+    },
+    {
+      "id": "giant_stump",
+      "name": "浣熊商店",
+      "nameEn": "Giant Stump",
+      "aliases": [
+        "浣熊商店",
+        "浣熊太太商店",
+        "浣熊",
+        "raccoon shop",
+        "giant stump",
+        "大树桩",
+        "森林邻居",
+        "浣熊日志",
+        "胡萝卜种子在哪里买",
+        "西兰花种子在哪里买"
+      ],
+      "location": "煤矿森林北部，玛妮牧场西侧",
+      "openHours": "修复大树桩并推进浣熊请求后可交易",
+      "unlockCondition": "强风暴事件后，用硬木 x100 修复大树桩；完成浣熊请求会逐步解锁家庭和商店",
+      "currency": "以物换物",
+      "stock": [
+        {
+          "name": "浣熊日志",
+          "aliases": [
+            "raccoon journal",
+            "raccoon book",
+            "浣熊书"
+          ],
+          "currency": "完成浣熊请求奖励/商店兑换",
+          "availability": "浣熊请求线推进后",
+          "note": "阅读后提升杂草掉落混合种子的机会"
+        },
+        {
+          "name": "胡萝卜种子",
+          "aliases": [
+            "carrot seeds",
+            "胡萝卜"
+          ],
+          "currency": "以物换物，随浣熊商店库存变化",
+          "availability": "浣熊商店解锁后",
+          "note": "春季特种种子，也可从种子点/箱子等来源获得"
+        },
+        {
+          "name": "西葫芦种子",
+          "aliases": [
+            "summer squash seeds",
+            "夏南瓜种子"
+          ],
+          "currency": "以物换物，随浣熊商店库存变化",
+          "availability": "浣熊商店解锁后",
+          "note": "夏季特种种子"
+        },
+        {
+          "name": "西兰花种子",
+          "aliases": [
+            "broccoli seeds",
+            "花椰菜种子"
+          ],
+          "currency": "以物换物，随浣熊商店库存变化",
+          "availability": "浣熊商店解锁后",
+          "note": "秋季特种种子"
+        },
+        {
+          "name": "粉瓜种子",
+          "aliases": [
+            "powdermelon seeds",
+            "粉末瓜种子"
+          ],
+          "currency": "以物换物，随浣熊商店库存变化",
+          "availability": "浣熊商店解锁后",
+          "note": "冬季可种的特种种子"
+        }
+      ],
+      "recommendation": "浣熊线适合 1.6 中后期补特种种子和成就；先准备硬木、鱼熏机、脱水机、罐头瓶等加工能力会更顺。",
+      "note": "浣熊请求通常按季节要加工品，完成后隔 7 天出下一轮请求。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Giant_Stump",
+        "https://zh.stardewvalleywiki.com/大树桩"
+      ]
     }
   ],
   "villagers": [

@@ -327,6 +327,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedShopIntentRetrievesSpecialMerchantEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.SHOP, "自动抚摸机在哪里买"),
+                intent(StardewGuideIntent.SHOP, "赌场怎么进"),
+                intent(StardewGuideIntent.SHOP, "幻觉神龛多少钱"),
+                intent(StardewGuideIntent.SHOP, "胡萝卜种子在哪里买")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 自动抚摸机、赌场、幻觉神龛和胡萝卜种子怎么弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SHOP);
+        assertThat(joinAnswers(evidence))
+                .contains("Joja", "自动抚摸机", "50,000g")
+                .contains("赌场", "神秘的齐", "09:00-23:50")
+                .contains("法师塔", "幻觉神龛", "500g")
+                .contains("浣熊商店", "胡萝卜种子", "以物换物")
+                .doesNotContain("夏季鱼类", "工具升级", "果树怎么种", "居民位置");
+    }
+
+    @Test
     void typedGuideIntentRetrievesFoodBuffRulesEvidence() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.GUIDE, "料理buff和饮料buff怎么叠加"));
 

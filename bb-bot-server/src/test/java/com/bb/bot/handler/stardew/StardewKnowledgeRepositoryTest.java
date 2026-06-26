@@ -27,7 +27,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
-        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(15);
+        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(23);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
@@ -230,7 +230,15 @@ class StardewKnowledgeRepositoryTest {
                 "oasis",
                 "island_trader",
                 "qis_walnut_room",
-                "stardrop_saloon"
+                "stardrop_saloon",
+                "harveys_clinic",
+                "jojamart",
+                "casino",
+                "volcano_dwarf_shop",
+                "wizards_tower",
+                "ice_cream_stand",
+                "abandoned_house",
+                "giant_stump"
         );
     }
 

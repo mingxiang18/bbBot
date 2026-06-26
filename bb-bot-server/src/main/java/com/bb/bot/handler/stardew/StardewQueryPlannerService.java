@@ -98,7 +98,7 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
         }
-        if (looksLikeShopNameQuery(q) && containsAny(q, "几点", "营业", "开门", "关门", "卖什么", "买", "购买", "兑换", "换什么", "在哪里买")) {
+        if (looksLikeShopNameQuery(q) && containsAny(q, "几点", "营业", "开门", "关门", "卖什么", "买", "购买", "兑换", "换什么", "在哪里买", "怎么进", "解锁", "怎么解锁")) {
             return StardewGuideIntent.SHOP;
         }
         if (containsAny(q, "在哪", "位置", "日程", "行程", "几点")
@@ -183,7 +183,11 @@ public class StardewQueryPlannerService {
                 "鱼店", "科罗布斯", "旅行货车", "货车", "沙漠商人", "书商",
                 "冒险家公会", "公会", "矮人商店", "矮人", "绿洲", "桑迪",
                 "姜岛商人", "岛屿商人", "齐先生核桃房", "齐钻商店", "核桃房",
-                "星之果实餐吧", "星之果实酒吧", "酒吧", "格斯");
+                "星之果实餐吧", "星之果实酒吧", "酒吧", "格斯",
+                "哈维诊所", "哈维的诊所", "医院", "诊所", "Joja", "joja", "乔家",
+                "赌场", "火山矮人", "火山商店", "法师塔", "巫师塔",
+                "冰淇淋摊", "冰激凌摊", "帽子店", "帽子鼠", "浣熊商店", "浣熊",
+                "大树桩");
     }
 
     private boolean looksLikeCookingFoodQuery(String query) {

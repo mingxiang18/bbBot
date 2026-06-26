@@ -396,6 +396,14 @@ class StardewGuideServiceTest {
         StardewGuideResult bananaSapling = service.answerEvidence(StardewGuideIntent.SHOP, "香蕉树苗怎么换");
         StardewGuideResult horseFlute = service.answerEvidence(StardewGuideIntent.SHOP, "马笛在哪里买");
         StardewGuideResult coffee = service.answerEvidence(StardewGuideIntent.SHOP, "咖啡在哪里买");
+        StardewGuideResult energyTonic = service.answerEvidence(StardewGuideIntent.SHOP, "体力药在哪里买");
+        StardewGuideResult autoPetter = service.answerEvidence(StardewGuideIntent.SHOP, "自动抚摸机在哪里买");
+        StardewGuideResult casino = service.answerEvidence(StardewGuideIntent.SHOP, "赌场怎么进");
+        StardewGuideResult islandTotemRecipe = service.answerEvidence(StardewGuideIntent.SHOP, "岛屿图腾配方在哪里买");
+        StardewGuideResult shrine = service.answerEvidence(StardewGuideIntent.SHOP, "幻觉神龛多少钱");
+        StardewGuideResult iceCream = service.answerEvidence(StardewGuideIntent.SHOP, "冰淇淋在哪里买");
+        StardewGuideResult hats = service.answerEvidence(StardewGuideIntent.SHOP, "帽子在哪里买");
+        StardewGuideResult carrotSeeds = service.answerEvidence(StardewGuideIntent.SHOP, "胡萝卜种子在哪里买");
 
         assertThat(bookseller.getIntent()).isEqualTo("shop");
         assertThat(bookseller.getAnswer()).contains("每个季节随机来访 2 天", "日历", "Joja");
@@ -417,6 +425,22 @@ class StardewGuideServiceTest {
         assertThat(horseFlute.getAnswer()).contains("齐先生核桃房", "马笛", "50 齐钻");
         assertThat(coffee.getIntent()).isEqualTo("shop_item");
         assertThat(coffee.getAnswer()).contains("星之果实餐吧", "咖啡", "300g", "12:00-00:00");
+        assertThat(energyTonic.getIntent()).isEqualTo("shop_item");
+        assertThat(energyTonic.getAnswer()).contains("哈维", "能量滋补水", "1,000g", "09:00-15:00");
+        assertThat(autoPetter.getIntent()).isEqualTo("shop_item");
+        assertThat(autoPetter.getAnswer()).contains("Joja", "自动抚摸机", "50,000g", "Joja 路线");
+        assertThat(casino.getIntent()).isEqualTo("shop");
+        assertThat(casino.getAnswer()).contains("赌场", "09:00-23:50", "神秘的齐", "齐币");
+        assertThat(islandTotemRecipe.getIntent()).isEqualTo("shop_item");
+        assertThat(islandTotemRecipe.getAnswer()).contains("火山矮人", "岛屿传送图腾配方", "10,000g", "第 5 层");
+        assertThat(shrine.getIntent()).isEqualTo("shop_item");
+        assertThat(shrine.getAnswer()).contains("法师塔", "幻觉神龛", "500g", "4 心");
+        assertThat(iceCream.getIntent()).isEqualTo("shop_item");
+        assertThat(iceCream.getAnswer()).contains("冰淇淋摊", "冰淇淋", "250g", "夏季");
+        assertThat(hats.getIntent()).isEqualTo("shop_item");
+        assertThat(hats.getAnswer()).contains("废弃屋帽子店", "成就帽子", "第一个成就");
+        assertThat(carrotSeeds.getIntent()).isEqualTo("shop_item");
+        assertThat(carrotSeeds.getAnswer()).contains("浣熊商店", "胡萝卜种子", "以物换物");
     }
 
     @Test
