@@ -27,6 +27,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
+        assertThat(repository.craftingRecipes()).hasSizeGreaterThanOrEqualTo(150);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
@@ -587,6 +588,61 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(machine.getRecommendation()).isNotBlank();
                     assertThat(machine.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void fullCraftingRecipeTableIsCoveredSeparatelyFromMachineCompatibilityData() {
+        Set<String> recipeIds = repository.craftingRecipes().stream()
+                .map(StardewData.CraftingRecipe::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.craftingRecipes()).hasSize(150);
+        assertThat(recipeIds).contains(
+                "gate",
+                "wood_fence",
+                "hardwood_fence",
+                "cask",
+                "tea_sapling",
+                "fiber_seeds",
+                "wood_floor",
+                "torch",
+                "tapper",
+                "worm_bin",
+                "flute_block",
+                "stone_sign",
+                "garden_pot",
+                "explosive_ammo",
+                "mini_forge"
+        );
+        assertThat(repository.machines()).hasSize(80);
+    }
+
+    @Test
+    void allCraftingRecipesHaveCoreFieldsMaterialsAndSources() {
+        assertThat(repository.craftingRecipes())
+                .allSatisfy(recipe -> {
+                    assertThat(recipe.getId()).isNotBlank();
+                    assertThat(recipe.getName()).isNotBlank();
+                    assertThat(recipe.getNameEn()).isNotBlank();
+                    assertThat(recipe.getCategory()).isNotBlank();
+                    assertThat(recipe.getRecipeSource()).isNotBlank();
+                    assertThat(recipe.getMaterials()).isNotEmpty();
+                    assertThat(recipe.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void findsCraftingRecipesAcrossOfficialCraftingCategories() {
+        assertThat(repository.findCraftingRecipe("木栅栏怎么做").orElseThrow().getId())
+                .isEqualTo("wood_fence");
+        assertThat(repository.findCraftingRecipe("茶苗材料").orElseThrow().getId())
+                .isEqualTo("tea_sapling");
+        assertThat(repository.findCraftingRecipe("树液采集器配方").orElseThrow().getId())
+                .isEqualTo("tapper");
+        assertThat(repository.findCraftingRecipe("迷你锻造台怎么做").orElseThrow().getId())
+                .isEqualTo("mini_forge");
+        assertThat(repository.findCraftingRecipe("生命药水怎么做").orElseThrow().getId())
+                .isEqualTo("life_elixir");
     }
 
     @Test

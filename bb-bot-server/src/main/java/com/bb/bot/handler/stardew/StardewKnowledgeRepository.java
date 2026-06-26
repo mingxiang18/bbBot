@@ -26,9 +26,9 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
-                    data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
+                    data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
                     data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getGuides().size());
         } catch (Exception e) {
@@ -63,6 +63,15 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.Tool> tools() {
         return safe(data.getTools());
+    }
+
+    public List<StardewData.CraftingRecipe> craftingRecipes() {
+        if (data.getCraftingRecipes() == null || data.getCraftingRecipes().isEmpty()) {
+            return machines().stream()
+                    .map(this::asCraftingRecipe)
+                    .toList();
+        }
+        return safe(data.getCraftingRecipes());
     }
 
     public List<StardewData.Machine> machines() {
@@ -209,6 +218,35 @@ public class StardewKnowledgeRepository {
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(MachineMatch::machine)
                 .findFirst();
+    }
+
+    public Optional<StardewData.CraftingRecipe> findCraftingRecipe(String query) {
+        String q = normalize(query);
+        return craftingRecipes().stream()
+                .map(recipe -> new CraftingRecipeMatch(recipe, scoreSearchable(q, recipe.getName(), recipe.getNameEn(), recipe.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(CraftingRecipeMatch::recipe)
+                .findFirst();
+    }
+
+    private StardewData.CraftingRecipe asCraftingRecipe(StardewData.Machine machine) {
+        StardewData.CraftingRecipe recipe = new StardewData.CraftingRecipe();
+        recipe.setId(machine.getId());
+        recipe.setName(machine.getName());
+        recipe.setNameEn(machine.getNameEn());
+        recipe.setAliases(machine.getAliases());
+        recipe.setCategory(machine.getCategory());
+        recipe.setRecipeSource(machine.getRecipeSource());
+        recipe.setMaterials(machine.getMaterials());
+        recipe.setInputs(machine.getInputs());
+        recipe.setOutputs(machine.getOutputs());
+        recipe.setProcessingTime(machine.getProcessingTime());
+        recipe.setFormula(machine.getFormula());
+        recipe.setRecommendation(machine.getRecommendation());
+        recipe.setNote(machine.getNote());
+        recipe.setSourceUrls(machine.getSourceUrls());
+        return recipe;
     }
 
     public Optional<StardewData.Shop> findShop(String query) {
@@ -493,6 +531,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record MachineMatch(StardewData.Machine machine, int score) {
+    }
+
+    private record CraftingRecipeMatch(StardewData.CraftingRecipe recipe, int score) {
     }
 
     private record ShopMatch(StardewData.Shop shop, int score) {

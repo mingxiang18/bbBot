@@ -34952,5 +34952,5487 @@
         "https://zh.stardewvalleywiki.com/精通"
       ]
     }
+  ],
+  "craftingRecipes": [
+    {
+      "id": "keg",
+      "name": "小桶",
+      "nameEn": "Keg",
+      "aliases": [
+        "keg",
+        "酒桶",
+        "酿酒桶",
+        "酿酒",
+        "啤酒桶",
+        "远古水果酒",
+        "杨桃酒",
+        "淡啤酒"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 8 级；茶水间工匠收集包/重混酿酒师收集包也可奖励小桶",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 30
+        },
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "橡树树脂",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "水果",
+        "蔬菜",
+        "小麦",
+        "啤酒花",
+        "咖啡豆",
+        "茶叶",
+        "蜂蜜",
+        "未碾米"
+      ],
+      "outputs": [
+        "果酒",
+        "果汁",
+        "啤酒",
+        "淡啤酒",
+        "咖啡",
+        "绿茶",
+        "蜂蜜酒",
+        "醋"
+      ],
+      "processingTime": "不同产物不同；果酒约 7 天，果汁约 4 天，咖啡 2 小时",
+      "formula": "果酒约为原料基础价 x3；果汁约为蔬菜基础价 x2.25",
+      "recommendation": "温室/姜岛的远古水果、杨桃优先进小桶；橡树树脂会卡产能，尽早用树液采集器养橡树。",
+      "note": "小桶适合高价值原料，低价值高周转作物可和罐头瓶比较。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Keg",
+        "https://zh.stardewvalleywiki.com/小桶",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "preserves_jar",
+      "name": "罐头瓶",
+      "nameEn": "Preserves Jar",
+      "aliases": [
+        "preserves jar",
+        "果酱瓶",
+        "腌菜瓶",
+        "罐头",
+        "果酱",
+        "腌菜",
+        "鱼籽酱",
+        "鱼子酱",
+        "caviar"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 4 级；茶水间高品质作物收集包/重混稀有作物收集包也可奖励",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "石头",
+          "quantity": 40
+        },
+        {
+          "name": "煤炭",
+          "quantity": 8
+        }
+      ],
+      "inputs": [
+        "水果",
+        "蔬菜",
+        "蘑菇",
+        "部分采集物",
+        "鱼籽"
+      ],
+      "outputs": [
+        "果酱",
+        "腌菜",
+        "陈年鱼籽",
+        "鱼子酱"
+      ],
+      "processingTime": "约 2-3 天；鱼子酱约 4 天",
+      "formula": "果酱/腌菜约为原料基础价 x2 + 50；陈年鱼籽约为鱼籽基础价 x2",
+      "recommendation": "罐头瓶前中期很强，适合低到中价作物、鱼塘鱼籽和想快速回款的农产品。",
+      "note": "原料品质不影响成品售价；鲟鱼鱼籽可做鱼子酱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Preserves_Jar",
+        "https://zh.stardewvalleywiki.com/罐头瓶",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mayonnaise_machine",
+      "name": "蛋黄酱机",
+      "nameEn": "Mayonnaise Machine",
+      "aliases": [
+        "mayonnaise machine",
+        "蛋黄酱",
+        "蛋黄酱机器",
+        "鸡蛋加工",
+        "鸭蛋加工",
+        "恐龙蛋加工"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 2 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 15
+        },
+        {
+          "name": "石头",
+          "quantity": 15
+        },
+        {
+          "name": "地晶",
+          "quantity": 1
+        },
+        {
+          "name": "铜锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "鸡蛋",
+        "大鸡蛋",
+        "鸭蛋",
+        "虚空蛋",
+        "恐龙蛋"
+      ],
+      "outputs": [
+        "蛋黄酱",
+        "鸭蛋黄酱",
+        "虚空蛋黄酱",
+        "恐龙蛋黄酱"
+      ],
+      "processingTime": "约 3 小时",
+      "formula": "把蛋类加工成对应蛋黄酱，通常比直接卖蛋更划算",
+      "recommendation": "养鸡后第一批机器优先做蛋黄酱机，能立刻改善前期现金流。",
+      "note": "蛋的类型会决定成品；大鸡蛋可出更高价值蛋黄酱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mayonnaise_Machine",
+        "https://zh.stardewvalleywiki.com/蛋黄酱机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cheese_press",
+      "name": "奶酪压制机",
+      "nameEn": "Cheese Press",
+      "aliases": [
+        "cheese press",
+        "奶酪机",
+        "奶酪压榨机",
+        "奶酪",
+        "羊奶酪",
+        "牛奶加工",
+        "羊奶加工"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 6 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 45
+        },
+        {
+          "name": "石头",
+          "quantity": 45
+        },
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "铜锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "牛奶",
+        "大壶牛奶",
+        "山羊奶",
+        "大壶山羊奶"
+      ],
+      "outputs": [
+        "奶酪",
+        "山羊奶酪"
+      ],
+      "processingTime": "约 3.3 小时",
+      "formula": "把奶加工成奶酪/山羊奶酪；高品质大壶奶通常产出更高品质成品",
+      "recommendation": "畜棚路线核心机器，奶酪既能卖钱也能作为下矿回复食物。",
+      "note": "奶酪可进地窖木桶陈酿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cheese_Press",
+        "https://zh.stardewvalleywiki.com/奶酪压制机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "loom",
+      "name": "织布机",
+      "nameEn": "Loom",
+      "aliases": [
+        "loom",
+        "布料机",
+        "织布",
+        "布料",
+        "羊毛加工"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 7 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 60
+        },
+        {
+          "name": "纤维",
+          "quantity": 30
+        },
+        {
+          "name": "松焦油",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "羊毛"
+      ],
+      "outputs": [
+        "布料"
+      ],
+      "processingTime": "约 4 小时",
+      "formula": "羊毛加工为布料；较高品质羊毛有机会产出更多布料",
+      "recommendation": "如果养绵羊/兔子，织布机能稳定补布料；磨坊、服装和任务都会用到布料。",
+      "note": "兔子也会产羊毛，兔脚和布料可一起补收集/送礼需求。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Loom",
+        "https://zh.stardewvalleywiki.com/织布机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "oil_maker",
+      "name": "产油机",
+      "nameEn": "Oil Maker",
+      "aliases": [
+        "oil maker",
+        "榨油机",
+        "油机",
+        "松露油",
+        "油",
+        "松露加工"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 8 级",
+      "materials": [
+        {
+          "name": "史莱姆泥",
+          "quantity": 50
+        },
+        {
+          "name": "硬木",
+          "quantity": 20
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "松露",
+        "玉米",
+        "葵花籽",
+        "向日葵"
+      ],
+      "outputs": [
+        "松露油",
+        "油"
+      ],
+      "processingTime": "松露油约 6 小时；普通油处理时间较短",
+      "formula": "松露加工为松露油；烹饪用油也可由玉米/葵花籽/向日葵制作",
+      "recommendation": "猪成型后产油机是松露路线核心，配采集者/植物学家相关路线收益更稳。",
+      "note": "雨天和冬天猪不会在户外挖松露，机器产能要按季节规划。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Oil_Maker",
+        "https://zh.stardewvalleywiki.com/产油机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "bee_house",
+      "name": "蜂房",
+      "nameEn": "Bee House",
+      "aliases": [
+        "bee house",
+        "蜂箱",
+        "蜂蜜",
+        "花蜜",
+        "仙尘玫瑰蜂蜜",
+        "玫瑰仙子蜂蜜"
+      ],
+      "category": "artisan",
+      "recipeSource": "耕种 3 级；茶水间秋季作物收集包奖励蜂房",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 40
+        },
+        {
+          "name": "煤炭",
+          "quantity": 8
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "枫糖浆",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "附近花朵"
+      ],
+      "outputs": [
+        "野蜂蜜",
+        "花蜜"
+      ],
+      "processingTime": "约 4 天",
+      "formula": "蜂蜜价格受附近成熟花朵影响；姜岛全年可产蜂蜜",
+      "recommendation": "姜岛蜂房配高价值花很适合被动收益；本岛冬天不产蜂蜜。",
+      "note": "不要采掉用于定价的花；蜂房会根据范围内花朵决定蜂蜜种类。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bee_House",
+        "https://zh.stardewvalleywiki.com/蜂房",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "furnace",
+      "name": "熔炉",
+      "nameEn": "Furnace",
+      "aliases": [
+        "furnace",
+        "炉子",
+        "冶炼",
+        "熔炼",
+        "矿石变锭",
+        "铜锭",
+        "铁锭",
+        "金锭",
+        "铱锭"
+      ],
+      "category": "refining",
+      "recipeSource": "克林特在玩家获得铜矿石后给配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 25
+        },
+        {
+          "name": "铜矿石",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "矿石",
+        "煤炭",
+        "石英",
+        "火水晶"
+      ],
+      "outputs": [
+        "金属锭",
+        "精炼石英"
+      ],
+      "processingTime": "不同矿石不同；铜锭约 30 分钟，铱锭约 8 小时",
+      "formula": "多数金属锭需要 5 个矿石 + 1 个煤炭",
+      "recommendation": "第一批铜矿石尽快做熔炉，工具升级、洒水器和机器都会大量吃金属锭。",
+      "note": "精炼石英也可用石英/火水晶在熔炉中制作。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Furnace",
+        "https://zh.stardewvalleywiki.com/熔炉",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "charcoal_kiln",
+      "name": "木炭窑",
+      "nameEn": "Charcoal Kiln",
+      "aliases": [
+        "charcoal kiln",
+        "煤炭机",
+        "烧炭",
+        "木头变煤",
+        "煤炭怎么做"
+      ],
+      "category": "refining",
+      "recipeSource": "觅食 2 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 20
+        },
+        {
+          "name": "铜锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "木材"
+      ],
+      "outputs": [
+        "煤炭"
+      ],
+      "processingTime": "约 30 分钟",
+      "formula": "10 木材 -> 1 煤炭",
+      "recommendation": "缺煤但木材富余时使用；前期木材也很紧，别无脑全烧。",
+      "note": "煤炭也可刷矿井煤尘精灵、买克林特或用回收机间接补。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Charcoal_Kiln",
+        "https://zh.stardewvalleywiki.com/木炭窑",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "recycling_machine",
+      "name": "回收机",
+      "nameEn": "Recycling Machine",
+      "aliases": [
+        "recycling machine",
+        "回收",
+        "垃圾回收",
+        "眼镜回收",
+        "漂流木",
+        "湿报纸",
+        "cd回收"
+      ],
+      "category": "refining",
+      "recipeSource": "钓鱼 4 级；也可通过部分特殊奖励获得",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 25
+        },
+        {
+          "name": "石头",
+          "quantity": 25
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "垃圾",
+        "浮木",
+        "湿报纸",
+        "破损的眼镜",
+        "破损的 CD"
+      ],
+      "outputs": [
+        "石头",
+        "木材",
+        "火把",
+        "布料",
+        "精炼石英"
+      ],
+      "processingTime": "约 1 小时",
+      "formula": "把钓鱼垃圾转成基础材料或精炼石英",
+      "recommendation": "钓鱼多、蟹笼多时很实用，破损眼镜/CD 是补精炼石英的好来源。",
+      "note": "Joja 可乐和腐烂植物不能放入回收机。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Recycling_Machine",
+        "https://zh.stardewvalleywiki.com/回收机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "seed_maker",
+      "name": "种子生产器",
+      "nameEn": "Seed Maker",
+      "aliases": [
+        "seed maker",
+        "种子机",
+        "种子制造机",
+        "远古种子复制",
+        "作物变种子"
+      ],
+      "category": "refining",
+      "recipeSource": "耕种 9 级；完成染料收集包也可奖励",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 25
+        },
+        {
+          "name": "煤炭",
+          "quantity": 10
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "多数作物"
+      ],
+      "outputs": [
+        "对应种子",
+        "混合种子",
+        "远古种子"
+      ],
+      "processingTime": "约 20 分钟",
+      "formula": "通常产 1-3 个对应种子；有小概率出混合种子或远古种子",
+      "recommendation": "远古水果和稀有种子扩种时核心；普通商店种子不一定值得回收。",
+      "note": "部分作物不能放入；远古水果复制是温室成型关键。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Seed_Maker",
+        "https://zh.stardewvalleywiki.com/种子生产器",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "crystalarium",
+      "name": "宝石复制机",
+      "nameEn": "Crystalarium",
+      "aliases": [
+        "crystalarium",
+        "水晶复制机",
+        "宝石复制",
+        "复制宝石",
+        "复制钻石",
+        "翡翠复制"
+      ],
+      "category": "refining",
+      "recipeSource": "采矿 9 级；金库 25,000g 收集包奖励一个",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 99
+        },
+        {
+          "name": "金锭",
+          "quantity": 5
+        },
+        {
+          "name": "铱锭",
+          "quantity": 2
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "宝石",
+        "矿物"
+      ],
+      "outputs": [
+        "复制的宝石/矿物"
+      ],
+      "processingTime": "按物品变化；钻石约 5 天",
+      "formula": "放入一种宝石后持续复制，取出成品不会消耗模板",
+      "recommendation": "常见用法是复制翡翠换楼梯、复制钻石赚钱/送礼；后期批量很强。",
+      "note": "五彩碎片不能复制。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crystalarium",
+        "https://zh.stardewvalleywiki.com/宝石复制机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "lightning_rod",
+      "name": "避雷针",
+      "nameEn": "Lightning Rod",
+      "aliases": [
+        "lightning rod",
+        "避雷",
+        "电池组",
+        "电池",
+        "雷雨电池"
+      ],
+      "category": "refining",
+      "recipeSource": "觅食 6 级；10,000g 金库收集包也可奖励避雷针",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        },
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "雷雨天闪电"
+      ],
+      "outputs": [
+        "电池组"
+      ],
+      "processingTime": "被闪电击中后第二天可取电池组",
+      "formula": "雷雨时有机会吸收闪电，保护农场并产电池",
+      "recommendation": "中期多做几个，铱制洒水器、宝石复制机和任务都常缺电池组。",
+      "note": "不是每个雷都会被吸收；数量越多越稳。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lightning_Rod",
+        "https://zh.stardewvalleywiki.com/避雷针",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "fish_smoker",
+      "name": "鱼熏机",
+      "nameEn": "Fish Smoker",
+      "aliases": [
+        "fish smoker",
+        "熏鱼机",
+        "烟熏鱼",
+        "鱼怎么熏",
+        "熏鱼",
+        "钓鱼果冻用途"
+      ],
+      "category": "artisan",
+      "recipeSource": "威利鱼店购买配方 10,000g；河边农场开局自带一个，也可能从奖品机获得",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "海果冻",
+          "quantity": 1
+        },
+        {
+          "name": "河果冻",
+          "quantity": 1
+        },
+        {
+          "name": "洞穴果冻",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "任意鱼",
+        "煤炭"
+      ],
+      "outputs": [
+        "烟熏鱼"
+      ],
+      "processingTime": "50 分钟",
+      "formula": "鱼 + 煤炭 -> 烟熏鱼；售价为原鱼价格 x2，保留鱼的品质",
+      "recommendation": "高品质、高价鱼优先熏；钓鱼流派可以显著提高即时收益。",
+      "note": "可处理传说鱼和蟹笼鱼；蟹笼鱼熏制后也可食用。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Smoker",
+        "https://zh.stardewvalleywiki.com/鱼熏机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "dehydrator",
+      "name": "脱水机",
+      "nameEn": "Dehydrator",
+      "aliases": [
+        "dehydrator",
+        "风干机",
+        "烘干机",
+        "脱水果干",
+        "果干",
+        "葡萄干",
+        "蘑菇干",
+        "干蘑菇"
+      ],
+      "category": "artisan",
+      "recipeSource": "皮埃尔杂货店购买配方 10,000g；选择蘑菇洞时会附带一个，也可能从奖品机获得",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 30
+        },
+        {
+          "name": "黏土",
+          "quantity": 2
+        },
+        {
+          "name": "火水晶",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "5 个同种同品质水果",
+        "5 个可食用蘑菇",
+        "5 个葡萄"
+      ],
+      "outputs": [
+        "果干",
+        "蘑菇干",
+        "葡萄干"
+      ],
+      "processingTime": "1 天，次日早晨完成",
+      "formula": "果干/蘑菇干售价约为 7.5 倍基础价 + 25g；葡萄干固定 600g",
+      "recommendation": "低维护加工机，适合蘑菇洞、果树和大量水果；但顶级赚钱仍常和小桶比较。",
+      "note": "成品固定普通品质；红蘑菇不能放入，松露不算蘑菇。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dehydrator",
+        "https://zh.stardewvalleywiki.com/脱水机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "bait_maker",
+      "name": "诱饵制造机",
+      "nameEn": "Bait Maker",
+      "aliases": [
+        "bait maker",
+        "鱼饵制造机",
+        "定向鱼饵",
+        "目标鱼饵",
+        "专用鱼饵",
+        "鱼变鱼饵"
+      ],
+      "category": "refining",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 3
+        },
+        {
+          "name": "珊瑚",
+          "quantity": 3
+        },
+        {
+          "name": "海胆",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "任意鱼"
+      ],
+      "outputs": [
+        "对应鱼的定向鱼饵 5-10 个"
+      ],
+      "processingTime": "10 分钟",
+      "formula": "放入某种鱼后产出对应定向鱼饵，提高钓到该鱼的概率",
+      "recommendation": "刷特定鱼、鱼塘扩容材料或收集包补漏时很有用；别拿只想留样本的稀有鱼乱做。",
+      "note": "鱼可放入，海草、藻类、果冻等可钓物不能放入。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bait_Maker",
+        "https://zh.stardewvalleywiki.com/诱饵制造机",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mushroom_log",
+      "name": "蘑菇木桩",
+      "nameEn": "Mushroom Log",
+      "aliases": [
+        "mushroom log",
+        "蘑菇原木",
+        "蘑菇木头",
+        "蘑菇桩",
+        "怎么种蘑菇"
+      ],
+      "category": "refining",
+      "recipeSource": "觅食 4 级；奖品机也可能奖励",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "苔藓",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "附近野生树木"
+      ],
+      "outputs": [
+        "普通蘑菇",
+        "红蘑菇",
+        "紫蘑菇",
+        "羊肚菌",
+        "鸡油菌"
+      ],
+      "processingTime": "通常每 4 天产出；雨天会缩短 1 天",
+      "formula": "周围 7x7 范围野生树越多，产量越高；成熟树种会影响蘑菇类型倾向",
+      "recommendation": "想补蘑菇、脱水机原料或生命药水材料时值得规划一片树林。",
+      "note": "可在所有季节产蘑菇，也可放在沙漠和姜岛。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mushroom_Log",
+        "https://zh.stardewvalleywiki.com/蘑菇木桩",
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "sprinkler",
+      "name": "洒水器",
+      "nameEn": "Sprinkler",
+      "aliases": [
+        "sprinkler",
+        "基础洒水器",
+        "普通洒水器",
+        "洒水器怎么做",
+        "自动浇水"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 2 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌上下左右 4 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖 4 个相邻格；不能浇花盆，不能放在沙地上。",
+      "recommendation": "前期可以少量过渡，但范围小；通常尽快升级到优质洒水器。",
+      "note": "也可偶尔从旅行货车买到。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Sprinkler",
+        "https://zh.stardewvalleywiki.com/%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "quality_sprinkler",
+      "name": "优质洒水器",
+      "nameEn": "Quality Sprinkler",
+      "aliases": [
+        "quality sprinkler",
+        "高级洒水器",
+        "优质喷头",
+        "优质洒水器怎么做",
+        "8格洒水器"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌周围 8 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖中心周围 3x3 的 8 格。",
+      "recommendation": "第一年夏秋非常实用；铁锭、金锭和精炼石英稳定后优先批量制作。",
+      "note": "可从谜之盒/金色谜之盒开出，也可偶尔从旅行货车买到。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://zh.stardewvalleywiki.com/%E4%BC%98%E8%B4%A8%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "iridium_sprinkler",
+      "name": "铱制洒水器",
+      "nameEn": "Iridium Sprinkler",
+      "aliases": [
+        "iridium sprinkler",
+        "铱洒水器",
+        "铱喷头",
+        "铱制洒水器怎么做",
+        "24格洒水器"
+      ],
+      "category": "irrigation",
+      "recipeSource": "耕种 9 级；科罗布斯每周五也会出售",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在耕地附近"
+      ],
+      "outputs": [
+        "每天早上自动浇灌周围 24 格作物"
+      ],
+      "processingTime": "每天 6:00 自动工作",
+      "formula": "覆盖中心周围 5x5 的 24 格。",
+      "recommendation": "温室、姜岛和大田地的主力洒水器；铱锭紧张时可周五去科罗布斯处购买。",
+      "note": "可用压力喷嘴或施肥器进一步升级。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://zh.stardewvalleywiki.com/%E9%93%B1%E5%88%B6%E6%B4%92%E6%B0%B4%E5%99%A8"
+      ]
+    },
+    {
+      "id": "cherry_bomb",
+      "name": "樱桃炸弹",
+      "nameEn": "Cherry Bomb",
+      "aliases": [
+        "cherry bomb",
+        "小炸弹",
+        "樱桃炸弹怎么做",
+        "小爆炸"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 1 级",
+      "materials": [
+        {
+          "name": "铜矿石",
+          "quantity": 4
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "小范围爆炸，破坏岩石和矿点"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 3 格。",
+      "recommendation": "前期清矿井小片石头可以用；大量下矿更推荐普通炸弹或超级炸弹。",
+      "note": "放下后要立刻走开，避免被炸伤。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Cherry_Bomb",
+        "https://zh.stardewvalleywiki.com/%E6%A8%B1%E6%A1%83%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "bomb",
+      "name": "炸弹",
+      "nameEn": "Bomb",
+      "aliases": [
+        "bomb",
+        "普通炸弹",
+        "炸弹怎么做",
+        "矿洞炸弹"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 6 级",
+      "materials": [
+        {
+          "name": "铁矿石",
+          "quantity": 4
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "中范围爆炸，快速清岩石和找楼梯/矿石"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 5 格。",
+      "recommendation": "骷髅洞穴和危险矿井的核心消耗品；煤炭紧张时可以从矮人处购买炸弹。",
+      "note": "炸弹会伤到玩家，也可能破坏农场上附近可破坏物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Bomb",
+        "https://zh.stardewvalleywiki.com/%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "mega_bomb",
+      "name": "超级炸弹",
+      "nameEn": "Mega Bomb",
+      "aliases": [
+        "mega bomb",
+        "大炸弹",
+        "巨型炸弹",
+        "超级炸弹怎么做"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 8 级",
+      "materials": [
+        {
+          "name": "金矿石",
+          "quantity": 4
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置后短暂延迟爆炸"
+      ],
+      "outputs": [
+        "大范围爆炸，快速清骷髅洞穴大面积岩石"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "爆炸半径约 6-8 格。",
+      "recommendation": "中后期冲骷髅洞穴深层效率最高；太阳精华/虚空精华不缺时优先带一组。",
+      "note": "范围很大，放下后尽快拉开距离。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Mega_Bomb",
+        "https://zh.stardewvalleywiki.com/%E8%B6%85%E7%BA%A7%E7%82%B8%E5%BC%B9"
+      ]
+    },
+    {
+      "id": "staircase",
+      "name": "楼梯",
+      "nameEn": "Staircase",
+      "aliases": [
+        "staircase",
+        "梯子",
+        "楼梯怎么做",
+        "矿洞楼梯",
+        "骷髅洞穴楼梯",
+        "跳层"
+      ],
+      "category": "mining",
+      "recipeSource": "采矿 2 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 99
+        }
+      ],
+      "inputs": [
+        "在矿井/骷髅洞穴中使用"
+      ],
+      "outputs": [
+        "立即生成通往下一层的楼梯"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "每个楼梯消耗 99 石头；沙漠商人周日可用翡翠换楼梯。",
+      "recommendation": "骷髅洞穴冲 100 层、跳过怪层/螺旋层时很强；提前用宝石复制机复制翡翠更省石头。",
+      "note": "不能代替日常找矿收益，适合保命、冲层和跳低效层。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Staircase",
+        "https://zh.stardewvalleywiki.com/%E6%A5%BC%E6%A2%AF"
+      ]
+    },
+    {
+      "id": "chest",
+      "name": "箱子",
+      "nameEn": "Chest",
+      "aliases": [
+        "chest",
+        "木箱",
+        "箱子怎么做",
+        "储物箱",
+        "收纳箱"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供基础储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "用于分类保存物品；箱子可以放在很多户外区域，但 NPC 经过的格子可能影响摆放安全。",
+      "recommendation": "第一周就建议做多个箱子，按作物、矿物、鱼、任务物品分类。",
+      "note": "箱子本身不是出货箱；卖东西仍要放进农场出货箱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Chest",
+        "https://zh.stardewvalleywiki.com/%E7%AE%B1%E5%AD%90"
+      ]
+    },
+    {
+      "id": "big_chest",
+      "name": "大箱子",
+      "nameEn": "Big Chest",
+      "aliases": [
+        "big chest",
+        "大木箱",
+        "大箱子怎么做",
+        "大型箱子"
+      ],
+      "category": "storage",
+      "recipeSource": "木匠的商店购买配方，5,000g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 120
+        },
+        {
+          "name": "铜锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供接近普通箱子两倍的储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "可作为普通箱子的升级型储物方案。",
+      "recommendation": "中期物品爆仓后升级常用分类箱；铜锭紧张时先升级高频箱。",
+      "note": "适合矿物、作物、鱼类等数量多的分类。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Big_Chest",
+        "https://zh.stardewvalleywiki.com/%E5%A4%A7%E7%AE%B1%E5%AD%90"
+      ]
+    },
+    {
+      "id": "stone_chest",
+      "name": "石箱",
+      "nameEn": "Stone Chest",
+      "aliases": [
+        "stone chest",
+        "石头箱子",
+        "石箱怎么做",
+        "石制箱子"
+      ],
+      "category": "storage",
+      "recipeSource": "罗宾特别订单奖励配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供基础储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "功能类似普通箱子，主要消耗石头而不是木材。",
+      "recommendation": "木材紧张、石头富余时可用来扩储物。",
+      "note": "需要先完成罗宾相关特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Stone_Chest",
+        "https://zh.stardewvalleywiki.com/%E7%9F%B3%E7%AE%B1"
+      ]
+    },
+    {
+      "id": "big_stone_chest",
+      "name": "大石箱",
+      "nameEn": "Big Stone Chest",
+      "aliases": [
+        "big stone chest",
+        "大石头箱子",
+        "大石箱怎么做"
+      ],
+      "category": "storage",
+      "recipeSource": "矮人处购买配方，5,000g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 250
+        }
+      ],
+      "inputs": [
+        "放置物品"
+      ],
+      "outputs": [
+        "提供接近普通箱子两倍的储物空间"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "大容量石制储物方案。",
+      "recommendation": "后期石头很多时适合批量升级储物；下矿玩家通常比木材更容易攒石头。",
+      "note": "需要能和矮人交易。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Big_Stone_Chest",
+        "https://zh.stardewvalleywiki.com/%E5%A4%A7%E7%9F%B3%E7%AE%B1"
+      ]
+    },
+    {
+      "id": "wood_sign",
+      "name": "木牌",
+      "nameEn": "Wood Sign",
+      "aliases": [
+        "wood sign",
+        "木牌怎么做",
+        "木标牌",
+        "牌子",
+        "标牌"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "对木牌使用一个物品"
+      ],
+      "outputs": [
+        "显示物品图标且不消耗该物品"
+      ],
+      "processingTime": "放置后长期使用",
+      "formula": "用于标记箱子、作物区、鱼塘或机器产线。",
+      "recommendation": "箱子多了以后很实用；用图标标记分类能减少翻箱时间。",
+      "note": "想写自定义文字可用文本标牌。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Wood_Sign",
+        "https://zh.stardewvalleywiki.com/%E6%9C%A8%E7%89%8C"
+      ]
+    },
+    {
+      "id": "scarecrow",
+      "name": "稻草人",
+      "nameEn": "Scarecrow",
+      "aliases": [
+        "scarecrow",
+        "稻草人怎么做",
+        "防乌鸦",
+        "乌鸦吃作物"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "耕种 1 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "放置在农田附近"
+      ],
+      "outputs": [
+        "防止范围内作物被乌鸦破坏"
+      ],
+      "processingTime": "放置后长期生效",
+      "formula": "普通稻草人半径约 8 格。",
+      "recommendation": "春季第一批作物后尽快做；大田地需要多个覆盖，别只放在边角。",
+      "note": "稀有稻草人主要是收藏；集齐稀有稻草人后可解锁豪华稻草人配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Scarecrow",
+        "https://zh.stardewvalleywiki.com/%E7%A8%BB%E8%8D%89%E4%BA%BA"
+      ]
+    },
+    {
+      "id": "deluxe_scarecrow",
+      "name": "豪华稻草人",
+      "nameEn": "Deluxe Scarecrow",
+      "aliases": [
+        "deluxe scarecrow",
+        "高级稻草人",
+        "豪华稻草人怎么做",
+        "16格稻草人"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "集齐全部稀有稻草人后次日邮件获得配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "纤维",
+          "quantity": 40
+        },
+        {
+          "name": "铱矿石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放置在农田附近"
+      ],
+      "outputs": [
+        "更大范围防乌鸦"
+      ],
+      "processingTime": "放置后长期生效",
+      "formula": "豪华稻草人半径约 16 格。",
+      "recommendation": "后期大田地减少稻草人数量和摆放压力；前期不必强追。",
+      "note": "需要先收集全套稀有稻草人。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Deluxe_Scarecrow",
+        "https://zh.stardewvalleywiki.com/%E8%B1%AA%E5%8D%8E%E7%A8%BB%E8%8D%89%E4%BA%BA"
+      ]
+    },
+    {
+      "id": "heavy_furnace",
+      "name": "重型熔炉",
+      "nameEn": "Heavy Furnace",
+      "aliases": [
+        "heavy furnace",
+        "大熔炉",
+        "重型熔炉怎么做",
+        "高级熔炉"
+      ],
+      "category": "refining",
+      "recipeSource": "采矿精通",
+      "materials": [
+        {
+          "name": "熔炉",
+          "quantity": 2
+        },
+        {
+          "name": "铁锭",
+          "quantity": 3
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "任意矿石 x25",
+        "煤炭 x3"
+      ],
+      "outputs": [
+        "金属锭"
+      ],
+      "processingTime": "和普通熔炉类似，按矿石类型不同",
+      "formula": "每次消耗 25 矿石和 3 煤炭，比普通熔炉更省煤炭。",
+      "recommendation": "后期批量烧矿时很省煤；精通前继续用普通熔炉阵列。",
+      "note": "需要采矿精通后才能制作。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Heavy_Furnace",
+        "https://zh.stardewvalleywiki.com/%E9%87%8D%E5%9E%8B%E7%86%94%E7%82%89"
+      ]
+    },
+    {
+      "id": "solar_panel",
+      "name": "太阳能板",
+      "nameEn": "Solar Panel",
+      "aliases": [
+        "solar panel",
+        "太阳能板怎么做",
+        "太阳能电池板",
+        "电池板"
+      ],
+      "category": "refining",
+      "recipeSource": "卡洛琳特别订单奖励配方",
+      "materials": [
+        {
+          "name": "精炼石英",
+          "quantity": 10
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        },
+        {
+          "name": "金锭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "放在阳光下"
+      ],
+      "outputs": [
+        "电池组"
+      ],
+      "processingTime": "晴天累计一段时间后产出电池组",
+      "formula": "需要放在室外有阳光的位置；不是雷雨天触发。",
+      "recommendation": "后期稳定补电池组，适合搭配铱制洒水器、宝石复制机等消耗。",
+      "note": "配方来自卡洛琳特别订单，不是技能升级直接解锁。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Solar_Panel",
+        "https://zh.stardewvalleywiki.com/%E5%A4%AA%E9%98%B3%E8%83%BD%E6%9D%BF"
+      ]
+    },
+    {
+      "id": "slime_incubator",
+      "name": "史莱姆孵化器",
+      "nameEn": "Slime Incubator",
+      "aliases": [
+        "slime incubator",
+        "史莱姆孵化器怎么做",
+        "孵史莱姆",
+        "史莱姆蛋孵化"
+      ],
+      "category": "slime",
+      "recipeSource": "战斗 8 级",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 2
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 100
+        }
+      ],
+      "inputs": [
+        "史莱姆蛋"
+      ],
+      "outputs": [
+        "孵化出史莱姆"
+      ],
+      "processingTime": "需要等待一段时间孵化",
+      "formula": "可在史莱姆屋或户外养史莱姆。",
+      "recommendation": "想经营史莱姆屋再做；普通进度优先级低于武器、防具和矿洞资源。",
+      "note": "户外养史莱姆前先考虑安全和围栏。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Slime_Incubator",
+        "https://zh.stardewvalleywiki.com/%E5%8F%B2%E8%8E%B1%E5%A7%86%E5%AD%B5%E5%8C%96%E5%99%A8"
+      ]
+    },
+    {
+      "id": "slime_egg_press",
+      "name": "史莱姆蛋压制机",
+      "nameEn": "Slime Egg-Press",
+      "aliases": [
+        "slime egg-press",
+        "slime egg press",
+        "史莱姆蛋压制机怎么做",
+        "史莱姆蛋机器"
+      ],
+      "category": "slime",
+      "recipeSource": "战斗 6 级",
+      "materials": [
+        {
+          "name": "煤炭",
+          "quantity": 25
+        },
+        {
+          "name": "火水晶",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "史莱姆 x100"
+      ],
+      "outputs": [
+        "史莱姆蛋"
+      ],
+      "processingTime": "加工后产出史莱姆蛋",
+      "formula": "把 100 个史莱姆压成 1 个史莱姆蛋。",
+      "recommendation": "史莱姆屋路线或卖史莱姆蛋时有用；前期煤炭紧张时别急着大量做。",
+      "note": "史莱姆蛋颜色和价值有差异。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Slime_Egg-Press",
+        "https://zh.stardewvalleywiki.com/%E5%8F%B2%E8%8E%B1%E5%A7%86%E8%9B%8B%E5%8E%8B%E5%88%B6%E6%9C%BA"
+      ]
+    },
+    {
+      "id": "bone_mill",
+      "name": "骨头磨坊",
+      "nameEn": "Bone Mill",
+      "aliases": [
+        "bone mill",
+        "骨磨机",
+        "骨头磨坊怎么做",
+        "骨头机器",
+        "骨头转肥料"
+      ],
+      "category": "refining",
+      "recipeSource": "冈瑟特别订单奖励配方",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 10
+        },
+        {
+          "name": "黏土",
+          "quantity": 3
+        },
+        {
+          "name": "石头",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "骨头类物品"
+      ],
+      "outputs": [
+        "肥料"
+      ],
+      "processingTime": "加工后产出肥料",
+      "formula": "把骨头类物品转成不同肥料。",
+      "recommendation": "姜岛/矿井刷到大量骨头碎片后，用来补高级肥料很舒服。",
+      "note": "需要完成冈瑟特别订单获得配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Bone_Mill",
+        "https://zh.stardewvalleywiki.com/%E9%AA%A8%E5%A4%B4%E7%A3%A8%E5%9D%8A"
+      ]
+    },
+    {
+      "id": "geode_crusher",
+      "name": "晶球破开器",
+      "nameEn": "Geode Crusher",
+      "aliases": [
+        "geode crusher",
+        "晶球破碎机",
+        "晶球破开器怎么做",
+        "自动开晶球",
+        "开晶球机器"
+      ],
+      "category": "refining",
+      "recipeSource": "克林特特别订单奖励配方",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 2
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        },
+        {
+          "name": "钻石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "晶球",
+        "冰封晶球",
+        "岩浆晶球",
+        "万象晶球"
+      ],
+      "outputs": [
+        "晶球内物品"
+      ],
+      "processingTime": "自动破开晶球",
+      "formula": "自动开晶球，但仍适合先去克林特处理关键缺口。",
+      "recommendation": "后期大量晶球处理省跑腿；博物馆缺具体矿物时仍要结合晶球类型选择。",
+      "note": "需要完成克林特特别订单获得配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Geode_Crusher",
+        "https://zh.stardewvalleywiki.com/%E6%99%B6%E7%90%83%E7%A0%B4%E5%BC%80%E5%99%A8"
+      ]
+    },
+    {
+      "id": "hopper",
+      "name": "料斗",
+      "nameEn": "Hopper",
+      "aliases": [
+        "hopper",
+        "料斗怎么做",
+        "自动上料",
+        "自动填机器"
+      ],
+      "category": "automation",
+      "recipeSource": "齐先生核桃房购买配方，50 齐钻",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "放射性锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "放入待加工物品，并把机器放在前方"
+      ],
+      "outputs": [
+        "自动把物品送入前方机器"
+      ],
+      "processingTime": "持续辅助上料",
+      "formula": "只能自动装入机器，不能自动收取成品。",
+      "recommendation": "适合大规模加工线减点击；没有自动收成能力，仍要手动取成品。",
+      "note": "属于齐先生后期配方，材料也偏后期。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Hopper",
+        "https://zh.stardewvalleywiki.com/%E6%96%99%E6%96%97"
+      ]
+    },
+    {
+      "id": "farm_computer",
+      "name": "农场电脑",
+      "nameEn": "Farm Computer",
+      "aliases": [
+        "farm computer",
+        "农场电脑怎么做",
+        "农场信息",
+        "查看农场状态"
+      ],
+      "category": "farm_utility",
+      "recipeSource": "德米特里厄斯特别订单奖励配方",
+      "materials": [
+        {
+          "name": "矮人小工具",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "在农场使用"
+      ],
+      "outputs": [
+        "显示农场作物、机器、建筑等状态摘要"
+      ],
+      "processingTime": "即时查看",
+      "formula": "用于快速查看农场上未收机器、未浇水作物等信息。",
+      "recommendation": "中后期农场规模变大后很实用；矮人小工具第一件通常先捐博物馆，第二件再做电脑。",
+      "note": "需要完成德米特里厄斯特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting",
+        "https://stardewvalleywiki.com/Farm_Computer",
+        "https://zh.stardewvalleywiki.com/%E5%86%9C%E5%9C%BA%E7%94%B5%E8%84%91"
+      ]
+    },
+    {
+      "id": "basic_fertilizer",
+      "name": "基础肥料",
+      "nameEn": "Basic Fertilizer",
+      "aliases": [
+        "basic fertilizer",
+        "普通肥料",
+        "肥料",
+        "基础肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 1 级",
+      "materials": [
+        {
+          "name": "树液",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "小幅提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "每块已锄地只能使用一种肥料；作物成熟后对品质概率生效。",
+      "recommendation": "前期树液便宜，适合铺在防风草、土豆、蓝莓等大面积作物上补品质收益。",
+      "note": "肥料通常要在种子发芽前使用。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_fertilizer",
+      "name": "高级肥料",
+      "nameEn": "Quality Fertilizer",
+      "aliases": [
+        "quality fertilizer",
+        "高品质肥料",
+        "高级肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 9 级",
+      "materials": [
+        {
+          "name": "树液",
+          "quantity": 4
+        },
+        {
+          "name": "任意鱼",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 2 个高级肥料",
+        "提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "相比基础肥料更偏向出高品质作物。",
+      "recommendation": "后期做高品质作物、卖高品质直接收益或补金星作物时使用；鱼多时材料压力较低。",
+      "note": "不提高生长速度，只影响品质概率。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_fertilizer",
+      "name": "豪华肥料",
+      "nameEn": "Deluxe Fertilizer",
+      "aliases": [
+        "deluxe fertilizer",
+        "顶级肥料",
+        "豪华肥料怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "齐先生核桃房购买配方，20 齐钻",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 40
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 5 个豪华肥料",
+        "大幅提升作物品质概率"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "高成本品质肥料，适合高价值作物或特定品质目标。",
+      "recommendation": "齐钻和铱锭都贵，优先给高价值长期作物或明确需要高品质产物的场景。",
+      "note": "不加速成熟；如果目标是周转，生长激素类更合适。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "speed_gro",
+      "name": "生长激素",
+      "nameEn": "Speed-Gro",
+      "aliases": [
+        "speed-gro",
+        "speed gro",
+        "普通生长激素",
+        "生长激素怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 3 级",
+      "materials": [
+        {
+          "name": "松焦油",
+          "quantity": 1
+        },
+        {
+          "name": "苔藓",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "每次制作 5 个生长激素",
+        "至少提升 10% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "加速作物成熟，不直接提高品质。",
+      "recommendation": "用于卡月底多收一茬，或让草莓、啤酒花、蓝莓等提前开始再收。",
+      "note": "树液采集器早铺松树能减少松焦油卡点。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_speed_gro",
+      "name": "高级生长激素",
+      "nameEn": "Deluxe Speed-Gro",
+      "aliases": [
+        "deluxe speed-gro",
+        "deluxe speed gro",
+        "高级生长激素怎么做",
+        "豪华生长激素"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 8 级",
+      "materials": [
+        {
+          "name": "橡树树脂",
+          "quantity": 1
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "每次制作 5 个高级生长激素",
+        "至少提升 25% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "高效加速作物成熟，可帮多数作物挤出额外收获。",
+      "recommendation": "夏季杨桃、秋季南瓜、温室/姜岛扩种时非常实用；橡树树脂也要留给小桶。",
+      "note": "如果橡树树脂紧张，先评估小桶产线和本季多收一茬哪个收益更高。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "hyper_speed_gro",
+      "name": "超级生长激素",
+      "nameEn": "Hyper Speed-Gro",
+      "aliases": [
+        "hyper speed-gro",
+        "hyper speed gro",
+        "超级生长激素怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "齐先生核桃房购买配方，30 齐钻",
+      "materials": [
+        {
+          "name": "放射性矿石",
+          "quantity": 1
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 3
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块，可在种子发芽前或发芽后使用"
+      ],
+      "outputs": [
+        "至少提升 33% 生长速度"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "最高级加速肥料，适合后期高价值作物和时间窗口很紧的补种。",
+      "recommendation": "放射性矿石有限，优先给杨桃、远古水果扩种或赛季末必须赶成熟的作物。",
+      "note": "需要后期齐先生内容和放射性矿石来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "basic_retaining_soil",
+      "name": "初级保湿土壤",
+      "nameEn": "Basic Retaining Soil",
+      "aliases": [
+        "basic retaining soil",
+        "初级保湿土",
+        "保湿土壤"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 4 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "小概率让地块隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "用于减少手动浇水压力。",
+      "recommendation": "没有洒水器时可少量用；大规模农田通常优先做洒水器。",
+      "note": "效果不是 100%，不能完全替代洒水器。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_retaining_soil",
+      "name": "高级保湿土壤",
+      "nameEn": "Quality Retaining Soil",
+      "aliases": [
+        "quality retaining soil",
+        "高级保湿土",
+        "高级保湿土壤怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "耕种 7 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 3
+        },
+        {
+          "name": "黏土",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "每次制作 2 个高级保湿土壤",
+        "较高概率隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "比初级保湿土壤更可靠，但仍不是必定保持浇水。",
+      "recommendation": "适合喷壶期或难覆盖洒水器的位置；黏土前期要留建筑/制作需求。",
+      "note": "想省心到 100% 保湿，后期看豪华保湿土壤。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_retaining_soil",
+      "name": "豪华保湿土壤",
+      "nameEn": "Deluxe Retaining Soil",
+      "aliases": [
+        "deluxe retaining soil",
+        "豪华保湿土",
+        "豪华保湿土壤怎么做"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "姜岛商人购买配方，50 火山晶石",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 5
+        },
+        {
+          "name": "纤维",
+          "quantity": 3
+        },
+        {
+          "name": "黏土",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "混入已锄地块后播种"
+      ],
+      "outputs": [
+        "100% 隔夜保持浇水"
+      ],
+      "processingTime": "放入土壤后当季生效",
+      "formula": "地块浇过一次后会一直保持浇水状态，直到肥料失效。",
+      "recommendation": "姜岛农场和温室花盆很舒服，可以大幅降低维护成本。",
+      "note": "配方需要姜岛进度；本岛季末肥料会随季节重置。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tree_fertilizer",
+      "name": "树肥",
+      "nameEn": "Tree Fertilizer",
+      "aliases": [
+        "tree fertilizer",
+        "树木肥料",
+        "树肥怎么做",
+        "果树肥料"
+      ],
+      "category": "fertilizer",
+      "recipeSource": "觅食 7 级",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 5
+        },
+        {
+          "name": "石头",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "撒在野生树上"
+      ],
+      "outputs": [
+        "让野生树快速成长，冬天也可生效"
+      ],
+      "processingTime": "使用后作用于该树生长",
+      "formula": "只对橡树、枫树、松树、桃花心木等野生树有效。",
+      "recommendation": "想快速养树液采集器树林、补硬木/木材时很好用。",
+      "note": "树肥不能用于果树，水果树仍按 28 天成熟和周围 3x3 空地规则。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "monster_musk",
+      "name": "怪物香水",
+      "nameEn": "Monster Musk",
+      "aliases": [
+        "monster musk",
+        "怪物香水怎么做",
+        "增加怪物",
+        "刷怪香水"
+      ],
+      "category": "consumable",
+      "recipeSource": "完成法师特别订单后获得配方",
+      "materials": [
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 30
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 30
+        }
+      ],
+      "inputs": [
+        "使用后进入矿井/怪物区域"
+      ],
+      "outputs": [
+        "一段时间内提高怪物生成量"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "提高怪物密度，适合刷击杀数、战斗经验和怪物掉落。",
+      "recommendation": "刷战斗等级、冒险家公会目标或特定掉落时使用；战斗弱时先准备食物和武器。",
+      "note": "没有确认弹窗，使用时注意安全。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "fairy_dust",
+      "name": "仙尘",
+      "nameEn": "Fairy Dust",
+      "aliases": [
+        "fairy dust",
+        "仙尘怎么做",
+        "仙女粉",
+        "立刻完成机器"
+      ],
+      "category": "consumable",
+      "recipeSource": "完成海盗的妻子任务后获得配方",
+      "materials": [
+        {
+          "name": "钻石",
+          "quantity": 1
+        },
+        {
+          "name": "玫瑰仙子",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "对小桶、熔炉等加工/精炼设备使用"
+      ],
+      "outputs": [
+        "立即取得当前加工产物"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "跳过正在进行的加工等待时间。",
+      "recommendation": "适合急着完成任务、赶高价值酒/铱锭等长耗时产物；日常批量生产一般成本偏高。",
+      "note": "只对正在加工中的可用设备有意义。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_beach",
+      "name": "海滩传送图腾",
+      "nameEn": "Warp Totem: Beach",
+      "aliases": [
+        "warp totem beach",
+        "海滩图腾",
+        "海边传送图腾",
+        "海滩传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 6 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "珊瑚",
+          "quantity": 2
+        },
+        {
+          "name": "纤维",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到海滩"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即传送，省去路程时间。",
+      "recommendation": "适合赶威利鱼店、潮汐池采集、海边钓鱼时间窗口。",
+      "note": "使用后消耗一个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_mountains",
+      "name": "山岭传送图腾",
+      "nameEn": "Warp Totem: Mountains",
+      "aliases": [
+        "warp totem mountains",
+        "山岭图腾",
+        "矿山传送图腾",
+        "山岭传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 7 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "石头",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到深山/矿井附近"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即传送到山岭区域。",
+      "recommendation": "下矿、去木匠店、找罗宾、山湖钓鱼前很省时间。",
+      "note": "使用后消耗一个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_farm",
+      "name": "农场传送图腾",
+      "nameEn": "Warp Totem: Farm",
+      "aliases": [
+        "warp totem farm",
+        "回家图腾",
+        "农场图腾",
+        "农场传送图腾怎么做"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 8 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "蜂蜜",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送回农场"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "立即回到农场，减少深夜赶路风险。",
+      "recommendation": "下矿、钓鱼、姜岛活动前带一个，能把夜间活动时间拉满。",
+      "note": "使用后消耗一个；后期可用回程魔杖替代。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_desert",
+      "name": "沙漠传送图腾",
+      "nameEn": "Warp Totem: Desert",
+      "aliases": [
+        "warp totem desert",
+        "沙漠图腾",
+        "沙漠传送图腾怎么做",
+        "卡利科沙漠图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "沙漠商人用 10 个铱锭兑换配方",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 2
+        },
+        {
+          "name": "椰子",
+          "quantity": 1
+        },
+        {
+          "name": "铱矿石",
+          "quantity": 4
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到卡利科沙漠"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "跳过巴士等待时间，早晨可直接开始骷髅洞穴。",
+      "recommendation": "冲骷髅洞穴深层非常关键，越早到沙漠越有价值。",
+      "note": "配方成本很高；早期也可直接从沙漠商人兑换少量图腾。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warp_totem_island",
+      "name": "姜岛传送图腾",
+      "nameEn": "Warp Totem: Island",
+      "aliases": [
+        "warp totem island",
+        "姜岛图腾",
+        "姜岛传送图腾怎么做",
+        "岛屿传送图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "火山矮人商店购买配方，10,000g",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "龙牙",
+          "quantity": 1
+        },
+        {
+          "name": "姜",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "使用后传送"
+      ],
+      "outputs": [
+        "传送到姜岛"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "省去坐船时间，直接开始姜岛行动。",
+      "recommendation": "刷火山、金核桃、姜岛农场维护时很好用；龙牙紧张时优先考虑岛屿图腾柱。",
+      "note": "需要先推进姜岛和火山矮人交易。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "rain_totem",
+      "name": "雨水图腾",
+      "nameEn": "Rain Totem",
+      "aliases": [
+        "rain totem",
+        "雨天图腾",
+        "雨水图腾怎么做",
+        "召雨图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食 9 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        },
+        {
+          "name": "松露油",
+          "quantity": 1
+        },
+        {
+          "name": "松焦油",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "使用后影响次日天气"
+      ],
+      "outputs": [
+        "大幅提高明天下雨概率"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "适合安排雨天鱼、浇水减负或特定天气事件。",
+      "recommendation": "钓雨天限定鱼、想让作物免浇水或刷雨天事件时很好用；松露油成本较高。",
+      "note": "不是改变当天，而是影响次日天气。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "treasure_totem",
+      "name": "宝藏图腾",
+      "nameEn": "Treasure Totem",
+      "aliases": [
+        "treasure totem",
+        "宝藏图腾怎么做",
+        "挖掘图腾",
+        "藏宝图腾"
+      ],
+      "category": "totem",
+      "recipeSource": "觅食精通",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "神秘糖浆",
+          "quantity": 1
+        },
+        {
+          "name": "苔藓",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "在可挖掘地面使用"
+      ],
+      "outputs": [
+        "生成一圈宝藏点"
+      ],
+      "processingTime": "一次性消耗品",
+      "formula": "用于集中挖掘宝藏点，配合锄头效率更高。",
+      "recommendation": "后期补古物、特殊掉落和觅食精通玩法时使用；神秘糖浆产线要先准备。",
+      "note": "需要觅食精通。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "sturdy_ring",
+      "name": "坚固戒指",
+      "nameEn": "Sturdy Ring",
+      "aliases": [
+        "sturdy ring",
+        "坚固戒指怎么做",
+        "负面效果减半戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 1 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 2
+        },
+        {
+          "name": "虫肉",
+          "quantity": 25
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 25
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "负面状态持续时间减半"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "提供状态抗性，适合早期矿井。",
+      "recommendation": "前期材料够可以做，但通常会很快被更强戒指替换。",
+      "note": "戒指占装备栏，按当前战斗需求取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "warrior_ring",
+      "name": "战士戒指",
+      "nameEn": "Warrior Ring",
+      "aliases": [
+        "warrior ring",
+        "战士戒指怎么做"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 4 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 25
+        },
+        {
+          "name": "冰泪晶",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "击杀怪物后有概率进入战士能量状态"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "偏进攻的早中期戒指。",
+      "recommendation": "战斗等级低且缺爆发时可用；后期通常换铱环、幸运戒指等。",
+      "note": "材料成本对前期不低。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "ring_of_yoba",
+      "name": "尤巴戒指",
+      "nameEn": "Ring of Yoba",
+      "aliases": [
+        "ring of yoba",
+        "尤巴戒指怎么做",
+        "约巴戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 7 级",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 5
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        },
+        {
+          "name": "钻石",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "受伤后有概率获得尤巴祝福护盾"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "低血量/挨打时提供防护机会。",
+      "recommendation": "操作不稳或武器偏弱时可用来提高容错。",
+      "note": "钻石也常用于送礼和复制机模板，注意取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "thorns_ring",
+      "name": "荆棘戒指",
+      "nameEn": "Thorns Ring",
+      "aliases": [
+        "thorns ring",
+        "荆棘戒指怎么做",
+        "反伤戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 7 级",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 50
+        },
+        {
+          "name": "石头",
+          "quantity": 50
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "被攻击时反弹伤害"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "把部分承受伤害转为反伤。",
+      "recommendation": "适合怪物密集但防御足够时使用；追求效率通常还是更偏向伤害/吸附/幸运。",
+      "note": "不要为了反伤主动挨打。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "glowstone_ring",
+      "name": "光辉戒指",
+      "nameEn": "Glowstone Ring",
+      "aliases": [
+        "glowstone ring",
+        "光辉戒指怎么做",
+        "发光吸附戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "采矿 4 级",
+      "materials": [
+        {
+          "name": "太阳精华",
+          "quantity": 5
+        },
+        {
+          "name": "铁锭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "发光",
+        "增加拾取范围"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "同时提供光源和吸附，提升矿井手感。",
+      "recommendation": "铱环前非常好用，尤其是夜间、矿井和资源收集。",
+      "note": "如果已有强力发光/吸附戒指，可按装备栏取舍。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "iridium_band",
+      "name": "铱环",
+      "nameEn": "Iridium Band",
+      "aliases": [
+        "iridium band",
+        "铱戒指",
+        "铱环怎么做",
+        "铱戒"
+      ],
+      "category": "ring",
+      "recipeSource": "战斗 9 级",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 5
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 50
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 50
+        }
+      ],
+      "inputs": [
+        "装备戒指"
+      ],
+      "outputs": [
+        "发光",
+        "增加拾取范围",
+        "攻击伤害 +10%"
+      ],
+      "processingTime": "装备后长期生效",
+      "formula": "综合了发光、吸附和增伤，是通用强戒指。",
+      "recommendation": "战斗 9 级后优先做，矿井、骷髅洞穴和日常收集都很舒服。",
+      "note": "铱锭和精华消耗很大，提前刷怪和烧铱矿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wedding_ring",
+      "name": "结婚戒指",
+      "nameEn": "Wedding Ring",
+      "aliases": [
+        "wedding ring",
+        "结婚戒指怎么做",
+        "多人结婚戒指"
+      ],
+      "category": "ring",
+      "recipeSource": "旅行货车购买配方，500g；仅多人模式可用",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 5
+        },
+        {
+          "name": "五彩碎片",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "多人模式下赠送给另一位玩家"
+      ],
+      "outputs": [
+        "向其他玩家求婚"
+      ],
+      "processingTime": "一次性求婚道具",
+      "formula": "多人模式专用，不是给 NPC 求婚的道具。",
+      "recommendation": "单人档不用做；多人档需要五彩碎片和铱锭，成本较高。",
+      "note": "NPC 求婚用美人鱼吊坠，不是结婚戒指。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "spinner",
+      "name": "旋式鱼饵",
+      "nameEn": "Spinner",
+      "aliases": [
+        "spinner",
+        "旋式钓具",
+        "旋式鱼饵怎么做",
+        "增加咬钩率"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "稍微提高鱼咬钩速度"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "缩短等待鱼上钩的时间。",
+      "recommendation": "普通钓鱼刷量时可用；想冲宝箱则优先寻宝器，想稳难鱼则优先陷阱浮标。",
+      "note": "玻璃纤维鱼竿不能装钓具，需要铱金鱼竿或高级铱金鱼竿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "trap_bobber",
+      "name": "陷阱浮标",
+      "nameEn": "Trap Bobber",
+      "aliases": [
+        "trap bobber",
+        "陷阱浮漂",
+        "陷阱钓具",
+        "陷阱浮标怎么做",
+        "鱼逃得慢"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "鱼离开钓鱼条时逃脱速度变慢"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "降低不收线时鱼逃跑的速度，给玩家更多纠错时间。",
+      "recommendation": "钓传说鱼、章鱼、岩浆鳗鱼等高难鱼时优先级很高。",
+      "note": "树液消耗不小，别把树液全卖光。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "sonar_bobber",
+      "name": "声呐浮标",
+      "nameEn": "Sonar Bobber",
+      "aliases": [
+        "sonar bobber",
+        "声纳浮标",
+        "声呐浮标怎么做",
+        "显示上钩鱼"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 6 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "在捕获前显示上钩的鱼"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "能提前判断是否值得继续钓这一条。",
+      "recommendation": "刷特定鱼、任务鱼或用魔法鱼饵时有用；追求稳钓难鱼时不如陷阱浮标。",
+      "note": "1.6 后适合减少无效拉杆。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cork_bobber",
+      "name": "软木塞浮标",
+      "nameEn": "Cork Bobber",
+      "aliases": [
+        "cork bobber",
+        "软木浮标",
+        "软木塞浮标怎么做",
+        "增加钓鱼条"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 7 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 10
+        },
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 10
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "略微增加钓鱼条大小"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "让鱼更容易保持在钓鱼条内。",
+      "recommendation": "钓鱼等级还不高、料理 buff 不足时很好用；难鱼也可和高级铱金鱼竿第二钓具搭配。",
+      "note": "硬木前期珍贵，先保证钢斧和建筑需求。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "quality_bobber",
+      "name": "优质浮标",
+      "nameEn": "Quality Bobber",
+      "aliases": [
+        "quality bobber",
+        "品质浮标",
+        "优质浮标怎么做",
+        "提高鱼品质"
+      ],
+      "category": "fishing",
+      "recipeSource": "完成威利特别订单后获得配方",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 20
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "提高钓到鱼的品质"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "提高鱼品质，适合卖鱼或补高品质鱼需求。",
+      "recommendation": "钓鱼赚钱流和补金星鱼时很好；如果鱼本身很难，先考虑陷阱浮标保证钓上来。",
+      "note": "配方来自威利特别订单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "treasure_hunter",
+      "name": "寻宝器",
+      "nameEn": "Treasure Hunter",
+      "aliases": [
+        "treasure hunter",
+        "宝藏猎人",
+        "寻宝钓具",
+        "寻宝器怎么做",
+        "钓鱼宝箱"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 7 级",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "收宝箱时鱼不会逃脱",
+        "略微提高宝箱出现概率"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "让钓鱼宝箱更容易安全拿到。",
+      "recommendation": "刷古物、矿物、武器或前期资源时很舒服；纯赚钱刷鱼时不一定最优。",
+      "note": "和海盗职业、磁铁、好运加成搭配更偏宝箱流。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "dressed_spinner",
+      "name": "精装旋式鱼饵",
+      "nameEn": "Dressed Spinner",
+      "aliases": [
+        "dressed spinner",
+        "高级旋式鱼饵",
+        "精装旋式鱼饵怎么做",
+        "更快咬钩"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 8 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        },
+        {
+          "name": "布料",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "提高鱼咬钩速度"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "比普通旋式鱼饵更偏效率。",
+      "recommendation": "刷大量普通鱼、冲钓鱼经验或想减少等待时间时使用。",
+      "note": "布料也常用于任务、衣物和建筑，前期别全做钓具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "barbed_hook",
+      "name": "倒刺钩",
+      "nameEn": "Barbed Hook",
+      "aliases": [
+        "barbed hook",
+        "倒钩",
+        "倒刺钩怎么做",
+        "鱼钩贴鱼"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 8 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装备在可使用钓具的鱼竿上"
+      ],
+      "outputs": [
+        "钓鱼条会尝试贴住鱼"
+      ],
+      "processingTime": "钓具，会随使用损耗",
+      "formula": "对移动慢、幅度小的鱼效果较好。",
+      "recommendation": "不推荐拿来钓乱窜的高难鱼；慢鱼或低操作需求场景可以用。",
+      "note": "高难鱼通常陷阱浮标更稳。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "magnet",
+      "name": "磁铁",
+      "nameEn": "Magnet",
+      "aliases": [
+        "magnet",
+        "磁铁鱼饵",
+        "磁铁怎么做",
+        "宝箱鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 9 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 3 个磁铁",
+        "提高钓鱼宝箱出现概率"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "替代普通鱼饵，偏宝箱收益。",
+      "recommendation": "配海盗职业、寻宝器和好运日刷宝箱；单纯刷鱼咬钩不如普通/高级鱼饵。",
+      "note": "鱼不太喜欢这个味道，定位是宝箱流。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "bait",
+      "name": "鱼饵",
+      "nameEn": "Bait",
+      "aliases": [
+        "bait",
+        "普通鱼饵",
+        "鱼饵怎么做"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 2 级",
+      "materials": [
+        {
+          "name": "虫肉",
+          "quantity": 1
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个鱼饵",
+        "加快鱼咬钩"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "鱼竿使用时减少等待咬钩时间；蟹笼通常需要放鱼饵后次日收获。",
+      "recommendation": "升到钓鱼 2 后尽快换玻璃纤维鱼竿并挂鱼饵，体验会明显变好。",
+      "note": "竹鱼竿不能挂鱼饵。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_bait",
+      "name": "高级鱼饵",
+      "nameEn": "Deluxe Bait",
+      "aliases": [
+        "deluxe bait",
+        "高级鱼饵怎么做",
+        "豪华鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 4 级",
+      "materials": [
+        {
+          "name": "鱼饵",
+          "quantity": 5
+        },
+        {
+          "name": "苔藓",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个高级鱼饵",
+        "更快咬钩并增加钓鱼条大小"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "兼顾咬钩速度和钓鱼条手感。",
+      "recommendation": "1.6 后很适合常规钓鱼；苔藓富余时比普通鱼饵更舒服。",
+      "note": "苔藓还会用于一些 1.6 配方，按库存分配。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wild_bait",
+      "name": "野性鱼饵",
+      "nameEn": "Wild Bait",
+      "aliases": [
+        "wild bait",
+        "万能鱼饵",
+        "野性鱼饵怎么做",
+        "莱纳斯鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "莱纳斯 4 心事件获得配方",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 10
+        },
+        {
+          "name": "虫肉",
+          "quantity": 5
+        },
+        {
+          "name": "史莱姆",
+          "quantity": 5
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿或蟹笼上"
+      ],
+      "outputs": [
+        "每次制作 5 个野性鱼饵",
+        "有机会一次钓到两条鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "保留加快咬钩效果，并有双鱼机会。",
+      "recommendation": "材料够时刷鱼赚钱和经验很强；纤维、虫肉、史莱姆都要提前囤。",
+      "note": "需要触发莱纳斯 4 心剧情。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "magic_bait",
+      "name": "魔法鱼饵",
+      "nameEn": "Magic Bait",
+      "aliases": [
+        "magic bait",
+        "魔法鱼饵怎么做",
+        "不限季节鱼饵",
+        "任意季节鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "齐先生核桃房购买配方，20 齐钻",
+      "materials": [
+        {
+          "name": "放射性矿石",
+          "quantity": 1
+        },
+        {
+          "name": "虫肉",
+          "quantity": 3
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 5 个魔法鱼饵",
+        "允许在对应水域钓到任意季节/时间/天气的鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "不改变水域类型；海鱼仍要在海里，河鱼仍要在河流/对应水域。",
+      "recommendation": "补全鱼图鉴、错过季节鱼、夜市潜艇鱼替代方案时很强；放射性矿石成本较高。",
+      "note": "不会让所有鱼在任意地点出现，地点限制仍要满足。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "challenge_bait",
+      "name": "挑战鱼饵",
+      "nameEn": "Challenge Bait",
+      "aliases": [
+        "challenge bait",
+        "挑战鱼饵怎么做",
+        "三倍鱼饵",
+        "完美钓鱼鱼饵"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼精通",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 5
+        },
+        {
+          "name": "苔藓",
+          "quantity": 2
+        }
+      ],
+      "inputs": [
+        "装在可使用鱼饵的鱼竿上"
+      ],
+      "outputs": [
+        "每次制作 5 个挑战鱼饵",
+        "完美捕获可获得三倍鱼"
+      ],
+      "processingTime": "鱼饵类消耗品",
+      "formula": "鱼离开钓鱼条会减少最终捕获数量；完美捕获收益最高。",
+      "recommendation": "适合高钓鱼等级、低难度高价值鱼或熟练玩家刷量；高难鱼不稳时别硬上。",
+      "note": "需要钓鱼精通。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "crab_pot_item",
+      "name": "蟹笼",
+      "nameEn": "Crab Pot",
+      "aliases": [
+        "crab pot",
+        "蟹笼怎么做",
+        "蟹笼材料",
+        "蟹笼配方"
+      ],
+      "category": "fishing",
+      "recipeSource": "钓鱼 3 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 40
+        },
+        {
+          "name": "铁锭",
+          "quantity": 3
+        }
+      ],
+      "inputs": [
+        "放进水里并装入鱼饵，次日收获"
+      ],
+      "outputs": [
+        "淡水/海水蟹笼产物",
+        "垃圾"
+      ],
+      "processingTime": "通常次日可收",
+      "formula": "捕猎者职业会降低制作成本：木材 x25 + 铜锭 x2。",
+      "recommendation": "适合低操作量补钓鱼经验和蟹笼收集包；水手职业可避免垃圾，诱饵大师职业蟹笼不再需要鱼饵。",
+      "note": "想查能抓什么时问“蟹笼能抓什么”；淡水和海水产物不同。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "gate",
+      "name": "大门",
+      "nameEn": "Gate",
+      "aliases": [
+        "门",
+        "围栏门",
+        "Gate"
+      ],
+      "category": "fence",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 10
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "允许穿过栅栏"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "畜牧围栏必备；和任意栅栏组合使用。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wood_fence",
+      "name": "木栅栏",
+      "nameEn": "Wood Fence",
+      "aliases": [
+        "木围栏",
+        "Wood Fence"
+      ],
+      "category": "fence",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "阻挡动物和草蔓延"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "最便宜，前期临时围栏够用；后期可换硬木栅栏。",
+      "note": "会随时间损坏，金钟会阻止农场栅栏腐坏。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stone_fence",
+      "name": "石栅栏",
+      "nameEn": "Stone Fence",
+      "aliases": [
+        "石围栏",
+        "Stone Fence"
+      ],
+      "category": "fence",
+      "recipeSource": "耕种 2 级",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "比木栅栏更耐久"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "石头多时适合替换木栅栏。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "iron_fence",
+      "name": "铁栅栏",
+      "nameEn": "Iron Fence",
+      "aliases": [
+        "铁围栏",
+        "Iron Fence"
+      ],
+      "category": "fence",
+      "recipeSource": "耕种 4 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 10 个铁栅栏"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "耐久更好，但铁锭前期更建议先留给工具和设备。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "hardwood_fence",
+      "name": "硬木栅栏",
+      "nameEn": "Hardwood Fence",
+      "aliases": [
+        "硬木围栏",
+        "Hardwood Fence"
+      ],
+      "category": "fence",
+      "recipeSource": "耕种 6 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "最耐久的普通栅栏"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "长期农场规划优先用硬木栅栏。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cask",
+      "name": "木桶",
+      "nameEn": "Cask",
+      "aliases": [
+        "陈酿木桶",
+        "酒桶",
+        "Cask"
+      ],
+      "category": "artisan",
+      "recipeSource": "房屋升级到地窖后获得配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 20
+        },
+        {
+          "name": "硬木",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "在地窖中陈酿酒类和奶酪"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "只在地窖内发挥核心价值；后期酒类收益提升很明显。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "spring_seeds",
+      "name": "春季种子",
+      "nameEn": "Spring Seeds",
+      "aliases": [
+        "野生种子(春)",
+        "Wild Seeds (Sp)",
+        "Spring Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "觅食 1 级",
+      "materials": [
+        {
+          "name": "野山葵",
+          "quantity": 1
+        },
+        {
+          "name": "黄水仙",
+          "quantity": 1
+        },
+        {
+          "name": "韭葱",
+          "quantity": 1
+        },
+        {
+          "name": "蒲公英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 10 个春季种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "社区中心春季采集物多余时可做种子扩大觅食作物。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "summer_seeds",
+      "name": "夏季种子",
+      "nameEn": "Summer Seeds",
+      "aliases": [
+        "野生种子(夏)",
+        "Wild Seeds (Su)",
+        "Summer Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "觅食 4 级",
+      "materials": [
+        {
+          "name": "香味浆果",
+          "quantity": 1
+        },
+        {
+          "name": "葡萄",
+          "quantity": 1
+        },
+        {
+          "name": "甜豌豆",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 10 个夏季种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "适合补觅食经验或低成本种植。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "fall_seeds",
+      "name": "秋季种子",
+      "nameEn": "Fall Seeds",
+      "aliases": [
+        "野生种子(秋)",
+        "Wild Seeds (Fa)",
+        "Fall Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "觅食 6 级",
+      "materials": [
+        {
+          "name": "普通蘑菇",
+          "quantity": 1
+        },
+        {
+          "name": "野梅",
+          "quantity": 1
+        },
+        {
+          "name": "榛子",
+          "quantity": 1
+        },
+        {
+          "name": "黑莓",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 10 个秋季种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "秋季采集物常见，适合批量做种子。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "winter_seeds",
+      "name": "冬季种子",
+      "nameEn": "Winter Seeds",
+      "aliases": [
+        "野生种子(冬)",
+        "Wild Seeds (Wi)",
+        "Winter Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "觅食 7 级",
+      "materials": [
+        {
+          "name": "冬根",
+          "quantity": 1
+        },
+        {
+          "name": "水晶果",
+          "quantity": 1
+        },
+        {
+          "name": "雪山药",
+          "quantity": 1
+        },
+        {
+          "name": "藏红花",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 10 个冬季种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "冬季少数能种的作物来源；想练觅食可以多做。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "ancient_seeds_recipe",
+      "name": "远古种子",
+      "nameEn": "Ancient Seeds",
+      "aliases": [
+        "上古种子配方",
+        "远古种子配方",
+        "Ancient Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "向博物馆捐赠古代种子后获得配方",
+      "materials": [
+        {
+          "name": "古代种子",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "远古种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "拿到第一颗古代种子后优先捐博物馆解锁配方，再种远古水果。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "grass_starter",
+      "name": "草籽",
+      "nameEn": "Grass Starter",
+      "aliases": [
+        "草种",
+        "Grass Starter"
+      ],
+      "category": "seed",
+      "recipeSource": "皮埃尔杂货店购买配方，1,000g",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 10
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "草籽"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "畜牧开局很实用；可在冬 28 提前铺，春 1 会扩散。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "blue_grass_starter",
+      "name": "蓝草籽",
+      "nameEn": "Blue Grass Starter",
+      "aliases": [
+        "蓝草种",
+        "Blue Grass Starter"
+      ],
+      "category": "seed",
+      "recipeSource": "齐先生核桃房购买配方，40 齐钻",
+      "materials": [
+        {
+          "name": "纤维",
+          "quantity": 25
+        },
+        {
+          "name": "苔藓",
+          "quantity": 10
+        },
+        {
+          "name": "神秘糖浆",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "蓝草籽"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "后期畜牧强化用；成本高，先保证普通草料供应。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tea_sapling",
+      "name": "茶苗",
+      "nameEn": "Tea Sapling",
+      "aliases": [
+        "茶树苗",
+        "Tea Sapling"
+      ],
+      "category": "seed",
+      "recipeSource": "卡洛琳 2 心事件后次日邮件获得配方",
+      "materials": [
+        {
+          "name": "任意野生种子",
+          "quantity": 2
+        },
+        {
+          "name": "纤维",
+          "quantity": 5
+        },
+        {
+          "name": "木材",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "茶苗"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "茶苗卖价高，前期缺钱时常用作稳定赚钱配方。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "fiber_seeds",
+      "name": "纤维种子",
+      "nameEn": "Fiber Seeds",
+      "aliases": [
+        "纤维种子配方",
+        "Fiber Seeds"
+      ],
+      "category": "seed",
+      "recipeSource": "莱纳斯特别订单奖励配方",
+      "materials": [
+        {
+          "name": "混合种子",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 5
+        },
+        {
+          "name": "黏土",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 4 个纤维种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "冬季也能种，适合稳定补纤维。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mystic_tree_seed",
+      "name": "神秘树种子",
+      "nameEn": "Mystic Tree Seed",
+      "aliases": [
+        "神秘种子",
+        "Mystic Tree Seed"
+      ],
+      "category": "seed",
+      "recipeSource": "觅食精通",
+      "materials": [
+        {
+          "name": "橡子",
+          "quantity": 5
+        },
+        {
+          "name": "枫树种子",
+          "quantity": 5
+        },
+        {
+          "name": "松果",
+          "quantity": 5
+        },
+        {
+          "name": "桃花心木种子",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "神秘树种子"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "后期神秘糖浆来源，解锁精通后再规划种植。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wood_floor",
+      "name": "木地板",
+      "nameEn": "Wood Floor",
+      "aliases": [
+        "Wood Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，100g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "农场动线装饰，室外地板还能减少杂草树木阻挡。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "rustic_plank_floor",
+      "name": "乡村木地板",
+      "nameEn": "Rustic Plank Floor",
+      "aliases": [
+        "Rustic Plank Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，200g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "straw_floor",
+      "name": "稻草地板",
+      "nameEn": "Straw Floor",
+      "aliases": [
+        "Straw Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，200g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "weathered_floor",
+      "name": "风化地板",
+      "nameEn": "Weathered Floor",
+      "aliases": [
+        "Weathered Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "矮人商店购买配方，500g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "crystal_floor",
+      "name": "水晶地板",
+      "nameEn": "Crystal Floor",
+      "aliases": [
+        "Crystal Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "科罗布斯商店购买配方，500g",
+      "materials": [
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 5 个水晶地板"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stone_floor",
+      "name": "石地板",
+      "nameEn": "Stone Floor",
+      "aliases": [
+        "Stone Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，100g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stone_walkway_floor",
+      "name": "石质走道地板",
+      "nameEn": "Stone Walkway Floor",
+      "aliases": [
+        "Stone Walkway Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，200g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "地板/路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "brick_floor",
+      "name": "砖地板",
+      "nameEn": "Brick Floor",
+      "aliases": [
+        "Brick Floor"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，500g",
+      "materials": [
+        {
+          "name": "黏土",
+          "quantity": 2
+        },
+        {
+          "name": "石头",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 5 个砖地板"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wood_path",
+      "name": "木径",
+      "nameEn": "Wood Path",
+      "aliases": [
+        "木头小径",
+        "Wood Path"
+      ],
+      "category": "decor",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "gravel_path",
+      "name": "碎石小径",
+      "nameEn": "Gravel Path",
+      "aliases": [
+        "Gravel Path"
+      ],
+      "category": "decor",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cobblestone_path",
+      "name": "鹅卵石小径",
+      "nameEn": "Cobblestone Path",
+      "aliases": [
+        "Cobblestone Path"
+      ],
+      "category": "decor",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stepping_stone_path",
+      "name": "踏脚石小径",
+      "nameEn": "Stepping Stone Path",
+      "aliases": [
+        "Stepping Stone Path"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，100g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "路径装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "crystal_path",
+      "name": "水晶小径",
+      "nameEn": "Crystal Path",
+      "aliases": [
+        "Crystal Path"
+      ],
+      "category": "decor",
+      "recipeSource": "木匠的商店购买配方，200g",
+      "materials": [
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 5 个水晶小径"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "field_snack",
+      "name": "野外小食",
+      "nameEn": "Field Snack",
+      "aliases": [
+        "Field Snack"
+      ],
+      "category": "edible",
+      "recipeSource": "觅食 1 级",
+      "materials": [
+        {
+          "name": "橡子",
+          "quantity": 1
+        },
+        {
+          "name": "枫树种子",
+          "quantity": 1
+        },
+        {
+          "name": "松果",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "恢复少量体力和生命"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "前期砍树顺手做，适合矿井和钓鱼补体力。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "bug_steak",
+      "name": "虫肉牛排",
+      "nameEn": "Bug Steak",
+      "aliases": [
+        "Bug Steak"
+      ],
+      "category": "edible",
+      "recipeSource": "战斗 1 级",
+      "materials": [
+        {
+          "name": "虫肉",
+          "quantity": 10
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "恢复体力和生命"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "矿井前期虫肉多时可做补给。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "life_elixir",
+      "name": "生命药水",
+      "nameEn": "Life Elixir",
+      "aliases": [
+        "Life Elixir"
+      ],
+      "category": "edible",
+      "recipeSource": "战斗 2 级",
+      "materials": [
+        {
+          "name": "红蘑菇",
+          "quantity": 1
+        },
+        {
+          "name": "紫蘑菇",
+          "quantity": 1
+        },
+        {
+          "name": "羊肚菌",
+          "quantity": 1
+        },
+        {
+          "name": "鸡油菌",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "恢复全部生命"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "高风险矿洞/骷髅洞穴保命用。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "oil_of_garlic",
+      "name": "蒜油",
+      "nameEn": "Oil of Garlic",
+      "aliases": [
+        "Oil of Garlic"
+      ],
+      "category": "edible",
+      "recipeSource": "战斗 6 级",
+      "materials": [
+        {
+          "name": "大蒜",
+          "quantity": 10
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "减少弱小怪物骚扰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "跑矿时可降低低级怪干扰，但不会替代幸运/速度食物。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "torch",
+      "name": "火把",
+      "nameEn": "Torch",
+      "aliases": [
+        "Torch"
+      ],
+      "category": "lighting",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 1
+        },
+        {
+          "name": "树液",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "提供少量光照"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "早期照明最便宜。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "campfire",
+      "name": "营火",
+      "nameEn": "Campfire",
+      "aliases": [
+        "Campfire"
+      ],
+      "category": "lighting",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 10
+        },
+        {
+          "name": "木材",
+          "quantity": 10
+        },
+        {
+          "name": "纤维",
+          "quantity": 10
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "提供中等光照"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wooden_brazier",
+      "name": "木制火盆",
+      "nameEn": "Wooden Brazier",
+      "aliases": [
+        "Wooden Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，250g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stone_brazier",
+      "name": "石制火盆",
+      "nameEn": "Stone Brazier",
+      "aliases": [
+        "Stone Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，400g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "gold_brazier",
+      "name": "黄金火盆",
+      "nameEn": "Gold Brazier",
+      "aliases": [
+        "Gold Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，1,000g",
+      "materials": [
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "carved_brazier",
+      "name": "雕刻火盆",
+      "nameEn": "Carved Brazier",
+      "aliases": [
+        "Carved Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，2,000g",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stump_brazier",
+      "name": "树桩火盆",
+      "nameEn": "Stump Brazier",
+      "aliases": [
+        "Stump Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，800g",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 5
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "barrel_brazier",
+      "name": "桶式火盆",
+      "nameEn": "Barrel Brazier",
+      "aliases": [
+        "Barrel Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，800g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1
+        },
+        {
+          "name": "煤炭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "skull_brazier",
+      "name": "骷髅火盆",
+      "nameEn": "Skull Brazier",
+      "aliases": [
+        "Skull Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，3,000g",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 10
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "marble_brazier",
+      "name": "大理石火盆",
+      "nameEn": "Marble Brazier",
+      "aliases": [
+        "Marble Brazier"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，5,000g",
+      "materials": [
+        {
+          "name": "大理石",
+          "quantity": 1
+        },
+        {
+          "name": "海蓝宝石",
+          "quantity": 1
+        },
+        {
+          "name": "石头",
+          "quantity": 100
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wood_lamp_post",
+      "name": "木灯柱",
+      "nameEn": "Wood Lamp-post",
+      "aliases": [
+        "木制灯柱",
+        "Wood Lamp-post"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，500g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 50
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "iron_lamp_post",
+      "name": "铁灯柱",
+      "nameEn": "Iron Lamp-post",
+      "aliases": [
+        "Iron Lamp-post"
+      ],
+      "category": "lighting",
+      "recipeSource": "木匠的商店购买配方，1,000g",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "jack_o_lantern",
+      "name": "南瓜灯",
+      "nameEn": "Jack-O-Lantern",
+      "aliases": [
+        "Jack-O-Lantern"
+      ],
+      "category": "lighting",
+      "recipeSource": "万灵节皮埃尔摊位购买配方，2,000g",
+      "materials": [
+        {
+          "name": "南瓜",
+          "quantity": 1
+        },
+        {
+          "name": "火把",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "季节性照明装饰"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "ostrich_incubator",
+      "name": "鸵鸟孵化器",
+      "nameEn": "Ostrich Incubator",
+      "aliases": [
+        "Ostrich Incubator"
+      ],
+      "category": "refining",
+      "recipeSource": "完成姜岛办事处化石收集后获得配方",
+      "materials": [
+        {
+          "name": "骨头碎片",
+          "quantity": 50
+        },
+        {
+          "name": "硬木",
+          "quantity": 50
+        },
+        {
+          "name": "火山晶石",
+          "quantity": 20
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "孵化鸵鸟蛋"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "姜岛后期畜牧内容；先完成蜗牛教授化石收集。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tapper",
+      "name": "树液采集器",
+      "nameEn": "Tapper",
+      "aliases": [
+        "树液收集器",
+        "Tapper"
+      ],
+      "category": "refining",
+      "recipeSource": "觅食 4 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 40
+        },
+        {
+          "name": "铜锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "采集树脂、松焦油、枫糖浆和神秘糖浆"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "小桶、蜂房等关键设备都要树脂，越早挂越好。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "heavy_tapper",
+      "name": "重型树液采集器",
+      "nameEn": "Heavy Tapper",
+      "aliases": [
+        "重型采集器",
+        "Heavy Tapper"
+      ],
+      "category": "refining",
+      "recipeSource": "齐先生核桃房购买配方，20 齐钻",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 30
+        },
+        {
+          "name": "放射性锭",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "更快采集树液产品"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "后期替换普通树液采集器。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "worm_bin",
+      "name": "虫饵盒",
+      "nameEn": "Worm Bin",
+      "aliases": [
+        "虫箱",
+        "Worm Bin"
+      ],
+      "category": "refining",
+      "recipeSource": "钓鱼 4 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 15
+        },
+        {
+          "name": "金锭",
+          "quantity": 1
+        },
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "纤维",
+          "quantity": 50
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "每天产鱼饵"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "钓鱼流派可早做，省虫肉。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "deluxe_worm_bin",
+      "name": "豪华虫饵盒",
+      "nameEn": "Deluxe Worm Bin",
+      "aliases": [
+        "豪华虫箱",
+        "Deluxe Worm Bin"
+      ],
+      "category": "refining",
+      "recipeSource": "钓鱼 8 级",
+      "materials": [
+        {
+          "name": "虫饵盒",
+          "quantity": 1
+        },
+        {
+          "name": "苔藓",
+          "quantity": 30
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "每天产高级鱼饵"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "1.6 后钓鱼后期很实用。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tub_o_flowers",
+      "name": "花桶",
+      "nameEn": "Tub o' Flowers",
+      "aliases": [
+        "Tub o Flowers"
+      ],
+      "category": "furniture",
+      "recipeSource": "花舞节皮埃尔摊位购买配方，2,000g",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 15
+        },
+        {
+          "name": "郁金香球茎",
+          "quantity": 1
+        },
+        {
+          "name": "蓝爵种子",
+          "quantity": 1
+        },
+        {
+          "name": "虞美人籽",
+          "quantity": 1
+        },
+        {
+          "name": "夏季亮片种子",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "装饰家具"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "wicked_statue",
+      "name": "邪恶雕像",
+      "nameEn": "Wicked Statue",
+      "aliases": [
+        "Wicked Statue"
+      ],
+      "category": "furniture",
+      "recipeSource": "科罗布斯商店购买配方，1,000g",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 25
+        },
+        {
+          "name": "煤炭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "装饰家具"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "flute_block",
+      "name": "长笛块",
+      "nameEn": "Flute Block",
+      "aliases": [
+        "Flute Block"
+      ],
+      "category": "furniture",
+      "recipeSource": "罗宾 6 心事件获得配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 10
+        },
+        {
+          "name": "铜矿石",
+          "quantity": 2
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可发声装饰块"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "drum_block",
+      "name": "鼓块",
+      "nameEn": "Drum Block",
+      "aliases": [
+        "Drum Block"
+      ],
+      "category": "furniture",
+      "recipeSource": "罗宾 6 心事件获得配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 10
+        },
+        {
+          "name": "铜矿石",
+          "quantity": 2
+        },
+        {
+          "name": "纤维",
+          "quantity": 20
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可发声装饰块"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "stone_sign",
+      "name": "石牌",
+      "nameEn": "Stone Sign",
+      "aliases": [
+        "石标牌",
+        "Stone Sign"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "石头",
+          "quantity": 25
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可展示物品图标的标牌"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "dark_sign",
+      "name": "黑暗牌",
+      "nameEn": "Dark Sign",
+      "aliases": [
+        "暗黑标牌",
+        "Dark Sign"
+      ],
+      "category": "storage",
+      "recipeSource": "科罗布斯 3 心后邮件获得配方",
+      "materials": [
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 5
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可展示物品图标的标牌"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "text_sign",
+      "name": "文本标牌",
+      "nameEn": "Text Sign",
+      "aliases": [
+        "文字牌",
+        "Text Sign"
+      ],
+      "category": "storage",
+      "recipeSource": "初始配方",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 25
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可输入文字的标牌"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "garden_pot",
+      "name": "花盆",
+      "nameEn": "Garden Pot",
+      "aliases": [
+        "Garden Pot"
+      ],
+      "category": "misc",
+      "recipeSource": "修复温室后触发艾芙琳剧情获得配方",
+      "materials": [
+        {
+          "name": "黏土",
+          "quantity": 1
+        },
+        {
+          "name": "石头",
+          "quantity": 10
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "可在室内种植多数作物"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "温室未满或想室内种茶苗/花时很有用。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "explosive_ammo",
+      "name": "爆炸弹药",
+      "nameEn": "Explosive Ammo",
+      "aliases": [
+        "爆炸弹丸",
+        "Explosive Ammo"
+      ],
+      "category": "misc",
+      "recipeSource": "战斗 8 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 1
+        },
+        {
+          "name": "煤炭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "一次制作 5 个爆炸弹药"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "配合弹弓炸矿，熟练后效率很高。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "transmute_fe",
+      "name": "转化（铁）",
+      "nameEn": "Transmute (Fe)",
+      "aliases": [
+        "转化铁",
+        "Transmute Fe"
+      ],
+      "category": "misc",
+      "recipeSource": "采矿 4 级",
+      "materials": [
+        {
+          "name": "铜锭",
+          "quantity": 3
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "铁锭"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "应急转化用，通常不如直接挖矿划算。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "transmute_au",
+      "name": "转化（金）",
+      "nameEn": "Transmute (Au)",
+      "aliases": [
+        "转化金",
+        "Transmute Au"
+      ],
+      "category": "misc",
+      "recipeSource": "采矿 7 级",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "金锭"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "应急转化用，通常不如直接挖矿划算。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mini_jukebox",
+      "name": "迷你点唱机",
+      "nameEn": "Mini-Jukebox",
+      "aliases": [
+        "Mini Jukebox"
+      ],
+      "category": "misc",
+      "recipeSource": "格斯 5 心事件获得配方",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 2
+        },
+        {
+          "name": "电池组",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "播放已解锁音乐"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mini_obelisk",
+      "name": "迷你方尖塔",
+      "nameEn": "Mini-Obelisk",
+      "aliases": [
+        "迷你图腾柱",
+        "Mini Obelisk"
+      ],
+      "category": "misc",
+      "recipeSource": "法师特别订单奖励配方",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 30
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 20
+        },
+        {
+          "name": "金锭",
+          "quantity": 3
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "农场内短距离传送"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "农场动线优化很好用，需要放置成一对。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "cookout_kit",
+      "name": "野炊工具",
+      "nameEn": "Cookout Kit",
+      "aliases": [
+        "Cookout Kit"
+      ],
+      "category": "misc",
+      "recipeSource": "觅食 3 级",
+      "materials": [
+        {
+          "name": "木材",
+          "quantity": 15
+        },
+        {
+          "name": "纤维",
+          "quantity": 10
+        },
+        {
+          "name": "煤炭",
+          "quantity": 3
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "临时户外烹饪"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "下矿或远行时临时做料理。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "tent_kit",
+      "name": "帐篷套件",
+      "nameEn": "Tent Kit",
+      "aliases": [
+        "Tent Kit"
+      ],
+      "category": "misc",
+      "recipeSource": "觅食 8 级",
+      "materials": [
+        {
+          "name": "硬木",
+          "quantity": 10
+        },
+        {
+          "name": "纤维",
+          "quantity": 25
+        },
+        {
+          "name": "布料",
+          "quantity": 1
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "野外过夜"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "1.6 后远行容错更高。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "statue_of_the_dwarf_king",
+      "name": "矮人之王雕像",
+      "nameEn": "Statue Of The Dwarf King",
+      "aliases": [
+        "Statue Of The Dwarf King"
+      ],
+      "category": "misc",
+      "recipeSource": "采矿精通",
+      "materials": [
+        {
+          "name": "铱锭",
+          "quantity": 20
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "每天选择采矿增益"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "后期采矿精通奖励，适合骷髅洞穴和火山前使用。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "statue_of_blessings",
+      "name": "祝福雕像",
+      "nameEn": "Statue Of Blessings",
+      "aliases": [
+        "Statue Of Blessings"
+      ],
+      "category": "misc",
+      "recipeSource": "耕种精通",
+      "materials": [
+        {
+          "name": "树液",
+          "quantity": 999
+        },
+        {
+          "name": "纤维",
+          "quantity": 999
+        },
+        {
+          "name": "石头",
+          "quantity": 999
+        },
+        {
+          "name": "苔藓",
+          "quantity": 333
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "每天提供祝福"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "材料很重，后期资源富余再做。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "anvil",
+      "name": "铁砧",
+      "nameEn": "Anvil",
+      "aliases": [
+        "Anvil"
+      ],
+      "category": "misc",
+      "recipeSource": "战斗精通",
+      "materials": [
+        {
+          "name": "铁锭",
+          "quantity": 50
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "重铸小饰品属性"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "小饰品成型核心工具。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    },
+    {
+      "id": "mini_forge",
+      "name": "迷你锻造台",
+      "nameEn": "Mini-Forge",
+      "aliases": [
+        "迷你熔炉",
+        "Mini Forge"
+      ],
+      "category": "misc",
+      "recipeSource": "战斗精通",
+      "materials": [
+        {
+          "name": "龙牙",
+          "quantity": 5
+        },
+        {
+          "name": "铁锭",
+          "quantity": 10
+        },
+        {
+          "name": "金锭",
+          "quantity": 10
+        },
+        {
+          "name": "铱锭",
+          "quantity": 5
+        }
+      ],
+      "inputs": [],
+      "outputs": [
+        "农场版火山锻造台"
+      ],
+      "processingTime": "",
+      "formula": "",
+      "recommendation": "后期省去跑火山锻造台，非常值得做。",
+      "note": "",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crafting"
+      ]
+    }
   ]
 }

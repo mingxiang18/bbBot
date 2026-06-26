@@ -13,6 +13,7 @@ public enum StardewGuideIntent {
     CROP,
     TOOL,
     BUILDING,
+    CRAFTING,
     MACHINE,
     SHOP,
     COOKING,

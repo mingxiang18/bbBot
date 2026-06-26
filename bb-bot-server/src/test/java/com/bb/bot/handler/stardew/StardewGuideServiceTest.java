@@ -870,6 +870,37 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFullCraftingRecipeDetailsThroughTypedIntent() {
+        StardewGuideResult woodFence = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 木栅栏怎么做");
+        StardewGuideResult teaSapling = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 茶苗材料");
+        StardewGuideResult tapper = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 树液采集器配方");
+        StardewGuideResult miniForge = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 迷你锻造台怎么做");
+
+        assertThat(woodFence.getIntent()).isEqualTo("crafting_detail");
+        assertThat(woodFence.getAnswer()).contains("木栅栏", "初始配方", "木材 x2");
+        assertThat(teaSapling.getIntent()).isEqualTo("crafting_detail");
+        assertThat(teaSapling.getAnswer()).contains("茶苗", "卡洛琳 2 心", "任意野生种子 x2", "纤维 x5", "木材 x5");
+        assertThat(tapper.getIntent()).isEqualTo("crafting_detail");
+        assertThat(tapper.getAnswer()).contains("树液采集器", "觅食 4 级", "木材 x40", "铜锭 x2");
+        assertThat(miniForge.getIntent()).isEqualTo("crafting_detail");
+        assertThat(miniForge.getAnswer()).contains("迷你锻造台", "战斗精通", "龙牙 x5", "铁锭 x10", "铱锭 x5");
+    }
+
+    @Test
+    void answersFullCraftingCategoryListsThroughTypedIntent() {
+        StardewGuideResult fences = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 栅栏有哪些");
+        StardewGuideResult seeds = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 种子配方有哪些");
+        StardewGuideResult lighting = service.answerEvidence(StardewGuideIntent.CRAFTING, "星露谷 照明有哪些");
+
+        assertThat(fences.getIntent()).isEqualTo("crafting_available");
+        assertThat(fences.getAnswer()).contains("栅栏/大门", "大门", "木栅栏", "石栅栏", "铁栅栏", "硬木栅栏");
+        assertThat(seeds.getIntent()).isEqualTo("crafting_available");
+        assertThat(seeds.getAnswer()).contains("种子/茶苗", "春季种子", "茶苗", "纤维种子", "神秘树种子");
+        assertThat(lighting.getIntent()).isEqualTo("crafting_available");
+        assertThat(lighting.getAnswer()).contains("照明", "火把", "营火", "木制火盆", "南瓜灯");
+    }
+
+    @Test
     void keepsCrabPotCatchQueriesOnFishRouteAfterCrabPotCraftableIsAdded() {
         StardewGuideResult catchList = service.answer("星露谷 蟹笼能抓什么");
 

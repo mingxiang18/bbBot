@@ -1,6 +1,7 @@
 package com.bb.bot.handler.stardew;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class StardewData {
     private List<Crop> crops = new ArrayList<>();
     private List<Building> buildings = new ArrayList<>();
     private List<Tool> tools = new ArrayList<>();
+    private List<CraftingRecipe> craftingRecipes = new ArrayList<>();
     private List<Machine> machines = new ArrayList<>();
     private List<Shop> shops = new ArrayList<>();
     private List<Villager> villagers = new ArrayList<>();
@@ -148,6 +150,11 @@ public class StardewData {
         private String recommendation;
         private String note;
         private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class CraftingRecipe extends Machine {
     }
 
     @Data

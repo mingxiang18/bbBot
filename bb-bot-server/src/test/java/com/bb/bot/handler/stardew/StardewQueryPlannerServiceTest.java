@@ -77,6 +77,56 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void aiClassificationRemainsPrimaryWhenItChoosesConcreteNonGuideIntent() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {
+                              "type": "RESOURCE",
+                              "keywords": ["小桶怎么做"],
+                              "constraints": {}
+                            }
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("小桶怎么做");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+    }
+
+    @Test
+    void localGuardrailOnlyPullsBroadGuideBackToConcreteCraftingIntent() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {
+                              "type": "GUIDE",
+                              "keywords": ["木栅栏怎么做"],
+                              "constraints": {}
+                            }
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("木栅栏怎么做");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.CRAFTING);
+    }
+
+    @Test
     void localFallbackClassifiesMonsterDropQueriesSeparatelyFromResourceQueries() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
@@ -437,6 +487,29 @@ class StardewQueryPlannerServiceTest {
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.COOKING);
         assertThat(plan.getIntents().get(0).getKeywords())
                 .containsExactly("南瓜派怎么做，蔓越莓酱效果是什么，墨汁意大利饺和芒果糯米饭材料是什么");
+    }
+
+    @Test
+    void localFallbackClassifiesCraftingRecipeQueriesSeparatelyFromResourceCookingAndSpecialOrders() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("木栅栏怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.CRAFTING);
+        assertThat(planner.plan("茶苗材料是什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.CRAFTING);
+        assertThat(planner.plan("树液采集器配方").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.CRAFTING);
+        assertThat(planner.plan("迷你锻造台怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.CRAFTING);
+        assertThat(planner.plan("巧克力蛋糕怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.COOKING);
+        assertThat(planner.plan("恐龙蛋黄酱怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("齐瓜怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
     }
 
     @Test

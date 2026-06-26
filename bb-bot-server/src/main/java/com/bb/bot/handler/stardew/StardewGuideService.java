@@ -221,6 +221,7 @@ public class StardewGuideService {
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
             case BUILDING -> typedBuildingAnswer(query);
+            case CRAFTING -> typedCraftingAnswer(query);
             case MACHINE -> typedMachineAnswer(query);
             case SHOP -> typedShopAnswer(query);
             case COOKING -> typedCookingAnswer(query);
@@ -321,11 +322,23 @@ public class StardewGuideService {
     }
 
     private StardewGuideResult typedMachineAnswer(String query) {
+        Optional<StardewData.CraftingRecipe> recipe = repository.findCraftingRecipe(query);
+        if (recipe.isPresent() && !isBroadMachineQuery(query)) {
+            return machineDetailAnswer(recipe.get());
+        }
         Optional<StardewData.Machine> machine = repository.findMachine(query);
         if (machine.isPresent() && !isBroadMachineQuery(query)) {
             return machineDetailAnswer(machine.get());
         }
         return machineListAnswer(query);
+    }
+
+    private StardewGuideResult typedCraftingAnswer(String query) {
+        Optional<StardewData.CraftingRecipe> recipe = repository.findCraftingRecipe(query);
+        if (recipe.isPresent() && !isBroadCraftingQuery(query)) {
+            return craftingDetailAnswer(recipe.get());
+        }
+        return craftingListAnswer(query);
     }
 
     private StardewGuideResult typedShopAnswer(String query) {
@@ -886,6 +899,49 @@ public class StardewGuideService {
         }
         sb.append("建议：赚钱优先看小桶/罐头瓶/动物加工；资源循环优先看熔炉、回收机、避雷针和宝石复制机。");
         return result("machine_available", sb.toString(), collectMachineSources(matched));
+    }
+
+    private StardewGuideResult craftingListAnswer(String query) {
+        String category = parseMachineCategory(query);
+        List<StardewData.CraftingRecipe> matched = repository.craftingRecipes().stream()
+                .filter(recipe -> category == null || category.equals(recipe.getCategory()))
+                .sorted(Comparator.comparing(StardewData.CraftingRecipe::getName))
+                .toList();
+
+        if (matched.isEmpty()) {
+            return result("crafting_available", "按当前条件没匹配到制作配方。可以试试：木栅栏、茶苗、树液采集器、鱼熏机、迷你锻造台。", List.of());
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("可查询制作配方");
+        if (category != null) {
+            sb.append("（").append(formatMachineCategory(category)).append("）");
+        }
+        sb.append("：\n");
+        int limit = Math.min(60, matched.size());
+        for (int i = 0; i < limit; i++) {
+            StardewData.CraftingRecipe recipe = matched.get(i);
+            sb.append(i + 1).append(". ").append(recipe.getName())
+                    .append("：配方来源：").append(StringUtils.defaultIfBlank(recipe.getRecipeSource(), "暂未记录"))
+                    .append("，材料：").append(formatMaterials(recipe.getMaterials()));
+            if (recipe.getOutputs() != null && !recipe.getOutputs().isEmpty()) {
+                sb.append("，产出/用途：").append(String.join("、", recipe.getOutputs()));
+            }
+            if (StringUtils.isNotBlank(recipe.getRecommendation())) {
+                sb.append("，建议：").append(recipe.getRecommendation());
+            }
+            sb.append("\n");
+        }
+        if (matched.size() > limit) {
+            sb.append("还有 ").append(matched.size() - limit).append(" 个配方未展开；可以问具体名字看材料和来源。\n");
+        }
+        sb.append("建议：问具体名字最稳，例如“茶苗怎么做”“树液采集器材料”“迷你锻造台怎么做”。");
+        return result("crafting_available", sb.toString(), collectMachineSources(matched));
+    }
+
+    private StardewGuideResult craftingDetailAnswer(StardewData.CraftingRecipe recipe) {
+        StardewGuideResult detail = machineDetailAnswer(recipe);
+        return result("crafting_detail", detail.getAnswer(), detail.getSourceUrls());
     }
 
     private StardewGuideResult machineDetailAnswer(StardewData.Machine machine) {
@@ -2067,11 +2123,51 @@ public class StardewGuideService {
                 || query.contains("钓鱼装备有哪些") || query.contains("钓鱼制作有哪些");
     }
 
+    private boolean isBroadCraftingQuery(String query) {
+        return isBroadMachineQuery(query)
+                || query.contains("制作配方有哪些")
+                || query.contains("制作列表")
+                || query.contains("配方列表")
+                || query.contains("合成列表")
+                || query.contains("能做什么")
+                || query.contains("可以做什么")
+                || query.contains("栅栏有哪些")
+                || query.contains("地板有哪些")
+                || query.contains("小径有哪些")
+                || query.contains("照明有哪些")
+                || query.contains("家具配方有哪些")
+                || query.contains("种子配方有哪些")
+                || query.contains("野生种子有哪些");
+    }
+
     private String parseMachineCategory(String query) {
         if (query.contains("鱼饵") || query.contains("钓具") || query.contains("浮标")
                 || query.contains("旋式") || query.contains("寻宝") || query.contains("宝藏猎人")
                 || query.contains("倒刺钩") || query.contains("磁铁") || query.contains("蟹笼")) {
             return "fishing";
+        }
+        if (query.contains("栅栏") || query.contains("围栏") || query.contains("大门")) {
+            return "fence";
+        }
+        if (query.contains("种子") || query.contains("草籽") || query.contains("茶苗")
+                || query.contains("树种子")) {
+            return "seed";
+        }
+        if (query.contains("地板") || query.contains("小径") || query.contains("路径")
+                || query.contains("木径")) {
+            return "decor";
+        }
+        if (query.contains("火把") || query.contains("营火") || query.contains("火盆")
+                || query.contains("灯柱") || query.contains("南瓜灯") || query.contains("照明")) {
+            return "lighting";
+        }
+        if (query.contains("家具") || query.contains("花桶") || query.contains("邪恶雕像")
+                || query.contains("长笛块") || query.contains("鼓块")) {
+            return "furniture";
+        }
+        if (query.contains("野外小食") || query.contains("虫肉牛排") || query.contains("生命药水")
+                || query.contains("蒜油")) {
+            return "edible";
         }
         if (query.contains("肥料") || query.contains("保湿土壤") || query.contains("保湿土")
                 || query.contains("生长激素") || query.contains("树肥")) {
@@ -2105,7 +2201,7 @@ public class StardewGuideService {
             return "mining";
         }
         if (query.contains("箱子") || query.contains("储物") || query.contains("收纳")
-                || query.contains("标牌") || query.contains("牌子")) {
+                || query.contains("标牌") || query.contains("牌子") || query.contains("告示牌")) {
             return "storage";
         }
         if (query.contains("稻草人") || query.contains("农场工具") || query.contains("农场电脑")
@@ -2117,6 +2213,12 @@ public class StardewGuideService {
         }
         if (query.contains("自动化") || query.contains("料斗") || query.contains("自动上料")) {
             return "automation";
+        }
+        if (query.contains("野炊") || query.contains("帐篷") || query.contains("铁砧")
+                || query.contains("锻造台") || query.contains("迷你锻造") || query.contains("转化")
+                || query.contains("点唱机") || query.contains("方尖塔") || query.contains("雕像")
+                || query.contains("爆炸弹药") || query.contains("花盆")) {
+            return "misc";
         }
         return null;
     }
@@ -2136,6 +2238,13 @@ public class StardewGuideService {
             case "ring" -> "戒指";
             case "consumable" -> "一次性消耗品";
             case "fishing" -> "钓鱼装备";
+            case "fence" -> "栅栏/大门";
+            case "seed" -> "种子/茶苗";
+            case "decor" -> "地板/小径";
+            case "lighting" -> "照明";
+            case "furniture" -> "家具";
+            case "edible" -> "可食用制作物";
+            case "misc" -> "杂项";
             default -> category;
         };
     }
@@ -2298,7 +2407,7 @@ public class StardewGuideService {
         return new ArrayList<>(urls);
     }
 
-    private List<String> collectMachineSources(List<StardewData.Machine> machines) {
+    private List<String> collectMachineSources(List<? extends StardewData.Machine> machines) {
         Set<String> urls = new LinkedHashSet<>();
         for (StardewData.Machine machine : machines) {
             if (machine.getSourceUrls() != null) {

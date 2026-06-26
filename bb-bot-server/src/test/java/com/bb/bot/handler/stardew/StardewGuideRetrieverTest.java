@@ -168,6 +168,45 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedCraftingIntentRetrievesRecipesAcrossFullCraftingTableWithoutResourceCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.CRAFTING, "木栅栏怎么做"),
+                intent(StardewGuideIntent.CRAFTING, "茶苗材料是什么"),
+                intent(StardewGuideIntent.CRAFTING, "树液采集器配方"),
+                intent(StardewGuideIntent.CRAFTING, "迷你锻造台怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("木栅栏、茶苗、树液采集器和迷你锻造台怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.CRAFTING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("crafting_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("木栅栏", "木材 x2")
+                .contains("茶苗", "任意野生种子 x2", "纤维 x5", "卡洛琳")
+                .contains("树液采集器", "木材 x40", "铜锭 x2")
+                .contains("迷你锻造台", "龙牙 x5", "铱锭 x5")
+                .doesNotContain("资源获取方式", "料理", "工具升级");
+    }
+
+    @Test
+    void typedCraftingIntentRetrievesBroadCraftingCategories() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.CRAFTING, "栅栏有哪些"),
+                intent(StardewGuideIntent.CRAFTING, "照明有哪些")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("栅栏和照明制作配方有哪些", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("crafting_available");
+        assertThat(joinAnswers(evidence))
+                .contains("可查询制作配方（栅栏/大门）", "大门", "木栅栏", "硬木栅栏")
+                .contains("可查询制作配方（照明）", "火把", "木制火盆", "南瓜灯");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

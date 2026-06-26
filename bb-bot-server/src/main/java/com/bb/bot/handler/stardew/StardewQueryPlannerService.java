@@ -45,7 +45,7 @@ public class StardewQueryPlannerService {
                         }
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
-                        ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, MACHINE, SHOP,
+                        ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
                         COOKING, SPECIAL_ORDER, SKILL, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
@@ -65,6 +65,8 @@ public class StardewQueryPlannerService {
                         - 问鱼塘建筑本身的建造材料、价格、占地、罗宾建造，例如“鱼塘建造材料多少钱”，归为 BUILDING。
                         - 问特别订单/特殊订单/订单板/齐先生核桃房任务的需求、奖励、期限、怎么做，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”“齐瓜怎么做”“五彩农场交什么”，归为 SPECIAL_ORDER。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
+                        - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
+                        - 问加工机器/制作物怎么用、材料、配方，例如“小桶怎么做”“鱼熏机材料”“洒水器怎么做”，也归为 CRAFTING；MACHINE 仅作为兼容类型。
                         - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
@@ -117,9 +119,13 @@ public class StardewQueryPlannerService {
         if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FISH_POND) {
             return true;
         }
+        if (aiType == StardewGuideIntent.MACHINE && localType == StardewGuideIntent.CRAFTING) {
+            return true;
+        }
         return aiType == StardewGuideIntent.GUIDE
                 && (localType == StardewGuideIntent.SKILL
                 || localType == StardewGuideIntent.SPECIAL_ORDER
+                || localType == StardewGuideIntent.CRAFTING
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
     }
@@ -140,6 +146,9 @@ public class StardewQueryPlannerService {
         }
         if (containsAny(q, "收集包", "献祭", "社区中心", "电影院", "失踪的包")) {
             return StardewGuideIntent.BUNDLE;
+        }
+        if (looksLikeSpecificCraftingRecipeBeforeGuideQuery(q)) {
+            return StardewGuideIntent.CRAFTING;
         }
         if (looksLikeTrinketQuery(q)) {
             return StardewGuideIntent.GUIDE;
@@ -166,6 +175,9 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.RESOURCE;
         }
         if (looksLikeSpecificMineralResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
+        }
+        if (looksLikeCraftedProductResourceQuery(q)) {
             return StardewGuideIntent.RESOURCE;
         }
         if (looksLikeMonsterDropQuery(q)) {
@@ -228,9 +240,8 @@ public class StardewQueryPlannerService {
                 && !containsAny(q, "升级多少钱")) {
             return StardewGuideIntent.SHOP;
         }
-        if (containsAny(q, "洒水器", "小桶", "罐头瓶", "蛋黄酱机", "奶酪机", "织布机", "熔炉", "避雷针", "回收机", "晶球破开器", "楼梯", "鱼饵", "浮标", "戒指", "图腾")
-                && containsAny(q, "怎么做", "材料", "配方", "制作", "需要")) {
-            return StardewGuideIntent.MACHINE;
+        if (looksLikeCraftingRecipeQuery(q)) {
+            return StardewGuideIntent.CRAFTING;
         }
         if (containsAny(q, "作物", "种什么", "种子", "几天成熟", "收益", "春季", "夏季", "秋季", "冬季")
                 && !containsAny(q, "钓", "鱼")) {
@@ -461,6 +472,41 @@ public class StardewQueryPlannerService {
                 "炖饭", "烩饭", "松糕", "杂烩汤", "浓汤", "田螺", "蜗牛",
                 "虾鸡尾酒", "芒果糯米饭", "芋泥", "咖喱", "墨汁意大利饺",
                 "意大利饺", "苔藓汤");
+    }
+
+    private boolean looksLikeCraftingRecipeQuery(String query) {
+        if (!containsAny(query, "怎么做", "材料", "配方", "制作", "合成", "需要")) {
+            return false;
+        }
+        return containsAny(query,
+                "洒水器", "小桶", "罐头瓶", "蛋黄酱机", "奶酪机", "织布机", "产油机", "蜂房",
+                "鱼熏机", "脱水机", "诱饵制造机", "熔炉", "重型熔炉", "木炭窑", "回收机",
+                "种子生产器", "宝石复制机", "避雷针", "太阳能板", "树液采集器", "虫饵盒",
+                "晶球破开器", "蘑菇木桩", "鸵鸟孵化器", "骨头磨坊", "料斗", "农场电脑",
+                "炸弹", "楼梯", "爆炸弹药", "箱子", "石箱", "牌", "标牌", "稻草人", "花盆",
+                "肥料", "生长激素", "保湿土壤", "树肥", "种子", "草籽", "茶苗", "树种子",
+                "栅栏", "围栏", "大门", "地板", "小径", "木径", "路径", "火把", "营火",
+                "火盆", "灯柱", "南瓜灯", "花桶", "邪恶雕像", "长笛块", "鼓块",
+                "野外小食", "虫肉牛排", "生命药水", "蒜油", "怪物香水", "仙尘",
+                "图腾", "传送", "戒指", "铱环", "鱼饵", "浮标", "旋式", "寻宝器",
+                "倒刺钩", "磁铁", "蟹笼", "迷你点唱机", "迷你方尖塔", "野炊工具",
+                "帐篷套件", "矮人之王雕像", "祝福雕像", "铁砧", "迷你锻造台",
+                "gate", "fence", "sprinkler", "keg", "preserves jar", "tapper", "bomb",
+                "staircase", "fertilizer", "totem", "ring", "bait", "bobber", "torch",
+                "brazier", "floor", "path", "chest", "sign", "anvil", "mini-forge");
+    }
+
+    private boolean looksLikeCraftedProductResourceQuery(String query) {
+        return containsAny(query, "怎么做", "怎么弄", "怎么获得", "获取", "来源")
+                && containsAny(query,
+                "恐龙蛋黄酱", "鱼籽酱", "果酒", "果酱", "腌菜", "松露油",
+                "奶酪", "山羊奶酪", "布料", "葡萄干", "熏鱼", "腌鱼籽",
+                "dinosaur mayonnaise", "caviar", "truffle oil", "cloth", "raisins");
+    }
+
+    private boolean looksLikeSpecificCraftingRecipeBeforeGuideQuery(String query) {
+        return looksLikeCraftingRecipeQuery(query)
+                && containsAny(query, "迷你锻造台", "铁砧", "mini-forge", "anvil");
     }
 
     private boolean containsAny(String query, String... words) {
