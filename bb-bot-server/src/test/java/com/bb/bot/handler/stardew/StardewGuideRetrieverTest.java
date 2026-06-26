@@ -285,6 +285,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedQuestIntentRetrievesStoryQuestEvidenceWithoutSpecialOrderOrVillagerCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.QUEST, "罗宾斧头在哪"),
+                intent(StardewGuideIntent.QUEST, "神秘齐怎么做"),
+                intent(StardewGuideIntent.QUEST, "普通任务有哪些"),
+                intent(StardewGuideIntent.SPECIAL_ORDER, "罗宾资源冲刺奖励是什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("罗宾斧头、神秘齐、普通任务和罗宾资源冲刺", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.QUEST, StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("story_quest_detail", "story_quest_available", "special_order");
+        assertThat(joinAnswers(evidence))
+                .contains("罗宾丢失的斧子", "煤矿森林", "神秘的齐", "彩虹贝壳", "普通任务对照")
+                .contains("罗宾的资源冲刺特别订单", "石箱配方")
+                .doesNotContain("没找到对应居民", "没找到这个资源");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

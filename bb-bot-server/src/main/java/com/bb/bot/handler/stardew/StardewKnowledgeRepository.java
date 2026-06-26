@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -104,6 +104,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.BookGuide> books() {
         return safe(data.getBooks());
+    }
+
+    public List<StardewData.StoryQuestGuide> storyQuests() {
+        return safe(data.getStoryQuests());
     }
 
     public List<StardewData.SpecialOrderGuide> specialOrders() {
@@ -347,6 +351,16 @@ public class StardewKnowledgeRepository {
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(BookMatch::book)
                 .toList();
+    }
+
+    public Optional<StardewData.StoryQuestGuide> findStoryQuest(String query) {
+        String q = normalize(query);
+        return storyQuests().stream()
+                .map(quest -> new StoryQuestMatch(quest, scoreStoryQuest(q, quest)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(StoryQuestMatch::quest)
+                .findFirst();
     }
 
     public Optional<StardewData.Fish> findFish(String query) {
@@ -599,6 +613,44 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreStoryQuest(String q, StardewData.StoryQuestGuide quest) {
+        int score = scoreSearchable(q, quest.getName(), quest.getNameEn(), quest.getAliases());
+        if (score == 0) {
+            score = Math.max(score, scoreTextMatches(q, quest.getTrigger(), 20));
+            score = Math.max(score, scoreTextMatches(q, quest.getRecommendation(), 20));
+            score = Math.max(score, scoreTextMatches(q, quest.getNote(), 20));
+            score = Math.max(score, scoreTextMatches(q, quest.getRequirements(), 30));
+            score = Math.max(score, scoreTextMatches(q, quest.getWalkthrough(), 30));
+            score = Math.max(score, scoreTextMatches(q, quest.getRewards(), 20));
+        }
+        if (score == 0) {
+            return 0;
+        }
+        score += scoreTextMatches(q, quest.getTrigger(), 10);
+        score += scoreTextMatches(q, quest.getRequirements(), 10);
+        score += scoreTextMatches(q, quest.getWalkthrough(), 10);
+        return score;
+    }
+
+    private int scoreTextMatches(String q, List<String> values, int maxScore) {
+        int score = 0;
+        if (values == null) {
+            return score;
+        }
+        for (String value : values) {
+            score += scoreTextMatches(q, value, maxScore);
+        }
+        return score;
+    }
+
+    private int scoreTextMatches(String q, String value, int maxScore) {
+        String normalized = normalize(value);
+        if (normalized.length() < 2 || !q.contains(normalized)) {
+            return 0;
+        }
+        return Math.min(maxScore, Math.max(5, normalized.length() / 2));
+    }
+
     private int scoreBundle(String q, StardewData.Bundle bundle) {
         int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
         boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
@@ -661,6 +713,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record BookMatch(StardewData.BookGuide book, int score) {
+    }
+
+    private record StoryQuestMatch(StardewData.StoryQuestGuide quest, int score) {
     }
 
     private record SpecialOrderMatch(StardewData.SpecialOrderGuide order, int score) {

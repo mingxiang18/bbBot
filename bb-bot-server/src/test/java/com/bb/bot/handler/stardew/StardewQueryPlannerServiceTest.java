@@ -247,6 +247,54 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesStoryQuestQueriesSeparatelyFromSpecialOrdersResourcesAndVillagers() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan robinAxe = planner.plan("罗宾斧头在哪");
+        StardewQueryPlan mayorsShorts = planner.plan("刘易斯短裤怎么拿");
+        StardewQueryPlan mysteriousQi = planner.plan("神秘齐怎么做");
+        StardewQueryPlan pirateWife = planner.plan("海盗妻子任务流程");
+        StardewQueryPlan robinRush = planner.plan("罗宾资源冲刺奖励是什么");
+        StardewQueryPlan robinSchedule = planner.plan("罗宾下午两点在哪");
+
+        assertThat(robinAxe.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(mayorsShorts.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(mysteriousQi.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(pirateWife.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(robinRush.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(robinSchedule.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.VILLAGER_SCHEDULE);
+    }
+
+    @Test
+    void localGuardrailPullsStoryQuestsBackFromResourceVillagerAndUnknownPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"RESOURCE","keywords":["罗宾斧头在哪"],"constraints":{}},
+                            {"type":"VILLAGER_SCHEDULE","keywords":["刘易斯短裤怎么拿"],"constraints":{}},
+                            {"type":"UNKNOWN","keywords":["海盗妻子任务流程"],"constraints":{}},
+                            {"type":"QUEST","keywords":["罗宾资源冲刺奖励是什么"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("普通任务和特别订单边界");
+
+        assertThat(plan.getIntents()).hasSize(4);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.QUEST);
+        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

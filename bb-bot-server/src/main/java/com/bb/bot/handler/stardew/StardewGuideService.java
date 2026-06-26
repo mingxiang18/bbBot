@@ -233,6 +233,7 @@ public class StardewGuideService {
             case MACHINE -> typedMachineAnswer(query);
             case SHOP -> typedShopAnswer(query);
             case COOKING -> typedCookingAnswer(query);
+            case QUEST -> typedStoryQuestAnswer(query);
             case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
             case FESTIVAL -> typedFestivalAnswer(query);
             case FARM_MAP -> typedFarmMapAnswer(query);
@@ -372,6 +373,14 @@ public class StardewGuideService {
             return cookingRecipeAnswer(cookingRecipe.get());
         }
         return cookingListAnswer(query, cookingRecipe);
+    }
+
+    private StardewGuideResult typedStoryQuestAnswer(String query) {
+        Optional<StardewData.StoryQuestGuide> storyQuest = repository.findStoryQuest(query);
+        if (storyQuest.isPresent() && !isBroadStoryQuestQuery(query)) {
+            return storyQuestAnswer(storyQuest.get());
+        }
+        return storyQuestListAnswer(query, storyQuest);
     }
 
     private StardewGuideResult typedSpecialOrderAnswer(String query) {
@@ -737,6 +746,54 @@ public class StardewGuideService {
             }
             sb.append("\n");
         }
+    }
+
+    private StardewGuideResult storyQuestAnswer(StardewData.StoryQuestGuide quest) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(quest.getName()).append("：\n");
+        if (StringUtils.isNotBlank(quest.getTrigger())) {
+            sb.append("触发：").append(quest.getTrigger()).append("\n");
+        }
+        appendLines(sb, "需求", quest.getRequirements());
+        appendLines(sb, "步骤", quest.getWalkthrough());
+        appendLines(sb, "奖励", quest.getRewards());
+        if (StringUtils.isNotBlank(quest.getRecommendation())) {
+            sb.append("建议：").append(quest.getRecommendation()).append("\n");
+        }
+        if (StringUtils.isNotBlank(quest.getNote())) {
+            sb.append("提示：").append(quest.getNote()).append("\n");
+        }
+        return result("story_quest_detail", sb.toString().trim(), quest.getSourceUrls());
+    }
+
+    private StardewGuideResult storyQuestListAnswer(String query, Optional<StardewData.StoryQuestGuide> preferred) {
+        List<StardewData.StoryQuestGuide> matched = repository.storyQuests().stream()
+                .filter(quest -> matchesStoryQuestQuery(query, quest))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::storyQuests);
+        }
+        if (matched.isEmpty()) {
+            return result("story_quest_available", "没找到普通任务资料。可以试试：罗宾斧头、镇长短裤、神秘齐、海盗妻子。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("普通任务对照：\n");
+        for (StardewData.StoryQuestGuide quest : matched) {
+            sb.append("- ").append(quest.getName()).append("：");
+            if (StringUtils.isNotBlank(quest.getTrigger())) {
+                sb.append(quest.getTrigger());
+            } else {
+                sb.append("触发条件未记录");
+            }
+            if (quest.getRequirements() != null && !quest.getRequirements().isEmpty()) {
+                sb.append("；需求：").append(quest.getRequirements().get(0));
+            }
+            if (quest.getRewards() != null && !quest.getRewards().isEmpty()) {
+                sb.append("；奖励：").append(quest.getRewards().get(0));
+            }
+            sb.append("\n");
+        }
+        sb.append("提示：这里是任务日志/剧情任务；特别订单板和齐先生核桃房任务走特别订单类目。问具体任务名可以看触发、步骤和奖励。");
+        return result("story_quest_available", sb.toString().trim(), collectStoryQuestSources(matched));
     }
 
     private void appendLines(StringBuilder sb, String title, List<String> lines) {
@@ -2042,6 +2099,31 @@ public class StardewGuideService {
                 && !repository.findFarmAnimal(query).isPresent();
     }
 
+    private boolean isBroadStoryQuestQuery(String query) {
+        return containsAny(query, "任务有哪些", "普通任务有哪些", "剧情任务有哪些", "任务列表", "普通任务列表", "剧情任务列表", "所有任务", "全部任务", "总览")
+                || (containsAny(query, "普通任务", "剧情任务", "任务日志") && containsAny(query, "哪些", "列表", "总览", "所有", "全部"));
+    }
+
+    private boolean matchesStoryQuestQuery(String query, StardewData.StoryQuestGuide quest) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.StoryQuestGuide> direct = repository.findStoryQuest(query);
+        if (direct.isPresent() && direct.get().getId().equals(quest.getId()) && !isBroadStoryQuestQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "任务有哪些", "任务列表", "普通任务", "剧情任务", "任务日志", "所有任务", "全部任务")) {
+            return true;
+        }
+        return containsAnyNormalized(q, quest.getAliases())
+                || containsNormalized(q, quest.getName())
+                || containsNormalized(q, quest.getNameEn())
+                || containsNormalized(q, quest.getTrigger())
+                || containsAnyNormalized(q, quest.getRequirements())
+                || containsAnyNormalized(q, quest.getWalkthrough())
+                || containsAnyNormalized(q, quest.getRewards())
+                || containsNormalized(q, quest.getRecommendation())
+                || containsNormalized(q, quest.getNote());
+    }
+
     private boolean looksLikeSharedFarmAnimalProductQuery(String query) {
         String q = StardewKnowledgeRepository.normalize(query);
         List<StardewData.FarmAnimalGuide> productMatches = repository.farmAnimals().stream()
@@ -2875,6 +2957,16 @@ public class StardewGuideService {
         for (StardewData.FarmAnimalGuide animal : animals) {
             if (animal.getSourceUrls() != null) {
                 urls.addAll(animal.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectStoryQuestSources(List<StardewData.StoryQuestGuide> quests) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.StoryQuestGuide quest : quests) {
+            if (quest.getSourceUrls() != null) {
+                urls.addAll(quest.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

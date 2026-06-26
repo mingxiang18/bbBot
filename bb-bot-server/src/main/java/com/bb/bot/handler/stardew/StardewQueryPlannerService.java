@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -63,6 +63,7 @@ public class StardewQueryPlannerService {
                         - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
                         - 问鱼塘养什么好、某种鱼鱼塘产什么、鱼塘扩容任务、鱼籽/鱼籽酱、鱼塘要什么任务物品，例如“鲟鱼鱼塘产什么”“岩浆鳗鱼鱼塘要什么”“鱼塘养什么好”，归为 FISH_POND。
                         - 问鱼塘建筑本身的建造材料、价格、占地、罗宾建造，例如“鱼塘建造材料多少钱”，归为 BUILDING。
+                        - 普通剧情任务/任务日志任务，例如“罗宾斧头在哪”“镇长短裤怎么拿”“黑莓篮子在哪”“神秘齐怎么做”“海盗妻子任务流程”“普通任务有哪些”，归为 QUEST。
                         - 问特别订单/特殊订单/订单板/齐先生核桃房任务的需求、奖励、期限、怎么做，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”“齐瓜怎么做”“五彩农场交什么”，归为 SPECIAL_ORDER。
                         - 节日/活动本身的日期、时间、地点、怎么玩、奖励、小游戏、商店重点、兑换建议，例如“沙漠节怎么玩”“花舞节几点开始”“星露谷展览会怎么拿星之果实”“冬季有哪些节日”，归为 FESTIVAL。
                         - 节日里的具体商品在哪里买/多少钱，如果用户只问商品购买点，例如“草莓种子在哪里买”“万灵节稀有稻草人多少钱”，可归为 SHOP。
@@ -114,8 +115,21 @@ public class StardewQueryPlannerService {
     }
 
     private boolean shouldPreferLocalIntent(StardewGuideIntent aiType, StardewGuideIntent localType) {
+        if (aiType == StardewGuideIntent.UNKNOWN) {
+            return localType == StardewGuideIntent.QUEST;
+        }
         if (aiType == StardewGuideIntent.SPECIAL_ORDER
                 && (localType == StardewGuideIntent.FISH || localType == StardewGuideIntent.FISH_POND)) {
+            return true;
+        }
+        if (aiType == StardewGuideIntent.QUEST && localType == StardewGuideIntent.SPECIAL_ORDER) {
+            return true;
+        }
+        if (localType == StardewGuideIntent.QUEST
+                && (aiType == StardewGuideIntent.GUIDE
+                || aiType == StardewGuideIntent.RESOURCE
+                || aiType == StardewGuideIntent.VILLAGER_SCHEDULE
+                || aiType == StardewGuideIntent.VILLAGER_PROFILE)) {
             return true;
         }
         if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
@@ -137,6 +151,7 @@ public class StardewQueryPlannerService {
                 && (localType == StardewGuideIntent.SKILL
                 || localType == StardewGuideIntent.SPECIAL_ORDER
                 || localType == StardewGuideIntent.CRAFTING
+                || localType == StardewGuideIntent.QUEST
                 || localType == StardewGuideIntent.FESTIVAL
                 || localType == StardewGuideIntent.FARM_MAP
                 || localType == StardewGuideIntent.ANIMAL_CARE
@@ -202,6 +217,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeSpecialOrderQuery(q)) {
             return StardewGuideIntent.SPECIAL_ORDER;
+        }
+        if (looksLikeStoryQuestQuery(q)) {
+            return StardewGuideIntent.QUEST;
         }
         if (looksLikeFestivalQuery(q) && !looksLikeSpecificFestivalShopItemQuery(q)) {
             return StardewGuideIntent.FESTIVAL;
@@ -401,6 +419,27 @@ public class StardewQueryPlannerService {
                 "骷髅洞穴入侵", "齐氏料理", "齐的善意", "四颗宝石", "饥饿挑战",
                 "Island Ingredients", "Cave Patrol", "Qi's Crop", "Qi's Cuisine", "Qi's Kindness",
                 "Danger In The Deep", "Skull Cavern Invasion", "Qi's Prismatic Grange");
+    }
+
+    private boolean looksLikeStoryQuestQuery(String query) {
+        if (containsAny(query, "特别订单", "特殊订单", "订单板", "齐先生核桃房", "核桃房任务")) {
+            return false;
+        }
+        if (looksLikeCookingFoodQuery(query) && containsAny(query, "怎么做", "材料", "配方", "效果")) {
+            return false;
+        }
+        return containsAny(query,
+                "普通任务", "剧情任务", "任务日志", "任务有哪些", "任务列表",
+                "罗宾斧头", "罗宾的斧头", "罗宾丢失的斧子", "镇长短裤", "刘易斯短裤", "紫色短裤",
+                "黑莓篮子", "莱纳斯篮子", "玛妮的请求", "帕姆渴了", "黑暗试剂", "奶牛的喜悦",
+                "骷髅钥匙", "作物研究", "膝盖疗法", "神秘齐", "神秘的齐", "齐先生的挑战",
+                "冬日谜团", "奇怪纸条", "秘密纸条", "熊的知识", "隐秘纸条", "士兵的星星",
+                "镇长的需求", "龙虾通缉", "帕姆需要果汁", "鱼肉砂锅", "抓鱿鱼", "鱼汤",
+                "皮埃尔的通知", "克林特的尝试", "给克林特的帮助", "力量之杖", "奶奶的礼物",
+                "异域烈酒", "抓 lingcod", "抓蛇齿单线鱼", "黑暗护身符", "哥布林问题",
+                "海盗妻子", "海盗的妻子", "巨大树桩", "老鼠肆虐", "拜访法师",
+                "Robin's Lost Axe", "Mayor's Shorts", "Blackberry Basket", "The Mysterious Qi",
+                "Dark Talisman", "Goblin Problem", "The Pirate's Wife", "The Giant Stump");
     }
 
     private boolean looksLikeFestivalQuery(String query) {

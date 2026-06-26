@@ -36,6 +36,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.fishPonds()).hasSize(73);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
+        assertThat(repository.storyQuests()).hasSize(55);
         assertThat(repository.specialOrders()).hasSizeGreaterThanOrEqualTo(28);
         assertThat(repository.skillGuides()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.festivalEvents()).hasSize(12);
@@ -92,6 +93,56 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(animal.getBestFor()).isNotEmpty();
                     assertThat(animal.getRecommendations()).isNotEmpty();
                     assertThat(animal.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals");
+                });
+    }
+
+    @Test
+    void fullStoryQuestTableIsCoveredAsTypedCategory() {
+        Set<String> questIds = repository.storyQuests().stream()
+                .map(StardewData.StoryQuestGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.storyQuests()).hasSize(55);
+        assertThat(questIds).contains(
+                "quest_introductions",
+                "quest_getting_started_crop",
+                "quest_getting_started_meadowlands",
+                "quest_robins_lost_axe",
+                "quest_mayors_shorts",
+                "quest_blackberry_basket",
+                "quest_the_mysterious_qi",
+                "quest_a_winter_mystery",
+                "quest_strange_note",
+                "quest_cryptic_note",
+                "quest_dark_talisman",
+                "quest_goblin_problem",
+                "quest_the_pirates_wife",
+                "quest_the_giant_stump"
+        );
+
+        assertThat(repository.findStoryQuest("罗宾斧头在哪").orElseThrow().getId()).isEqualTo("quest_robins_lost_axe");
+        assertThat(repository.findStoryQuest("刘易斯短裤怎么拿").orElseThrow().getId()).isEqualTo("quest_mayors_shorts");
+        assertThat(repository.findStoryQuest("黑莓篮子在哪").orElseThrow().getId()).isEqualTo("quest_blackberry_basket");
+        assertThat(repository.findStoryQuest("神秘齐怎么做").orElseThrow().getId()).isEqualTo("quest_the_mysterious_qi");
+        assertThat(repository.findStoryQuest("骷髅洞穴100层秘密纸条").orElseThrow().getId()).isEqualTo("quest_cryptic_note");
+        assertThat(repository.findStoryQuest("虚空蛋黄酱哥布林").orElseThrow().getId()).isEqualTo("quest_goblin_problem");
+        assertThat(repository.findStoryQuest("海盗妻子任务流程").orElseThrow().getId()).isEqualTo("quest_the_pirates_wife");
+    }
+
+    @Test
+    void allStoryQuestsHaveCoreFieldsAndSources() {
+        assertThat(repository.storyQuests())
+                .hasSize(55)
+                .allSatisfy(quest -> {
+                    assertThat(quest.getId()).isNotBlank();
+                    assertThat(quest.getName()).isNotBlank();
+                    assertThat(quest.getNameEn()).isNotBlank();
+                    assertThat(quest.getAliases()).isNotEmpty();
+                    assertThat(quest.getTrigger()).isNotBlank();
+                    assertThat(quest.getRequirements()).isNotEmpty();
+                    assertThat(quest.getRewards()).isNotEmpty();
+                    assertThat(quest.getRecommendation()).isNotBlank();
+                    assertThat(quest.getSourceUrls()).contains("https://stardewvalleywiki.com/Quests");
                 });
     }
 

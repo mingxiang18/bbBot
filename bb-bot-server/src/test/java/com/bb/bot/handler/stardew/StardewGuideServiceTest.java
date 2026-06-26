@@ -494,6 +494,33 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersStoryQuestsThroughTypedIntentWithoutSpecialOrderCrossRouting() {
+        StardewGuideResult all = service.answerEvidence(StardewGuideIntent.QUEST, "星露谷 普通任务有哪些");
+        StardewGuideResult robinAxe = service.answerEvidence(StardewGuideIntent.QUEST, "星露谷 罗宾斧头在哪");
+        StardewGuideResult shorts = service.answerEvidence(StardewGuideIntent.QUEST, "星露谷 刘易斯短裤怎么拿");
+        StardewGuideResult mysteriousQi = service.answerEvidence(StardewGuideIntent.QUEST, "星露谷 神秘齐怎么做");
+        StardewGuideResult pirateWife = service.answerEvidence(StardewGuideIntent.QUEST, "星露谷 海盗妻子任务流程");
+        StardewGuideResult specialOrder = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "星露谷 罗宾资源冲刺奖励是什么");
+
+        assertThat(all.getIntent()).isEqualTo("story_quest_available");
+        assertThat(all.getAnswer()).contains("普通任务对照", "自我介绍", "前往海滩", "老鼠肆虐")
+                .doesNotContain("特别订单对照");
+
+        assertThat(robinAxe.getIntent()).isEqualTo("story_quest_detail");
+        assertThat(robinAxe.getAnswer()).contains("罗宾丢失的斧子", "煤矿森林", "下水道管道", "250g")
+                .doesNotContain("罗宾的资源冲刺");
+        assertThat(robinAxe.getSourceUrls()).contains("https://stardewvalleywiki.com/Quests");
+
+        assertThat(shorts.getAnswer()).contains("镇长的短裤", "玛妮卧室", "750g", "刘易斯");
+        assertThat(mysteriousQi.getAnswer()).contains("神秘的齐", "彩虹贝壳", "甜菜", "太阳精华", "会员卡");
+        assertThat(pirateWife.getAnswer()).contains("海盗的妻子", "伯蒂", "肯特", "海盗项链", "仙尘");
+
+        assertThat(specialOrder.getIntent()).isEqualTo("special_order");
+        assertThat(specialOrder.getAnswer()).contains("罗宾的资源冲刺特别订单", "收集 1000 个木材")
+                .doesNotContain("罗宾丢失的斧子", "普通任务对照");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

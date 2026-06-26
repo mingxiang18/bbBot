@@ -17,6 +17,7 @@ public enum StardewGuideIntent {
     MACHINE,
     SHOP,
     COOKING,
+    QUEST,
     SPECIAL_ORDER,
     SKILL,
     FESTIVAL,
