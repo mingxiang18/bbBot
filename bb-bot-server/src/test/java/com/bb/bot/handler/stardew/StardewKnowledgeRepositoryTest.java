@@ -30,7 +30,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
-        assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(19);
+        assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(46);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
     }
 
@@ -342,6 +342,43 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(recipe.getRecommendation()).isNotBlank();
                     assertThat(recipe.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void commonCookingRecipesAreCovered() {
+        Set<String> recipeIds = repository.cookingRecipes().stream()
+                .map(StardewData.CookingRecipe::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(recipeIds).contains(
+                "fried_egg",
+                "omelet",
+                "salad",
+                "cheese_cauliflower",
+                "baked_fish",
+                "parsnip_soup",
+                "vegetable_medley",
+                "complete_breakfast",
+                "fried_calamari",
+                "strange_bun",
+                "fried_mushroom",
+                "pizza",
+                "bean_hotpot",
+                "glazed_yams",
+                "carp_surprise",
+                "hashbrowns",
+                "pancakes",
+                "salmon_dinner",
+                "fish_taco",
+                "crispy_bass",
+                "bread",
+                "tom_kha_soup",
+                "trout_soup",
+                "chocolate_cake",
+                "sashimi",
+                "maki_roll",
+                "tortilla"
+        );
     }
 
     @Test

@@ -133,6 +133,9 @@ public class StardewQueryPlannerService {
                 && containsAny(q, "叠加", "覆盖", "规则", "机制", "能一起", "能同时", "互相覆盖")) {
             return StardewGuideIntent.GUIDE;
         }
+        if (looksLikeCookingFoodQuery(q) && containsAny(q, "怎么做", "材料", "配方", "效果", "吃什么", "有哪些")) {
+            return StardewGuideIntent.COOKING;
+        }
         if (containsAny(q, "料理", "食谱", "菜谱", "烹饪")) {
             return StardewGuideIntent.COOKING;
         }
@@ -169,6 +172,13 @@ public class StardewQueryPlannerService {
                 "伍迪的秘密", "浣熊日志", "神秘之书", "友谊 101", "宝物鉴定指南",
                 "Book Of Stars", "Price Catalogue", "Way Of The Wind", "Horse: The Book",
                 "Queen Of Sauce Cookbook");
+    }
+
+    private boolean looksLikeCookingFoodQuery(String query) {
+        return containsAny(query,
+                "蛋糕", "汤", "沙拉", "披萨", "寿司", "生鱼片", "煎蛋", "蛋卷",
+                "早餐", "面包", "薄煎饼", "薯饼", "鱼肉卷", "烤鱼", "炸鱿鱼",
+                "蘑菇", "火锅", "山药", "玉米饼", "鳟鱼汤", "鲤鱼惊喜");
     }
 
     private boolean containsAny(String query, String... words) {

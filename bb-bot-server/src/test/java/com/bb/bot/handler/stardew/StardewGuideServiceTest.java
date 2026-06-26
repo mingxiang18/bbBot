@@ -870,22 +870,35 @@ class StardewGuideServiceTest {
     void answersCookingRecipeDetails() {
         StardewGuideResult luckyLunch = service.answer("星露谷 幸运午餐怎么做");
         StardewGuideResult spicyEel = service.answer("星露谷 香辣鳗鱼材料和效果");
+        StardewGuideResult chocolateCake = service.answer("星露谷 巧克力蛋糕怎么做");
+        StardewGuideResult sashimi = service.answer("星露谷 生鱼片材料");
+        StardewGuideResult troutSoup = service.answer("星露谷 鳟鱼汤效果");
 
         assertThat(luckyLunch.getIntent()).isEqualTo("cooking_recipe");
         assertThat(luckyLunch.getAnswer()).contains("海参 x1", "玉米饼 x1", "蓝爵 x1", "运气 +3");
         assertThat(spicyEel.getIntent()).isEqualTo("cooking_recipe");
         assertThat(spicyEel.getAnswer()).contains("鳗鱼 x1", "辣椒 x1", "速度 +1", "运气 +1", "红宝石兑换");
+        assertThat(chocolateCake.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(chocolateCake.getAnswer()).contains("小麦粉 x1", "糖 x1", "鸡蛋 x1");
+        assertThat(sashimi.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(sashimi.getAnswer()).contains("任意鱼 x1", "莱纳斯 3 心邮件");
+        assertThat(troutSoup.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(troutSoup.getAnswer()).contains("虹鳟鱼 x1", "绿藻 x1", "钓鱼 +1");
     }
 
     @Test
     void answersCookingBuffRecommendationLists() {
         StardewGuideResult fishing = service.answer("星露谷 钓鱼料理有哪些");
         StardewGuideResult combat = service.answer("星露谷 战斗等级低吃什么食物");
+        StardewGuideResult earlyHealing = service.answer("星露谷 前期回血普通料理有哪些");
 
         assertThat(fishing.getIntent()).isEqualTo("cooking_available");
-        assertThat(fishing.getAnswer()).contains("海泡布丁", "海之菜肴", "龙虾浓汤", "钓鱼 +");
+        assertThat(fishing.getAnswer()).contains("海泡布丁", "海之菜肴", "龙虾浓汤", "鱼肉卷", "钓鱼 +");
         assertThat(combat.getIntent()).isEqualTo("cooking_available");
         assertThat(combat.getAnswer()).contains("块茎拼盘", "攻击 +3");
+        assertThat(earlyHealing.getIntent()).isEqualTo("cooking_available");
+        assertThat(earlyHealing.getAnswer()).contains("煎蛋", "沙拉", "烤鱼", "恢复体力和生命");
+        assertThat(earlyHealing.getAnswer()).doesNotContain("夏季鱼类", "鸡舍升级", "工具升级");
     }
 
     @Test

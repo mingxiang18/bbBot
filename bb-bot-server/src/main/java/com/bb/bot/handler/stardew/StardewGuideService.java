@@ -264,10 +264,16 @@ public class StardewGuideService {
 
     private StardewGuideResult typedCookingAnswer(String query) {
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
-        if (cookingRecipe.isPresent() && !isBroadCookingQuery(query)) {
+        if (cookingRecipe.isPresent()
+                && (!isBroadCookingQuery(query) || looksLikeSpecificCookingRecipeQuery(query))) {
             return cookingRecipeAnswer(cookingRecipe.get());
         }
         return cookingListAnswer(query, cookingRecipe);
+    }
+
+    private boolean looksLikeSpecificCookingRecipeQuery(String query) {
+        return query.contains("怎么做") || query.contains("材料") || query.contains("配方")
+                || query.contains("效果") || query.contains("来源");
     }
 
     private StardewGuideResult guideAnswer(StardewData.GuideTopic guide) {
@@ -869,6 +875,17 @@ public class StardewGuideService {
         if (query.contains("磁力") || query.contains("吸")) {
             wanted.add("magnetism");
         }
+        if (query.contains("回血") || query.contains("回复") || query.contains("补血")
+                || query.contains("恢复") || query.contains("普通料理")) {
+            wanted.add("healing");
+        }
+        if (query.contains("基础") || query.contains("早期") || query.contains("前期")) {
+            wanted.add("early_game");
+        }
+        if (query.contains("材料菜") || query.contains("配料") || query.contains("中间材料")
+                || query.contains("做其他料理")) {
+            wanted.add("ingredient_dish");
+        }
         if (wanted.isEmpty()) {
             return isBroadCookingQuery(query);
         }
@@ -1364,7 +1381,19 @@ public class StardewGuideService {
                 || query.contains("buff") || query.contains("增益")
                 || query.contains("香辣鳗鱼") || query.contains("幸运午餐") || query.contains("海泡布丁")
                 || query.contains("蟹黄糕") || query.contains("南瓜汤") || query.contains("魔法糖冰棍")
-                || query.contains("三倍浓缩咖啡") || query.contains("咖啡") || query.contains("姜汁汽水");
+                || query.contains("三倍浓缩咖啡") || query.contains("咖啡") || query.contains("姜汁汽水")
+                || (looksLikeCookingFoodName(query) && (query.contains("怎么做") || query.contains("材料")
+                || query.contains("配方") || query.contains("效果")));
+    }
+
+    private boolean looksLikeCookingFoodName(String query) {
+        return query.contains("蛋糕") || query.contains("汤") || query.contains("沙拉")
+                || query.contains("披萨") || query.contains("寿司") || query.contains("生鱼片")
+                || query.contains("煎蛋") || query.contains("蛋卷") || query.contains("早餐")
+                || query.contains("面包") || query.contains("薄煎饼") || query.contains("薯饼")
+                || query.contains("鱼肉卷") || query.contains("烤鱼") || query.contains("炸鱿鱼")
+                || query.contains("蘑菇") || query.contains("火锅") || query.contains("山药")
+                || query.contains("玉米饼") || query.contains("鲤鱼惊喜");
     }
 
     private boolean isBroadCookingQuery(String query) {

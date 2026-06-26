@@ -18279,6 +18279,966 @@
         "https://stardewvalleywiki.com/Maple_Bar",
         "https://zh.stardewvalleywiki.com/枫糖棒"
       ]
+    },
+    {
+      "id": "fried_egg",
+      "name": "煎蛋",
+      "nameEn": "Fried Egg",
+      "aliases": [
+        "fried egg",
+        "荷包蛋"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "厨房自带",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "early_game",
+        "ingredient_dish"
+      ],
+      "recommendation": "最早能做的基础料理之一，也可继续作为其他料理材料。",
+      "note": "任意鸡蛋类通常都可用于这类基础蛋料理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fried_Egg"
+      ]
+    },
+    {
+      "id": "omelet",
+      "name": "煎蛋卷",
+      "nameEn": "Omelet",
+      "aliases": [
+        "omelet",
+        "omelette",
+        "蛋卷"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "ingredient_dish",
+        "early_game"
+      ],
+      "recommendation": "农夫午餐需要煎蛋卷，养鸡和奶牛后很容易稳定制作。",
+      "note": "如果目标是耕种 buff，通常继续做成农夫午餐更有价值。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Omelet"
+      ]
+    },
+    {
+      "id": "salad",
+      "name": "沙拉",
+      "nameEn": "Salad",
+      "aliases": [
+        "salad",
+        "沙律"
+      ],
+      "ingredients": [
+        {
+          "name": "韭葱",
+          "quantity": 1
+        },
+        {
+          "name": "蒲公英",
+          "quantity": 1
+        },
+        {
+          "name": "醋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "艾米丽 3 心邮件；也可在星之果实酒吧购买成品",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "gift",
+        "early_game"
+      ],
+      "recommendation": "材料偏春季采集，成品也是早期常见回血和送礼选择。",
+      "note": "不提供 buff，适合在已有食物 buff 时当纯回复。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Salad"
+      ]
+    },
+    {
+      "id": "cheese_cauliflower",
+      "name": "奶酪花椰菜",
+      "nameEn": "Cheese Cauliflower",
+      "aliases": [
+        "cheese cauliflower",
+        "干酪花椰菜",
+        "芝士花椰菜"
+      ],
+      "ingredients": [
+        {
+          "name": "花椰菜",
+          "quantity": 1
+        },
+        {
+          "name": "奶酪",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "潘姆 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "gift"
+      ],
+      "recommendation": "春季花椰菜和动物产物都有余量时可做，主要用于回复或送礼。",
+      "note": "不提供技能 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cheese_Cauliflower"
+      ]
+    },
+    {
+      "id": "baked_fish",
+      "name": "烤鱼",
+      "nameEn": "Baked Fish",
+      "aliases": [
+        "baked fish"
+      ],
+      "ingredients": [
+        {
+          "name": "太阳鱼",
+          "quantity": 1
+        },
+        {
+          "name": "鲷鱼",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "ingredient_dish"
+      ],
+      "recommendation": "需要两种常见鱼，适合鱼多但不需要钓鱼 buff 时做回复。",
+      "note": "不提升钓鱼等级；钓难鱼请优先看海泡布丁、海之菜肴、鳟鱼汤。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Baked_Fish"
+      ]
+    },
+    {
+      "id": "parsnip_soup",
+      "name": "防风草汤",
+      "nameEn": "Parsnip Soup",
+      "aliases": [
+        "parsnip soup"
+      ],
+      "ingredients": [
+        {
+          "name": "防风草",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "醋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "卡洛琳 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "early_game"
+      ],
+      "recommendation": "春季防风草有余量、已经有牛奶后可做普通回复料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Parsnip_Soup"
+      ]
+    },
+    {
+      "id": "vegetable_medley",
+      "name": "蔬菜杂烩",
+      "nameEn": "Vegetable Medley",
+      "aliases": [
+        "vegetable medley",
+        "炖菜"
+      ],
+      "ingredients": [
+        {
+          "name": "番茄",
+          "quantity": 1
+        },
+        {
+          "name": "甜菜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "卡洛琳 7 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "crop_dish"
+      ],
+      "recommendation": "甜菜来自沙漠种子，更多是中后期补图鉴或送礼料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Vegetable_Medley"
+      ]
+    },
+    {
+      "id": "complete_breakfast",
+      "name": "全套早餐",
+      "nameEn": "Complete Breakfast",
+      "aliases": [
+        "complete breakfast",
+        "豪华早餐"
+      ],
+      "ingredients": [
+        {
+          "name": "煎蛋",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "薯饼",
+          "quantity": 1
+        },
+        {
+          "name": "薄煎饼",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "提升耕种和最大体力",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 2,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "最大体力",
+          "value": 50,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "farming",
+        "max_energy",
+        "healing"
+      ],
+      "recommendation": "材料链较长，适合中期已有厨房和动物产品后，用于种地日或补图鉴。",
+      "note": "如果只追求耕种等级，农夫午餐更直接。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Complete_Breakfast"
+      ]
+    },
+    {
+      "id": "fried_calamari",
+      "name": "炸鱿鱼",
+      "nameEn": "Fried Calamari",
+      "aliases": [
+        "fried calamari",
+        "炸乌贼"
+      ],
+      "ingredients": [
+        {
+          "name": "鱿鱼",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "乔迪 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "gift"
+      ],
+      "recommendation": "鱿鱼是冬季夜间海鱼，想做这道菜要提前留鱼。",
+      "note": "不提供钓鱼 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fried_Calamari"
+      ]
+    },
+    {
+      "id": "strange_bun",
+      "name": "奇怪的小面包",
+      "nameEn": "Strange Bun",
+      "aliases": [
+        "strange bun",
+        "奇怪面包"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "玉黍螺",
+          "quantity": 1
+        },
+        {
+          "name": "虚空蛋黄酱",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "谢恩 7 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "secret"
+      ],
+      "recommendation": "更多用于秘密和收集目的；虚空蛋黄酱需要虚空鸡或女巫事件相关进度。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Strange_Bun"
+      ]
+    },
+    {
+      "id": "fried_mushroom",
+      "name": "炒蘑菇",
+      "nameEn": "Fried Mushroom",
+      "aliases": [
+        "fried mushroom",
+        "炸蘑菇"
+      ],
+      "ingredients": [
+        {
+          "name": "普通蘑菇",
+          "quantity": 1
+        },
+        {
+          "name": "羊肚菌",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "德米特里厄斯 3 心邮件",
+      "effect": "提升攻击",
+      "buffs": [
+        {
+          "name": "攻击",
+          "value": 2,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "combat",
+        "attack",
+        "foraging"
+      ],
+      "recommendation": "想要攻击 buff 又没有块茎拼盘时可考虑；蘑菇洞或秘密森林能帮忙备料。",
+      "note": "食物 buff 会覆盖其他食物 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fried_Mushroom"
+      ]
+    },
+    {
+      "id": "pizza",
+      "name": "披萨",
+      "nameEn": "Pizza",
+      "aliases": [
+        "pizza"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "番茄",
+          "quantity": 1
+        },
+        {
+          "name": "奶酪",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买成品",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "gift"
+      ],
+      "recommendation": "普通回复很稳定，也是部分居民喜欢/最爱的常见料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pizza"
+      ]
+    },
+    {
+      "id": "bean_hotpot",
+      "name": "豆类火锅",
+      "nameEn": "Bean Hotpot",
+      "aliases": [
+        "bean hotpot",
+        "豆子火锅"
+      ],
+      "ingredients": [
+        {
+          "name": "绿豆",
+          "quantity": 2
+        }
+      ],
+      "recipeSource": "克林特 7 心邮件",
+      "effect": "提升最大体力和磁力",
+      "buffs": [
+        {
+          "name": "最大体力",
+          "value": 30,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "磁力",
+          "value": 32,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "max_energy",
+        "magnetism",
+        "farming"
+      ],
+      "recommendation": "春季绿豆有余量时可做，磁力对捡矿物和掉落物有帮助。",
+      "note": "没有速度/运气，不是骷髅洞穴冲层首选。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bean_Hotpot"
+      ]
+    },
+    {
+      "id": "glazed_yams",
+      "name": "琉璃山药",
+      "nameEn": "Glazed Yams",
+      "aliases": [
+        "glazed yams",
+        "蜜汁山药",
+        "糖渍山药"
+      ],
+      "ingredients": [
+        {
+          "name": "山药",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "crop_dish"
+      ],
+      "recommendation": "秋季山药有余量时可做普通回复料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Glazed_Yams"
+      ]
+    },
+    {
+      "id": "carp_surprise",
+      "name": "鲤鱼惊喜",
+      "nameEn": "Carp Surprise",
+      "aliases": [
+        "carp surprise"
+      ],
+      "ingredients": [
+        {
+          "name": "鲤鱼",
+          "quantity": 4
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing"
+      ],
+      "recommendation": "鲤鱼很多时可以消耗库存，但不提供钓鱼 buff。",
+      "note": "需要 4 条鲤鱼，问钓鱼效率时不优先推荐。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Carp_Surprise"
+      ]
+    },
+    {
+      "id": "hashbrowns",
+      "name": "薯饼",
+      "nameEn": "Hashbrowns",
+      "aliases": [
+        "hashbrowns",
+        "hash browns",
+        "土豆饼"
+      ],
+      "ingredients": [
+        {
+          "name": "土豆",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "提升耕种",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 1,
+          "duration": "约 5 分钟"
+        }
+      ],
+      "tags": [
+        "farming",
+        "ingredient_dish",
+        "early_game"
+      ],
+      "recommendation": "早期便宜的耕种 buff，也可继续做全套早餐。",
+      "note": "只加耕种 +1；高品质作物日更推荐农夫午餐。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Hashbrowns"
+      ]
+    },
+    {
+      "id": "pancakes",
+      "name": "薄煎饼",
+      "nameEn": "Pancakes",
+      "aliases": [
+        "pancakes",
+        "煎饼"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "提升觅食",
+      "buffs": [
+        {
+          "name": "觅食",
+          "value": 2,
+          "duration": "约 11 分钟"
+        }
+      ],
+      "tags": [
+        "foraging",
+        "ingredient_dish",
+        "early_game"
+      ],
+      "recommendation": "觅食加成持续较久，浆果季、跑图采集或砍树前可吃。",
+      "note": "也是全套早餐材料。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pancakes"
+      ]
+    },
+    {
+      "id": "salmon_dinner",
+      "name": "鲑鱼晚餐",
+      "nameEn": "Salmon Dinner",
+      "aliases": [
+        "salmon dinner"
+      ],
+      "ingredients": [
+        {
+          "name": "鲑鱼",
+          "quantity": 1
+        },
+        {
+          "name": "苋菜",
+          "quantity": 1
+        },
+        {
+          "name": "羽衣甘蓝",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "格斯 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "gift"
+      ],
+      "recommendation": "材料跨季节，更多用于送礼、图鉴或消耗库存。",
+      "note": "不提供钓鱼 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Salmon_Dinner"
+      ]
+    },
+    {
+      "id": "fish_taco",
+      "name": "鱼肉卷",
+      "nameEn": "Fish Taco",
+      "aliases": [
+        "fish taco",
+        "鱼卷",
+        "鱼肉塔可"
+      ],
+      "ingredients": [
+        {
+          "name": "金枪鱼",
+          "quantity": 1
+        },
+        {
+          "name": "玉米饼",
+          "quantity": 1
+        },
+        {
+          "name": "红叶卷心菜",
+          "quantity": 1
+        },
+        {
+          "name": "蛋黄酱",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "莱纳斯 7 心邮件",
+      "effect": "提升钓鱼",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 2,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "fishing"
+      ],
+      "recommendation": "中期钓鱼 buff 选择；红叶卷心菜通常到第 2 年后更稳定。",
+      "note": "如果只是追求最高钓鱼等级，海泡布丁更强。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Taco"
+      ]
+    },
+    {
+      "id": "crispy_bass",
+      "name": "香酥鲈鱼",
+      "nameEn": "Crispy Bass",
+      "aliases": [
+        "crispy bass"
+      ],
+      "ingredients": [
+        {
+          "name": "大嘴鲈鱼",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "肯特 3 心邮件",
+      "effect": "提升磁力",
+      "buffs": [
+        {
+          "name": "磁力",
+          "value": 64,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "magnetism",
+        "fishing",
+        "mining"
+      ],
+      "recommendation": "想提高拾取范围时可用；下矿收益通常仍优先速度/运气。",
+      "note": "不提升钓鱼等级。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Crispy_Bass"
+      ]
+    },
+    {
+      "id": "bread",
+      "name": "面包",
+      "nameEn": "Bread",
+      "aliases": [
+        "bread"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "ingredient_dish",
+        "early_game"
+      ],
+      "recommendation": "基础回复和多道料理材料，只有小麦粉时很好做。",
+      "note": "生存汉堡等料理会继续用到面包。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bread"
+      ]
+    },
+    {
+      "id": "tom_kha_soup",
+      "name": "椰汁汤",
+      "nameEn": "Tom Kha Soup",
+      "aliases": [
+        "tom kha soup",
+        "冬阴功汤",
+        "椰奶汤"
+      ],
+      "ingredients": [
+        {
+          "name": "椰子",
+          "quantity": 1
+        },
+        {
+          "name": "虾",
+          "quantity": 1
+        },
+        {
+          "name": "普通蘑菇",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "桑迪 7 心邮件",
+      "effect": "提升耕种和最大体力",
+      "buffs": [
+        {
+          "name": "耕种",
+          "value": 2,
+          "duration": "约 7 分钟"
+        },
+        {
+          "name": "最大体力",
+          "value": 30,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "farming",
+        "max_energy"
+      ],
+      "recommendation": "中期有沙漠和蟹笼后更容易做，适合种地或长时间农场工作。",
+      "note": "不提供速度/运气。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Tom_Kha_Soup"
+      ]
+    },
+    {
+      "id": "trout_soup",
+      "name": "鳟鱼汤",
+      "nameEn": "Trout Soup",
+      "aliases": [
+        "trout soup",
+        "钓鱼加1"
+      ],
+      "ingredients": [
+        {
+          "name": "虹鳟鱼",
+          "quantity": 1
+        },
+        {
+          "name": "绿藻",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "厨房制作；威利鱼店常卖成品",
+      "effect": "提升钓鱼",
+      "buffs": [
+        {
+          "name": "钓鱼",
+          "value": 1,
+          "duration": "约 4 分钟"
+        }
+      ],
+      "tags": [
+        "fishing",
+        "early_game"
+      ],
+      "recommendation": "早期钓鱼等级低时的廉价救急选择，直接从威利处买也很方便。",
+      "note": "加成低但获取简单。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Trout_Soup"
+      ]
+    },
+    {
+      "id": "chocolate_cake",
+      "name": "巧克力蛋糕",
+      "nameEn": "Chocolate Cake",
+      "aliases": [
+        "chocolate cake",
+        "巧克力糕"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "gift"
+      ],
+      "recommendation": "材料常见，适合补图鉴、回复或送礼。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Chocolate_Cake"
+      ]
+    },
+    {
+      "id": "sashimi",
+      "name": "生鱼片",
+      "nameEn": "Sashimi",
+      "aliases": [
+        "sashimi",
+        "刺身"
+      ],
+      "ingredients": [
+        {
+          "name": "任意鱼",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "莱纳斯 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "gift"
+      ],
+      "recommendation": "消耗低价值鱼很方便，也是早中期常见回复料理。",
+      "note": "用高价值鱼做生鱼片通常不划算。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Sashimi"
+      ]
+    },
+    {
+      "id": "maki_roll",
+      "name": "寿司卷",
+      "nameEn": "Maki Roll",
+      "aliases": [
+        "maki roll",
+        "寿司",
+        "卷寿司"
+      ],
+      "ingredients": [
+        {
+          "name": "任意鱼",
+          "quantity": 1
+        },
+        {
+          "name": "海草",
+          "quantity": 1
+        },
+        {
+          "name": "大米",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "bundle"
+      ],
+      "recommendation": "常用于补料理图鉴，也可能用于社区中心相关需求。",
+      "note": "不提供钓鱼 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Maki_Roll"
+      ]
+    },
+    {
+      "id": "tortilla",
+      "name": "玉米饼",
+      "nameEn": "Tortilla",
+      "aliases": [
+        "tortilla",
+        "墨西哥薄饼"
+      ],
+      "ingredients": [
+        {
+          "name": "玉米",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇；也可在星之果实酒吧购买配方",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "ingredient_dish"
+      ],
+      "recommendation": "幸运午餐、鱼肉卷等料理会继续用到玉米饼，夏秋玉米有余量时可以提前做。",
+      "note": "本身不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Tortilla"
+      ]
     }
   ]
 }

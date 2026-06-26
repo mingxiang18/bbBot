@@ -336,6 +336,25 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedCookingIntentRetrievesCommonRecipeDetails() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.COOKING, "巧克力蛋糕怎么做"),
+                intent(StardewGuideIntent.COOKING, "鱼肉卷材料和效果")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 巧克力蛋糕和鱼肉卷怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.COOKING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("cooking_recipe");
+        assertThat(joinAnswers(evidence))
+                .contains("巧克力蛋糕", "小麦粉 x1", "糖 x1", "鸡蛋 x1")
+                .contains("鱼肉卷", "金枪鱼 x1", "玉米饼 x1", "钓鱼 +2")
+                .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

@@ -181,6 +181,19 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesDishNameMaterialQuestionsAsCooking() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("巧克力蛋糕怎么做，鳟鱼汤材料是什么");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.COOKING);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("巧克力蛋糕怎么做，鳟鱼汤材料是什么");
+    }
+
+    @Test
     void parsesSkillIntentForCombatLevelingQuestions() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
