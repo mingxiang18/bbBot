@@ -70,10 +70,48 @@ class StardewQueryPlannerServiceTest {
 
         StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
                 .plan("斧头升级需要什么");
+        StardewQueryPlan pan = new StardewQueryPlannerService(aiChatService)
+                .plan("铱盘升级需要什么");
+        StardewQueryPlan scythe = new StardewQueryPlannerService(aiChatService)
+                .plan("铱金镰刀怎么拿");
+        StardewQueryPlan backpack = new StardewQueryPlannerService(aiChatService)
+                .plan("背包升级多少钱");
+        StardewQueryPlan milkPail = new StardewQueryPlannerService(aiChatService)
+                .plan("奶桶在哪里买");
+        StardewQueryPlan shears = new StardewQueryPlannerService(aiChatService)
+                .plan("剪刀在哪里买");
 
         assertThat(plan.getIntents()).hasSize(1);
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
         assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("斧头升级需要什么");
+        assertThat(pan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
+        assertThat(scythe.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
+        assertThat(backpack.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
+        assertThat(milkPail.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
+        assertThat(shears.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
+    }
+
+    @Test
+    void localGuardrailPullsConcreteToolQueriesBackFromBroadAiPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {"type":"GUIDE","keywords":["铱金镰刀怎么拿"],"constraints":{}},
+                            {"type":"SHOP","keywords":["背包升级多少钱"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["奶桶在哪里买"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("铱金镰刀怎么拿，背包升级多少钱，奶桶在哪里买");
+
+        assertThat(plan.getIntents()).hasSize(3);
+        assertThat(plan.getIntents()).extracting(StardewQueryPlan.PlannedIntent::getType)
+                .containsExactly(StardewGuideIntent.TOOL, StardewGuideIntent.TOOL, StardewGuideIntent.TOOL);
     }
 
     @Test

@@ -26,7 +26,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(58);
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
-        assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
+        assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(11);
         assertThat(repository.craftingRecipes()).hasSizeGreaterThanOrEqualTo(150);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
@@ -840,6 +840,34 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(tool.getRecommendation()).isNotBlank();
                     assertThat(tool.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void fullToolGuideSetCoversUpgradesAndOtherTools() {
+        Set<String> toolIds = repository.tools().stream()
+                .map(StardewData.Tool::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.tools()).hasSize(11);
+        assertThat(toolIds).containsExactlyInAnyOrder(
+                "axe",
+                "pickaxe",
+                "watering_can",
+                "hoe",
+                "trash_can",
+                "fishing_rod",
+                "pan",
+                "scythe",
+                "backpack",
+                "milk_pail",
+                "shears"
+        );
+
+        assertThat(repository.findTool("铱盘怎么升级").orElseThrow().getId()).isEqualTo("pan");
+        assertThat(repository.findTool("金镰刀在哪拿").orElseThrow().getId()).isEqualTo("scythe");
+        assertThat(repository.findTool("大背包多少钱").orElseThrow().getId()).isEqualTo("backpack");
+        assertThat(repository.findTool("奶桶在哪里买").orElseThrow().getId()).isEqualTo("milk_pail");
+        assertThat(repository.findTool("剪刀在哪里买").orElseThrow().getId()).isEqualTo("shears");
     }
 
     @Test

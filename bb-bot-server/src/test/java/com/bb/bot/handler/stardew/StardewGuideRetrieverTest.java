@@ -465,7 +465,7 @@ class StardewGuideRetrieverTest {
                 .contains("蛇头骨获取方式", "姜岛西部", "木乃伊蝙蝠获取方式", "火山地牢")
                 .contains("金色椰子获取方式", "克林特", "岛屿办事处化石", "蜗牛教授", "22", "18")
                 .doesNotContain("博物馆捐赠：", "95 件", "42 件古物", "53 件矿物")
-                .doesNotContain("星星币获取方式", "工具升级总览");
+                .doesNotContain("星星币获取方式", "工具获取/升级总览");
     }
 
     @Test
@@ -484,6 +484,29 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence))
                 .contains("沙漠方尖塔", "铱锭 x20", "仙人掌果子 x10")
                 .contains("潘姆房屋社区升级", "500,000g", "木材 x950");
+    }
+
+    @Test
+    void typedToolIntentRetrievesFullToolEvidenceWithoutShopFishAnimalOrGuideCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.TOOL, "铱盘升级需要什么"),
+                intent(StardewGuideIntent.TOOL, "铱金镰刀怎么拿"),
+                intent(StardewGuideIntent.TOOL, "背包升级多少钱"),
+                intent(StardewGuideIntent.TOOL, "奶桶在哪里买")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("铱盘、铱金镰刀、背包和奶桶怎么弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.TOOL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("tool_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("铱盘需要：25,000g + 铱锭 x5", "最多 4 个特殊物品")
+                .contains("铱金镰刀需要：无固定金币花费", "耕种精通")
+                .contains("大背包（24 格）：2,000g", "豪华背包（36 格）：10,000g")
+                .contains("奶桶需要：1,000g", "玛妮的牧场")
+                .doesNotContain("在哪里购买：", "鱼类条件：", "动物照料", "精通系统：");
     }
 
     @Test
@@ -770,7 +793,7 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence))
                 .contains("火山锻造与附魔", "火山地牢第 10 层", "10/15/20 个火山晶石")
                 .contains("五彩碎片 x1", "工具附魔会在工具升级后保留", "两个不同戒指")
-                .doesNotContain("工具升级总览", "春季作物：", "夏季鱼类", "在哪里购买");
+                .doesNotContain("工具获取/升级总览", "春季作物：", "夏季鱼类", "在哪里购买");
     }
 
     @Test
@@ -810,7 +833,7 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence))
                 .contains("小饰品与铁砧重铸", "战斗精通", "铱锭 x3", "仙女盒", "寒冰法杖")
                 .contains("被青蛙吃掉的敌人不会掉落物品", "完美为 0.9 秒冷却", "生成率 4%")
-                .doesNotContain("精通系统：", "10,000 / 15,000 / 20,000 / 25,000 / 30,000", "资源获取方式", "工具升级总览");
+                .doesNotContain("精通系统：", "10,000 / 15,000 / 20,000 / 25,000 / 30,000", "资源获取方式", "工具获取/升级总览");
     }
 
     @Test
@@ -830,7 +853,7 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence))
                 .contains("鲟鱼鱼塘", "1-2 鱼籽", "鱼塘产物与推荐", "岩浆鳗鱼", "黄貂鱼")
                 .contains("花费：5,000g", "石头 x200")
-                .doesNotContain("夏季鱼类", "鱼类条件", "工具升级总览");
+                .doesNotContain("夏季鱼类", "鱼类条件", "工具获取/升级总览");
     }
 
     @Test
@@ -852,7 +875,7 @@ class StardewGuideRetrieverTest {
         assertThat(joinAnswers(evidence))
                 .contains("星星币获取方式", "农庄展览", "1,000g 换 100 齐币", "鳟鱼大赛", "特殊货币与兑换物")
                 .contains("火山晶石获取方式", "火山地牢")
-                .doesNotContain("陶瓷碎片", "星之碎片", "工具升级总览", "星露谷展览会商店：", "火山锻造与附魔");
+                .doesNotContain("陶瓷碎片", "星之碎片", "工具获取/升级总览", "星露谷展览会商店：", "火山锻造与附魔");
     }
 
     @Test
@@ -875,7 +898,7 @@ class StardewGuideRetrieverTest {
                 .contains("齐瓜特别订单", "出货 500 个齐果", "100 齐钻")
                 .contains("特别订单对照", "鹈鹕镇特别订单板", "齐先生核桃房特别订单板")
                 .contains("岩浆鳗鱼鱼塘", "扩容任务")
-                .doesNotContain("机器/加工设备", "工具升级总览", "鱼类条件：", "鱼塘产物与推荐：");
+                .doesNotContain("机器/加工设备", "工具获取/升级总览", "鱼类条件：", "鱼塘产物与推荐：");
     }
 
     @Test

@@ -7238,6 +7238,253 @@
         "https://stardewvalleywiki.com/Fishing_Rod",
         "https://zh.stardewvalleywiki.com/鱼竿"
       ]
+    },
+    {
+      "id": "pan",
+      "name": "铜盘",
+      "nameEn": "Pan",
+      "aliases": [
+        "pan",
+        "pans",
+        "panning",
+        "淘盘",
+        "淘金盘",
+        "铜淘盘",
+        "铜盘",
+        "钢盘",
+        "金盘",
+        "铱盘",
+        "铱金盘",
+        "河边闪光",
+        "淘矿"
+      ],
+      "category": "upgradeable",
+      "upgradeLocation": "基础铜盘由威利赠送；后续可在铁匠铺升级",
+      "upgradeTime": "铁匠铺升级 2 天；铜盘也可在威利鱼店补买",
+      "recommendation": "铜盘属于中后期补矿石、古物宝藏和特殊物品的工具；想认真淘矿再升级，高运气日和运气食物收益更好。",
+      "note": "解锁需要移除矿井入口西侧桥边闪闪发光的巨石：完成鱼缸收集包，或走 Joja 购买淘矿项目。",
+      "upgrades": [
+        {
+          "level": "铜",
+          "name": "铜盘",
+          "cost": 2500,
+          "materials": [],
+          "effect": "可从水面闪光点淘 3-9 个矿石，最多 1 个特殊物品；首次由威利赠送，之后可在鱼店购买。",
+          "prerequisite": "完成鱼缸收集包或 Joja 淘矿项目后触发威利剧情"
+        },
+        {
+          "level": "钢",
+          "name": "钢盘",
+          "cost": 5000,
+          "materials": [
+            {
+              "name": "铁锭",
+              "quantity": 5
+            }
+          ],
+          "effect": "可淘 4-10 个矿石，最多 2 个特殊物品，并有小概率刷新另一个淘矿点。",
+          "prerequisite": "铜盘"
+        },
+        {
+          "level": "金",
+          "name": "金盘",
+          "cost": 10000,
+          "materials": [
+            {
+              "name": "金锭",
+              "quantity": 5
+            }
+          ],
+          "effect": "可淘 5-11 个矿石，最多 3 个特殊物品，刷新淘矿点概率更高。",
+          "prerequisite": "钢盘"
+        },
+        {
+          "level": "铱",
+          "name": "铱盘",
+          "cost": 25000,
+          "materials": [
+            {
+              "name": "铱锭",
+              "quantity": 5
+            }
+          ],
+          "effect": "可淘 6-12 个矿石，最多 4 个特殊物品，并有较高概率刷新另一个淘矿点。",
+          "prerequisite": "金盘"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pans",
+        "https://stardewvalleywiki.com/Tools"
+      ]
+    },
+    {
+      "id": "scythe",
+      "name": "镰刀",
+      "nameEn": "Scythe",
+      "aliases": [
+        "scythe",
+        "golden scythe",
+        "iridium scythe",
+        "镰刀",
+        "普通镰刀",
+        "金镰刀",
+        "黄金镰刀",
+        "铱金镰刀",
+        "铱镰刀",
+        "收割工具"
+      ],
+      "category": "progression",
+      "upgradeLocation": "普通镰刀初始获得；金镰刀在采石场矿洞；铱金镰刀来自耕种精通",
+      "upgradeTime": "不是铁匠铺升级线，获得后立即可用",
+      "recommendation": "金镰刀是采石场解锁后的顺路奖励；铱金镰刀来自耕种精通，适合后期大面积收割和干草收集。",
+      "note": "镰刀使用不消耗能量；建好筒仓后割草可转化为干草。",
+      "upgrades": [
+        {
+          "level": "基础",
+          "name": "镰刀",
+          "cost": 0,
+          "materials": [],
+          "effect": "割草、杂草、幼树、苔藓，也可收获苋菜、羽衣甘蓝、小麦等需要镰刀的作物。",
+          "prerequisite": "开局自带"
+        },
+        {
+          "level": "金",
+          "name": "金镰刀",
+          "cost": 0,
+          "materials": [],
+          "effect": "比普通镰刀更强，割草范围和干草收集更舒服。",
+          "prerequisite": "解锁采石场后，在采石场矿洞尽头取得"
+        },
+        {
+          "level": "铱",
+          "name": "铱金镰刀",
+          "cost": 0,
+          "materials": [],
+          "effect": "可收获任意作物，也很适合大量收集干草。",
+          "prerequisite": "获得耕种精通奖励"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Scythe",
+        "https://stardewvalleywiki.com/Tools"
+      ]
+    },
+    {
+      "id": "backpack",
+      "name": "背包",
+      "nameEn": "Backpack",
+      "aliases": [
+        "backpack",
+        "inventory",
+        "large pack",
+        "deluxe pack",
+        "背包",
+        "背包升级",
+        "物品栏",
+        "大背包",
+        "豪华背包",
+        "24格背包",
+        "36格背包"
+      ],
+      "category": "purchase",
+      "upgradeLocation": "皮埃尔的杂货店",
+      "upgradeTime": "购买后立即生效",
+      "recommendation": "第一年春季尽快买 24 格背包，采矿、钓鱼和采集都会舒服很多；36 格背包通常在工具/种子资金不紧后补。",
+      "note": "背包升级只增加物品栏格数，不是铁匠铺工具升级。",
+      "upgrades": [
+        {
+          "level": "初始",
+          "name": "背包（12 格）",
+          "cost": 0,
+          "materials": [],
+          "effect": "开局 12 个物品栏格子。",
+          "prerequisite": "开局自带"
+        },
+        {
+          "level": "大",
+          "name": "大背包（24 格）",
+          "cost": 2000,
+          "materials": [],
+          "effect": "解锁第 2 行物品栏，增加 12 格。",
+          "prerequisite": "游戏开始后可在皮埃尔的杂货店购买"
+        },
+        {
+          "level": "豪华",
+          "name": "豪华背包（36 格）",
+          "cost": 10000,
+          "materials": [],
+          "effect": "解锁第 3 行物品栏，再增加 12 格。",
+          "prerequisite": "已购买大背包"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Backpack",
+        "https://stardewvalleywiki.com/Tools"
+      ]
+    },
+    {
+      "id": "milk_pail",
+      "name": "奶桶",
+      "nameEn": "Milk Pail",
+      "aliases": [
+        "milk pail",
+        "pail",
+        "奶桶",
+        "挤奶桶",
+        "挤奶工具",
+        "牛奶工具",
+        "羊奶工具"
+      ],
+      "category": "purchase",
+      "upgradeLocation": "玛妮的牧场",
+      "upgradeTime": "购买后立即可用",
+      "recommendation": "开始养奶牛或山羊前买；后期有自动采集器后可减少手动使用。",
+      "note": "奶桶不是升级线，用来从奶牛和山羊身上收集牛奶/羊奶。",
+      "upgrades": [
+        {
+          "level": "购买",
+          "name": "奶桶",
+          "cost": 1000,
+          "materials": [],
+          "effect": "从奶牛、山羊等动物身上收集奶类产物。",
+          "prerequisite": "在玛妮的牧场购买"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Milk_Pail",
+        "https://stardewvalleywiki.com/Tools"
+      ]
+    },
+    {
+      "id": "shears",
+      "name": "剪刀",
+      "nameEn": "Shears",
+      "aliases": [
+        "shears",
+        "剪刀",
+        "羊毛剪刀",
+        "剪羊毛",
+        "绵羊工具"
+      ],
+      "category": "purchase",
+      "upgradeLocation": "玛妮的牧场",
+      "upgradeTime": "购买后立即可用",
+      "recommendation": "养绵羊时购买；只为了布料也可以走兔子路线，后期自动采集器能省操作。",
+      "note": "剪刀不是升级线，用来从绵羊身上收集羊毛。",
+      "upgrades": [
+        {
+          "level": "购买",
+          "name": "剪刀",
+          "cost": 1000,
+          "materials": [],
+          "effect": "从绵羊身上收集羊毛。",
+          "prerequisite": "在玛妮的牧场购买"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shears",
+        "https://stardewvalleywiki.com/Tools"
+      ]
     }
   ],
   "machines": [

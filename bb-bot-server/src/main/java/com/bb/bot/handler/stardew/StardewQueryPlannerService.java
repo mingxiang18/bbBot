@@ -51,9 +51,10 @@ public class StardewQueryPlannerService {
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
                         - 技能等级怎么升、快速升级、职业怎么选、战斗/采矿/钓鱼/耕种/觅食经验路线归为 SKILL。
-                        - 精通系统、精通点、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、祝福雕像归为 GUIDE。
+                        - 精通系统、精通点、精通先选哪个、五系精通奖励、挑战鱼饵、宝藏图腾、祝福雕像归为 GUIDE。
                         - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
+                        - 工具本身的升级、购买、获取、用途和条件，例如斧头、镐子、锄头、喷壶、垃圾桶、鱼竿、高级铱金鱼竿、铜盘/钢盘/金盘/铱盘、镰刀/金镰刀/铱金镰刀、背包、奶桶、剪刀，归为 TOOL。
                         - 泛问特殊货币、兑换货币、节日货币有哪些/怎么规划，例如“特殊货币有哪些”“各种币怎么花”，归为 GUIDE。
                         - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“金核桃怎么用”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE。
                         - 岛屿办事处、姜岛化石、蜗牛教授、紫花、紫海星、化石捐赠顺序/奖励，归为 GUIDE。
@@ -147,6 +148,13 @@ public class StardewQueryPlannerService {
                 || aiType == StardewGuideIntent.SHOP
                 || aiType == StardewGuideIntent.FARM_MAP
                 || aiType == StardewGuideIntent.BUILDING)) {
+            return true;
+        }
+        if (localType == StardewGuideIntent.TOOL
+                && (aiType == StardewGuideIntent.GUIDE
+                || aiType == StardewGuideIntent.SHOP
+                || aiType == StardewGuideIntent.RESOURCE
+                || aiType == StardewGuideIntent.CRAFTING)) {
             return true;
         }
         if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
@@ -266,8 +274,9 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "喜欢", "讨厌", "礼物", "生日", "红心", "好感")) {
             return StardewGuideIntent.VILLAGER_PROFILE;
         }
-        if (containsAny(q, "斧头", "镐", "锄头", "水壶", "垃圾桶", "工具升级")
-                && containsAny(q, "升级", "多少钱", "材料", "需要", "条件")) {
+        if (looksLikeToolQuery(q)
+                && containsAny(q, "升级", "多少钱", "材料", "需要", "条件", "怎么拿", "怎么获得",
+                "哪里拿", "在哪拿", "在哪里买", "哪里买", "购买", "解锁", "怎么用", "用途", "效果")) {
             return StardewGuideIntent.TOOL;
         }
         if (containsAny(q, "农场建筑", "建筑有哪些", "建筑列表",
@@ -332,11 +341,28 @@ public class StardewQueryPlannerService {
                 "forge", "enchant", "infinity weapon");
     }
 
+    private boolean looksLikeToolQuery(String query) {
+        return containsAny(query,
+                "工具升级", "升级工具",
+                "斧头", "斧子", "铜斧", "钢斧", "金斧", "铱斧",
+                "镐", "镐子", "十字镐", "铜镐", "钢镐", "金镐", "铱镐",
+                "锄头", "铜锄", "钢锄", "金锄", "铱锄",
+                "喷壶", "浇水壶", "水壶", "铜喷壶", "钢喷壶", "金喷壶", "铱喷壶",
+                "垃圾桶", "铜垃圾桶", "钢垃圾桶", "金垃圾桶", "铱垃圾桶",
+                "鱼竿", "钓竿", "训练用鱼竿", "竹鱼竿", "玻璃纤维鱼竿", "铱金鱼竿", "高级铱金鱼竿",
+                "铜盘", "淘盘", "淘金盘", "钢盘", "金盘", "铱盘", "铱金盘", "淘矿",
+                "镰刀", "金镰刀", "黄金镰刀", "铱金镰刀", "铱镰刀",
+                "背包", "物品栏", "大背包", "豪华背包",
+                "奶桶", "挤奶桶", "剪刀", "剪羊毛",
+                "axe", "pickaxe", "hoe", "watering can", "trash can", "fishing rod", "pan", "scythe",
+                "backpack", "milk pail", "shears");
+    }
+
     private boolean looksLikeMasteryQuery(String query) {
         return containsAny(query,
                 "精通", "精通点", "精通洞穴", "精通等级", "精通奖励", "精通先选", "精通选",
-                "铱金镰刀", "祝福雕像", "金色动物饼干", "矮人之王雕像", "重型熔炉",
-                "神秘树种子", "宝藏图腾", "高级铱金鱼竿", "挑战鱼饵", "金色钓鱼宝箱",
+                "祝福雕像", "金色动物饼干", "矮人之王雕像", "重型熔炉",
+                "神秘树种子", "宝藏图腾", "挑战鱼饵", "金色钓鱼宝箱",
                 "mastery", "mastery point");
     }
 
@@ -516,6 +542,9 @@ public class StardewQueryPlannerService {
     }
 
     private boolean looksLikeDungeonGuideQuery(String query) {
+        if (containsAny(query, "铱金镰刀", "铱镰刀")) {
+            return false;
+        }
         if (looksLikeMonsterDropQuery(query)
                 || looksLikeSpecificArtifactResourceQuery(query)
                 || looksLikeSpecificMineralResourceQuery(query)

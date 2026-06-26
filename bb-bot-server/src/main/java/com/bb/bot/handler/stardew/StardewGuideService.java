@@ -84,9 +84,9 @@ public class StardewGuideService {
         }
         if (tool.isPresent() || looksLikeToolQuery(query)) {
             if (tool.isPresent()) {
-                return toolUpgradeAnswer(query, tool.get());
+                return toolDetailAnswer(query, tool.get());
             }
-            return toolUpgradeListAnswer();
+            return toolListAnswer();
         }
         if (!books.isEmpty() && shouldPreferBookGuideOverShop(query)) {
             return bookAnswer(query, books);
@@ -322,8 +322,8 @@ public class StardewGuideService {
 
     private StardewGuideResult typedToolAnswer(String query) {
         return repository.findTool(query)
-                .map(tool -> toolUpgradeAnswer(query, tool))
-                .orElseGet(this::toolUpgradeListAnswer);
+                .map(tool -> toolDetailAnswer(query, tool))
+                .orElseGet(this::toolListAnswer);
     }
 
     private StardewGuideResult typedBuildingAnswer(String query) {
@@ -1204,12 +1204,12 @@ public class StardewGuideService {
         return result("building_detail", sb.toString().trim(), b.getSourceUrls());
     }
 
-    private StardewGuideResult toolUpgradeListAnswer() {
+    private StardewGuideResult toolListAnswer() {
         StringBuilder sb = new StringBuilder();
-        sb.append("工具升级总览：\n");
+        sb.append("工具获取/升级总览：\n");
         for (StardewData.Tool tool : repository.tools()) {
             sb.append("- ").append(tool.getName()).append("：");
-            if ("purchase".equals(tool.getCategory())) {
+            if ("purchase".equals(tool.getCategory()) || "progression".equals(tool.getCategory())) {
                 sb.append("购买/解锁线，");
             } else {
                 sb.append(StringUtils.defaultIfBlank(tool.getUpgradeLocation(), "升级地点未记录")).append("，");
@@ -1221,11 +1221,11 @@ public class StardewGuideService {
                     .toList();
             sb.append(String.join("；", upgrades)).append("\n");
         }
-        sb.append("建议：斧头优先钢斧进秘密森林；喷壶看天气预报升级；镐子服务下矿效率；垃圾桶最后考虑。");
-        return result("tool_upgrade_list", sb.toString(), collectToolSources(repository.tools()));
+        sb.append("建议：斧头优先钢斧进秘密森林；喷壶看天气预报升级；镐子服务下矿效率；背包尽早到 24 格；垃圾桶最后考虑。");
+        return result("tool_list", sb.toString(), collectToolSources(repository.tools()));
     }
 
-    private StardewGuideResult toolUpgradeAnswer(String query, StardewData.Tool tool) {
+    private StardewGuideResult toolDetailAnswer(String query, StardewData.Tool tool) {
         Optional<StardewData.ToolUpgrade> selected = selectToolUpgrade(query, tool);
         StringBuilder sb = new StringBuilder();
         sb.append(tool.getName()).append("：\n");
@@ -1268,7 +1268,7 @@ public class StardewGuideService {
         if (StringUtils.isNotBlank(tool.getNote())) {
             sb.append("提示：").append(tool.getNote()).append("\n");
         }
-        return result("tool_upgrade_detail", sb.toString().trim(), tool.getSourceUrls());
+        return result("tool_detail", sb.toString().trim(), tool.getSourceUrls());
     }
 
     private Optional<StardewData.ToolUpgrade> selectToolUpgrade(String query, StardewData.Tool tool) {
@@ -1276,7 +1276,7 @@ public class StardewGuideService {
         return tool.getUpgrades().stream()
                 .filter(upgrade -> containsNormalized(q, upgrade.getName())
                         || containsNormalized(q, upgrade.getLevel() + "级"))
-                .findFirst();
+                .max(Comparator.comparingInt(upgrade -> StringUtils.length(StardewKnowledgeRepository.normalize(upgrade.getName()))));
     }
 
     private StardewGuideResult machineListAnswer(String query) {
@@ -2398,8 +2398,16 @@ public class StardewGuideService {
                 || query.contains("喷壶") || query.contains("浇水壶") || query.contains("水壶")
                 || query.contains("锄头") || query.contains("垃圾桶")
                 || query.contains("鱼竿") || query.contains("钓竿")
+                || query.contains("铜盘") || query.contains("淘金盘") || query.contains("淘盘")
+                || query.contains("钢盘") || query.contains("金盘") || query.contains("铱盘")
+                || query.contains("镰刀") || query.contains("金镰刀") || query.contains("铱金镰刀")
+                || query.contains("背包") || query.contains("物品栏")
+                || query.contains("奶桶") || query.contains("挤奶桶")
+                || query.contains("剪刀") || query.contains("剪羊毛")
                 || query.contains("铜斧") || query.contains("钢斧") || query.contains("金斧") || query.contains("铱斧")
-                || query.contains("铜镐") || query.contains("钢镐") || query.contains("金镐") || query.contains("铱镐");
+                || query.contains("铜镐") || query.contains("钢镐") || query.contains("金镐") || query.contains("铱镐")
+                || query.contains("铜锄") || query.contains("钢锄") || query.contains("金锄") || query.contains("铱锄")
+                || query.contains("铜喷壶") || query.contains("钢喷壶") || query.contains("金喷壶") || query.contains("铱喷壶");
     }
 
     private boolean looksLikeBuildingQuery(String query) {

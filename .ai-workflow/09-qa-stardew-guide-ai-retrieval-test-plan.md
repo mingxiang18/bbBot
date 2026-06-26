@@ -44,6 +44,8 @@
 - `星露谷 矮人卷轴在哪刷`
 - `星露谷 电池组怎么获得`
 - `星露谷 斧头升级需要什么`
+- `星露谷 铱盘升级需要什么`
+- `星露谷 背包升级多少钱`
 - `星露谷 海滩农场洒水器能用吗`
 - `星露谷 罗宾斧头在哪`
 
@@ -88,7 +90,7 @@
 - 居民：34 位居民均有本地日程；有时间能回答位置；缺少游戏内时间时要求补条件。
 - 礼物：生日、最爱礼物、喜欢礼物、通用送礼规则。
 - 资源：硬木、电池组、恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、红叶卷心菜、鱼籽酱、龙牙等。
-- 工具：斧头、镐子、喷壶、锄头、垃圾桶、鱼竿的升级或购买条件。
+- 工具：11 类工具的升级、购买、获取、用途和条件，覆盖斧头、镐子、喷壶、锄头、垃圾桶、鱼竿、铜盘/钢盘/金盘/铱盘、镰刀/金镰刀/铱金镰刀、背包、奶桶、剪刀。
 - 建筑：鸡舍、畜棚、筒仓、鱼塘、马厩、房屋升级等。
 - 制作配方：完整制作页 150 条，覆盖栅栏、种子、地板/路径、照明、家具、标牌、精炼设备、工匠设备、肥料、图腾、戒指、钓具和杂项。
 - 机器兼容：小桶、罐头瓶、蛋黄酱机、鱼熏机、脱水机、诱饵制造机等旧 `MACHINE` 路径仍能回答。
@@ -112,6 +114,8 @@
 - `冬季矿井能钓什么鱼` 中的“井”不能误判为建筑“水井”。
 - `海滩农场洒水器能用吗` 应走 `FARM_MAP`，不能误判为建筑或普通攻略。
 - `农场建筑有哪些`、`鸡舍升级材料` 应走 `BUILDING`，不能误判为 `FARM_MAP`。
+- `铱盘升级需要什么`、`背包升级多少钱`、`奶桶在哪里买` 应走 `TOOL`，不能误判为 `GUIDE`、`SHOP`、`RESOURCE` 或 `ANIMAL_CARE`。
+- `工具附魔哪个好`、`精通先选哪个` 应继续走 `GUIDE`，不能因为包含工具词而误判为 `TOOL`。
 - `兔子的脚怎么出`、`猪松露怎么赚钱` 应走 `ANIMAL_CARE` 的动物详情，不能退成动物列表或资源泛答。
 - `后期养什么动物赚钱` 应走 `ANIMAL_CARE` 的动物对照列表，并突出猪、松露和松露油。
 - `鸡舍升级材料`、`畜棚多少钱` 应走 `BUILDING`，不能被农场动物抢走。
@@ -137,7 +141,7 @@
 - 普通社区中心收集包、失踪的收集包、房间概览包 id 覆盖完整。
 - 每个收集包都有房间、奖励、物品和来源字段。
 - 高频资源、料理、工具、建筑、机器、商店、节日/活动条目能够成功加载。
-- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=6、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、islandGuides=13、dungeonGuides=6、guides=39。
+- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=11、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、islandGuides=13、dungeonGuides=6、guides=39。
 
 ### 2.6 `StardewWikiApiClientTest`
 
@@ -472,7 +476,7 @@ AI tool 验收：
   test
 ```
 
-当前结果：257 tests, 0 failures, 0 errors, 0 skipped。
+当前结果：261 tests, 0 failures, 0 errors, 0 skipped。
 
 模块编译：
 

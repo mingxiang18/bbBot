@@ -374,7 +374,7 @@ class StardewGuideServiceTest {
         assertThat(guide.getIntent()).isEqualTo("guide");
         assertThat(guide.getAnswer())
                 .contains("特殊货币与兑换物", "齐钻", "金核桃", "齐币", "星星币", "奖券", "三花蛋", "火山晶石", "金色标签")
-                .doesNotContain("工具升级总览", "夏季鱼类");
+                .doesNotContain("工具获取/升级总览", "夏季鱼类");
     }
 
     @Test
@@ -687,8 +687,8 @@ class StardewGuideServiceTest {
         StardewGuideResult sprinkler = service.answer("星露谷 铱制洒水器在哪里买");
         StardewGuideResult hay = service.answer("星露谷 干草在哪里买");
 
-        assertThat(backpack.getIntent()).isEqualTo("shop_item");
-        assertThat(backpack.getAnswer()).contains("皮埃尔", "大背包", "2,000g", "豪华背包", "10,000g");
+        assertThat(backpack.getIntent()).isEqualTo("tool_detail");
+        assertThat(backpack.getAnswer()).contains("皮埃尔", "大背包（24 格）", "2,000g", "豪华背包（36 格）", "10,000g");
         assertThat(sprinkler.getIntent()).isEqualTo("shop_item");
         assertThat(sprinkler.getAnswer()).contains("科罗布斯", "铱制洒水器", "10,000g", "每周五");
         assertThat(hay.getIntent()).isEqualTo("shop_item");
@@ -773,7 +773,7 @@ class StardewGuideServiceTest {
     void answersToolUpgradeCosts() {
         StardewGuideResult result = service.answer("星露谷 斧头升级需要什么条件和金钱");
 
-        assertThat(result.getIntent()).isEqualTo("tool_upgrade_detail");
+        assertThat(result.getIntent()).isEqualTo("tool_detail");
         assertThat(result.getAnswer()).contains("铜斧", "2,000g", "铜锭 x5");
         assertThat(result.getAnswer()).contains("钢斧", "5,000g", "铁锭 x5");
         assertThat(result.getAnswer()).contains("秘密森林");
@@ -784,10 +784,12 @@ class StardewGuideServiceTest {
     void answersGenericToolUpgradeRule() {
         StardewGuideResult result = service.answer("星露谷 工具升级多少钱");
 
-        assertThat(result.getIntent()).isEqualTo("tool_upgrade_list");
+        assertThat(result.getIntent()).isEqualTo("tool_list");
         assertThat(result.getAnswer()).contains("斧头", "铜斧 2,000g + 铜锭 x5");
         assertThat(result.getAnswer()).contains("喷壶", "铱喷壶 25,000g + 铱锭 x5");
         assertThat(result.getAnswer()).contains("垃圾桶", "铱垃圾桶 12,500g + 铱锭 x5");
+        assertThat(result.getAnswer()).contains("铜盘", "铱盘 25,000g + 铱锭 x5");
+        assertThat(result.getAnswer()).contains("背包", "大背包（24 格） 2,000g");
     }
 
     @Test
@@ -795,10 +797,30 @@ class StardewGuideServiceTest {
         StardewGuideResult axe = service.answer("星露谷 钢斧需要什么材料");
         StardewGuideResult rod = service.answer("星露谷 玻璃纤维鱼竿多少钱，怎么解锁");
 
-        assertThat(axe.getIntent()).isEqualTo("tool_upgrade_detail");
+        assertThat(axe.getIntent()).isEqualTo("tool_detail");
         assertThat(axe.getAnswer()).contains("钢斧需要：5,000g + 铁锭 x5", "前置：铜斧", "秘密森林");
-        assertThat(rod.getIntent()).isEqualTo("tool_upgrade_detail");
+        assertThat(rod.getIntent()).isEqualTo("tool_detail");
         assertThat(rod.getAnswer()).contains("玻璃纤维鱼竿需要：1,800g", "钓鱼等级 2", "鱼饵");
+    }
+
+    @Test
+    void answersFullToolCategoryBeyondBlacksmithUpgrades() {
+        StardewGuideResult pan = service.answerEvidence(StardewGuideIntent.TOOL, "星露谷 铱盘升级需要什么");
+        StardewGuideResult scythe = service.answerEvidence(StardewGuideIntent.TOOL, "星露谷 铱金镰刀怎么拿");
+        StardewGuideResult backpack = service.answerEvidence(StardewGuideIntent.TOOL, "星露谷 背包升级多少钱");
+        StardewGuideResult milkPail = service.answerEvidence(StardewGuideIntent.TOOL, "星露谷 奶桶在哪里买");
+        StardewGuideResult shears = service.answerEvidence(StardewGuideIntent.TOOL, "星露谷 剪刀在哪里买");
+
+        assertThat(pan.getIntent()).isEqualTo("tool_detail");
+        assertThat(pan.getAnswer()).contains("铱盘需要：25,000g + 铱锭 x5", "最多 4 个特殊物品");
+        assertThat(scythe.getIntent()).isEqualTo("tool_detail");
+        assertThat(scythe.getAnswer()).contains("铱金镰刀需要：无固定金币花费", "耕种精通", "任意作物");
+        assertThat(backpack.getIntent()).isEqualTo("tool_detail");
+        assertThat(backpack.getAnswer()).contains("大背包（24 格）：2,000g", "豪华背包（36 格）：10,000g", "皮埃尔的杂货店");
+        assertThat(milkPail.getIntent()).isEqualTo("tool_detail");
+        assertThat(milkPail.getAnswer()).contains("奶桶需要：1,000g", "玛妮的牧场");
+        assertThat(shears.getIntent()).isEqualTo("tool_detail");
+        assertThat(shears.getAnswer()).contains("剪刀需要：1,000g", "绵羊", "玛妮的牧场");
     }
 
     @Test
@@ -1367,7 +1389,7 @@ class StardewGuideServiceTest {
         assertThat(rings.getAnswer()).contains("两个不同戒指", "火山晶石 x20", "不能把两个相同戒指", "铱环 + 幸运戒指");
         assertThat(forge.getSourceUrls()).contains("https://stardewvalleywiki.com/Forge");
         assertThat(legacyForge.getIntent()).isEqualTo("guide");
-        assertThat(legacyForge.getAnswer()).doesNotContain("工具升级总览");
+        assertThat(legacyForge.getAnswer()).doesNotContain("工具获取/升级总览");
     }
 
     @Test
