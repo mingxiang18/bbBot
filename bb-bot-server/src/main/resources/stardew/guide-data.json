@@ -11891,6 +11891,369 @@
         "https://stardewvalleywiki.com/Giant_Stump",
         "https://zh.stardewvalleywiki.com/大树桩"
       ]
+    },
+    {
+      "id": "egg_festival_shop",
+      "name": "复活节商店",
+      "nameEn": "Egg Festival Shop",
+      "aliases": [
+        "复活节商店",
+        "复活节",
+        "彩蛋节商店",
+        "蛋蛋节",
+        "egg festival shop",
+        "egg festival",
+        "草莓种子在哪里买",
+        "草莓种子"
+      ],
+      "location": "鹈鹕镇广场",
+      "openHours": "春季 13 日 09:00-14:00 入场；找蛋比赛开始前可购买",
+      "closed": "找蛋比赛开始后不能再购买；节日结束直接回农场 22:00",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "草莓种子",
+          "aliases": [
+            "strawberry seeds",
+            "草莓"
+          ],
+          "price": 100,
+          "availability": "复活节皮埃尔摊位",
+          "note": "春季种植，8 天成熟后每 4 天再收；第一年常见做法是复活节前攒钱大量购买"
+        },
+        {
+          "name": "草帽",
+          "aliases": [
+            "straw hat"
+          ],
+          "currency": "赢得找蛋比赛奖励；之后帽子店可购买",
+          "availability": "赢得复活节找蛋比赛",
+          "note": "单人通常需要至少 9 个蛋才能赢"
+        },
+        {
+          "name": "绒毛兔",
+          "aliases": [
+            "plush bunny"
+          ],
+          "price": 2000,
+          "availability": "复活节皮埃尔摊位",
+          "note": "装饰"
+        }
+      ],
+      "recommendation": "第一年优先攒钱买草莓种子；当天买当天种通常还能收一茬，留种到第二年春 1 日种也很强。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Egg_Festival"
+      ]
+    },
+    {
+      "id": "flower_dance_shop",
+      "name": "花舞节商店",
+      "nameEn": "Flower Dance Shop",
+      "aliases": [
+        "花舞节商店",
+        "花舞节",
+        "花舞会",
+        "flower dance shop",
+        "flower dance",
+        "稀有稻草人5",
+        "Rarecrow #5",
+        "花桶配方"
+      ],
+      "location": "煤矿森林西侧花舞节场地",
+      "openHours": "春季 24 日 09:00-14:00 入场；开始舞会前可购买",
+      "closed": "舞会开始后节日结束并回农场 22:00",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "花桶配方",
+          "aliases": [
+            "Tub o' Flowers Recipe",
+            "花桶",
+            "花桶图纸"
+          ],
+          "price": 1000,
+          "availability": "花舞节皮埃尔摊位",
+          "note": "制作春夏开花的花桶装饰"
+        },
+        {
+          "name": "稀有稻草人 #5",
+          "aliases": [
+            "Rarecrow #5",
+            "稀有乌鸦5",
+            "稀有稻草人5"
+          ],
+          "price": 2500,
+          "availability": "花舞节皮埃尔摊位",
+          "note": "全稀有稻草人收集的一部分"
+        },
+        {
+          "name": "水仙花",
+          "aliases": [
+            "daffodil"
+          ],
+          "price": 50,
+          "availability": "花舞节皮埃尔摊位",
+          "note": "10 个一组，常用于送礼"
+        }
+      ],
+      "recommendation": "收集党优先买稀有稻草人 #5；花桶配方只需买一次。想和 NPC 跳舞需要 4 心。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Flower_Dance"
+      ]
+    },
+    {
+      "id": "moonlight_jellies_shop",
+      "name": "月光水母节商店",
+      "nameEn": "Dance of the Moonlight Jellies Shop",
+      "aliases": [
+        "月光水母节商店",
+        "月光水母",
+        "月光水母节",
+        "水母节",
+        "Dance of the Moonlight Jellies",
+        "moonlight jellies shop",
+        "海泡布丁在哪里买"
+      ],
+      "location": "海滩西北角",
+      "openHours": "夏季 28 日 22:00-00:00 入场；点灯剧情前可购买",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "海泡布丁",
+          "aliases": [
+            "Seafoam Pudding",
+            "海泡布丁在哪里买"
+          ],
+          "price": 5000,
+          "availability": "月光水母节皮埃尔摊位",
+          "note": "强力钓鱼料理，钓鱼 +4"
+        },
+        {
+          "name": "月光水母横幅",
+          "aliases": [
+            "Moonlight Jellies Banner"
+          ],
+          "price": 800,
+          "availability": "月光水母节皮埃尔摊位",
+          "note": "装饰"
+        },
+        {
+          "name": "现代地毯",
+          "aliases": [
+            "Modern Rug"
+          ],
+          "price": 4000,
+          "availability": "月光水母节皮埃尔摊位",
+          "note": "装饰"
+        }
+      ],
+      "recommendation": "钓传说鱼、章鱼或难钓鱼前可以买海泡布丁；纯收益路线不必强买装饰。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dance_of_the_Moonlight_Jellies"
+      ]
+    },
+    {
+      "id": "stardew_valley_fair_shop",
+      "name": "星露谷展览会商店",
+      "nameEn": "Stardew Valley Fair Shop",
+      "aliases": [
+        "星露谷展览会商店",
+        "星露谷展览会",
+        "秋季展览会",
+        "展览会商店",
+        "stardew valley fair shop",
+        "fair shop",
+        "星之果实展览会",
+        "星之果实在哪里买"
+      ],
+      "location": "鹈鹕镇广场，公交车站入口附近",
+      "openHours": "秋季 16 日 09:00-15:00 入场；离开后回农场 22:00",
+      "currency": "星星币",
+      "stock": [
+        {
+          "name": "星之果实",
+          "aliases": [
+            "Stardrop",
+            "星星果实",
+            "永久体力果实"
+          ],
+          "price": 2000,
+          "currency": "星星币",
+          "availability": "每个存档只能从展览会商店购买一次",
+          "note": "永久提高最大能量，展览会最重要兑换"
+        },
+        {
+          "name": "稀有稻草人 #1",
+          "aliases": [
+            "Rarecrow #1",
+            "稀有稻草人1"
+          ],
+          "price": 800,
+          "currency": "星星币",
+          "availability": "展览会固定库存，每年补货",
+          "note": "全稀有稻草人收集的一部分"
+        },
+        {
+          "name": "奖品券",
+          "aliases": [
+            "Prize Ticket"
+          ],
+          "price": 1000,
+          "currency": "星星币",
+          "availability": "展览会固定库存",
+          "note": "1.6 奖品机使用"
+        }
+      ],
+      "recommendation": "第一优先级是 2,000 星星币的星之果实，其次是稀有稻草人 #1；星星币不会继承到明年。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stardew_Valley_Fair"
+      ]
+    },
+    {
+      "id": "spirits_eve_shop",
+      "name": "万灵节商店",
+      "nameEn": "Spirit's Eve Shop",
+      "aliases": [
+        "万灵节商店",
+        "万灵节",
+        "Spirit's Eve",
+        "Spirits Eve",
+        "南瓜灯配方",
+        "稀有稻草人2"
+      ],
+      "location": "鹈鹕镇万灵节迷宫入口附近",
+      "openHours": "秋季 27 日 22:00-23:50 入场",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "南瓜灯配方",
+          "aliases": [
+            "Jack-O-Lantern Recipe",
+            "Jack O Lantern Recipe",
+            "南瓜灯图纸"
+          ],
+          "price": 2000,
+          "availability": "万灵节皮埃尔摊位",
+          "note": "制作南瓜灯装饰"
+        },
+        {
+          "name": "稀有稻草人 #2",
+          "aliases": [
+            "Rarecrow #2",
+            "稀有稻草人2"
+          ],
+          "price": 5000,
+          "availability": "万灵节皮埃尔摊位",
+          "note": "全稀有稻草人收集的一部分"
+        },
+        {
+          "name": "南瓜灯",
+          "aliases": [
+            "Jack-O-Lantern",
+            "Jack O Lantern"
+          ],
+          "price": 750,
+          "availability": "万灵节皮埃尔摊位",
+          "note": "每次购买 5 个"
+        }
+      ],
+      "recommendation": "收集党优先稀有稻草人 #2 和南瓜灯配方；迷宫奖励奇数年是金南瓜，偶数年是奖品券。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Spirit%27s_Eve"
+      ]
+    },
+    {
+      "id": "desert_festival_shop",
+      "name": "沙漠节商店",
+      "nameEn": "Desert Festival Shop",
+      "aliases": [
+        "沙漠节商店",
+        "沙漠节",
+        "Calico Egg Merchant",
+        "卡利科三花蛋商人",
+        "三花蛋商人",
+        "沙漠节换什么",
+        "魔法糖冰棍沙漠节",
+        "草莓种子沙漠节"
+      ],
+      "location": "沙漠节主会场",
+      "openHours": "春季 15-17 日，10:00 后开放；需要修复巴士才能前往",
+      "closed": "春季 15-17 日以外不开放；节日结束后三花蛋不会保留到下一年",
+      "currency": "卡利科三花蛋",
+      "stock": [
+        {
+          "name": "神秘盒",
+          "aliases": [
+            "Mystery Box",
+            "谜之盒"
+          ],
+          "price": 20,
+          "currency": "卡利科三花蛋",
+          "availability": "沙漠节 Calico Egg Merchant 常驻库存",
+          "note": "每次购买 10 个"
+        },
+        {
+          "name": "超级炸弹",
+          "aliases": [
+            "Mega Bomb",
+            "大炸弹"
+          ],
+          "price": 15,
+          "currency": "卡利科三花蛋",
+          "availability": "沙漠节 Calico Egg Merchant 常驻库存",
+          "note": "下骷髅洞穴实用"
+        },
+        {
+          "name": "魔法糖冰棍",
+          "aliases": [
+            "Magic Rock Candy",
+            "魔法冰棍"
+          ],
+          "price": 250,
+          "currency": "卡利科三花蛋",
+          "availability": "春季 17 日限量 1 个",
+          "note": "强力全能 buff 食物"
+        },
+        {
+          "name": "樵夫周刊",
+          "aliases": [
+            "Woodcutter's Weekly",
+            "觅食技能书"
+          ],
+          "price": 100,
+          "currency": "卡利科三花蛋",
+          "availability": "沙漠节 Calico Egg Merchant 常驻库存",
+          "note": "阅读后获得 250 觅食经验"
+        },
+        {
+          "name": "草莓种子",
+          "aliases": [
+            "Strawberry Seeds",
+            "草莓"
+          ],
+          "price": 5,
+          "currency": "卡利科三花蛋",
+          "availability": "春季 15 日 5 个三花蛋；春季 17 日 6 个三花蛋",
+          "note": "沙漠节也能用三花蛋换草莓种子"
+        },
+        {
+          "name": "辣鳗鱼/蟹黄糕/幸运午餐等料理",
+          "aliases": [
+            "Spicy Eel",
+            "Crab Cakes",
+            "Lucky Lunch",
+            "沙漠节料理"
+          ],
+          "price": 10,
+          "currency": "卡利科三花蛋",
+          "availability": "五种料理随机出现一种，每次 5 个",
+          "note": "适合当场下骷髅洞穴或补 buff"
+        }
+      ],
+      "recommendation": "优先考虑魔法糖冰棍、超级炸弹、实用料理和缺的收藏/书籍；三花蛋不会留到下一年，节日内尽量花掉。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Desert_Festival"
+      ]
     }
   ],
   "villagers": [

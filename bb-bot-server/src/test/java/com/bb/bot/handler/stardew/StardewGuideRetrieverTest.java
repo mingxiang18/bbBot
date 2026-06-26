@@ -381,6 +381,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedShopIntentRetrievesFestivalShopEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.SHOP, "草莓种子在哪里买"),
+                intent(StardewGuideIntent.SHOP, "沙漠节换什么"),
+                intent(StardewGuideIntent.SHOP, "星之果实展览会在哪里买"),
+                intent(StardewGuideIntent.SHOP, "万灵节稀有稻草人2多少钱")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("草莓种子、沙漠节、展览会星之果实和万灵节稀有稻草人怎么买", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SHOP);
+        assertThat(joinAnswers(evidence))
+                .contains("复活节商店", "草莓种子", "100g")
+                .contains("沙漠节商店", "卡利科三花蛋", "魔法糖冰棍")
+                .contains("星露谷展览会商店", "星之果实", "2,000 星星币")
+                .contains("万灵节商店", "稀有稻草人 #2", "5,000g")
+                .doesNotContain("夏季鱼类", "工具升级", "居民位置", "鸡舍");
+    }
+
+    @Test
     void typedGuideIntentRetrievesFoodBuffRulesEvidence() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.GUIDE, "料理buff和饮料buff怎么叠加"));
 

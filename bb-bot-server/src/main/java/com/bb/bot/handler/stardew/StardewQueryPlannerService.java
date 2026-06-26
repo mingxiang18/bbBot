@@ -187,7 +187,9 @@ public class StardewQueryPlannerService {
                 "哈维诊所", "哈维的诊所", "医院", "诊所", "Joja", "joja", "乔家",
                 "赌场", "火山矮人", "火山商店", "法师塔", "巫师塔",
                 "冰淇淋摊", "冰激凌摊", "帽子店", "帽子鼠", "浣熊商店", "浣熊",
-                "大树桩");
+                "大树桩", "复活节", "彩蛋节", "花舞节", "月光水母", "水母节",
+                "星露谷展览会", "秋季展览会", "展览会", "万灵节", "沙漠节",
+                "Calico Egg Merchant", "卡利科三花蛋", "三花蛋商人");
     }
 
     private boolean looksLikeCookingFoodQuery(String query) {

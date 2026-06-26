@@ -27,7 +27,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
-        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(23);
+        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
@@ -239,7 +239,13 @@ class StardewKnowledgeRepositoryTest {
                 "wizards_tower",
                 "ice_cream_stand",
                 "abandoned_house",
-                "giant_stump"
+                "giant_stump",
+                "egg_festival_shop",
+                "flower_dance_shop",
+                "moonlight_jellies_shop",
+                "stardew_valley_fair_shop",
+                "spirits_eve_shop",
+                "desert_festival_shop"
         );
     }
 

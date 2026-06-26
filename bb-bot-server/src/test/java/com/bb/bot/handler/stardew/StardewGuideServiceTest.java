@@ -404,6 +404,11 @@ class StardewGuideServiceTest {
         StardewGuideResult iceCream = service.answerEvidence(StardewGuideIntent.SHOP, "冰淇淋在哪里买");
         StardewGuideResult hats = service.answerEvidence(StardewGuideIntent.SHOP, "帽子在哪里买");
         StardewGuideResult carrotSeeds = service.answerEvidence(StardewGuideIntent.SHOP, "胡萝卜种子在哪里买");
+        StardewGuideResult strawberrySeeds = service.answerEvidence(StardewGuideIntent.SHOP, "草莓种子在哪里买");
+        StardewGuideResult desertFestival = service.answerEvidence(StardewGuideIntent.SHOP, "沙漠节换什么");
+        StardewGuideResult fairStardrop = service.answerEvidence(StardewGuideIntent.SHOP, "星之果实展览会在哪里买");
+        StardewGuideResult moonlightPudding = service.answerEvidence(StardewGuideIntent.SHOP, "海泡布丁在哪里买");
+        StardewGuideResult rarecrowTwo = service.answerEvidence(StardewGuideIntent.SHOP, "万灵节稀有稻草人2多少钱");
 
         assertThat(bookseller.getIntent()).isEqualTo("shop");
         assertThat(bookseller.getAnswer()).contains("每个季节随机来访 2 天", "日历", "Joja");
@@ -441,6 +446,16 @@ class StardewGuideServiceTest {
         assertThat(hats.getAnswer()).contains("废弃屋帽子店", "成就帽子", "第一个成就");
         assertThat(carrotSeeds.getIntent()).isEqualTo("shop_item");
         assertThat(carrotSeeds.getAnswer()).contains("浣熊商店", "胡萝卜种子", "以物换物");
+        assertThat(strawberrySeeds.getIntent()).isEqualTo("shop_item");
+        assertThat(strawberrySeeds.getAnswer()).contains("复活节商店", "草莓种子", "100g", "春季 13 日");
+        assertThat(desertFestival.getIntent()).isEqualTo("shop");
+        assertThat(desertFestival.getAnswer()).contains("沙漠节商店", "春季 15-17 日", "卡利科三花蛋", "魔法糖冰棍");
+        assertThat(fairStardrop.getIntent()).isEqualTo("shop_item");
+        assertThat(fairStardrop.getAnswer()).contains("星露谷展览会商店", "星之果实", "2,000 星星币", "只能");
+        assertThat(moonlightPudding.getIntent()).isEqualTo("shop_item");
+        assertThat(moonlightPudding.getAnswer()).contains("月光水母节商店", "海泡布丁", "5,000g", "夏季 28 日");
+        assertThat(rarecrowTwo.getIntent()).isEqualTo("shop_item");
+        assertThat(rarecrowTwo.getAnswer()).contains("万灵节商店", "稀有稻草人 #2", "5,000g", "秋季 27 日");
     }
 
     @Test

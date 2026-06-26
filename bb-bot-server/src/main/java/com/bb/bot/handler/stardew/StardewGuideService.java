@@ -1067,6 +1067,9 @@ public class StardewGuideService {
 
     private String formatShopPrice(StardewData.ShopItem item) {
         if (item.getPrice() != null) {
+            if (StringUtils.isNotBlank(item.getCurrency()) && !"gold".equalsIgnoreCase(item.getCurrency())) {
+                return item.getPrice().toString().replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",") + " " + item.getCurrency();
+            }
             return formatGold(item.getPrice());
         }
         return StringUtils.defaultIfBlank(item.getCurrency(), "非金币购买/价格随库存变化");

@@ -233,6 +233,19 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFestivalShopQueriesAsShop() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("沙漠节换什么，草莓种子在哪里买");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("沙漠节换什么，草莓种子在哪里买");
+    }
+
+    @Test
     void localFallbackClassifiesBuffStackingRulesAsGuide() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
