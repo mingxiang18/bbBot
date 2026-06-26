@@ -117,6 +117,12 @@ public class StardewQueryPlannerService {
                 && containsAny(q, "等级", "升级", "经验", "怎么练", "快速", "职业")) {
             return StardewGuideIntent.SKILL;
         }
+        if (looksLikeBookQuery(q) && containsAny(q, "在哪里买", "哪里买", "谁卖", "多少钱", "购买")) {
+            return StardewGuideIntent.SHOP;
+        }
+        if (looksLikeBookQuery(q)) {
+            return StardewGuideIntent.GUIDE;
+        }
         if (containsAny(q, "果树", "树苗", "温室怎么种")) {
             return StardewGuideIntent.FRUIT_TREE;
         }
@@ -148,6 +154,17 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.GUIDE;
         }
         return StardewGuideIntent.UNKNOWN;
+    }
+
+    private boolean looksLikeBookQuery(String query) {
+        return containsAny(query,
+                "技能书", "书商", "书籍", "力量书", "能力书", "永久能力书",
+                "星之书", "价格目录", "风之道", "马之书", "老滑腿", "酱料女皇食谱",
+                "鱼饵和浮标", "采矿月刊", "战斗季刊", "樵夫周刊", "星露谷年鉴",
+                "怪物图鉴", "洞穴系统地图", "矮人安全手册", "海之宝石", "捕蟹的艺术",
+                "伍迪的秘密", "浣熊日志", "神秘之书", "友谊 101", "宝物鉴定指南",
+                "Book Of Stars", "Price Catalogue", "Way Of The Wind", "Horse: The Book",
+                "Queen Of Sauce Cookbook");
     }
 
     private boolean containsAny(String query, String... words) {

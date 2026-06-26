@@ -814,8 +814,25 @@ class StardewGuideServiceTest {
 
         assertThat(books.getIntent()).isEqualTo("shop_item");
         assertThat(books.getAnswer()).contains("书商", "每个季节随机来访 2 天", "技能书", "星之书");
+        assertThat(books.getAnswer()).contains("5,000-10,000g", "15,000g", "价格目录", "风之道");
         assertThat(reset.getIntent()).isEqualTo("guide");
         assertThat(reset.getAnswer()).contains("不确定雕像", "10,000g", "睡觉后");
+    }
+
+    @Test
+    void answersBookEffectsAndPrioritiesLocally() {
+        StardewGuideResult priceCatalogue = service.answer("星露谷 价格目录有什么用，值得买吗");
+        StardewGuideResult starBook = service.answer("星露谷 星之书有什么用");
+        StardewGuideResult cookbook = service.answer("星露谷 酱料女皇食谱怎么解锁");
+
+        assertThat(priceCatalogue.getIntent()).isEqualTo("guide");
+        assertThat(priceCatalogue.getAnswer()).contains("《价格目录》3,000g", "查看可出售物品的卖价");
+        assertThat(priceCatalogue.getAnswer()).contains("前期优先价格目录", "力量书第一次读给永久能力");
+        assertThat(starBook.getIntent()).isEqualTo("guide");
+        assertThat(starBook.getAnswer()).contains("《星之书》给所有技能各 250 经验", "1,125 精通点", "15,000g");
+        assertThat(cookbook.getIntent()).isEqualTo("guide");
+        assertThat(cookbook.getAnswer()).contains("《酱料女皇食谱》50,000g", "100 个金核桃", "学会所有尚未掌握的酱料女皇电视食谱");
+        assertThat(cookbook.getSourceUrls()).contains("https://stardewvalleywiki.com/Books");
     }
 
     @Test

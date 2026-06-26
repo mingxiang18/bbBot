@@ -66,6 +66,9 @@ public class StardewGuideService {
             }
             return toolUpgradeListAnswer();
         }
+        if (guide.isPresent() && shouldPreferGuideOverShop(query, guide.get())) {
+            return guideAnswer(guide.get());
+        }
         if (looksLikeShopQuery(query) && shopItem.isPresent()) {
             return shopItemAnswer(query, shopItem.get());
         }
@@ -103,6 +106,9 @@ public class StardewGuideService {
                 return machineDetailAnswer(machine.get());
             }
             return machineListAnswer(query);
+        }
+        if (guide.isPresent() && shouldPreferGuideOverCooking(query, guide.get())) {
+            return guideAnswer(guide.get());
         }
         if (cookingRecipe.isPresent() && looksLikeCookingQuery(query) && !isBroadCookingQuery(query)) {
             return cookingRecipeAnswer(cookingRecipe.get());
@@ -1409,6 +1415,22 @@ public class StardewGuideService {
                 && (query.contains("怎么种") || query.contains("温室") || query.contains("布局")
                 || query.contains("间隔") || query.contains("3x3") || query.contains("3×3")
                 || query.contains("几天成熟") || query.contains("成熟"));
+    }
+
+    private boolean shouldPreferGuideOverShop(String query, StardewData.GuideTopic guide) {
+        if (guide == null || !"skill_books".equals(guide.getId())) {
+            return false;
+        }
+        return query.contains("有什么用") || query.contains("效果") || query.contains("值得")
+                || query.contains("推荐") || query.contains("优先") || query.contains("读了");
+    }
+
+    private boolean shouldPreferGuideOverCooking(String query, StardewData.GuideTopic guide) {
+        if (guide == null || !"skill_books".equals(guide.getId())) {
+            return false;
+        }
+        return query.contains("书") || query.contains("书籍") || query.contains("书商")
+                || query.contains("酱料女皇食谱") || query.contains("Queen Of Sauce Cookbook");
     }
 
     private boolean looksLikeGuideQuery(String query) {

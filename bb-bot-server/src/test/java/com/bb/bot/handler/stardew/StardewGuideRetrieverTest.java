@@ -248,6 +248,37 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedGuideIntentRetrievesBookEffectEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.GUIDE, "价格目录有什么用，星之书有什么用"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 价格目录和星之书有什么用", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("技能书与书商", "《价格目录》3,000g", "《星之书》给所有技能各 250 经验")
+                .contains("力量书第一次读给永久能力")
+                .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+    }
+
+    @Test
+    void typedShopIntentRetrievesBookSellerItemEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SHOP, "酱料女皇食谱在哪里买"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 酱料女皇食谱在哪里买", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SHOP);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("shop_item");
+        assertThat(joinAnswers(evidence))
+                .contains("书商", "酱料女皇食谱", "50,000g", "100 个金核桃")
+                .doesNotContain("夏季鱼类", "工具升级");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

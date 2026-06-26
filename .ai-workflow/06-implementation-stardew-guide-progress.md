@@ -487,6 +487,24 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：124 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 技能书/力量书/书商攻略加厚：
+
+- 针对“价格目录有什么用/星之书有什么用/酱料女皇食谱在哪里买/技能书值得买吗”等 1.6 书籍问题补强 `skill_books` 与 `bookseller` 数据。
+- 按官方 Bookseller/Books/Book Of Stars/Price Catalogue/Queen Of Sauce Cookbook 资料补充 5 个小节：书商和读书规则、技能经验书、固定出售和高优先级、常见力量书效果、购买建议。
+- 补充书商 stock：技能书、星之书、价格目录、风之道第一卷/第二卷、马之书、老滑腿、酱料女皇食谱，支持“在哪里买/多少钱/解锁条件”类检索。
+- 补充明确事实：单项技能书给 250 对应技能经验，星之书给所有技能各 250 经验，满级后给 1,125 精通点；价格目录显示售价；酱料女皇食谱需要 100 金核桃后固定出售。
+- 路由修复：新增书籍问题 fallback 分类，书籍效果/值得买吗走 `GUIDE`，明确购买问题走 `SHOP`；同时修复“价格目录”自带“价格”导致误判商店的问题。
+- 路由修复：新增 `skill_books` guide-over-shop / guide-over-cooking 保护，避免“价格目录有什么用”被商品命中抢走，也避免“酱料女皇食谱怎么解锁”被普通料理列表抢走。
+- AI tool 描述补充价格目录、风之道、马之书、酱料女皇食谱、力量书效果/购买触发词。
+- 测试补充：新增 `StardewGuideServiceTest` 书籍效果断言，新增 `StardewGuideRetrieverTest` typed `GUIDE`/`SHOP` 证据测试，新增 `StardewQueryPlannerServiceTest` fallback 分类测试。
+
+本轮聚焦验证结果：
+
+- 首次聚焦测试暴露两个真实路由问题：`价格目录有什么用` 被 `价格` 字样误归 `SHOP`，且 raw query 被书商商品命中抢走；已通过购买意图收窄和 guide-over-shop 修复。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideServiceTest`：96 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：129 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -511,7 +529,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、书商/技能书、职业重置、技能食物 buff；后续还需继续补具体书籍效果、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、书商/技能书/首批高频力量书、职业重置、技能食物 buff；后续还需继续补全量书籍效果、全量书籍获取来源、具体料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 
