@@ -312,7 +312,7 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.SKILL);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("skill_guide");
         assertThat(joinAnswers(evidence))
                 .contains("战斗技能", "击杀怪物", "战斗季刊", "40-79 层")
                 .contains("怪物香水", "战士 -> 野蛮人");
@@ -327,7 +327,7 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.SKILL);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("skill_guide");
         assertThat(joinAnswers(evidence))
                 .contains("钓鱼技能", "训练用鱼竿", "气泡点", "完美钓鱼")
                 .contains("海泡布丁", "渔夫 -> 垂钓者")
@@ -343,7 +343,7 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.SKILL);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("skill_guide");
         assertThat(joinAnswers(evidence))
                 .contains("采矿技能", "怪物破坏岩石不给经验", "40-79 层", "骷髅洞穴")
                 .contains("矿工特供", "矿工 -> 勘探者")
@@ -359,7 +359,7 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.SKILL);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("skill_guide");
         assertThat(joinAnswers(evidence))
                 .contains("耕种技能", "13 个防风草", "洒水器", "农夫午餐")
                 .contains("农耕人 -> 工匠")
@@ -375,7 +375,7 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.SKILL);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("skill_guide");
         assertThat(joinAnswers(evidence))
                 .contains("觅食技能", "秘密森林", "冬季野种子", "炸弹炸倒树不给觅食经验")
                 .contains("收集者 -> 植物学家")

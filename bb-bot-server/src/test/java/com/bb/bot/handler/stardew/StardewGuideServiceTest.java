@@ -961,7 +961,7 @@ class StardewGuideServiceTest {
     void answersCombatLevelingLocally() {
         StardewGuideResult result = service.answer("星露谷 战斗技能如何快速升级");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("战斗经验来自击杀怪物");
         assertThat(result.getAnswer()).contains("250 战斗经验", "10 级 15000", "农场怪物只给标准经验的 1/3");
         assertThat(result.getAnswer()).contains("40-79 层", "70-79 层", "骷髅洞穴", "火山地牢");
@@ -973,7 +973,7 @@ class StardewGuideServiceTest {
     void answersFishingLevelingLocally() {
         StardewGuideResult result = service.answer("星露谷 钓鱼等级低怎么快速升级");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("钓鱼经验来自鱼竿钓到物品", "250 钓鱼经验");
         assertThat(result.getAnswer()).contains("完美钓鱼会让经验 x2.4", "10 级总经验阈值");
         assertThat(result.getAnswer()).contains("训练用鱼竿", "玻璃纤维鱼竿", "铱金鱼竿");
@@ -986,7 +986,7 @@ class StardewGuideServiceTest {
     void answersMiningLevelingLocally() {
         StardewGuideResult result = service.answer("星露谷 采矿等级低怎么快速升级");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("怪物破坏岩石不给经验", "250 采矿经验");
         assertThat(result.getAnswer()).contains("铜矿点 5", "铁矿点 12", "金矿点 18", "铱矿点 50");
         assertThat(result.getAnswer()).contains("每 5 层电梯", "40-79 层", "80-120 层", "头骨钥匙");
@@ -1000,7 +1000,7 @@ class StardewGuideServiceTest {
     void answersFarmingLevelingLocally() {
         StardewGuideResult result = service.answer("星露谷 耕种等级低怎么快速升级");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("250 耕种经验", "单纯锄地或浇水不会给耕种经验");
         assertThat(result.getAnswer()).contains("松露给觅食经验", "13 个防风草", "8 个土豆", "5 个花椰菜");
         assertThat(result.getAnswer()).contains("春季", "夏季", "秋季", "洒水器");
@@ -1013,7 +1013,7 @@ class StardewGuideServiceTest {
     void answersForagingLevelingLocally() {
         StardewGuideResult result = service.answer("星露谷 觅食等级低怎么快速升级");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("250 觅食经验", "普通地面采集物通常给 7 觅食经验");
         assertThat(result.getAnswer()).contains("砍倒一棵树给 14 觅食经验", "大型树桩和大圆木给 25");
         assertThat(result.getAnswer()).contains("秘密森林", "6 个大型树桩", "150 觅食经验");
@@ -1027,7 +1027,7 @@ class StardewGuideServiceTest {
     void answersSkillProfessionChoice() {
         StardewGuideResult result = service.answer("星露谷 钓鱼职业怎么选");
 
-        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getIntent()).isEqualTo("skill_guide");
         assertThat(result.getAnswer()).contains("渔夫", "垂钓者", "海盗", "蟹笼");
     }
 
@@ -1039,8 +1039,28 @@ class StardewGuideServiceTest {
         assertThat(books.getIntent()).isEqualTo("shop_item");
         assertThat(books.getAnswer()).contains("书商", "每个季节随机来访 2 天", "技能书", "星之书");
         assertThat(books.getAnswer()).contains("5,000-10,000g", "15,000g", "价格目录", "风之道");
-        assertThat(reset.getIntent()).isEqualTo("guide");
+        assertThat(reset.getIntent()).isEqualTo("skill_guide");
         assertThat(reset.getAnswer()).contains("不确定雕像", "10,000g", "睡觉后");
+    }
+
+    @Test
+    void answersSkillOverviewWithoutStealingBookCookingOrMonsterRoutes() {
+        StardewGuideResult overview = service.answerEvidence(StardewGuideIntent.SKILL, "技能有哪些，职业怎么选");
+        StardewGuideResult combatFood = service.answer("星露谷 战斗等级低吃什么食物");
+        StardewGuideResult combatQuarterly = service.answer("星露谷 战斗季刊有什么用");
+        StardewGuideResult dustSprite = service.answerEvidence(StardewGuideIntent.MONSTER_DROP, "煤尘精灵多少战斗经验，掉什么");
+
+        assertThat(overview.getIntent()).isEqualTo("skill_guide_list");
+        assertThat(overview.getAnswer()).contains("技能攻略对照", "耕种技能", "采矿技能", "觅食技能", "钓鱼技能", "战斗技能", "职业重置", "技能书与书商", "精通系统");
+
+        assertThat(combatFood.getIntent()).isEqualTo("cooking_available");
+        assertThat(combatFood.getAnswer()).contains("香辣鳗鱼", "块茎拼盘").doesNotContain("战斗技能：");
+
+        assertThat(combatQuarterly.getIntent()).isEqualTo("book_detail");
+        assertThat(combatQuarterly.getAnswer()).contains("战斗季刊", "250 战斗经验").doesNotContain("战斗技能：");
+
+        assertThat(dustSprite.getIntent()).isEqualTo("monster_drop");
+        assertThat(dustSprite.getAnswer()).contains("煤尘精灵", "战斗经验").doesNotContain("战斗技能：");
     }
 
     @Test

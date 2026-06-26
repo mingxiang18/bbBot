@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getSpecialOrders().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -99,6 +99,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.SpecialOrderGuide> specialOrders() {
         return safe(data.getSpecialOrders());
+    }
+
+    public List<StardewData.SkillGuide> skillGuides() {
+        return safe(data.getSkillGuides());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -224,6 +228,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(GuideMatch::guide)
+                .findFirst();
+    }
+
+    public Optional<StardewData.SkillGuide> findSkillGuide(String query) {
+        String q = normalize(query);
+        return skillGuides().stream()
+                .map(g -> new SkillGuideMatch(g, scoreSkillGuide(q, g)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(SkillGuideMatch::guide)
                 .findFirst();
     }
 
@@ -364,6 +378,45 @@ public class StardewKnowledgeRepository {
         return score + keywordScore;
     }
 
+    private int scoreSkillGuide(String q, StardewData.SkillGuide guide) {
+        List<String> names = new ArrayList<>();
+        names.add(guide.getName());
+        names.add(guide.getNameEn());
+        names.add(guide.getId());
+        if (guide.getAliases() != null) {
+            names.addAll(guide.getAliases());
+        }
+        int score = 0;
+        Set<String> seenNames = new LinkedHashSet<>();
+        for (String n : names) {
+            String normalized = normalize(n);
+            if (!seenNames.add(normalized)) {
+                continue;
+            }
+            if (!normalized.isEmpty() && q.contains(normalized)) {
+                score += Math.max(40, normalized.length() * 10);
+            }
+        }
+        boolean weakNameMatch = q.length() >= 2 && seenNames.stream()
+                .anyMatch(n -> !n.isEmpty() && n.contains(q));
+        if (weakNameMatch) {
+            score += 20;
+        }
+        if (score == 0) {
+            return 0;
+        }
+        List<String> keywords = guide.getKeywords();
+        if (keywords == null || keywords.isEmpty()) {
+            return score;
+        }
+        int keywordScore = keywords.stream()
+                .map(StardewKnowledgeRepository::normalize)
+                .filter(k -> !k.isEmpty() && q.contains(k))
+                .mapToInt(k -> Math.max(5, k.length() * 2))
+                .sum();
+        return score + keywordScore;
+    }
+
     private int scoreSpecialOrder(String q, StardewData.SpecialOrderGuide order) {
         int score = scoreSearchable(q, order.getName(), order.getNameEn(), order.getAliases());
         String board = normalize(order.getBoard());
@@ -425,6 +478,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record GuideMatch(StardewData.GuideTopic guide, int score) {
+    }
+
+    private record SkillGuideMatch(StardewData.SkillGuide guide, int score) {
     }
 
     private record BundleMatch(StardewData.Bundle bundle, int score) {

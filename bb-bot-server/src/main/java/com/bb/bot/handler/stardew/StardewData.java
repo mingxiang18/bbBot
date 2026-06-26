@@ -24,6 +24,7 @@ public class StardewData {
     private List<CookingRecipe> cookingRecipes = new ArrayList<>();
     private List<BookGuide> books = new ArrayList<>();
     private List<SpecialOrderGuide> specialOrders = new ArrayList<>();
+    private List<SkillGuide> skillGuides = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
     @Data
@@ -328,6 +329,18 @@ public class StardewData {
         private String repeatable;
         private String recommendation;
         private List<String> tips = new ArrayList<>();
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class SkillGuide {
+        private String id;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private List<String> keywords = new ArrayList<>();
+        private List<GuideSection> sections = new ArrayList<>();
+        private String recommendation;
         private List<String> sourceUrls = new ArrayList<>();
     }
 

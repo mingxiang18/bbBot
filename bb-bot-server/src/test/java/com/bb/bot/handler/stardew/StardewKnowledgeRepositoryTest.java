@@ -36,6 +36,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.specialOrders()).hasSizeGreaterThanOrEqualTo(28);
+        assertThat(repository.skillGuides()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
 
@@ -206,6 +207,48 @@ class StardewKnowledgeRepositoryTest {
                 "animals",
                 "combat"
         );
+    }
+
+    @Test
+    void skillGuidesAreCoveredAsCompleteTypedCategory() {
+        Set<String> ids = repository.skillGuides().stream()
+                .map(StardewData.SkillGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.skillGuides()).hasSize(9);
+        assertThat(ids).containsExactlyInAnyOrder(
+                "farming_skill",
+                "mining_skill",
+                "foraging_skill",
+                "fishing_skill",
+                "combat_skill",
+                "profession_reset",
+                "skill_books",
+                "skill_food_buffs",
+                "mastery"
+        );
+
+        assertThat(repository.findSkillGuide("战斗等级低怎么快速升级").orElseThrow().getId()).isEqualTo("combat_skill");
+        assertThat(repository.findSkillGuide("钓鱼职业怎么选").orElseThrow().getId()).isEqualTo("fishing_skill");
+        assertThat(repository.findSkillGuide("技能书怎么买").orElseThrow().getId()).isEqualTo("skill_books");
+        assertThat(repository.findSkillGuide("职业怎么重置").orElseThrow().getId()).isEqualTo("profession_reset");
+        assertThat(repository.findSkillGuide("精通先选哪个").orElseThrow().getId()).isEqualTo("mastery");
+    }
+
+    @Test
+    void allSkillGuidesHaveCoreFieldsAndSources() {
+        assertThat(repository.skillGuides())
+                .hasSize(9)
+                .allSatisfy(guide -> {
+                    assertThat(guide.getId()).isNotBlank();
+                    assertThat(guide.getName()).isNotBlank();
+                    assertThat(guide.getNameEn()).isNotBlank();
+                    assertThat(guide.getAliases()).isNotEmpty();
+                    assertThat(guide.getKeywords()).isNotEmpty();
+                    assertThat(guide.getSections()).isNotEmpty();
+                    assertThat(guide.getRecommendation()).isNotBlank();
+                    assertThat(guide.getSourceUrls()).isNotEmpty();
+                });
     }
 
     @Test

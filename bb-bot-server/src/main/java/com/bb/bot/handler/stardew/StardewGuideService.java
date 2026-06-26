@@ -64,6 +64,7 @@ public class StardewGuideService {
         Optional<StardewData.FishPondGuide> fishPond = repository.findFishPond(query);
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.SpecialOrderGuide> specialOrder = repository.findSpecialOrder(query);
+        Optional<StardewData.SkillGuide> skillGuide = repository.findSkillGuide(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
 
@@ -121,6 +122,12 @@ public class StardewGuideService {
         }
         if (specialOrder.isPresent() && looksLikeSpecialOrderQuery(query)) {
             return specialOrderAnswer(specialOrder.get());
+        }
+        if (skillGuide.isPresent() && looksLikeSkillGuideQuery(query)) {
+            if (isBroadSkillGuideQuery(query)) {
+                return skillGuideListAnswer(query);
+            }
+            return skillGuideAnswer(skillGuide.get());
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -209,7 +216,8 @@ public class StardewGuideService {
             case RESOURCE -> typedResourceAnswer(query);
             case MONSTER_DROP -> typedMonsterDropAnswer(query);
             case FISH_POND -> typedFishPondAnswer(query);
-            case ANIMAL_CARE, FRUIT_TREE, SKILL, MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case ANIMAL_CARE, FRUIT_TREE, MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case SKILL -> typedSkillAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
             case BUILDING -> typedBuildingAnswer(query);
@@ -275,6 +283,19 @@ public class StardewGuideService {
         return repository.findGuide(query)
                 .map(this::guideAnswer)
                 .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应攻略条目。可以试试：战斗技能、博物馆捐赠、动物养殖、果树。"));
+    }
+
+    private StardewGuideResult typedSkillAnswer(String query) {
+        Optional<StardewData.SkillGuide> skillGuide = repository.findSkillGuide(query);
+        if (skillGuide.isPresent() && !isBroadSkillGuideQuery(query)) {
+            return skillGuideAnswer(skillGuide.get());
+        }
+        if (isBroadSkillGuideQuery(query)) {
+            return skillGuideListAnswer(query);
+        }
+        return skillGuide
+                .map(this::skillGuideAnswer)
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应技能攻略。可以试试：战斗技能、钓鱼等级、职业重置、技能书。"));
     }
 
     private StardewGuideResult typedCropAnswer(String query) {
@@ -358,6 +379,38 @@ public class StardewGuideService {
             sb.append("建议：").append(guide.getRecommendation()).append("\n");
         }
         return result("guide", sb.toString().trim(), guide.getSourceUrls());
+    }
+
+    private StardewGuideResult skillGuideAnswer(StardewData.SkillGuide guide) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(guide.getName()).append("：\n");
+        for (StardewData.GuideSection section : guide.getSections()) {
+            if (StringUtils.isNotBlank(section.getTitle())) {
+                sb.append(section.getTitle()).append("：\n");
+            }
+            for (String line : section.getLines()) {
+                sb.append("- ").append(line).append("\n");
+            }
+        }
+        if (StringUtils.isNotBlank(guide.getRecommendation())) {
+            sb.append("建议：").append(guide.getRecommendation()).append("\n");
+        }
+        return result("skill_guide", sb.toString().trim(), guide.getSourceUrls());
+    }
+
+    private StardewGuideResult skillGuideListAnswer(String query) {
+        StringBuilder sb = new StringBuilder("技能攻略对照：\n");
+        for (StardewData.SkillGuide guide : repository.skillGuides()) {
+            sb.append("- ").append(guide.getName()).append("：");
+            sb.append(StringUtils.defaultIfBlank(guide.getRecommendation(), "可问具体技能查看升级路线、职业和技巧。"));
+            sb.append("\n");
+        }
+        sb.append("建议：问具体技能可以看经验来源、升级路线、职业选择和推荐装备，例如“战斗等级低怎么升级”“钓鱼职业怎么选”。");
+        List<String> sources = repository.skillGuides().stream()
+                .flatMap(guide -> guide.getSourceUrls().stream())
+                .distinct()
+                .toList();
+        return result("skill_guide_list", sb.toString().trim(), sources);
     }
 
     private StardewGuideResult specialOrderAnswer(StardewData.SpecialOrderGuide order) {
@@ -1629,6 +1682,32 @@ public class StardewGuideService {
                 "核桃房任务", "核桃房订单", "罗宾资源冲刺", "罗宾的项目", "岛屿食材",
                 "齐瓜", "齐豆", "齐果", "五彩农场", "五彩格兰奇", "大家族", "深处的危险",
                 "骷髅洞穴入侵", "齐氏料理", "齐的善意", "四颗宝石", "饥饿挑战");
+    }
+
+    private boolean looksLikeSkillGuideQuery(String query) {
+        if (looksLikeCookingQuery(query) && containsAny(query, "吃什么", "料理", "食物", "buff", "增益")) {
+            return false;
+        }
+        if (!repository.findBooks(query).isEmpty()
+                && containsAny(query, "在哪里买", "哪里买", "谁卖", "多少钱", "购买", "有什么用")) {
+            return false;
+        }
+        if (looksLikeMonsterDropQuery(query)) {
+            return false;
+        }
+        if (query.contains("职业") && containsAny(query, "重置", "更换", "换", "改", "洗")) {
+            return true;
+        }
+        if (containsAny(query, "职业重置", "重置职业", "换职业", "改职业", "洗职业", "洗点", "不确定雕像")) {
+            return true;
+        }
+        return containsAny(query, "耕种", "农业", "采矿", "挖矿", "觅食", "采集", "钓鱼", "战斗")
+                && containsAny(query, "技能", "等级", "经验", "职业", "怎么练", "怎么升级", "快速升级", "等级低", "刷");
+    }
+
+    private boolean isBroadSkillGuideQuery(String query) {
+        return containsAny(query, "技能有哪些", "所有技能", "技能总览", "技能攻略", "职业有哪些", "职业总览")
+                && !containsAny(query, "耕种", "农业", "采矿", "挖矿", "觅食", "采集", "钓鱼", "战斗");
     }
 
     private boolean isFishingQuestion(String query) {
