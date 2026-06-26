@@ -31,6 +31,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
+        assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
     }
 
@@ -475,6 +476,49 @@ class StardewKnowledgeRepositoryTest {
                 "radioactive_ore",
                 "dragon_tooth"
         );
+    }
+
+    @Test
+    void bookGuidesCoverSkillAndPowerBooks() {
+        Set<String> bookIds = repository.books().stream()
+                .map(StardewData.BookGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(bookIds).contains(
+                "price_catalogue",
+                "mapping_cave_systems",
+                "way_of_the_wind_1",
+                "way_of_the_wind_2",
+                "monster_compendium",
+                "friendship_101",
+                "jack_be_nimble",
+                "woodys_secret",
+                "raccoon_journal",
+                "jewels_of_the_sea",
+                "dwarvish_safety_manual",
+                "the_art_o_crabbing",
+                "the_alleyway_buffet",
+                "the_diamond_hunter",
+                "book_of_mysteries",
+                "horse_the_book",
+                "treasure_appraisal_guide",
+                "ol_slitherlegs",
+                "animal_catalogue",
+                "bait_and_bobber",
+                "book_of_stars",
+                "combat_quarterly",
+                "mining_monthly",
+                "stardew_valley_almanac",
+                "woodcutters_weekly",
+                "queen_of_sauce_cookbook"
+        );
+        assertThat(repository.books())
+                .allSatisfy(book -> {
+                    assertThat(book.getName()).isNotBlank();
+                    assertThat(book.getEffect()).isNotBlank();
+                    assertThat(book.getAcquisitions()).isNotEmpty();
+                    assertThat(book.getSourceUrls()).isNotEmpty();
+                });
     }
 
     @Test

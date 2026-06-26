@@ -870,15 +870,22 @@ class StardewGuideServiceTest {
         StardewGuideResult priceCatalogue = service.answer("星露谷 价格目录有什么用，值得买吗");
         StardewGuideResult starBook = service.answer("星露谷 星之书有什么用");
         StardewGuideResult cookbook = service.answer("星露谷 酱料女皇食谱怎么解锁");
+        StardewGuideResult monsterCompendium = service.answerEvidence(StardewGuideIntent.GUIDE, "怪物图鉴有什么用，在哪里买");
+        StardewGuideResult combatQuarterly = service.answerEvidence(StardewGuideIntent.GUIDE, "战斗季刊有什么用");
+        StardewGuideResult multipleBooks = service.answerEvidence(StardewGuideIntent.GUIDE, "价格目录有什么用，星之书有什么用");
 
-        assertThat(priceCatalogue.getIntent()).isEqualTo("guide");
-        assertThat(priceCatalogue.getAnswer()).contains("《价格目录》3,000g", "查看可出售物品的卖价");
-        assertThat(priceCatalogue.getAnswer()).contains("前期优先价格目录", "力量书第一次读给永久能力");
-        assertThat(starBook.getIntent()).isEqualTo("guide");
-        assertThat(starBook.getAnswer()).contains("《星之书》给所有技能各 250 经验", "1,125 精通点", "15,000g");
-        assertThat(cookbook.getIntent()).isEqualTo("guide");
-        assertThat(cookbook.getAnswer()).contains("《酱料女皇食谱》50,000g", "100 个金核桃", "学会所有尚未掌握的酱料女皇电视食谱");
+        assertThat(priceCatalogue.getIntent()).isEqualTo("book_detail");
+        assertThat(priceCatalogue.getAnswer()).contains("价格目录", "查看物品的出售价值", "书商固定出售", "3,000g");
+        assertThat(priceCatalogue.getAnswer()).contains("前期优先买");
+        assertThat(starBook.getIntent()).isEqualTo("book_detail");
+        assertThat(starBook.getAnswer()).contains("所有技能各获得 250 经验", "1,125 精通点", "15,000g");
+        assertThat(cookbook.getIntent()).isEqualTo("book_detail");
+        assertThat(cookbook.getAnswer()).contains("酱料女皇食谱", "100 个金核桃", "50,000g", "学会所有尚未掌握的酱料女皇电视食谱");
         assertThat(cookbook.getSourceUrls()).contains("https://stardewvalleywiki.com/Books");
+        assertThat(monsterCompendium.getAnswer()).contains("怪物图鉴", "双倍战利品", "第 3 年", "20,000g");
+        assertThat(combatQuarterly.getAnswer()).contains("战斗季刊", "250 战斗经验", "书商随机技能书库存");
+        assertThat(multipleBooks.getAnswer()).contains("书籍对照", "价格目录", "星之书")
+                .doesNotContain("夏季鱼类", "鸡舍升级");
     }
 
     @Test

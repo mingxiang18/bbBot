@@ -155,6 +155,32 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesDetailedBookEffectQueriesAsGuide() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("战斗季刊有什么用");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("战斗季刊有什么用");
+    }
+
+    @Test
+    void localFallbackClassifiesDetailedBookPurchaseQueriesAsShop() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("矮人安全手册在哪里买");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("矮人安全手册在哪里买");
+    }
+
+    @Test
     void localFallbackKeepsMerchantHourQueriesOnShopRoute() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

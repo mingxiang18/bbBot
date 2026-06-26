@@ -281,11 +281,44 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .containsOnly(StardewGuideIntent.GUIDE);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .containsOnly("guide");
+                .containsOnly("book_detail");
         assertThat(joinAnswers(evidence))
-                .contains("技能书与书商", "《价格目录》3,000g", "《星之书》给所有技能各 250 经验")
-                .contains("力量书第一次读给永久能力")
+                .contains("书籍对照", "价格目录", "查看物品的出售价值")
+                .contains("星之书", "所有技能各获得 250 经验", "1,125 精通点")
                 .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+    }
+
+    @Test
+    void typedGuideIntentRetrievesExactBookEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.GUIDE, "怪物图鉴有什么用"),
+                intent(StardewGuideIntent.GUIDE, "战斗季刊怎么获得")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("怪物图鉴和战斗季刊有什么用", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("book_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("怪物图鉴", "双倍战利品", "战斗季刊", "250 战斗经验")
+                .doesNotContain("夏季鱼类", "工具升级", "鸡舍", "料理");
+    }
+
+    @Test
+    void typedShopIntentRetrievesBookAcquisitionEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.SHOP, "怪物图鉴在哪里买"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 怪物图鉴在哪里买", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SHOP);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("book_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("怪物图鉴", "书商", "第 3 年", "20,000g", "双倍战利品")
+                .doesNotContain("夏季鱼类", "工具升级", "居民位置");
     }
 
     @Test

@@ -62,6 +62,7 @@ public class StardewGuideService {
         Optional<StardewData.ResourceGuide> resource = repository.findResource(query);
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
+        List<StardewData.BookGuide> books = repository.findBooks(query);
 
         boolean bundleIntent = query.contains("收集包") || query.contains("献祭")
                 || (bundle.isPresent() && (query.contains("要") || query.contains("需要") || query.contains("交") || query.contains("包")));
@@ -76,11 +77,17 @@ public class StardewGuideService {
             }
             return toolUpgradeListAnswer();
         }
+        if (!books.isEmpty() && shouldPreferBookGuideOverShop(query)) {
+            return bookAnswer(query, books);
+        }
         if (guide.isPresent() && shouldPreferGuideOverShop(query, guide.get())) {
             return guideAnswer(guide.get());
         }
         if (looksLikeShopQuery(query) && shopItem.isPresent()) {
             return shopItemAnswer(query, shopItem.get());
+        }
+        if (looksLikeShopQuery(query) && !books.isEmpty()) {
+            return bookAnswer(query, books);
         }
         if (looksLikeShopQuery(query) && shop.isPresent()) {
             return shopAnswer(shop.get());
@@ -117,6 +124,9 @@ public class StardewGuideService {
             }
             return machineListAnswer(query);
         }
+        if (!books.isEmpty() && looksLikeBookDetailQuery(query)) {
+            return bookAnswer(query, books);
+        }
         if (guide.isPresent() && shouldPreferGuideOverCooking(query, guide.get())) {
             return guideAnswer(guide.get());
         }
@@ -137,6 +147,9 @@ public class StardewGuideService {
             return cropListAnswer(query);
         }
         if (guide.isPresent() || looksLikeGuideQuery(query)) {
+            if (!books.isEmpty() && looksLikeBookDetailQuery(query)) {
+                return bookAnswer(query, books);
+            }
             return guide.map(this::guideAnswer)
                     .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应攻略条目。可以试试：斧头升级、鱼竿、鸡舍、畜棚、筒仓、房屋升级、夏季作物。"));
         }
@@ -217,6 +230,10 @@ public class StardewGuideService {
     }
 
     private StardewGuideResult typedGuideAnswer(String query) {
+        List<StardewData.BookGuide> books = repository.findBooks(query);
+        if (!books.isEmpty() && !isBroadBookQuery(query)) {
+            return bookAnswer(query, books);
+        }
         return repository.findGuide(query)
                 .map(this::guideAnswer)
                 .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应攻略条目。可以试试：战斗技能、博物馆捐赠、动物养殖、果树。"));
@@ -257,6 +274,10 @@ public class StardewGuideService {
         if (shopItem.isPresent()) {
             return shopItemAnswer(query, shopItem.get());
         }
+        List<StardewData.BookGuide> books = repository.findBooks(query);
+        if (!books.isEmpty()) {
+            return bookAnswer(query, books);
+        }
         return repository.findShop(query)
                 .map(this::shopAnswer)
                 .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应商店或商品。可以试试：背包升级、铱制洒水器在哪里买、书商什么时候来。"));
@@ -291,6 +312,48 @@ public class StardewGuideService {
             sb.append("建议：").append(guide.getRecommendation()).append("\n");
         }
         return result("guide", sb.toString().trim(), guide.getSourceUrls());
+    }
+
+    private StardewGuideResult bookAnswer(String query, List<StardewData.BookGuide> books) {
+        List<StardewData.BookGuide> matched = books.stream()
+                .limit(query.contains("哪些") || query.contains("列表") || query.contains("推荐") ? 8 : 4)
+                .toList();
+        if (matched.size() == 1) {
+            return singleBookAnswer(matched.get(0));
+        }
+        StringBuilder sb = new StringBuilder("书籍对照：\n");
+        for (StardewData.BookGuide book : matched) {
+            sb.append("- ").append(book.getName()).append("：").append(book.getEffect());
+            if (StringUtils.isNotBlank(book.getRepeatReading())) {
+                sb.append("；重复阅读：").append(book.getRepeatReading());
+            }
+            if (book.getAcquisitions() != null && !book.getAcquisitions().isEmpty()) {
+                sb.append("；获取：").append(book.getAcquisitions().get(0).getDetail());
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：具体问某一本书名，可以返回更完整的来源和是否值得优先读。");
+        return result("book_detail", sb.toString().trim(), collectBookSources(matched));
+    }
+
+    private StardewGuideResult singleBookAnswer(StardewData.BookGuide book) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(book.getName()).append("：\n")
+                .append("类型：").append(StringUtils.defaultIfBlank(book.getType(), "书籍")).append("\n")
+                .append("效果：").append(book.getEffect()).append("\n");
+        if (StringUtils.isNotBlank(book.getRepeatReading())) {
+            sb.append("重复阅读：").append(book.getRepeatReading()).append("\n");
+        }
+        if (book.getAcquisitions() != null && !book.getAcquisitions().isEmpty()) {
+            sb.append("获取：\n");
+            for (StardewData.Acquisition acquisition : book.getAcquisitions()) {
+                sb.append("- ").append(acquisition.getType()).append("：").append(acquisition.getDetail()).append("\n");
+            }
+        }
+        if (StringUtils.isNotBlank(book.getRecommendation())) {
+            sb.append("建议：").append(book.getRecommendation()).append("\n");
+        }
+        return result("book_detail", sb.toString().trim(), book.getSourceUrls());
     }
 
     private StardewGuideResult fishListAnswer(String query) {
@@ -1483,6 +1546,24 @@ public class StardewGuideService {
                 || query.contains("推荐") || query.contains("优先") || query.contains("读了");
     }
 
+    private boolean shouldPreferBookGuideOverShop(String query) {
+        return looksLikeBookDetailQuery(query) && !containsAny(query, "在哪里买", "哪里买", "谁卖", "购买");
+    }
+
+    private boolean looksLikeBookDetailQuery(String query) {
+        return query.contains("有什么用") || query.contains("效果") || query.contains("值得")
+                || query.contains("推荐") || query.contains("优先") || query.contains("读了")
+                || query.contains("重复") || query.contains("再读") || query.contains("怎么获得")
+                || query.contains("获取") || query.contains("来源") || query.contains("怎么拿")
+                || query.contains("怎么解锁") || query.contains("解锁");
+    }
+
+    private boolean isBroadBookQuery(String query) {
+        return query.contains("书籍有哪些") || query.contains("书有哪些") || query.contains("力量书有哪些")
+                || query.contains("技能书有哪些") || query.contains("书籍推荐") || query.contains("技能书推荐")
+                || query.contains("书商什么时候") || query.contains("书商在哪") || query.contains("书商卖什么");
+    }
+
     private boolean shouldPreferGuideOverCooking(String query, StardewData.GuideTopic guide) {
         if (guide == null) {
             return false;
@@ -1513,6 +1594,15 @@ public class StardewGuideService {
                 || query.contains("合成") || query.contains("精通") || query.contains("书商")
                 || query.contains("技能书") || query.contains("职业") || query.contains("洗点")
                 || query.contains("buff") || query.contains("增益");
+    }
+
+    private boolean containsAny(String query, String... values) {
+        for (String value : values) {
+            if (query.contains(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isBroadFishQuery(String query) {
@@ -1816,6 +1906,16 @@ public class StardewGuideService {
         for (StardewData.CookingRecipe recipe : recipes) {
             if (recipe.getSourceUrls() != null) {
                 urls.addAll(recipe.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectBookSources(List<StardewData.BookGuide> books) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.BookGuide book : books) {
+            if (book.getSourceUrls() != null) {
+                urls.addAll(book.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

@@ -20,6 +20,7 @@ public class StardewData {
     private List<Villager> villagers = new ArrayList<>();
     private List<ResourceGuide> resources = new ArrayList<>();
     private List<CookingRecipe> cookingRecipes = new ArrayList<>();
+    private List<BookGuide> books = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
     @Data
@@ -250,6 +251,20 @@ public class StardewData {
         private String name;
         private Integer value;
         private String duration;
+    }
+
+    @Data
+    public static class BookGuide {
+        private String id;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private String type;
+        private String effect;
+        private String repeatReading;
+        private List<Acquisition> acquisitions = new ArrayList<>();
+        private String recommendation;
+        private List<String> sourceUrls = new ArrayList<>();
     }
 
     @Data

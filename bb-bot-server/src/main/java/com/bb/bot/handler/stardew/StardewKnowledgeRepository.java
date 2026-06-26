@@ -26,10 +26,10 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, cookingRecipes={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, cookingRecipes={}, books={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
-                    data.getResources().size(), data.getCookingRecipes().size(), data.getGuides().size());
+                    data.getResources().size(), data.getCookingRecipes().size(), data.getBooks().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -82,6 +82,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.CookingRecipe> cookingRecipes() {
         return safe(data.getCookingRecipes());
+    }
+
+    public List<StardewData.BookGuide> books() {
+        return safe(data.getBooks());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -185,6 +189,20 @@ public class StardewKnowledgeRepository {
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(GuideMatch::guide)
                 .findFirst();
+    }
+
+    public Optional<StardewData.BookGuide> findBook(String query) {
+        return findBooks(query).stream().findFirst();
+    }
+
+    public List<StardewData.BookGuide> findBooks(String query) {
+        String q = normalize(query);
+        return books().stream()
+                .map(b -> new BookMatch(b, scoreSearchable(q, b.getName(), b.getNameEn(), b.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(BookMatch::book)
+                .toList();
     }
 
     public Optional<StardewData.Fish> findFish(String query) {
@@ -328,6 +346,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record CookingRecipeMatch(StardewData.CookingRecipe recipe, int score) {
+    }
+
+    private record BookMatch(StardewData.BookGuide book, int score) {
     }
 
     private record ResourceMatch(StardewData.ResourceGuide resource, int score, int firstIndex) {

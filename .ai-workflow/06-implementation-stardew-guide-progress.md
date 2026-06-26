@@ -57,6 +57,7 @@
 - 居民：34 位可送礼居民资料均已有本地结构化日程；覆盖普通日程、常驻居民、高频雨天/星期/上课/诊所规则，并保留节日、姜岛度假、婚后、好感剧情等覆盖风险提示
 - 资源获取：91 项，覆盖硬木、电池组、铱矿石、五彩碎片、上古种子、布料、三种钓鱼果冻，煤炭、黏土、纤维、苔藓、精炼石英、三类树液采集物、干草、海草/绿藻、树液、铜铁金矿石等高频材料，以及太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、龙牙、远古斑点、古物宝藏、四类晶球、基础矿物/宝石、一批高频博物馆古物、动物产品和果树水果
 - 料理/饮品：83 道，覆盖官方 81 种可烹饪菜品，并额外保留咖啡、魔法糖冰棍等玩家常问但不属于厨房烹饪的实用食物/饮品条目；支持骷髅洞穴/钓鱼/采矿/战斗/耕种/觅食/姜岛料理、普通回复、配方材料、buff 效果等查询
+- 书籍/力量书/技能书：26 本，覆盖 1.6 全部常见书籍条目，包括价格目录、风之道、马之书、老滑腿、怪物图鉴、洞穴系统地图、矮人安全手册、捕蟹的艺术、海之宝石、伍迪的秘密、浣熊日志、星之书、五类技能书、酱料女皇食谱等；支持具体书名效果、重复阅读、获取方式、是否值得优先读
 - 通用攻略：35 项，新增动物养殖和果树种植规则
 
 这不是完整星露谷数据集。当前靠 Wiki 兜底补足未建模问题。
@@ -114,6 +115,8 @@
 - 五大技能结构化攻略：耕种、采矿、觅食、钓鱼、战斗
 - 技能攻略包含经验来源、快速升级路线、5/10 级职业选择建议
 - “战斗技能如何快速升级”已改为本地结构化答案，不再只靠 Wiki 兜底
+- 具体书籍/力量书/技能书：价格目录有什么用、星之书有什么用、怪物图鉴在哪里买、战斗季刊有什么用、矮人安全手册在哪里买、酱料女皇食谱怎么解锁
+- 书籍检索边界：多本书同问返回书籍对照，单本书返回效果/获取/重复阅读；SHOP intent 问书籍来源时也能走书籍结构化证据，不强依赖旧商店库存命中
 - handler 和 AI tool 回复自然答案，不展示数据版本、校验日期、来源链接、Wiki 或本地库等内部信息
 - Wiki API 搜索结果解析、相关性排序、正文和表格摘要提取
 
@@ -634,6 +637,26 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：148 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 书籍/力量书/技能书结构化检索补齐：
+
+- 新增 `books` 顶层数据和 `BookGuide` 模型，将此前“技能书与书商”泛攻略拆出精确书籍证据层。
+- 本地书籍数据补齐 26 本：19 本力量书、5 本单项技能书、星之书、酱料女皇食谱。
+- `StardewKnowledgeRepository` 新增 `books()`、`findBook()`、`findBooks()`，按书名和别名做精确检索。
+- `StardewGuideService` 在 GUIDE typed evidence 中优先返回书籍详情；多本书同问返回书籍对照；SHOP typed evidence 问书籍来源时也可返回书籍获取证据，避免不在旧商店库存里的书直接落 Wiki。
+- 测试补充：
+  - 仓库测试强制校验 26 本书 id、效果、获取方式和来源不为空。
+  - `StardewGuideServiceTest` 覆盖价格目录、星之书、酱料女皇食谱、怪物图鉴、战斗季刊和多本书同问。
+  - `StardewGuideRetrieverTest` 覆盖 GUIDE/SHOP typed plan 下书籍证据不串到鱼类、工具、建筑、料理或居民位置。
+  - `StardewQueryPlannerServiceTest` 覆盖 AI 不可用时书籍效果归 GUIDE、书籍购买/来源归 SHOP。
+
+本轮聚焦验证结果：
+
+- JSON 轻量校验：`books=26`，重复 id 为空，关键新增 id 无缺失。
+- `git diff --check`：无 whitespace 问题。
+- `StardewKnowledgeRepositoryTest,StardewGuideServiceTest,StardewGuideRetrieverTest,StardewQueryPlannerServiceTest`：142 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：153 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -658,7 +681,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、书商/技能书/首批高频力量书、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 46 道，后续还需继续补全量书籍效果、全量书籍获取来源、剩余全量料理、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，后续还需继续补技能相关装备、附魔、精通装备和更细的场景化路线。
 
 ## 后续补齐方向
 

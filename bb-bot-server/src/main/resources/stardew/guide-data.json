@@ -17086,6 +17086,733 @@
       ]
     }
   ],
+  "books": [
+    {
+      "id": "price_catalogue",
+      "name": "价格目录",
+      "nameEn": "Price Catalogue",
+      "aliases": [
+        "Price Catalogue",
+        "物品价格",
+        "卖价目录",
+        "价格书"
+      ],
+      "type": "力量书",
+      "effect": "读后可以直接查看物品的出售价值。",
+      "repeatReading": "没有额外收益。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "书商固定出售，价格 3,000g。"
+        }
+      ],
+      "recommendation": "很适合前期优先买，能减少查价和误卖高价值物品的成本。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "mapping_cave_systems",
+      "name": "洞穴系统地图",
+      "nameEn": "Mapping Cave Systems",
+      "aliases": [
+        "Mapping Cave Systems",
+        "洞穴地图",
+        "马龙找回打折",
+        "找回服务打折"
+      ],
+      "type": "力量书",
+      "effect": "马龙的物品找回服务价格降低 50%。",
+      "repeatReading": "重复阅读给 100 战斗经验。",
+      "acquisitions": [
+        {
+          "type": "冒险家公会",
+          "detail": "击杀至少 1000 只怪物后，可打开冒险家公会后方房间的箱子取得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "经常下矿、容易在骷髅洞穴或火山翻车时价值较高；稳健玩家可以等自然取得。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "way_of_the_wind_1",
+      "name": "风之道 第一卷",
+      "nameEn": "Way Of The Wind pt. 1",
+      "aliases": [
+        "Way Of The Wind pt. 1",
+        "风之道1",
+        "风之道一",
+        "风之道"
+      ],
+      "type": "力量书",
+      "effect": "永久提高移动速度。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "书商固定出售，价格 15,000g。"
+        }
+      ],
+      "recommendation": "优先级很高，移动速度影响种地、跑图、下矿和赶日程。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "way_of_the_wind_2",
+      "name": "风之道 第二卷",
+      "nameEn": "Way Of The Wind pt. 2",
+      "aliases": [
+        "Way Of The Wind pt. 2",
+        "风之道2",
+        "风之道二"
+      ],
+      "type": "力量书",
+      "effect": "继续永久提高移动速度。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "读过第一卷后，书商固定出售，价格 35,000g。"
+        }
+      ],
+      "recommendation": "有第一卷后很值得补；如果现金紧张，先保证工具、背包和关键建筑。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "monster_compendium",
+      "name": "怪物图鉴",
+      "nameEn": "Monster Compendium",
+      "aliases": [
+        "Monster Compendium",
+        "怪物书",
+        "双倍战利品",
+        "怪物双倍掉落"
+      ],
+      "type": "力量书",
+      "effect": "怪物有小概率掉落双倍战利品。",
+      "repeatReading": "重复阅读给 100 战斗经验。",
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "击杀怪物时有机会获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "刷战斗资源、怪物掉落和矿洞材料时很好；如果已经常下矿，通常可以等掉落或第 3 年补买。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "friendship_101",
+      "name": "友谊 101",
+      "nameEn": "Friendship 101",
+      "aliases": [
+        "Friendship 101",
+        "友谊101",
+        "交朋友更快",
+        "好感书"
+      ],
+      "type": "力量书",
+      "effect": "和居民提升友谊的速度略微提高。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "奖品机",
+          "detail": "可从刘易斯家奖品机获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "适合想尽快推红心、结婚或补居民剧情的档；纯赚钱档优先级较低。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "jack_be_nimble",
+      "name": "矫健厚实",
+      "nameEn": "Jack Be Nimble, Jack Be Thick",
+      "aliases": [
+        "Jack Be Nimble Jack Be Thick",
+        "Jack Be Nimble, Jack Be Thick",
+        "防御加一",
+        "防御+1"
+      ],
+      "type": "力量书",
+      "effect": "永久获得防御 +1。",
+      "repeatReading": "重复阅读给 100 战斗经验。",
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "挖掘远古斑点时有机会获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "下矿压力大、经常被怪打残时更有价值；熟练玩家可以排在移动和关键掉落书之后。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "woodys_secret",
+      "name": "伍迪的秘密",
+      "nameEn": "Woody's Secret",
+      "aliases": [
+        "Woody's Secret",
+        "Woody Secret",
+        "伐木双倍",
+        "双倍木材"
+      ],
+      "type": "力量书",
+      "effect": "砍倒树时有 5% 概率获得双倍木材。",
+      "repeatReading": "重复阅读给 100 觅食经验。",
+      "acquisitions": [
+        {
+          "type": "砍树",
+          "detail": "砍树时有机会获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "木材长期缺，越早读越省心；但 5% 是长期收益，不适合为短期缺木立刻砸钱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "raccoon_journal",
+      "name": "浣熊日志",
+      "nameEn": "Raccoon Journal",
+      "aliases": [
+        "Raccoon Journal",
+        "Ways Of The Wild",
+        "荒野之道",
+        "杂草种子",
+        "混合种子"
+      ],
+      "type": "力量书",
+      "effect": "杂草掉落混合种子的概率提高。",
+      "repeatReading": "重复阅读给 100 觅食经验。",
+      "acquisitions": [
+        {
+          "type": "浣熊任务",
+          "detail": "完成第二次浣熊物品请求后获得。"
+        },
+        {
+          "type": "浣熊商店",
+          "detail": "可用 999 纤维从浣熊妻子的商店兑换。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "喜欢野种子、混合种子或资源循环时有用；主线收益不算最高。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "jewels_of_the_sea",
+      "name": "海之宝石",
+      "nameEn": "Jewels Of The Sea",
+      "aliases": [
+        "Jewels Of The Sea",
+        "钓鱼宝箱鱼籽",
+        "鱼籽书"
+      ],
+      "type": "力量书",
+      "effect": "钓鱼宝箱有机会开出鱼籽。",
+      "repeatReading": "重复阅读给 100 钓鱼经验。",
+      "acquisitions": [
+        {
+          "type": "钓鱼宝箱",
+          "detail": "可作为钓鱼宝箱奖励获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "钓鱼多、鱼塘或鱼籽加工路线多时更值得；不常钓鱼可以后置。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "dwarvish_safety_manual",
+      "name": "矮人安全手册",
+      "nameEn": "Dwarvish Safety Manual",
+      "aliases": [
+        "Dwarvish Safety Manual",
+        "炸弹减伤",
+        "炸弹伤害降低",
+        "矮人手册"
+      ],
+      "type": "力量书",
+      "effect": "炸弹对自己造成的伤害降低 25%。",
+      "repeatReading": "重复阅读给 100 采矿经验。",
+      "acquisitions": [
+        {
+          "type": "矮人商店",
+          "detail": "可从矿井矮人处购买，价格 4,000g。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "如果你下矿大量用炸弹，4,000g 从矮人处买很划算。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "the_art_o_crabbing",
+      "name": "捕蟹的艺术",
+      "nameEn": "The Art O' Crabbing",
+      "aliases": [
+        "The Art O Crabbing",
+        "The Art O' Crabbing",
+        "蟹笼双倍",
+        "捕蟹书"
+      ],
+      "type": "力量书",
+      "effect": "蟹笼有 25% 概率获得双倍产出。",
+      "repeatReading": "重复阅读给 100 钓鱼经验。",
+      "acquisitions": [
+        {
+          "type": "鱿鱼节",
+          "detail": "如果此前没有获得过，可作为鱿鱼节任一天铱级奖励取得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "蟹笼流或想省心产材料时很不错；不摆蟹笼则优先级低。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "the_alleyway_buffet",
+      "name": "小巷自助餐",
+      "nameEn": "The Alleyway Buffet",
+      "aliases": [
+        "The Alleyway Buffet",
+        "垃圾桶书",
+        "翻垃圾桶",
+        "垃圾桶出物品"
+      ],
+      "type": "力量书",
+      "effect": "从垃圾桶里找到物品的概率提高。",
+      "repeatReading": "重复阅读给 100 觅食经验。",
+      "acquisitions": [
+        {
+          "type": "隐藏地点",
+          "detail": "铁匠铺和 JojaMart 之间金色垃圾桶附近，通过围栏缺口进入隐藏位置取得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "喜欢翻垃圾桶或早期缺食物时有趣；强度不如速度、战斗和资源类书。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "the_diamond_hunter",
+      "name": "钻石猎人",
+      "nameEn": "The Diamond Hunter",
+      "aliases": [
+        "The Diamond Hunter",
+        "钻石书",
+        "石头掉钻石",
+        "挖石头出钻石"
+      ],
+      "type": "力量书",
+      "effect": "手动开采石头时有机会掉落钻石。",
+      "repeatReading": "重复阅读给 100 采矿经验。",
+      "acquisitions": [
+        {
+          "type": "火山矮人商店",
+          "detail": "可从火山地牢 5 层矮人处用 10 个钻石购买。"
+        }
+      ],
+      "recommendation": "经常下矿、缺钻石或复制机还没成型时有用；成本是 10 个钻石，别在急缺钻石做别的事时硬换。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Volcano_Dungeon"
+      ]
+    },
+    {
+      "id": "book_of_mysteries",
+      "name": "神秘之书",
+      "nameEn": "Book of Mysteries",
+      "aliases": [
+        "Book of Mysteries",
+        "谜之盒书",
+        "神秘书",
+        "更多谜之盒"
+      ],
+      "type": "力量书",
+      "effect": "找到谜之盒的概率略微提高。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "谜之盒",
+          "detail": "可从谜之盒或金色谜之盒中开出。"
+        }
+      ],
+      "recommendation": "偏长期收益；如果已经解锁大量谜之盒来源，越早读越好。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books"
+      ]
+    },
+    {
+      "id": "horse_the_book",
+      "name": "马之书",
+      "nameEn": "Horse: The Book",
+      "aliases": [
+        "Horse: The Book",
+        "Horse The Book",
+        "马书",
+        "骑马速度"
+      ],
+      "type": "力量书",
+      "effect": "骑马时获得额外速度。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "书商固定出售，价格 25,000g。"
+        }
+      ],
+      "recommendation": "有马厩后收益很明显；没马时可以先不急。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "treasure_appraisal_guide",
+      "name": "宝物鉴定指南",
+      "nameEn": "Treasure Appraisal Guide",
+      "aliases": [
+        "Treasure Appraisal Guide",
+        "古物售价",
+        "宝物估价",
+        "古物卖价"
+      ],
+      "type": "力量书",
+      "effect": "出售古物时价格更高。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "古物宝藏",
+          "detail": "可从古物宝藏中获得。"
+        },
+        {
+          "type": "书商",
+          "detail": "第 3 年起可能在书商处以 20,000g 出售。"
+        }
+      ],
+      "recommendation": "适合经常开古物宝藏、挖古物或准备卖重复古物的玩家；纯博物馆收集优先级一般。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "ol_slitherlegs",
+      "name": "老滑腿",
+      "nameEn": "Ol' Slitherlegs",
+      "aliases": [
+        "Ol' Slitherlegs",
+        "Ol Slitherlegs",
+        "草丛加速",
+        "作物里跑得快"
+      ],
+      "type": "力量书",
+      "effect": "在草地和作物中移动更快。",
+      "repeatReading": "重复阅读给每项技能 20 经验。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "书商固定出售，价格 25,000g。"
+        }
+      ],
+      "recommendation": "农场作物区大、动物草场多时体验提升明显；如果主要跑矿，风之道通常更优先。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "animal_catalogue",
+      "name": "动物目录",
+      "nameEn": "Animal Catalogue",
+      "aliases": [
+        "Animal Catalogue",
+        "玛妮目录",
+        "玛妮不在也买",
+        "动物商店目录"
+      ],
+      "type": "力量书",
+      "effect": "玛妮不在柜台时，也可以访问玛妮牧场商店。",
+      "repeatReading": "没有额外收益。",
+      "acquisitions": [
+        {
+          "type": "玛妮牧场",
+          "detail": "第 2 年起可从玛妮处购买，价格 5,000g。"
+        }
+      ],
+      "recommendation": "养动物档很值得买，主要价值是减少被玛妮日程卡住。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books"
+      ]
+    },
+    {
+      "id": "bait_and_bobber",
+      "name": "鱼饵和浮标",
+      "nameEn": "Bait And Bobber",
+      "aliases": [
+        "Bait And Bobber",
+        "钓鱼技能书",
+        "钓鱼经验书",
+        "钓鱼书"
+      ],
+      "type": "技能书",
+      "effect": "阅读后获得 250 钓鱼经验；如果已进入精通阶段，则给精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "可在书商随机技能书库存中出现，价格通常为 5,000g、8,000g 或 10,000g 档位。"
+        },
+        {
+          "type": "随机来源",
+          "detail": "可来自谜之盒、金色谜之盒、钓鱼宝箱、远古斑点、摇树/砍树、怪物或矿井容器、奖品机、旅行货车。"
+        }
+      ],
+      "recommendation": "适合钓鱼等级差一点到关键等级时补经验；如果能高效钓鱼，通常不必早期硬买。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "book_of_stars",
+      "name": "星之书",
+      "nameEn": "Book Of Stars",
+      "aliases": [
+        "Book Of Stars",
+        "星书",
+        "全技能经验书",
+        "所有技能经验"
+      ],
+      "type": "技能书",
+      "effect": "阅读后所有技能各获得 250 经验；如果已解锁精通洞穴，则改为获得 1,125 精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "书商库存中有 25% 概率出现，价格 15,000g。"
+        },
+        {
+          "type": "浣熊/谜之盒",
+          "detail": "可作为第 5 次之后浣熊请求奖励，也可从谜之盒或金色谜之盒中获得。"
+        }
+      ],
+      "recommendation": "五项技能都缺经验或已经进入精通阶段时很强；只缺单项技能时，单项技能书更省钱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "combat_quarterly",
+      "name": "战斗季刊",
+      "nameEn": "Combat Quarterly",
+      "aliases": [
+        "Combat Quarterly",
+        "战斗技能书",
+        "战斗经验书",
+        "战斗书"
+      ],
+      "type": "技能书",
+      "effect": "阅读后获得 250 战斗经验；如果已进入精通阶段，则给精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "可在书商随机技能书库存中出现，价格通常为 5,000g、8,000g 或 10,000g 档位。"
+        },
+        {
+          "type": "随机来源",
+          "detail": "可来自谜之盒、金色谜之盒、钓鱼宝箱、远古斑点、摇树/砍树、怪物或矿井容器、奖品机、旅行货车。"
+        }
+      ],
+      "recommendation": "战斗等级低但马上想解锁戒指/职业时可买；长期练战斗仍建议靠矿洞刷怪。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "mining_monthly",
+      "name": "采矿月刊",
+      "nameEn": "Mining Monthly",
+      "aliases": [
+        "Mining Monthly",
+        "采矿技能书",
+        "采矿经验书",
+        "采矿书"
+      ],
+      "type": "技能书",
+      "effect": "阅读后获得 250 采矿经验；如果已进入精通阶段，则给精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "可在书商随机技能书库存中出现，价格通常为 5,000g、8,000g 或 10,000g 档位。"
+        },
+        {
+          "type": "随机来源",
+          "detail": "可来自谜之盒、金色谜之盒、钓鱼宝箱、远古斑点、摇树/砍树、怪物或矿井容器、奖品机、旅行货车。"
+        }
+      ],
+      "recommendation": "采矿差一点升级时可补；如果能稳定下矿，炸矿和敲矿通常更划算。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "stardew_valley_almanac",
+      "name": "星露谷年鉴",
+      "nameEn": "Stardew Valley Almanac",
+      "aliases": [
+        "Stardew Valley Almanac",
+        "耕种技能书",
+        "耕种经验书",
+        "耕种书"
+      ],
+      "type": "技能书",
+      "effect": "阅读后获得 250 耕种经验；如果已进入精通阶段，则给精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "可在书商随机技能书库存中出现，价格通常为 5,000g、8,000g 或 10,000g 档位。"
+        },
+        {
+          "type": "随机来源",
+          "detail": "可来自谜之盒、金色谜之盒、钓鱼宝箱、远古斑点、摇树/砍树、怪物或矿井容器、奖品机、旅行货车。"
+        }
+      ],
+      "recommendation": "耕种等级通常靠收获作物自然提升；只差关键配方或职业时再买。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "woodcutters_weekly",
+      "name": "樵夫周刊",
+      "nameEn": "Woodcutter's Weekly",
+      "aliases": [
+        "Woodcutter's Weekly",
+        "Woodcutters Weekly",
+        "觅食技能书",
+        "觅食经验书",
+        "觅食书"
+      ],
+      "type": "技能书",
+      "effect": "阅读后获得 250 觅食经验；如果已进入精通阶段，则给精通点。",
+      "repeatReading": "每次阅读仍给经验或精通点，不提供永久能力。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "可在书商随机技能书库存中出现，价格通常为 5,000g、8,000g 或 10,000g 档位。"
+        },
+        {
+          "type": "沙漠节",
+          "detail": "可从沙漠节 Calico Egg Merchant 处用 100 个卡利科三花蛋购买。"
+        },
+        {
+          "type": "随机来源",
+          "detail": "可来自谜之盒、金色谜之盒、钓鱼宝箱、远古斑点、摇树/砍树、怪物或矿井容器、奖品机、旅行货车。"
+        }
+      ],
+      "recommendation": "冬季或缺觅食等级时可补；如果秘密森林和树木资源充足，直接刷经验也可以。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    },
+    {
+      "id": "queen_of_sauce_cookbook",
+      "name": "酱料女皇食谱",
+      "nameEn": "Queen Of Sauce Cookbook",
+      "aliases": [
+        "Queen Of Sauce Cookbook",
+        "女皇食谱",
+        "食谱书",
+        "料理书",
+        "电视食谱"
+      ],
+      "type": "技能书",
+      "effect": "阅读后学会所有尚未掌握的酱料女皇电视食谱。",
+      "repeatReading": "已学完相关食谱后没有额外收益。",
+      "acquisitions": [
+        {
+          "type": "书商",
+          "detail": "收集 100 个金核桃后，书商固定出售，价格 50,000g。"
+        }
+      ],
+      "recommendation": "做料理收藏或错过大量电视食谱时很省心；如果按电视节目慢慢补，优先级可以后置。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Books",
+        "https://stardewvalleywiki.com/Bookseller"
+      ]
+    }
+  ],
   "guides": [
     {
       "id": "tool_upgrades",
