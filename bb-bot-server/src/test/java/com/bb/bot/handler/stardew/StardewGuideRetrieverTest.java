@@ -279,6 +279,38 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedGuideIntentRetrievesFoodBuffRulesEvidence() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.GUIDE, "料理buff和饮料buff怎么叠加"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 料理buff和饮料buff怎么叠加", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("技能食物增益", "只能有 1 组食物 buff 和 1 组饮料 buff")
+                .contains("姜汁汽水是饮料类运气 +1", "不要连续吃不同 buff 食物")
+                .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+    }
+
+    @Test
+    void typedCookingIntentStillRetrievesSkullCavernFoodList() {
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.COOKING, "骷髅洞穴吃什么料理 buff 好"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 骷髅洞穴吃什么料理 buff 好", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.COOKING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("cooking_available");
+        assertThat(joinAnswers(evidence))
+                .contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡", "魔法糖冰棍")
+                .contains("约 7 分钟", "约 4 分钟")
+                .doesNotContain("夏季鱼类", "鸡舍", "工具升级");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

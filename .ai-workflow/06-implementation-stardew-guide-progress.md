@@ -505,6 +505,21 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：129 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 料理/饮料 buff 机制攻略加厚：
+
+- 针对“料理 buff 怎么叠加/姜汁汽水和咖啡能不能一起/骷髅洞穴吃什么 buff 好/钓难鱼吃什么”等问题补强 `skill_food_buffs`。
+- 按官方 Food/Buffs/Spicy Eel/Magic Rock Candy/Seafoam Pudding 资料补充 5 个小节：叠加和覆盖规则、骷髅洞穴和火山、钓鱼和收集包、技能和日常效率、选择思路。
+- 补充明确机制：同一时间通常只能有 1 组食物 buff 和 1 组饮料 buff；新食物覆盖旧食物，新饮料覆盖旧饮料；无 buff 回复食物不会清掉已有 buff。
+- 补充叠加边界：速度、运气和最大体力可以通过食物 + 饮料叠加；姜汁汽水可叠幸运午餐/南瓜汤，但会覆盖咖啡/三倍浓缩咖啡。
+- 补充场景建议：骷髅洞穴默认香辣鳗鱼或幸运午餐 + 三倍浓缩咖啡；战斗压力大用南瓜汤/蟹黄糕；高端冲刺用魔法糖冰棍；钓难鱼用海泡布丁。
+- 路由修复：`skill_food_buffs` 新增 guide-over-cooking 保护，叠加/覆盖/机制类问题走 `GUIDE`；“骷髅洞穴吃什么料理 buff 好”仍保留 `COOKING` 推荐列表。
+- 测试补充：新增 `StardewGuideServiceTest` buff 叠加机制断言，新增 `StardewGuideRetrieverTest` typed `GUIDE`/`COOKING` 分流测试，新增 `StardewQueryPlannerServiceTest` fallback 分类测试。
+
+本轮聚焦验证结果：
+
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：134 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -529,7 +544,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；但附魔、锻造、特殊工具、全部钓具数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、书商/技能书/首批高频力量书、职业重置、技能食物 buff；后续还需继续补全量书籍效果、全量书籍获取来源、具体料理 buff 数值、技能相关装备/附魔等细节。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、书商/技能书/首批高频力量书、职业重置、首批料理/饮料 buff 数值和叠加规则；后续还需继续补全量书籍效果、全量书籍获取来源、全量料理 buff 数值、技能相关装备/附魔等细节。
 
 ## 后续补齐方向
 

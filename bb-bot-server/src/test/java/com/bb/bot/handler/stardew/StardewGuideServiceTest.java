@@ -841,7 +841,20 @@ class StardewGuideServiceTest {
 
         assertThat(result.getIntent()).isEqualTo("cooking_available");
         assertThat(result.getAnswer()).contains("香辣鳗鱼", "幸运午餐", "三倍浓缩咖啡");
-        assertThat(result.getAnswer()).contains("速度", "运气", "饮料类速度 buff 可与食物 buff 叠加");
+        assertThat(result.getAnswer()).contains("速度", "运气", "约 7 分钟", "约 4 分钟");
+        assertThat(result.getAnswer()).contains("饮料类速度 buff 可与食物 buff 叠加");
+    }
+
+    @Test
+    void answersFoodBuffStackingRulesLocally() {
+        StardewGuideResult result = service.answer("星露谷 料理buff和饮料buff怎么叠加，会互相覆盖吗");
+
+        assertThat(result.getIntent()).isEqualTo("guide");
+        assertThat(result.getAnswer()).contains("只能有 1 组食物 buff 和 1 组饮料 buff");
+        assertThat(result.getAnswer()).contains("姜汁汽水是饮料类运气 +1", "会覆盖咖啡/三倍浓缩咖啡");
+        assertThat(result.getAnswer()).contains("速度、运气和最大体力可以通过食物 + 饮料叠加");
+        assertThat(result.getAnswer()).contains("不要连续吃不同 buff 食物");
+        assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Buffs");
     }
 
     @Test

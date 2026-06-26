@@ -129,6 +129,10 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "恐龙", "猪", "心情", "大壶奶")) {
             return StardewGuideIntent.ANIMAL_CARE;
         }
+        if (containsAny(q, "buff", "增益", "料理", "食物", "饮料")
+                && containsAny(q, "叠加", "覆盖", "规则", "机制", "能一起", "能同时", "互相覆盖")) {
+            return StardewGuideIntent.GUIDE;
+        }
         if (containsAny(q, "料理", "食谱", "菜谱", "烹饪")) {
             return StardewGuideIntent.COOKING;
         }

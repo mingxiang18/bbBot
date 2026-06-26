@@ -1426,11 +1426,19 @@ public class StardewGuideService {
     }
 
     private boolean shouldPreferGuideOverCooking(String query, StardewData.GuideTopic guide) {
-        if (guide == null || !"skill_books".equals(guide.getId())) {
+        if (guide == null) {
             return false;
         }
-        return query.contains("书") || query.contains("书籍") || query.contains("书商")
-                || query.contains("酱料女皇食谱") || query.contains("Queen Of Sauce Cookbook");
+        if ("skill_books".equals(guide.getId())) {
+            return query.contains("书") || query.contains("书籍") || query.contains("书商")
+                    || query.contains("酱料女皇食谱") || query.contains("Queen Of Sauce Cookbook");
+        }
+        if ("skill_food_buffs".equals(guide.getId())) {
+            return query.contains("叠加") || query.contains("覆盖") || query.contains("规则")
+                    || query.contains("机制") || query.contains("能一起") || query.contains("能同时")
+                    || query.contains("互相覆盖");
+        }
+        return false;
     }
 
     private boolean looksLikeGuideQuery(String query) {

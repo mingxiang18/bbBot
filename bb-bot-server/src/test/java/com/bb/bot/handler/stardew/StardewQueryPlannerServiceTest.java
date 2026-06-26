@@ -155,6 +155,32 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesBuffStackingRulesAsGuide() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("料理buff和饮料buff怎么叠加，会互相覆盖吗");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("料理buff和饮料buff怎么叠加，会互相覆盖吗");
+    }
+
+    @Test
+    void localFallbackStillClassifiesSkullCavernFoodQuestionsAsCooking() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("骷髅洞穴吃什么料理buff好");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.COOKING);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("骷髅洞穴吃什么料理buff好");
+    }
+
+    @Test
     void parsesSkillIntentForCombatLevelingQuestions() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
