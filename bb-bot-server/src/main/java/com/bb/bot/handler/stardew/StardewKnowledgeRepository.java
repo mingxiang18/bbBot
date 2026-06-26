@@ -36,11 +36,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, fruitTrees={}, islandGuides={}, dungeonGuides={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, specialAnimals={}, fruitTrees={}, islandGuides={}, dungeonGuides={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getFruitTrees().size(), data.getIslandGuides().size(), data.getDungeonGuides().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getSpecialAnimals().size(), data.getFruitTrees().size(), data.getIslandGuides().size(), data.getDungeonGuides().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -150,6 +150,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.FarmAnimalGuide> farmAnimals() {
         return safe(data.getFarmAnimals());
+    }
+
+    public List<StardewData.SpecialAnimalGuide> specialAnimals() {
+        return safe(data.getSpecialAnimals());
     }
 
     public List<StardewData.FruitTreeGuide> fruitTrees() {
@@ -360,6 +364,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(FarmAnimalMatch::animal)
+                .findFirst();
+    }
+
+    public Optional<StardewData.SpecialAnimalGuide> findSpecialAnimal(String query) {
+        String q = normalize(query);
+        return specialAnimals().stream()
+                .map(animal -> new SpecialAnimalMatch(animal, scoreSpecialAnimal(q, animal)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(SpecialAnimalMatch::animal)
                 .findFirst();
     }
 
@@ -724,6 +738,22 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreSpecialAnimal(String q, StardewData.SpecialAnimalGuide animal) {
+        int score = scoreSearchable(q, animal.getName(), animal.getNameEn(), animal.getAliases());
+        if (score == 0) {
+            return 0;
+        }
+        score += scoreTextMatches(q, animal.getCategory(), 10);
+        score += scoreTextMatches(q, animal.getUnlock(), 10);
+        score += scoreTextMatches(q, animal.getHousing(), 10);
+        score += scoreTextMatches(q, animal.getAcquisition(), 10);
+        score += scoreTextMatches(q, animal.getMechanics(), 10);
+        score += scoreTextMatches(q, animal.getBenefits(), 10);
+        score += scoreTextMatches(q, animal.getRecommendations(), 10);
+        score += scoreTextMatches(q, animal.getNote(), 10);
+        return score;
+    }
+
     private int scoreDungeonGuide(String q, StardewData.DungeonGuide dungeon) {
         int score = scoreSearchable(q, dungeon.getName(), dungeon.getNameEn(), dungeon.getAliases());
         if (score == 0) {
@@ -847,6 +877,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record FarmAnimalMatch(StardewData.FarmAnimalGuide animal, int score) {
+    }
+
+    private record SpecialAnimalMatch(StardewData.SpecialAnimalGuide animal, int score) {
     }
 
     private record FruitTreeMatch(StardewData.FruitTreeGuide tree, int score) {

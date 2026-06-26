@@ -299,12 +299,24 @@ class StardewQueryPlannerServiceTest {
         StardewQueryPlan rabbitFoot = planner.plan("兔子的脚怎么出");
         StardewQueryPlan pigMoney = planner.plan("后期养什么动物赚钱");
         StardewQueryPlan ostrich = planner.plan("鸵鸟蛋拿到后怎么办");
+        StardewQueryPlan pet = planner.plan("宠物有什么用，怎么提高好感");
+        StardewQueryPlan petBowl = planner.plan("宠物碗多少钱，额外宠物怎么买");
+        StardewQueryPlan horse = planner.plan("马怎么获得，马笛怎么用");
+        StardewQueryPlan slimeHutch = planner.plan("史莱姆屋怎么玩");
+        StardewQueryPlan stableMaterials = planner.plan("马厩材料多少钱");
+        StardewQueryPlan slimeResource = planner.plan("史莱姆泥怎么获得");
         StardewQueryPlan meadowlands = planner.plan("草原农场适合养动物吗");
         StardewQueryPlan coopUpgrade = planner.plan("鸡舍升级材料");
 
         assertThat(rabbitFoot.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
         assertThat(pigMoney.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
         assertThat(ostrich.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(pet.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(petBowl.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(horse.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(slimeHutch.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(stableMaterials.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+        assertThat(slimeResource.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(meadowlands.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
         assertThat(coopUpgrade.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
     }
@@ -319,17 +331,23 @@ class StardewQueryPlannerServiceTest {
                           "clarificationQuestion": "",
                           "intents": [
                             {"type":"GUIDE","keywords":["兔子的脚怎么出"],"constraints":{}},
-                            {"type":"GUIDE","keywords":["猪松露怎么赚钱"],"constraints":{}}
+                            {"type":"GUIDE","keywords":["猪松露怎么赚钱"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["宠物有什么用"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["马怎么获得"],"constraints":{}},
+                            {"type":"ANIMAL_CARE","keywords":["史莱姆屋材料多少钱"],"constraints":{}}
                           ]
                         }
                         """);
 
         StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
-                .plan("兔脚和猪松露");
+                .plan("兔脚、猪松露、宠物、马和史莱姆屋材料");
 
-        assertThat(plan.getIntents()).hasSize(2);
+        assertThat(plan.getIntents()).hasSize(5);
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
         assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(plan.getIntents().get(4).getType()).isEqualTo(StardewGuideIntent.BUILDING);
     }
 
     @Test

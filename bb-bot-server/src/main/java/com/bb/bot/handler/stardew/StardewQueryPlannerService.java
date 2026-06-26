@@ -78,6 +78,7 @@ public class StardewQueryPlannerService {
                         - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
                         - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
                         - 鸡舍/畜棚动物本身的购买、成熟时间、产物、赚钱建议、兔脚/鸭毛/松露/大壶牛奶/羊毛/鸵鸟蛋等动物产物机制，例如“猪值得养吗”“兔子的脚怎么出”“奶牛为什么不出大壶奶”“动物有哪些”，归为 ANIMAL_CARE。
+                        - 宠物、猫、狗、乌龟、马、马笛、史莱姆屋玩法、养史莱姆、史莱姆球、史莱姆蛋等特殊动物/伴侣动物的机制、作用、怎么养、怎么玩，例如“宠物有什么用”“马怎么获得”“史莱姆屋怎么玩”，归为 ANIMAL_CARE；但“马厩材料”“史莱姆屋多少钱”这种建筑材料价格仍归为 BUILDING，“史莱姆泥怎么获得”仍归为 RESOURCE。
                         - 果树/水果树的种植规则、树苗来源概览、成熟时间、结果季节、温室/姜岛全年结果、3x3 间隔和布局，例如“果树怎么种”“苹果树温室怎么种”“夏季果树有哪些”，归为 FRUIT_TREE；具体水果本身怎么获得/用途，例如“苹果怎么获得”，仍归为 RESOURCE；只问树苗在哪里买/怎么换，归为 SHOP。
                         - 姜岛整体探索、威利修船上岛、南/东/北/西岛区域、岛屿农场、度假村、海盗湾、美人鱼谜题、宝石鸟、蜗牛教授、田野办事处、挖掘场、岛屿商人、齐先生核桃房、鹦鹉快线、金核桃优先解锁顺序，例如“姜岛怎么解锁”“岛屿农场怎么修”“海盗湾怎么进”“美人鱼谜题怎么做”“蜗牛教授怎么救”，归为 ISLAND。
                         - 矿井、骷髅洞穴、火山地牢、采石场矿洞、突变虫穴、女巫沼泽等地下城/冒险地点的解锁、层数、路线、机制、奖励、怎么过、怎么冲层，例如“矿井多少层”“骷髅洞穴100层怎么冲”“火山地牢怎么过”“金镰刀在哪拿”，归为 DUNGEON。
@@ -178,7 +179,8 @@ public class StardewQueryPlannerService {
         ));
         corrections.put(StardewGuideIntent.BUILDING, EnumSet.of(
                 StardewGuideIntent.FISH_POND,
-                StardewGuideIntent.FARM_MAP
+                StardewGuideIntent.FARM_MAP,
+                StardewGuideIntent.ANIMAL_CARE
         ));
         corrections.put(StardewGuideIntent.FARM_MAP, EnumSet.of(
                 StardewGuideIntent.GUIDE,
@@ -269,6 +271,12 @@ public class StardewQueryPlannerService {
         if (looksLikeFarmMapQuery(q) && !looksLikeFarmBuildingQuery(q)) {
             return StardewGuideIntent.FARM_MAP;
         }
+        if (looksLikeSpecialAnimalResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
+        }
+        if (looksLikeSpecialAnimalCareQuery(q)) {
+            return StardewGuideIntent.ANIMAL_CARE;
+        }
         if (looksLikeIslandGuideQuery(q)) {
             return StardewGuideIntent.ISLAND;
         }
@@ -316,7 +324,8 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.FRUIT_TREE;
         }
         if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "兔脚", "兔子的脚", "恐龙", "猪", "鸵鸟",
-                "心情", "大壶奶", "大壶牛奶", "鸭毛", "羊毛", "松露", "鸵鸟蛋")) {
+                "心情", "大壶奶", "大壶牛奶", "鸭毛", "羊毛", "松露", "鸵鸟蛋",
+                "宠物", "猫", "狗", "乌龟", "马笛", "养史莱姆", "史莱姆球", "史莱姆蛋")) {
             return StardewGuideIntent.ANIMAL_CARE;
         }
         if (containsAny(q, "buff", "增益", "料理", "食物", "饮料")
@@ -583,6 +592,25 @@ public class StardewQueryPlannerService {
                 || (containsAny(query, "建筑", "建造", "升级", "材料", "多少钱", "价格", "费用")
                 && !containsAny(query, "地图", "类型", "布局", "开局农场", "标准农场", "河流农场", "森林农场",
                 "山顶农场", "荒野农场", "四角农场", "海滩农场", "草原农场"));
+    }
+
+    private boolean looksLikeSpecialAnimalCareQuery(String query) {
+        if (looksLikeSpecialAnimalResourceQuery(query)) {
+            return false;
+        }
+        if (containsAny(query, "马厩", "史莱姆屋")
+                && containsAny(query, "材料", "多少钱", "价格", "费用", "建造", "怎么建", "怎么造", "占地", "多大")) {
+            return false;
+        }
+        return containsAny(query,
+                "宠物", "宠物猫", "宠物狗", "宠物龟", "宠物碗", "宠物好感",
+                "马怎么", "骑马", "坐骑", "马笛", "马有什么用",
+                "养史莱姆", "史莱姆屋怎么玩", "史莱姆养殖", "史莱姆球", "史莱姆蛋孵化", "史莱姆蛋压制");
+    }
+
+    private boolean looksLikeSpecialAnimalResourceQuery(String query) {
+        return containsAny(query, "史莱姆泥")
+                && containsAny(query, "怎么获得", "获取", "哪里刷", "在哪刷", "来源", "怎么刷", "哪里有");
     }
 
     private boolean looksLikeDungeonGuideQuery(String query) {

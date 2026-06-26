@@ -455,6 +455,19 @@ public class StardewGuideService {
     }
 
     private StardewGuideResult typedAnimalCareAnswer(String query) {
+        if (looksLikeSpecialAnimalBuildingQuery(query)) {
+            return typedBuildingAnswer(query);
+        }
+        if (looksLikeSpecialAnimalResourceQuery(query)) {
+            return typedResourceAnswer(query);
+        }
+        Optional<StardewData.SpecialAnimalGuide> specialAnimal = repository.findSpecialAnimal(query);
+        if (specialAnimal.isPresent() && !looksLikeSpecialAnimalListQuery(query)) {
+            return specialAnimalDetailAnswer(specialAnimal.get());
+        }
+        if (looksLikeSpecialAnimalListQuery(query)) {
+            return specialAnimalListAnswer(query, specialAnimal);
+        }
         Optional<StardewData.FarmAnimalGuide> animal = repository.findFarmAnimal(query);
         if (looksLikeSharedFarmAnimalProductQuery(query)) {
             return farmAnimalListAnswer(query, animal);
@@ -761,8 +774,73 @@ public class StardewGuideService {
             }
             sb.append("\n");
         }
+        if (shouldIncludeSpecialAnimalsInAnimalList(query)) {
+            appendSpecialAnimalSummaries(sb, repository.specialAnimals());
+        }
         sb.append("建议：前期鸡和奶牛最稳；中期按收集包补鸭、兔、山羊；后期赚钱重点看猪，姜岛后再考虑鸵鸟。问具体动物名可看产物、成熟时间和机制。");
-        return result("farm_animal_available", sb.toString().trim(), collectFarmAnimalSources(matched));
+        return result("farm_animal_available", sb.toString().trim(),
+                collectFarmAndSpecialAnimalSources(matched, shouldIncludeSpecialAnimalsInAnimalList(query) ? repository.specialAnimals() : List.of()));
+    }
+
+    private StardewGuideResult specialAnimalDetailAnswer(StardewData.SpecialAnimalGuide animal) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(animal.getName()).append("：\n");
+        if (StringUtils.isNotBlank(animal.getUnlock())) {
+            sb.append("解锁：").append(animal.getUnlock()).append("\n");
+        }
+        if (StringUtils.isNotBlank(animal.getHousing())) {
+            sb.append("居住/位置：").append(animal.getHousing()).append("\n");
+        }
+        if (StringUtils.isNotBlank(animal.getAcquisition())) {
+            sb.append("获取：").append(animal.getAcquisition()).append("\n");
+        }
+        if (animal.getCost() != null) {
+            sb.append("费用：").append(formatGold(animal.getCost())).append("\n");
+        }
+        if (animal.getMaterials() != null && !animal.getMaterials().isEmpty()) {
+            sb.append("材料：").append(formatMaterials(animal.getMaterials())).append("\n");
+        }
+        appendLines(sb, "机制", animal.getMechanics());
+        appendLines(sb, "作用", animal.getBenefits());
+        appendLines(sb, "建议", animal.getRecommendations());
+        if (StringUtils.isNotBlank(animal.getNote())) {
+            sb.append("提示：").append(animal.getNote()).append("\n");
+        }
+        return result("special_animal_detail", sb.toString().trim(), animal.getSourceUrls());
+    }
+
+    private StardewGuideResult specialAnimalListAnswer(String query, Optional<StardewData.SpecialAnimalGuide> preferred) {
+        List<StardewData.SpecialAnimalGuide> matched = repository.specialAnimals().stream()
+                .filter(animal -> matchesSpecialAnimalQuery(query, animal))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::specialAnimals);
+        }
+        if (matched.isEmpty()) {
+            return result("special_animal_available", "没找到特殊动物资料。可以试试：宠物有什么用、马怎么获得、史莱姆屋怎么玩。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("特殊动物/伴侣动物对照：\n");
+        appendSpecialAnimalSummaries(sb, matched);
+        sb.append("建议：马偏效率，宠物偏好感和农场氛围，史莱姆屋偏后期收集玩法；问具体名字可看解锁、机制和规划。");
+        return result("special_animal_available", sb.toString().trim(), collectSpecialAnimalSources(matched));
+    }
+
+    private void appendSpecialAnimalSummaries(StringBuilder sb, List<StardewData.SpecialAnimalGuide> animals) {
+        if (animals == null || animals.isEmpty()) {
+            return;
+        }
+        sb.append("特殊动物/伴侣动物：\n");
+        for (StardewData.SpecialAnimalGuide animal : animals) {
+            sb.append("- ").append(animal.getName()).append("：")
+                    .append(StringUtils.defaultIfBlank(animal.getHousing(), "位置未记录"));
+            if (animal.getBenefits() != null && !animal.getBenefits().isEmpty()) {
+                sb.append("；作用：").append(String.join("、", animal.getBenefits().stream().limit(3).toList()));
+            }
+            if (animal.getRecommendations() != null && !animal.getRecommendations().isEmpty()) {
+                sb.append("；建议：").append(animal.getRecommendations().get(0));
+            }
+            sb.append("\n");
+        }
     }
 
     private StardewGuideResult fruitTreeDetailAnswer(StardewData.FruitTreeGuide tree) {
@@ -2366,6 +2444,25 @@ public class StardewGuideService {
                 || (containsAny(query, "鸡舍", "畜棚", "动物") && containsAny(query, "产物", "对照", "比较"));
     }
 
+    private boolean looksLikeSpecialAnimalListQuery(String query) {
+        return containsAny(query, "特殊动物", "伴侣动物", "宠物马", "宠物和马", "宠物、马", "宠物/马", "马和宠物")
+                || (containsAny(query, "宠物", "马", "史莱姆屋", "养史莱姆") && containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "对照", "比较"));
+    }
+
+    private boolean shouldIncludeSpecialAnimalsInAnimalList(String query) {
+        return containsAny(query, "动物有哪些", "动物列表", "动物总览", "所有动物", "全部动物", "特殊动物", "伴侣动物", "宠物", "马", "史莱姆屋", "养史莱姆");
+    }
+
+    private boolean looksLikeSpecialAnimalBuildingQuery(String query) {
+        return containsAny(query, "马厩", "史莱姆屋")
+                && containsAny(query, "材料", "多少钱", "价格", "建造", "怎么建", "怎么造", "升级", "占地", "多大");
+    }
+
+    private boolean looksLikeSpecialAnimalResourceQuery(String query) {
+        return containsAny(query, "史莱姆泥")
+                && containsAny(query, "怎么获得", "获取", "哪里刷", "在哪刷", "来源", "怎么刷", "哪里有");
+    }
+
     private boolean looksLikeAnimalCareGuideQuery(String query) {
         return containsAny(query, "怎么养", "心情", "好感", "喂", "摸", "干草", "草地", "不产", "不出", "为什么")
                 && !repository.findFarmAnimal(query).isPresent();
@@ -2501,6 +2598,28 @@ public class StardewGuideService {
                 || containsNormalized(q, animal.getNameEn())
                 || containsNormalized(q, animal.getAcquisition())
                 || containsNormalized(q, animal.getProduceFrequency())
+                || containsNormalized(q, animal.getNote());
+    }
+
+    private boolean matchesSpecialAnimalQuery(String query, StardewData.SpecialAnimalGuide animal) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.SpecialAnimalGuide> direct = repository.findSpecialAnimal(query);
+        if (direct.isPresent() && direct.get().getId().equals(animal.getId()) && !looksLikeSpecialAnimalListQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "特殊动物", "伴侣动物", "宠物马", "宠物和马", "所有动物", "全部动物")) {
+            return true;
+        }
+        return containsAnyNormalized(q, animal.getAliases())
+                || containsNormalized(q, animal.getName())
+                || containsNormalized(q, animal.getNameEn())
+                || containsNormalized(q, animal.getCategory())
+                || containsNormalized(q, animal.getUnlock())
+                || containsNormalized(q, animal.getHousing())
+                || containsNormalized(q, animal.getAcquisition())
+                || containsAnyNormalized(q, animal.getMechanics())
+                || containsAnyNormalized(q, animal.getBenefits())
+                || containsAnyNormalized(q, animal.getRecommendations())
                 || containsNormalized(q, animal.getNote());
     }
 
@@ -3360,6 +3479,25 @@ public class StardewGuideService {
                 urls.addAll(animal.getSourceUrls());
             }
         }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectSpecialAnimalSources(List<StardewData.SpecialAnimalGuide> animals) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.SpecialAnimalGuide animal : animals) {
+            if (animal.getSourceUrls() != null) {
+                urls.addAll(animal.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFarmAndSpecialAnimalSources(
+            List<StardewData.FarmAnimalGuide> farmAnimals,
+            List<StardewData.SpecialAnimalGuide> specialAnimals
+    ) {
+        Set<String> urls = new LinkedHashSet<>(collectFarmAnimalSources(farmAnimals));
+        urls.addAll(collectSpecialAnimalSources(specialAnimals));
         return new ArrayList<>(urls);
     }
 

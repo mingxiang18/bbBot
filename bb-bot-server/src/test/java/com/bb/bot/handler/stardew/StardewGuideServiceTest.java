@@ -664,7 +664,8 @@ class StardewGuideServiceTest {
         StardewGuideResult coop = service.answerEvidence(StardewGuideIntent.BUILDING, "星露谷 鸡舍升级材料");
 
         assertThat(all.getIntent()).isEqualTo("farm_animal_available");
-        assertThat(all.getAnswer()).contains("鸡（白/棕/蓝）", "鸭", "兔子", "恐龙", "奶牛", "山羊", "绵羊", "猪", "鸵鸟");
+        assertThat(all.getAnswer()).contains("鸡（白/棕/蓝）", "鸭", "兔子", "恐龙", "奶牛", "山羊", "绵羊", "猪", "鸵鸟")
+                .contains("特殊动物/伴侣动物", "宠物", "马", "史莱姆屋养殖");
 
         assertThat(early.getAnswer()).contains("鸡（白/棕/蓝）", "奶牛");
         assertThat(money.getAnswer()).contains("猪", "松露油");
@@ -676,6 +677,39 @@ class StardewGuideServiceTest {
 
         assertThat(coop.getIntent()).isEqualTo("building_detail");
         assertThat(coop.getAnswer()).contains("鸡舍", "木材", "石头").doesNotContain("农场动物对照", "兔子的脚");
+    }
+
+    @Test
+    void answersSpecialAnimalDetailsWithoutStealingBuildingsOrResources() {
+        StardewGuideResult pet = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 宠物有什么用，怎么提高好感");
+        StardewGuideResult petBowl = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 宠物碗多少钱，额外宠物怎么买");
+        StardewGuideResult horse = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 马怎么获得，马笛怎么用");
+        StardewGuideResult slimeHutch = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 史莱姆屋怎么玩，史莱姆球怎么产");
+        StardewGuideResult specialList = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 特殊动物有哪些");
+        StardewGuideResult stableBuilding = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 马厩材料多少钱");
+        StardewGuideResult slimeResource = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 史莱姆泥怎么获得");
+
+        assertThat(pet.getIntent()).isEqualTo("special_animal_detail");
+        assertThat(pet.getAnswer()).contains("宠物", "每天抚摸", "宠物碗", "爷爷评价");
+
+        assertThat(petBowl.getIntent()).isEqualTo("special_animal_detail");
+        assertThat(petBowl.getAnswer()).contains("宠物碗", "5,000g", "硬木 x25", "40,000g", "60,000g", "500,000g");
+
+        assertThat(horse.getIntent()).isEqualTo("special_animal_detail");
+        assertThat(horse.getAnswer()).contains("马", "马厩", "10,000g", "硬木 x100", "马笛");
+
+        assertThat(slimeHutch.getIntent()).isEqualTo("special_animal_detail");
+        assertThat(slimeHutch.getAnswer()).contains("史莱姆屋", "马龙", "史莱姆球", "史莱姆克星戒指");
+
+        assertThat(specialList.getIntent()).isEqualTo("special_animal_available");
+        assertThat(specialList.getAnswer()).contains("宠物", "马", "史莱姆屋养殖");
+
+        assertThat(stableBuilding.getIntent()).isEqualTo("building_detail");
+        assertThat(stableBuilding.getAnswer()).contains("马厩", "硬木 x100", "铁锭 x5")
+                .doesNotContain("特殊动物/伴侣动物对照");
+
+        assertThat(slimeResource.getIntent()).isEqualTo("resource");
+        assertThat(slimeResource.getAnswer()).contains("史莱姆泥获取方式", "击杀史莱姆", "史莱姆屋");
     }
 
     @Test

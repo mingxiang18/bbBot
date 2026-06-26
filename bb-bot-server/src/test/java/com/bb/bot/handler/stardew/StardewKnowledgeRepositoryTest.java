@@ -42,6 +42,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.farmMaps()).hasSize(8);
         assertThat(repository.farmAnimals()).hasSize(11);
+        assertThat(repository.specialAnimals()).hasSize(3);
         assertThat(repository.fruitTrees()).hasSize(8);
         assertThat(repository.islandGuides()).hasSize(13);
         assertThat(repository.dungeonGuides()).hasSize(6);
@@ -96,6 +97,48 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(animal.getBestFor()).isNotEmpty();
                     assertThat(animal.getRecommendations()).isNotEmpty();
                     assertThat(animal.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals");
+                });
+    }
+
+    @Test
+    void fullSpecialAnimalGuideSetIsCovered() {
+        Set<String> animalIds = repository.specialAnimals().stream()
+                .map(StardewData.SpecialAnimalGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.specialAnimals()).hasSize(3);
+        assertThat(animalIds).containsExactlyInAnyOrder(
+                "pet",
+                "horse",
+                "slime_hutch_play"
+        );
+
+        assertThat(repository.findSpecialAnimal("宠物有什么用").orElseThrow().getId()).isEqualTo("pet");
+        assertThat(repository.findSpecialAnimal("宠物碗多少钱").orElseThrow().getId()).isEqualTo("pet");
+        assertThat(repository.findSpecialAnimal("额外宠物许可证").orElseThrow().getId()).isEqualTo("pet");
+        assertThat(repository.findSpecialAnimal("马怎么获得").orElseThrow().getId()).isEqualTo("horse");
+        assertThat(repository.findSpecialAnimal("马笛怎么用").orElseThrow().getId()).isEqualTo("horse");
+        assertThat(repository.findSpecialAnimal("史莱姆屋怎么玩").orElseThrow().getId()).isEqualTo("slime_hutch_play");
+        assertThat(repository.findSpecialAnimal("史莱姆球怎么产").orElseThrow().getId()).isEqualTo("slime_hutch_play");
+    }
+
+    @Test
+    void allSpecialAnimalsHaveCoreFieldsAndSources() {
+        assertThat(repository.specialAnimals())
+                .hasSize(3)
+                .allSatisfy(animal -> {
+                    assertThat(animal.getId()).isNotBlank();
+                    assertThat(animal.getName()).isNotBlank();
+                    assertThat(animal.getNameEn()).isNotBlank();
+                    assertThat(animal.getAliases()).isNotEmpty();
+                    assertThat(animal.getCategory()).isIn("companion", "mount", "slime");
+                    assertThat(animal.getUnlock()).isNotBlank();
+                    assertThat(animal.getHousing()).isNotBlank();
+                    assertThat(animal.getAcquisition()).isNotBlank();
+                    assertThat(animal.getMechanics()).isNotEmpty();
+                    assertThat(animal.getBenefits()).isNotEmpty();
+                    assertThat(animal.getRecommendations()).isNotEmpty();
+                    assertThat(animal.getSourceUrls()).isNotEmpty();
                 });
     }
 

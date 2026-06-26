@@ -286,6 +286,32 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedAnimalCareIntentRetrievesSpecialAnimalsWithoutStealingBuildingsOrResources() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.ANIMAL_CARE, "宠物有什么用"),
+                intent(StardewGuideIntent.ANIMAL_CARE, "宠物碗多少钱"),
+                intent(StardewGuideIntent.ANIMAL_CARE, "马怎么获得"),
+                intent(StardewGuideIntent.ANIMAL_CARE, "史莱姆屋怎么玩"),
+                intent(StardewGuideIntent.BUILDING, "史莱姆屋材料多少钱"),
+                intent(StardewGuideIntent.RESOURCE, "史莱姆泥怎么获得")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("宠物、马、史莱姆屋和史莱姆泥怎么规划", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.ANIMAL_CARE, StardewGuideIntent.BUILDING, StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("special_animal_detail", "building_detail", "resource");
+        assertThat(joinAnswers(evidence))
+                .contains("宠物", "宠物碗", "爷爷评价")
+                .contains("5,000g", "硬木 x25")
+                .contains("马", "马厩", "跑图省时间")
+                .contains("史莱姆屋", "史莱姆球", "史莱姆克星戒指")
+                .contains("石头 x500", "精炼石英 x10", "史莱姆泥获取方式")
+                .doesNotContain("没找到对应攻略条目");
+    }
+
+    @Test
     void typedQuestIntentRetrievesStoryQuestEvidenceWithoutSpecialOrderOrVillagerCrossRouting() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.QUEST, "罗宾斧头在哪"),
