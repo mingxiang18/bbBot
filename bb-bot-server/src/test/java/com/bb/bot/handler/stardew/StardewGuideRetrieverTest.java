@@ -6,6 +6,11 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class StardewGuideRetrieverTest {
 
@@ -30,6 +35,26 @@ class StardewGuideRetrieverTest {
         assertThat(evidence).extracting(StardewGuideEvidence::type)
                 .contains(StardewGuideIntent.ANIMAL_CARE, StardewGuideIntent.RESOURCE);
         assertThat(joinAnswers(evidence)).contains("每天摸动物", "好感", "奶牛", "挤奶桶");
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void retrievesThroughExplicitEvidenceApiInsteadOfLegacyFreeTextRoute() {
+        StardewGuideService guideService = mock(StardewGuideService.class);
+        when(guideService.answerEvidence(StardewGuideIntent.RESOURCE, "电池组怎么获得"))
+                .thenReturn(StardewGuideResult.builder()
+                        .intent("resource")
+                        .answer("电池组获取方式：避雷针。")
+                        .build());
+        StardewGuideRetriever retriever = new StardewGuideRetriever(guideService);
+        StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "电池组怎么获得"));
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 电池组怎么获得", plan);
+
+        assertThat(evidence).hasSize(1);
+        assertThat(evidence.get(0).answer()).contains("电池组获取方式");
+        verify(guideService).answerEvidence(StardewGuideIntent.RESOURCE, "电池组怎么获得");
+        verify(guideService, never()).answer(anyString());
     }
 
     @Test

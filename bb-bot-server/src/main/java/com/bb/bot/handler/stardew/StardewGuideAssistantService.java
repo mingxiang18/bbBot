@@ -31,7 +31,7 @@ public class StardewGuideAssistantService {
     public String answer(String rawQuery) {
         String query = StringUtils.defaultString(rawQuery).trim();
         if (StringUtils.isBlank(query)) {
-            return guideService.answer(query).getAnswer();
+            return guideService.helpAnswer().getAnswer();
         }
 
         StardewQueryPlan plan = plannerService.plan(query);

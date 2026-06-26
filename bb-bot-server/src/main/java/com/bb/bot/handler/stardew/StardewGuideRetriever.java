@@ -34,7 +34,7 @@ public class StardewGuideRetriever {
                 if (!seenQueries.add(type + ":" + searchQuery)) {
                     continue;
                 }
-                StardewGuideResult result = guideService.answer(type, searchQuery);
+                StardewGuideResult result = guideService.answerEvidence(type, searchQuery);
                 if (result == null || StringUtils.isBlank(result.getAnswer())) {
                     continue;
                 }

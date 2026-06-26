@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("deprecation")
 class StardewGuideServiceTest {
 
     private StardewGuideService service;
@@ -855,6 +856,14 @@ class StardewGuideServiceTest {
         assertThat(result.getAnswer()).contains("速度、运气和最大体力可以通过食物 + 饮料叠加");
         assertThat(result.getAnswer()).contains("不要连续吃不同 buff 食物");
         assertThat(result.getSourceUrls()).contains("https://stardewvalleywiki.com/Buffs");
+    }
+
+    @Test
+    void explicitUnknownEvidenceDoesNotFallBackToLegacyFreeTextRoute() {
+        StardewGuideResult result = service.answerEvidence(StardewGuideIntent.UNKNOWN, "星露谷 鸡舍升级材料");
+
+        assertThat(result.getIntent()).isEqualTo("unknown");
+        assertThat(result.getAnswer()).isBlank();
     }
 
     @Test

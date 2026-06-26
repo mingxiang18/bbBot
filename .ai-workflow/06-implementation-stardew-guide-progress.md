@@ -231,6 +231,21 @@
 - `StardewGuideRetrieverTest,StardewGuideAssistantServiceTest`：15 tests, 0 failures。
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：100 tests, 0 failures。
 
+2026-06-26 证据层接口收敛：
+
+- `StardewGuideService` 保留为本地知识库证据层，新增 `answerEvidence(StardewGuideIntent, query)` 作为显式 typed evidence API。
+- `/星露谷` 命令和 `stardew_guide` AI tool 的正常链路仍统一为 `StardewQueryPlannerService -> StardewGuideRetriever -> StardewGuideAssistantService`。
+- `StardewGuideRetriever` 改为只调用 `answerEvidence`，不再语义依赖旧的 `answer(String)` 自由路由入口。
+- `StardewGuideAssistantService` 空问题改为调用 `helpAnswer()`，不再通过旧自由路由获取帮助文案。
+- `StardewGuideService.answer(String)` 和 `answer(StardewGuideIntent, String)` 标记为兼容入口；typed `UNKNOWN` 改为返回空证据，不再回退到自由路由。
+- 测试补充：新增 retriever 调用 `answerEvidence` 的交互测试，新增 `UNKNOWN` evidence 不回退旧自由路由的单元测试。
+
+本轮聚焦验证结果：
+
+- `StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest`：96 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：136 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 本轮验证结果：
 
 - `StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：78 tests, 0 failures。

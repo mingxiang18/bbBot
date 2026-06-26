@@ -34,10 +34,20 @@ public class StardewGuideService {
         this.wikiClient = wikiClient;
     }
 
+    public StardewGuideResult helpAnswer() {
+        return result("help", help(), List.of());
+    }
+
+    /**
+     * Compatibility entry point for older direct callers. The normal assistant path should use
+     * {@link StardewQueryPlannerService} + {@link StardewGuideRetriever} and call
+     * {@link #answerEvidence(StardewGuideIntent, String)} with an explicit intent.
+     */
+    @Deprecated
     public StardewGuideResult answer(String rawQuery) {
         String query = cleanQuery(rawQuery);
         if (StringUtils.isBlank(query)) {
-            return result("help", help(), List.of());
+            return helpAnswer();
         }
 
         Optional<StardewData.Bundle> bundle = repository.findBundle(query);
@@ -146,10 +156,15 @@ public class StardewGuideService {
         return wikiFallbackAnswer(query, help());
     }
 
+    @Deprecated
     public StardewGuideResult answer(StardewGuideIntent type, String rawQuery) {
+        return answerEvidence(type, rawQuery);
+    }
+
+    public StardewGuideResult answerEvidence(StardewGuideIntent type, String rawQuery) {
         String query = cleanQuery(rawQuery);
         if (StringUtils.isBlank(query)) {
-            return result("help", help(), List.of());
+            return helpAnswer();
         }
         StardewGuideIntent effectiveType = type == null ? StardewGuideIntent.UNKNOWN : type;
         return switch (effectiveType) {
@@ -165,7 +180,7 @@ public class StardewGuideService {
             case MACHINE -> typedMachineAnswer(query);
             case SHOP -> typedShopAnswer(query);
             case COOKING -> typedCookingAnswer(query);
-            case UNKNOWN -> answer(query);
+            case UNKNOWN -> result("unknown", "", List.of());
         };
     }
 
