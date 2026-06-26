@@ -3,6 +3,7 @@ package com.bb.bot.handler.stardew;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(134);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
@@ -628,6 +629,79 @@ class StardewKnowledgeRepositoryTest {
                 "prehistoric_rib"
         );
         assertThat(guideAliases).contains("古物", "文物", "矿物", "缺古物", "缺矿物", "全套收集");
+    }
+
+    @Test
+    void allFiftyThreeMuseumMineralsAreCoveredAsResources() {
+        List<String> mineralIds = List.of(
+                "quartz",
+                "earth_crystal",
+                "frozen_tear",
+                "fire_quartz",
+                "emerald",
+                "aquamarine",
+                "ruby",
+                "amethyst",
+                "topaz",
+                "jade",
+                "diamond",
+                "prismatic_shard",
+                "tigerseye",
+                "opal",
+                "fire_opal",
+                "alamite",
+                "bixite",
+                "baryte",
+                "aerinite",
+                "calcite",
+                "dolomite",
+                "esperite",
+                "fluorapatite",
+                "geminite",
+                "helvite",
+                "jamborite",
+                "jagoite",
+                "kyanite",
+                "lunarite",
+                "malachite",
+                "neptunite",
+                "lemon_stone",
+                "nekoite",
+                "orpiment",
+                "petrified_slime",
+                "thunder_egg",
+                "pyrite",
+                "ocean_stone",
+                "ghost_crystal",
+                "jasper",
+                "celestine",
+                "marble",
+                "sandstone",
+                "granite",
+                "basalt",
+                "limestone",
+                "soapstone",
+                "hematite",
+                "mudstone",
+                "obsidian",
+                "slate",
+                "fairy_stone",
+                "star_shards"
+        );
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(mineralIds).hasSize(53);
+        assertThat(resourceIds).containsAll(mineralIds);
+        assertThat(repository.resources().stream()
+                .filter(resource -> mineralIds.contains(resource.getId()))
+                .collect(Collectors.toList()))
+                .allSatisfy(resource -> {
+                    assertThat(resource.getAcquisitions()).isNotEmpty();
+                    assertThat(resource.getUsedIn()).contains("博物馆捐赠");
+                    assertThat(resource.getSourceUrls()).isNotEmpty();
+                });
     }
 
     @Test

@@ -199,6 +199,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedResourceIntentRetrievesSpecificMineralsWithoutMuseumGuideCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.RESOURCE, "黄水晶哪里找"),
+                intent(StardewGuideIntent.RESOURCE, "大理石怎么获得"),
+                intent(StardewGuideIntent.RESOURCE, "陶瓷碎片开哪个晶球"),
+                intent(StardewGuideIntent.RESOURCE, "黑曜石哪里刷")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("黄水晶、大理石、陶瓷碎片、黑曜石哪里找", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("resource");
+        assertThat(joinAnswers(evidence))
+                .contains("黄水晶获取方式", "黄水晶矿点")
+                .contains("大理石获取方式", "冰封晶球", "大理石火炬")
+                .contains("陶瓷碎片获取方式", "岩浆晶球", "星星 T 恤")
+                .contains("黑曜石获取方式", "塞巴斯蒂安最爱")
+                .doesNotContain("博物馆捐赠：", "95 件", "42 件古物", "53 件矿物");
+    }
+
+    @Test
     void typedBuildingIntentRetrievesLateGameAndCommunityBuildingEvidence() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.BUILDING, "沙漠方尖塔需要什么"),

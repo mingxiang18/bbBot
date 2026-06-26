@@ -276,6 +276,25 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesSpecificMineralQueriesAsResourcesAndBroadMuseumQueriesAsMuseum() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        StardewQueryPlan topaz = planner.plan("黄水晶这个矿物哪里找");
+        StardewQueryPlan marble = planner.plan("大理石开哪个晶球");
+        StardewQueryPlan starShards = planner.plan("陶瓷碎片怎么获得");
+        StardewQueryPlan museum = planner.plan("博物馆缺矿物怎么补");
+
+        assertThat(topaz.getIntents()).hasSize(1);
+        assertThat(topaz.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(marble.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(starShards.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(museum.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MUSEUM);
+    }
+
+    @Test
     void localFallbackStillClassifiesSkullCavernFoodQuestionsAsCooking() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

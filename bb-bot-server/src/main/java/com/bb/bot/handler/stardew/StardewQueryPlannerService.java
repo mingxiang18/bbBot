@@ -54,6 +54,8 @@ public class StardewQueryPlannerService {
                         - 精通系统、精通点、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、祝福雕像归为 GUIDE。
                         - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
+                        - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
+                        - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
                         - 不要声称读取存档或当前真实游戏状态。
@@ -106,6 +108,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeForgeEnchantingQuery(q)) {
             return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeSpecificMineralResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -199,6 +204,32 @@ public class StardewQueryPlannerService {
                 "黄金马刺", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶",
                 "Basilisk Paw", "Fairy Box", "Frog Egg", "Ice Rod", "Golden Spur",
                 "Magic Quiver", "Parrot Egg", "Magic Hair Gel", "trinket");
+    }
+
+    private boolean looksLikeSpecificMineralResourceQuery(String query) {
+        if (!containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "在哪", "来源", "开哪个", "开什么", "晶球", "矿物")) {
+            return false;
+        }
+        if (containsAny(query, "缺矿物", "全套矿物", "矿物怎么补", "博物馆怎么补", "博物馆缺")) {
+            return false;
+        }
+        return containsAny(query,
+                "石英", "地晶", "泪晶", "冰泪晶", "火水晶",
+                "绿宝石", "海蓝宝石", "红宝石", "紫水晶", "黄水晶", "翡翠", "钻石", "五彩碎片",
+                "虎眼石", "猫眼石", "赤红猫眼石", "透闪石", "黑方石", "重晶石", "青泥石",
+                "方解石", "白云石", "硅钙石", "氟磷灰石", "杰明石", "日光榴石", "绿水镍矿",
+                "铁铅矿", "蓝晶石", "酸性月岩", "孔雀石", "柱星叶石", "柠檬石", "新硅钙石",
+                "雌黄", "石化史莱姆", "雷公蛋", "黄铁矿", "海洋石", "幽灵水晶", "碧玉",
+                "天青石", "大理石", "沙岩", "花岗岩", "玄武岩", "石灰石", "皂石", "赤铁矿",
+                "泥石", "黑曜石", "板岩", "精灵石", "陶瓷碎片", "星之碎片", "星星碎片",
+                "emerald", "aquamarine", "ruby", "amethyst", "topaz", "jade", "diamond",
+                "tigerseye", "opal", "fire opal", "alamite", "bixite", "baryte", "aerinite",
+                "calcite", "dolomite", "esperite", "fluorapatite", "geminite", "helvite",
+                "jamborite", "jagoite", "kyanite", "lunarite", "malachite", "neptunite",
+                "lemon stone", "nekoite", "orpiment", "petrified slime", "thunder egg",
+                "pyrite", "ocean stone", "ghost crystal", "jasper", "celestine", "marble",
+                "sandstone", "granite", "basalt", "limestone", "soapstone", "hematite",
+                "mudstone", "obsidian", "slate", "fairy stone", "star shards");
     }
 
     private boolean looksLikeBookQuery(String query) {

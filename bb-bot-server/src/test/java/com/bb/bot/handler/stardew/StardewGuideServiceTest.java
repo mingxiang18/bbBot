@@ -351,6 +351,25 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFullMineralResourceQuestionsWithoutMuseumGuideCrossRouting() {
+        StardewGuideResult topaz = service.answer("星露谷 黄水晶这个矿物哪里找");
+        StardewGuideResult emerald = service.answerEvidence(StardewGuideIntent.RESOURCE, "绿宝石怎么获得");
+        StardewGuideResult marble = service.answerEvidence(StardewGuideIntent.RESOURCE, "大理石怎么获得");
+        StardewGuideResult bixite = service.answerEvidence(StardewGuideIntent.RESOURCE, "黑方石哪里找");
+        StardewGuideResult starShards = service.answerEvidence(StardewGuideIntent.RESOURCE, "陶瓷碎片开哪个晶球");
+        StardewGuideResult tigerseye = service.answerEvidence(StardewGuideIntent.RESOURCE, "虎眼石哪里刷");
+
+        assertThat(topaz.getIntent()).isEqualTo("resource");
+        assertThat(topaz.getAnswer()).contains("黄水晶获取方式", "黄水晶矿点", "钓鱼宝箱")
+                .doesNotContain("博物馆捐赠：");
+        assertThat(emerald.getAnswer()).contains("绿宝石获取方式", "绿宝石矿点", "潘妮最爱");
+        assertThat(marble.getAnswer()).contains("大理石获取方式", "冰封晶球", "大理石火炬");
+        assertThat(bixite.getAnswer()).contains("黑方石获取方式", "岩浆晶球", "黑色史莱姆");
+        assertThat(starShards.getAnswer()).contains("陶瓷碎片获取方式", "岩浆晶球", "万象晶球", "星星 T 恤");
+        assertThat(tigerseye.getAnswer()).contains("虎眼石获取方式", "山姆最爱", "岩浆晶球");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

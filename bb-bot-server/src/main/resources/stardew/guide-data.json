@@ -15480,7 +15480,7 @@
       "recommendation": "不要靠低概率来源硬等；准备好运日、幸运食物、炸弹和楼梯刷骷髅洞穴。",
       "usedIn": [
         "银河之剑",
-        "博物馆",
+        "博物馆捐赠",
         "电影院收集包",
         "附魔"
       ],
@@ -16677,6 +16677,7 @@
       "recommendation": "染料收集包需要海蓝宝石；普通矿井推进时见到先留一颗。",
       "usedIn": [
         "染料收集包",
+        "博物馆捐赠",
         "送礼",
         "戒指/制作"
       ],
@@ -17226,6 +17227,1046 @@
       ],
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/矿物"
+      ]
+    },
+    {
+      "id": "emerald",
+      "name": "绿宝石",
+      "nameEn": "Emerald",
+      "aliases": [
+        "emerald",
+        "绿宝石矿"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "绿宝石矿点和宝石矿点可产出绿宝石。"
+        },
+        {
+          "type": "其他",
+          "detail": "淘盘、垃圾桶、钓鱼宝箱和冬日星盛宴礼物也可能获得。"
+        },
+        {
+          "type": "复制",
+          "detail": "宝石复制机可复制，用作送礼、出售或备用。"
+        }
+      ],
+      "recommendation": "克林特、矮人、艾米丽和潘妮最爱绿宝石；第一颗通常先看博物馆需求，再考虑送礼。",
+      "usedIn": [
+        "博物馆捐赠",
+        "礼物",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "topaz",
+      "name": "黄水晶",
+      "nameEn": "Topaz",
+      "aliases": [
+        "topaz",
+        "黄水晶矿"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井",
+          "detail": "黄水晶矿点和宝石矿点可产出黄水晶。"
+        },
+        {
+          "type": "其他",
+          "detail": "淘盘、垃圾桶和钓鱼宝箱也可能获得。"
+        },
+        {
+          "type": "复制",
+          "detail": "宝石复制机可复制，但通常优先复制更高价值或有兑换用途的宝石。"
+        }
+      ],
+      "recommendation": "黄水晶较常见，第一颗先捐博物馆；重复品可送给克林特、矮人或艾米丽。",
+      "usedIn": [
+        "博物馆捐赠",
+        "礼物",
+        "宝石复制机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "tigerseye",
+      "name": "虎眼石",
+      "nameEn": "Tigerseye",
+      "aliases": [
+        "tigerseye",
+        "tiger's eye",
+        "虎睛石"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "山姆最爱虎眼石；缺博物馆矿物时刷岩浆晶球，万象晶球也可补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "opal",
+      "name": "猫眼石",
+      "nameEn": "Opal",
+      "aliases": [
+        "opal"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺它时刷 40-79 层冰封晶球比乱开普通晶球更对口。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "fire_opal",
+      "name": "赤红猫眼石",
+      "nameEn": "Fire Opal",
+      "aliases": [
+        "fire opal",
+        "火猫眼石"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺深层晶球矿物时刷 80 层以后积累岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "alamite",
+      "name": "透闪石",
+      "nameEn": "Alamite",
+      "aliases": [
+        "alamite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "浅层矿物缺口，优先刷矿井浅层普通晶球；重复品通常直接出售。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "bixite",
+      "name": "黑方石",
+      "nameEn": "Bixite",
+      "aliases": [
+        "bixite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        },
+        {
+          "type": "怪物",
+          "detail": "黑色史莱姆也可能掉落。"
+        }
+      ],
+      "recommendation": "缺它时优先刷岩浆晶球；黑色史莱姆可作为顺路补充来源。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "baryte",
+      "name": "重晶石",
+      "nameEn": "Baryte",
+      "aliases": [
+        "baryte",
+        "barite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；重复品售价不高，通常可卖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "aerinite",
+      "name": "青泥石",
+      "nameEn": "Aerinite",
+      "aliases": [
+        "aerinite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "冰封晶球矿物之一；补缺时刷矿井 40-79 层更集中。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "calcite",
+      "name": "方解石",
+      "nameEn": "Calcite",
+      "aliases": [
+        "calcite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；缺它时刷浅层普通晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "dolomite",
+      "name": "白云石",
+      "nameEn": "Dolomite",
+      "aliases": [
+        "dolomite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "深层晶球矿物之一；缺它时刷岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "esperite",
+      "name": "硅钙石",
+      "nameEn": "Esperite",
+      "aliases": [
+        "esperite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；冰封晶球缺口就刷矿井冰冻层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "fluorapatite",
+      "name": "氟磷灰石",
+      "nameEn": "Fluorapatite",
+      "aliases": [
+        "fluorapatite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "冰封晶球矿物之一；重复品通常出售即可。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "geminite",
+      "name": "杰明石",
+      "nameEn": "Geminite",
+      "aliases": [
+        "geminite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺它时优先开冰封晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "helvite",
+      "name": "日光榴石",
+      "nameEn": "Helvite",
+      "aliases": [
+        "helvite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "售价较高但第一件先捐；缺它时刷岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "jamborite",
+      "name": "绿水镍矿",
+      "nameEn": "Jamborite",
+      "aliases": [
+        "jamborite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；刷浅层普通晶球更对口。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "jagoite",
+      "name": "铁铅矿",
+      "nameEn": "Jagoite",
+      "aliases": [
+        "jagoite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；普通晶球缺口优先刷矿井浅层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "kyanite",
+      "name": "蓝晶石",
+      "nameEn": "Kyanite",
+      "aliases": [
+        "kyanite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "冰封晶球矿物之一；缺它时刷 40-79 层积累冰封晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "lunarite",
+      "name": "酸性月岩",
+      "nameEn": "Lunarite",
+      "aliases": [
+        "lunarite",
+        "月岩"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；重复品通常出售即可。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "malachite",
+      "name": "孔雀石",
+      "nameEn": "Malachite",
+      "aliases": [
+        "malachite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；缺它时刷浅层普通晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "neptunite",
+      "name": "柱星叶石",
+      "nameEn": "Neptunite",
+      "aliases": [
+        "neptunite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        },
+        {
+          "type": "怪物",
+          "detail": "黑色史莱姆也可能掉落。"
+        }
+      ],
+      "recommendation": "缺它时优先刷岩浆晶球；黑色史莱姆是额外来源。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "lemon_stone",
+      "name": "柠檬石",
+      "nameEn": "Lemon Stone",
+      "aliases": [
+        "lemon stone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺深层矿物时刷岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "nekoite",
+      "name": "新硅钙石",
+      "nameEn": "Nekoite",
+      "aliases": [
+        "nekoite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；补博物馆时第一件先捐。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "orpiment",
+      "name": "雌黄",
+      "nameEn": "Orpiment",
+      "aliases": [
+        "orpiment"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺它时刷普通晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "petrified_slime",
+      "name": "石化史莱姆",
+      "nameEn": "Petrified Slime",
+      "aliases": [
+        "petrified slime"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        },
+        {
+          "type": "其他",
+          "detail": "史莱姆球和鱼塘任务相关来源也可能获得。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；如果有史莱姆屋，史莱姆球也可作为补充来源。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "thunder_egg",
+      "name": "雷公蛋",
+      "nameEn": "Thunder Egg",
+      "aliases": [
+        "thunder egg"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；普通晶球缺口就刷浅层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "pyrite",
+      "name": "黄铁矿",
+      "nameEn": "Pyrite",
+      "aliases": [
+        "pyrite",
+        "愚人金"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "冰封晶球矿物之一；重复品可卖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "ocean_stone",
+      "name": "海洋石",
+      "nameEn": "Ocean Stone",
+      "aliases": [
+        "ocean stone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "鱼塘任务可能会要；第一件先捐，重复品可留一块备用。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "ghost_crystal",
+      "name": "幽灵水晶",
+      "nameEn": "Ghost Crystal",
+      "aliases": [
+        "ghost crystal"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；缺它时刷冰封晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "jasper",
+      "name": "碧玉",
+      "nameEn": "Jasper",
+      "aliases": [
+        "jasper"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "深层晶球矿物之一；补缺时刷岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "celestine",
+      "name": "天青石",
+      "nameEn": "Celestine",
+      "aliases": [
+        "celestine"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；第一件先捐博物馆。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "marble",
+      "name": "大理石",
+      "nameEn": "Marble",
+      "aliases": [
+        "marble"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "大理石火炬需要大理石；第一件先捐，想做装饰可多留一块。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "大理石火炬"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "sandstone",
+      "name": "沙岩",
+      "nameEn": "Sandstone",
+      "aliases": [
+        "sandstone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；重复品价值低，通常可卖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "granite",
+      "name": "花岗岩",
+      "nameEn": "Granite",
+      "aliases": [
+        "granite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "鱼塘任务可能会要；第一件先捐，重复品可留一块备用。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "basalt",
+      "name": "玄武岩",
+      "nameEn": "Basalt",
+      "aliases": [
+        "basalt"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "鱼塘任务可能会要；缺它时刷岩浆晶球。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "limestone",
+      "name": "石灰石",
+      "nameEn": "Limestone",
+      "aliases": [
+        "limestone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "鱼塘任务可能会要；售价很低，重复品通常只留备用。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "soapstone",
+      "name": "皂石",
+      "nameEn": "Soapstone",
+      "aliases": [
+        "soapstone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "冰封晶球矿物之一；缺它时刷 40-79 层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "hematite",
+      "name": "赤铁矿",
+      "nameEn": "Hematite",
+      "aliases": [
+        "hematite"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；冰封晶球缺口优先刷冰冻层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "mudstone",
+      "name": "泥石",
+      "nameEn": "Mudstone",
+      "aliases": [
+        "mudstone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "鱼塘任务可能会要；普通晶球矿物缺口时顺手留一块。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "obsidian",
+      "name": "黑曜石",
+      "nameEn": "Obsidian",
+      "aliases": [
+        "obsidian"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "塞巴斯蒂安最爱黑曜石；第一件先捐，之后可留作礼物。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "slate",
+      "name": "板岩",
+      "nameEn": "Slate",
+      "aliases": [
+        "slate"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "普通晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "普通晶球矿物之一；主要用于博物馆捐赠。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "fairy_stone",
+      "name": "精灵石",
+      "nameEn": "Fairy Stone",
+      "aliases": [
+        "fairy stone"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "冰封晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "主要用于博物馆捐赠；冰封晶球矿物缺口就刷冰冻层。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
+      ]
+    },
+    {
+      "id": "star_shards",
+      "name": "陶瓷碎片",
+      "nameEn": "Star Shards",
+      "aliases": [
+        "star shards",
+        "星之碎片",
+        "星星碎片"
+      ],
+      "acquisitions": [
+        {
+          "type": "晶球",
+          "detail": "岩浆晶球和万象晶球可能开出。"
+        }
+      ],
+      "recommendation": "售价较高但第一件先捐博物馆；也可用于裁制星星 T 恤和染色。",
+      "usedIn": [
+        "博物馆捐赠",
+        "矿物收集",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/陶瓷碎片",
+        "https://zh.stardewvalleywiki.com/矿物",
+        "https://stardewvalleywiki.com/Minerals"
       ]
     },
     {

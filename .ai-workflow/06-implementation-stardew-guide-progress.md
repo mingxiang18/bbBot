@@ -765,6 +765,32 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：169 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 全矿物资源获取补齐：
+
+- 按“完整一类数据”要求补齐博物馆 53 个矿物资源，不再只补高频矿物。
+- 全矿物集合覆盖：
+  - 4 个可采集矿物：石英、地晶、泪晶/冰泪晶、火水晶。
+  - 8 个宝石：绿宝石、海蓝宝石、红宝石、紫水晶、黄水晶、翡翠、钻石、五彩碎片。
+  - 41 个晶球矿物：虎眼石、猫眼石、赤红猫眼石、透闪石、黑方石、重晶石、青泥石、方解石、白云石、硅钙石、氟磷灰石、杰明石、日光榴石、绿水镍矿、铁铅矿、蓝晶石、酸性月岩、孔雀石、柱星叶石、柠檬石、新硅钙石、雌黄、石化史莱姆、雷公蛋、黄铁矿、海洋石、幽灵水晶、碧玉、天青石、大理石、沙岩、花岗岩、玄武岩、石灰石、皂石、赤铁矿、泥石、黑曜石、板岩、精灵石、陶瓷碎片。
+- 每个矿物条目包含获取方式、对应晶球/矿点/怪物补充来源、博物馆捐赠用途和补缺建议；特殊用途补充了楼梯兑换、香辣鳗鱼、鱼塘任务、大理石火炬、黑曜石/虎眼石送礼等高频信息。
+- 检索框架调整：
+  - `StardewQueryPlannerService` prompt 明确“具体矿物怎么获得/开哪个晶球”归 `RESOURCE`，“博物馆整体补全/缺矿物路线”归 `MUSEUM`。
+  - fallback 新增 `looksLikeSpecificMineralResourceQuery`，黄水晶、大理石、陶瓷碎片、黑曜石等具体矿物查询不再因为包含“矿物”而误归博物馆总览。
+  - `StardewGuideTool` 描述补全“全 53 矿物、具体矿物怎么获得/开哪个晶球”。
+- 测试补充：
+  - `StardewKnowledgeRepositoryTest` 强制校验 53 个矿物资源 id 全存在，每个都有获取方式、博物馆捐赠用途和来源。
+  - `StardewGuideServiceTest` 覆盖旧 `answer(String)` 与 typed `RESOURCE` 路径下的黄水晶、绿宝石、大理石、黑方石、陶瓷碎片、虎眼石。
+  - `StardewGuideRetrieverTest` 覆盖 typed `RESOURCE` 多矿物检索，确认不串到博物馆 95 件/42 古物/53 矿物总览。
+  - `StardewQueryPlannerServiceTest` 覆盖 AI 不可用时具体矿物归 `RESOURCE`、博物馆缺矿物归 `MUSEUM`。
+
+本轮验证结果：
+
+- JSON 轻量校验：`resources=134`，`minerals=53`，`missing=[]`，`dup=[]`，`withoutMuseumUse=[]`。
+- `git diff --check`：无 whitespace 问题。
+- `StardewKnowledgeRepositoryTest,StardewGuideServiceTest,StardewGuideRetrieverTest,StardewQueryPlannerServiceTest`：162 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：173 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -788,7 +814,7 @@ mysql(misu-mysql-local) Up
 - 建筑已扩到 27 个核心/后期条目，已覆盖方尖塔、黄金钟、祝尼魔小屋、潘姆房屋和城镇捷径社区升级；多人小屋不同样式、宠物碗、岛屿农舍、温室、特殊场景建筑等仍未完整结构化。
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；火山锻造、武器/工具附魔、无限武器和戒指合成已补一版攻略；但特殊工具、全部钓具数值、全部附魔概率/武器数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
-- 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
+- 资源获取已扩到 134 项，新增一批博物馆、古物、全 53 件矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
 - 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通系统奖励/配方/优先级、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，火山锻造/附魔已补一版通用攻略，小饰品/铁砧重铸已补全数值和高频建议；后续还需继续补技能相关装备、全部附魔概率/武器数值和更细的场景化路线。
 
 ## 后续补齐方向
@@ -801,7 +827,7 @@ mysql(misu-mysql-local) Up
    - 全建筑、房屋升级、动物、机器；首批核心农场建筑、房屋升级、后期魔法建筑/社区升级和 80 个核心机器/制作设备/常用 craftable 已结构化，后续补多人小屋样式、宠物碗、岛屿农舍、温室等特殊建筑和全部机器设备
    - 全工具、鱼竿、附魔、锻造、特殊工具和使用路线；首批工具升级费用/材料已结构化，火山锻造/武器和工具附魔/无限武器/戒指合成已补一版高频攻略
    - 全技能升级、职业选择、经验获取、快速升级路线、Mastery、技能书、职业重置、技能食物 buff、技能相关装备和附魔搭配；Mastery 已补五系奖励和高频配方，小饰品/铁砧重铸已补全数值，后续继续补全部附魔概率、武器数值和更细的战斗流派搭配
-   - 矿井、骷髅洞穴、火山、怪物掉落、博物馆、烹饪、制作；首批 91 个高频资源获取条目已结构化，已补煤炭、太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，后续继续补全 42 件古物、53 件矿物和完整怪物掉落表
+   - 矿井、骷髅洞穴、火山、怪物掉落、博物馆、烹饪、制作；首批 134 个资源获取条目已结构化，已补煤炭、太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，并已补全 53 件矿物，后续继续补全 42 件古物和完整怪物掉落表
 2. 测试覆盖：
    - 每个 intent 至少 happy path + miss + alias + 条件过滤
    - Wiki 兜底 query rewriting 回归样例
