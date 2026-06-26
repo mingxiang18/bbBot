@@ -1,8 +1,10 @@
 package com.bb.bot.aiAgent.tools;
 
+import com.bb.bot.aiAgent.core.AiTool;
 import com.bb.bot.handler.stardew.StardewGuideAssistantService;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +13,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class StardewGuideToolTest {
+
+    @Test
+    void keepsToolDescriptionFocusedOnToolSelectionNotInternalRouting() throws NoSuchMethodException {
+        Method guide = StardewGuideTool.class.getMethod("guide", String.class);
+        AiTool aiTool = guide.getAnnotation(AiTool.class);
+
+        assertThat(aiTool.name()).isEqualTo("stardew_guide");
+        assertThat(aiTool.description()).contains("星露谷物语相关攻略", "保留用户原问题", "工具内部会做分类");
+        assertThat(aiTool.description().length()).isLessThan(160);
+        assertThat(aiTool.description())
+                .doesNotContain("夏天能钓什么鱼", "全 42 古物", "全 53 矿物", "煤尘精灵", "铁砧重铸");
+    }
 
     @Test
     void returnsAssistantAnswerThroughSharedRetrievalPath() {
