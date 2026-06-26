@@ -259,6 +259,23 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesTrinketAndAnvilQueriesAsGuide() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        StardewQueryPlan trinkets = planner.plan("小饰品哪个好，怎么获得");
+        StardewQueryPlan frogEgg = planner.plan("青蛙蛋适合刷怪物掉落吗");
+        StardewQueryPlan magicQuiver = planner.plan("魔法箭筒铁砧刷什么词条");
+
+        assertThat(trinkets.getIntents()).hasSize(1);
+        assertThat(trinkets.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(frogEgg.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(magicQuiver.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+    }
+
+    @Test
     void localFallbackStillClassifiesSkullCavernFoodQuestionsAsCooking() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

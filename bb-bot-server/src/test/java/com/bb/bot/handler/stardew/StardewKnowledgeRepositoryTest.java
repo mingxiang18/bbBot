@@ -32,7 +32,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
-        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(36);
+        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
     }
 
     @Test
@@ -68,6 +68,21 @@ class StardewKnowledgeRepositoryTest {
         assertThat(guide.getSections()).extracting(StardewData.GuideSection::getTitle)
                 .contains("武器宝石锻造", "武器和工具附魔", "无限武器", "戒指合成和拆解");
         assertThat(guide.getSourceUrls()).contains("https://stardewvalleywiki.com/Forge");
+    }
+
+    @Test
+    void combatTrinketsGuideIsCovered() {
+        StardewData.GuideTopic guide = repository.guides().stream()
+                .filter(topic -> "combat_trinkets".equals(topic.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(guide.getName()).isEqualTo("小饰品与铁砧重铸");
+        assertThat(guide.getCategory()).isEqualTo("combat");
+        assertThat(guide.getAliases()).contains("小饰品", "铁砧重铸", "青蛙蛋", "魔法箭筒", "鹦鹉蛋");
+        assertThat(guide.getSections()).extracting(StardewData.GuideSection::getTitle)
+                .contains("解锁和获取", "掉落机制和刷法", "铁砧重铸", "全部小饰品效果", "选择建议");
+        assertThat(guide.getSourceUrls()).contains("https://stardewvalleywiki.com/Trinkets", "https://stardewvalleywiki.com/Anvil");
     }
 
     @Test

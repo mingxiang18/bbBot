@@ -741,6 +741,30 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：165 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 小饰品与铁砧重铸攻略补齐：
+
+- 本地通用攻略从 36 项扩到 37 项，新增 `combat_trinkets`：小饰品与铁砧重铸。
+- 按官方 Trinkets/Anvil/中文饰品/中文铁砧页面补齐：战斗精通解锁、获取方式、骷髅洞穴宝箱/怪物/容器掉落规则、窃贼戒指和怪物图鉴不影响饰品掉落、铁砧材料与重铸消耗、全部 8 个小饰品效果与可重铸数值。
+- 玩法建议补齐：仙女盒/寒冰法杖偏保命控场，魔法箭筒偏输出，鹦鹉蛋偏刷钱，青蛙蛋不适合补掉落/任务/怪物根除。
+- 路由保护：
+  - `StardewQueryPlannerService` fallback 新增 `looksLikeTrinketQuery`，小饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归 `GUIDE`。
+  - `StardewGuideRetriever` 遇到饰品类 GUIDE 查询补 `饰品攻略` hint，避免再被 `mastery` 精通总览抢答。
+  - `StardewGuideTool` 描述补齐小饰品/铁砧重铸类问题，继续要求命令入口和 AI tool 走同一套分类检索整合路径。
+- 测试补充：
+  - `StardewKnowledgeRepositoryTest` 校验 `combat_trinkets` 存在、分类为 `combat`、核心别名/章节/来源齐全。
+  - `StardewGuideServiceTest` 覆盖小饰品哪个好、青蛙蛋是否适合刷掉落、魔法箭筒重铸词条、鹦鹉蛋最高等级收入门槛。
+  - `StardewGuideRetrieverTest` 覆盖 typed `GUIDE` 饰品多关键词检索，确认不串到精通总览、资源或工具升级。
+  - `StardewQueryPlannerServiceTest` 覆盖 AI 不可用时饰品和铁砧类问题 fallback 分类归 `GUIDE`。
+
+本轮验证结果：
+
+- JSON 轻量校验：`guides=37`，`combat_trinkets` 5 个章节、4 个来源，重复 id 为空；`mastery` 不再保留 `小饰品/铁砧` 弱别名，`combat_trinkets` 保留精确 `铁砧` 别名。
+- `git diff --check`：无 whitespace 问题。
+- 首次 focused tests 暴露 `魔法箭筒铁砧刷什么词条` 被 `mastery` 抢答；修复方式是调整数据归属，移除 `mastery` 的 `小饰品/铁砧` 弱别名，而不是放宽断言。
+- `StardewKnowledgeRepositoryTest,StardewGuideServiceTest,StardewGuideRetrieverTest,StardewQueryPlannerServiceTest`：158 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：169 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -765,7 +789,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；火山锻造、武器/工具附魔、无限武器和戒指合成已补一版攻略；但特殊工具、全部钓具数值、全部附魔概率/武器数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通系统奖励/配方/优先级、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，火山锻造/附魔已补一版通用攻略；后续还需继续补技能相关装备、全部附魔概率、精通小饰品全数值和更细的场景化路线。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通系统奖励/配方/优先级、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，火山锻造/附魔已补一版通用攻略，小饰品/铁砧重铸已补全数值和高频建议；后续还需继续补技能相关装备、全部附魔概率/武器数值和更细的场景化路线。
 
 ## 后续补齐方向
 
@@ -776,7 +800,7 @@ mysql(misu-mysql-local) Up
    - 全作物、果树、季节、成熟天数、基础收益、收集包用途；首批 30 个核心作物已结构化
    - 全建筑、房屋升级、动物、机器；首批核心农场建筑、房屋升级、后期魔法建筑/社区升级和 80 个核心机器/制作设备/常用 craftable 已结构化，后续补多人小屋样式、宠物碗、岛屿农舍、温室等特殊建筑和全部机器设备
    - 全工具、鱼竿、附魔、锻造、特殊工具和使用路线；首批工具升级费用/材料已结构化，火山锻造/武器和工具附魔/无限武器/戒指合成已补一版高频攻略
-   - 全技能升级、职业选择、经验获取、快速升级路线、Mastery、技能书、职业重置、技能食物 buff、技能相关装备和附魔搭配；Mastery 已补五系奖励和高频配方，后续继续补小饰品全掉落/全数值
+   - 全技能升级、职业选择、经验获取、快速升级路线、Mastery、技能书、职业重置、技能食物 buff、技能相关装备和附魔搭配；Mastery 已补五系奖励和高频配方，小饰品/铁砧重铸已补全数值，后续继续补全部附魔概率、武器数值和更细的战斗流派搭配
    - 矿井、骷髅洞穴、火山、怪物掉落、博物馆、烹饪、制作；首批 91 个高频资源获取条目已结构化，已补煤炭、太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，后续继续补全 42 件古物、53 件矿物和完整怪物掉落表
 2. 测试覆盖：
    - 每个 intent 至少 happy path + miss + alias + 条件过滤

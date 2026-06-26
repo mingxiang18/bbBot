@@ -524,6 +524,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedGuideIntentRetrievesTrinketEvidenceWithoutCrossRoutingToMasteryOrResources() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.GUIDE, "小饰品哪个好"),
+                intent(StardewGuideIntent.GUIDE, "青蛙蛋刷怪物掉落好吗"),
+                intent(StardewGuideIntent.GUIDE, "魔法箭筒铁砧刷什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("小饰品哪个好，青蛙蛋和魔法箭筒怎么刷", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("小饰品与铁砧重铸", "战斗精通", "铱锭 x3", "仙女盒", "寒冰法杖")
+                .contains("被青蛙吃掉的敌人不会掉落物品", "完美为 0.9 秒冷却", "生成率 4%")
+                .doesNotContain("精通系统：", "10,000 / 15,000 / 20,000 / 25,000 / 30,000", "资源获取方式", "工具升级总览");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

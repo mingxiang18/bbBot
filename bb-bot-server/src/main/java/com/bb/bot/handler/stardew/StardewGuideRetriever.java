@@ -87,9 +87,13 @@ public class StardewGuideRetriever {
     }
 
     private String ensureGuideHint(String query) {
+        if (containsAny(query, "小饰品", "饰品", "铁砧", "重铸", "仙女盒", "青蛙蛋", "寒冰法杖",
+                "黄金马刺", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶", "trinket")) {
+            return ensureContains(query, "饰品攻略");
+        }
         if (containsAny(query, "精通", "精通点", "精通洞穴", "铱金镰刀", "祝福雕像", "金色动物饼干",
                 "矮人之王雕像", "重型熔炉", "神秘树种子", "宝藏图腾", "高级铱金鱼竿",
-                "挑战鱼饵", "金色钓鱼宝箱", "铁砧", "迷你锻造台", "小饰品", "mastery")) {
+                "挑战鱼饵", "金色钓鱼宝箱", "迷你锻造台", "mastery")) {
             return ensureContains(query, "精通系统");
         }
         if (containsAny(query, "锻造", "附魔", "火山晶石", "银河之魂", "无限武器", "戒指合成",

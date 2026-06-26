@@ -51,7 +51,8 @@ public class StardewQueryPlannerService {
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
                         - 技能等级怎么升、快速升级、职业怎么选、战斗/采矿/钓鱼/耕种/觅食经验路线归为 SKILL。
-                        - 精通系统、精通点、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、祝福雕像、铁砧、迷你锻造台归为 GUIDE。
+                        - 精通系统、精通点、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、祝福雕像归为 GUIDE。
+                        - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
@@ -96,6 +97,9 @@ public class StardewQueryPlannerService {
         }
         if (containsAny(q, "收集包", "献祭", "社区中心", "电影院", "失踪的包")) {
             return StardewGuideIntent.BUNDLE;
+        }
+        if (looksLikeTrinketQuery(q)) {
+            return StardewGuideIntent.GUIDE;
         }
         if (looksLikeMasteryQuery(q)) {
             return StardewGuideIntent.GUIDE;
@@ -186,7 +190,15 @@ public class StardewQueryPlannerService {
                 "精通", "精通点", "精通洞穴", "精通等级", "精通奖励", "精通先选", "精通选",
                 "铱金镰刀", "祝福雕像", "金色动物饼干", "矮人之王雕像", "重型熔炉",
                 "神秘树种子", "宝藏图腾", "高级铱金鱼竿", "挑战鱼饵", "金色钓鱼宝箱",
-                "铁砧", "迷你锻造台", "小饰品", "mastery", "mastery point");
+                "mastery", "mastery point");
+    }
+
+    private boolean looksLikeTrinketQuery(String query) {
+        return containsAny(query,
+                "小饰品", "饰品", "铁砧", "重铸", "仙女盒", "青蛙蛋", "寒冰法杖",
+                "黄金马刺", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶",
+                "Basilisk Paw", "Fairy Box", "Frog Egg", "Ice Rod", "Golden Spur",
+                "Magic Quiver", "Parrot Egg", "Magic Hair Gel", "trinket");
     }
 
     private boolean looksLikeBookQuery(String query) {

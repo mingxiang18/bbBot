@@ -979,8 +979,27 @@ class StardewGuideServiceTest {
         assertThat(priority.getAnswer()).contains("铱金镰刀", "祝福雕像", "金色动物饼干", "矮人之王雕像", "重型熔炉");
         assertThat(rod.getAnswer()).contains("高级铱金鱼竿", "钓鱼精通", "25,000g", "2 个钓具");
         assertThat(bait.getAnswer()).contains("挑战鱼饵", "骨头碎片 x5", "苔藓 x2", "一次制作 5 个");
-        assertThat(trinkets.getAnswer()).contains("铁砧", "小饰品", "铱锭 x3", "迷你锻造台");
+        assertThat(trinkets.getAnswer()).contains("小饰品与铁砧重铸", "铱锭 x3", "仙女盒", "寒冰法杖", "魔法箭筒");
         assertThat(priority.getSourceUrls()).contains("https://stardewvalleywiki.com/Mastery");
+    }
+
+    @Test
+    void answersCombatTrinketsAndAnvilGuideLocally() {
+        StardewGuideResult best = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 小饰品哪个好");
+        StardewGuideResult frog = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 青蛙蛋适合刷怪物掉落吗");
+        StardewGuideResult quiver = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 魔法箭筒铁砧刷什么词条");
+        StardewGuideResult parrot = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 鹦鹉蛋最高等级要多少钱");
+
+        assertThat(best.getIntent()).isEqualTo("guide");
+        assertThat(best.getAnswer())
+                .contains("小饰品与铁砧重铸", "战斗精通", "只能装备 1 个小饰品")
+                .contains("窃贼戒指和怪物图鉴不会提高小饰品掉落概率")
+                .contains("铁锭 x50", "铱锭 x3", "10 分钟")
+                .contains("仙女盒", "寒冰法杖", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶");
+        assertThat(frog.getAnswer()).contains("被青蛙吃掉的敌人不会掉落物品", "不计入任务或怪物根除目标");
+        assertThat(quiver.getAnswer()).contains("完美为 0.9 秒冷却", "30-35 伤害", "生成率 4%");
+        assertThat(parrot.getAnswer()).contains("4 级需要总收入至少 2,250,000g", "刷钱");
+        assertThat(best.getSourceUrls()).contains("https://stardewvalleywiki.com/Trinkets", "https://stardewvalleywiki.com/Anvil");
     }
 
     @Test
