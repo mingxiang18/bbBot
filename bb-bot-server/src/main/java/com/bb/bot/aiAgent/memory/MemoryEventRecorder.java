@@ -1,11 +1,13 @@
 package com.bb.bot.aiAgent.memory;
 
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.database.aiAgent.entity.AiMemoryEvent;
 import com.bb.bot.database.aiAgent.service.IAiMemoryEventService;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
+import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ import java.util.Map;
 @Slf4j
 @Component
 public class MemoryEventRecorder {
+
+    private static final ThreadLocal<String> OUTBOUND_KIND_OVERRIDE = new ThreadLocal<>();
 
     @Autowired
     private IAiMemoryEventService eventService;
@@ -109,6 +113,51 @@ public class MemoryEventRecorder {
         }
     }
 
+    /** Bot 出站消息信封 → 落库。用于统一记录所有真正发到聊天窗口里的回复。 */
+    public Long recordOutbound(BbSendMessage out, String defaultKind) {
+        if (out == null) return null;
+        List<BbMessageContent> contents = out.getMessageList();
+        if (contents == null || contents.isEmpty()) return null;
+        try {
+            String sessionId = sessionTracker.attachSessionId(out.getUserId(), out.getGroupId(), out.getBotType());
+            AiMemoryEvent e = new AiMemoryEvent();
+            e.setSessionId(sessionId);
+            e.setPlatform(out.getBotType());
+            e.setUserId(out.getUserId());
+            e.setGroupId(out.getGroupId());
+            e.setUserName("bot");
+            e.setSource("bot");
+            e.setKind(currentOutboundKind(defaultKind));
+            e.setMessageId(IdWorker.getIdStr());
+            e.setText(renderText(contents));
+            e.setPayload(serializeContentList(contents));
+            e.setCreatedAt(LocalDateTime.now());
+            eventService.save(e);
+            return e.getId();
+        } catch (Exception ex) {
+            log.warn("recordOutbound(sendMessage) 失败（非致命）", ex);
+            return null;
+        }
+    }
+
+    /** 在当前线程内给下一次统一出站记录指定 kind，不影响实际消息发送协议。 */
+    public void withOutboundKind(String kind, Runnable action) {
+        if (action == null) return;
+        String previous = OUTBOUND_KIND_OVERRIDE.get();
+        if (StringUtils.isNotBlank(kind)) {
+            OUTBOUND_KIND_OVERRIDE.set(kind);
+        }
+        try {
+            action.run();
+        } finally {
+            if (previous == null) {
+                OUTBOUND_KIND_OVERRIDE.remove();
+            } else {
+                OUTBOUND_KIND_OVERRIDE.set(previous);
+            }
+        }
+    }
+
     /** 工具调用摘要事件（详情仍在 ai_tool_invocation_log） */
     public Long recordToolInvocation(String sessionId, String userId, String platform,
                                       String toolName, String argsJson, String status) {
@@ -163,5 +212,32 @@ public class MemoryEventRecorder {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private String currentOutboundKind(String defaultKind) {
+        String override = OUTBOUND_KIND_OVERRIDE.get();
+        return StringUtils.defaultIfBlank(override, StringUtils.defaultIfBlank(defaultKind, "handler_reply"));
+    }
+
+    private String renderText(List<BbMessageContent> contents) {
+        if (contents == null || contents.isEmpty()) return null;
+        StringBuilder sb = new StringBuilder();
+        for (BbMessageContent c : contents) {
+            if (c == null || c.getData() == null) {
+                continue;
+            }
+            String type = c.getType();
+            if (BbSendMessageType.TEXT.equals(type)) {
+                sb.append(c.getData());
+            } else if (BbSendMessageType.AT.equals(type)) {
+                sb.append('@').append(c.getData()).append(' ');
+            } else if (BbSendMessageType.NET_IMAGE.equals(type) || BbSendMessageType.LOCAL_IMAGE.equals(type)) {
+                sb.append("[图片]");
+            } else if (BbSendMessageType.NET_FILE.equals(type) || BbSendMessageType.LOCAL_FILE.equals(type)) {
+                sb.append("[附件文件]");
+            }
+        }
+        String text = sb.toString().trim();
+        return StringUtils.isBlank(text) ? null : text;
     }
 }

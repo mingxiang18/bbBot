@@ -1,6 +1,7 @@
 package com.bb.bot.common.util;
 
 import com.bb.bot.api.BbMessageApi;
+import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.diagnostics.MessageTrace;
 import com.bb.bot.diagnostics.MessageTraceRecorder;
 import com.bb.bot.entity.bb.BbMessageContent;
@@ -31,6 +32,9 @@ public class BbReplies {
     /** 处理轨迹记录（自查用），缺失时静默跳过。 */
     @Autowired(required = false)
     private MessageTraceRecorder messageTraceRecorder;
+
+    @Autowired(required = false)
+    private MemoryEventRecorder memoryEventRecorder;
 
     @Autowired
     public BbReplies(BbMessageApi messageApi) {
@@ -76,6 +80,16 @@ public class BbReplies {
     }
 
     /**
+     * 自定义内容列表回复，并指定记忆事件 kind。用于公共 AI handler 保留 chat_reply 审计语义；
+     * 业务 handler 继续使用 {@link #send(BbReceiveMessage, List)}，默认由统一发送层记为 handler_reply。
+     */
+    public void sendWithMemoryKind(BbReceiveMessage src, List<BbMessageContent> contents, String memoryKind) {
+        BbSendMessage out = new BbSendMessage(src);
+        out.setMessageList(contents);
+        sendInternal(out, "send", contents == null ? 0 : contents.size(), memoryKind);
+    }
+
+    /**
      * 统一发送出口：记录发送尝试与结果，发送失败的异常照原样上抛（不改变现有调用方行为）。
      *
      * @param out   待发送消息
@@ -83,9 +97,17 @@ public class BbReplies {
      * @param size  载荷规模（文本长度或内容条数），便于排查空回复
      */
     private void sendInternal(BbSendMessage out, String via, int size) {
+        sendInternal(out, via, size, null);
+    }
+
+    private void sendInternal(BbSendMessage out, String via, int size, String memoryKind) {
         long start = System.currentTimeMillis();
         try {
-            messageApi.sendMessage(out);
+            if (memoryEventRecorder != null && memoryKind != null) {
+                memoryEventRecorder.withOutboundKind(memoryKind, () -> messageApi.sendMessage(out));
+            } else {
+                messageApi.sendMessage(out);
+            }
             log.info("回复已发出 via={} platform={} type={} group={} user={} replyTo={} size={} cost={}ms",
                     via, out.getBotType(), out.getMessageType(), out.getGroupId(), out.getUserId(),
                     out.getReceiveMessageId(), size, System.currentTimeMillis() - start);

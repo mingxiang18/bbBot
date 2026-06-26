@@ -1,6 +1,7 @@
 package com.bb.bot.common.util;
 
 import com.bb.bot.api.BbMessageApi;
+import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.constant.BbSendMessageType;
 import com.bb.bot.entity.bb.BbMessageContent;
 import com.bb.bot.entity.bb.BbReceiveMessage;
@@ -13,8 +14,12 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
  * 验证 {@link BbReplies} 构造并发送的 {@link BbSendMessage} 结构正确，
@@ -139,5 +144,22 @@ class BbRepliesTest {
 
         BbSendMessage sent = captureSent();
         assertThat(sent.getMessageList()).isEmpty();
+    }
+
+    @Test
+    void sendWithMemoryKind_should_wrapSendWithRequestedKind() {
+        MemoryEventRecorder recorder = mock(MemoryEventRecorder.class);
+        setField(replies, "memoryEventRecorder", recorder);
+        doAnswer(invocation -> {
+            invocation.getArgument(1, Runnable.class).run();
+            return null;
+        }).when(recorder).withOutboundKind(eq("chat_reply"), any(Runnable.class));
+
+        replies.sendWithMemoryKind(receiveMessage(),
+                List.of(BbMessageContent.buildTextContent("AI 回复")), "chat_reply");
+
+        verify(recorder).withOutboundKind(eq("chat_reply"), any(Runnable.class));
+        BbSendMessage sent = captureSent();
+        assertThat(sent.getMessageList()).extracting(BbMessageContent::getData).containsExactly("AI 回复");
     }
 }
