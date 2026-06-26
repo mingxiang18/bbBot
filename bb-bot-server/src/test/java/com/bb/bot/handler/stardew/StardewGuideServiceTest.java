@@ -370,6 +370,23 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFullArtifactResourceQuestionsWithoutMuseumGuideCrossRouting() {
+        StardewGuideResult ancientDoll = service.answer("星露谷 古代玩偶这个古物怎么获得");
+        StardewGuideResult dwarfScrollTwo = service.answerEvidence(StardewGuideIntent.RESOURCE, "矮人卷轴 II 哪里刷");
+        StardewGuideResult strangeDollYellow = service.answerEvidence(StardewGuideIntent.RESOURCE, "黄色诡异玩偶怎么拿");
+        StardewGuideResult nautilusFossil = service.answerEvidence(StardewGuideIntent.RESOURCE, "鹦鹉螺化石哪里找");
+        StardewGuideResult prehistoricVertebra = service.answerEvidence(StardewGuideIntent.RESOURCE, "史前脊骨怎么获得");
+
+        assertThat(ancientDoll.getIntent()).isEqualTo("resource");
+        assertThat(ancientDoll.getAnswer()).contains("古代玩偶获取方式", "冬日星盛宴", "古物宝藏")
+                .doesNotContain("95 件", "42 件古物", "53 件矿物");
+        assertThat(dwarfScrollTwo.getAnswer()).contains("矮人卷轴 II获取方式", "矿井 1-39", "煤尘精灵");
+        assertThat(strangeDollYellow.getAnswer()).contains("诡异玩偶（黄）获取方式", "秘密纸条 #18");
+        assertThat(nautilusFossil.getAnswer()).contains("鹦鹉螺化石获取方式", "不是冬季沙滩采集物");
+        assertThat(prehistoricVertebra.getAnswer()).contains("史前脊骨获取方式", "公交车站", "霸王喷火龙");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

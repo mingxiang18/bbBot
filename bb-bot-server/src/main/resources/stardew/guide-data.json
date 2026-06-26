@@ -15489,38 +15489,6 @@
       ]
     },
     {
-      "id": "ancient_seed",
-      "name": "上古种子",
-      "nameEn": "Ancient Seed",
-      "aliases": [
-        "远古种子",
-        "古代种子",
-        "ancient seed"
-      ],
-      "acquisitions": [
-        {
-          "type": "稳定倾向",
-          "detail": "捐献上古种子古物后获得可种植种子配方。"
-        },
-        {
-          "type": "古物",
-          "detail": "山区/森林等古物点、钓鱼宝箱、怪物掉落可能出上古种子古物。"
-        },
-        {
-          "type": "种子生产器",
-          "detail": "任意作物进种子生产器有极低概率变成上古种子。"
-        }
-      ],
-      "recommendation": "拿到第一颗后优先温室种植，再用种子生产器滚雪球。",
-      "usedIn": [
-        "上古水果",
-        "温室收益"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/上古种子"
-      ]
-    },
-    {
       "id": "cloth",
       "name": "布料",
       "nameEn": "Cloth",
@@ -16358,43 +16326,6 @@
       ]
     },
     {
-      "id": "dinosaur_egg",
-      "name": "恐龙蛋",
-      "nameEn": "Dinosaur Egg",
-      "aliases": [
-        "恐龙蛋",
-        "dinosaur egg",
-        "恐龙怎么养"
-      ],
-      "acquisitions": [
-        {
-          "type": "史前层",
-          "detail": "骷髅洞穴史前层可采集恐龙蛋，也能打霸王喷火龙获取。"
-        },
-        {
-          "type": "古物",
-          "detail": "深山/采石场远古斑点有低概率挖出。"
-        },
-        {
-          "type": "钓鱼",
-          "detail": "钓鱼宝箱有低概率开出。"
-        },
-        {
-          "type": "其他",
-          "detail": "电影院抓娃娃机、满好感宠物狗每日首次抚摸也可能给。"
-        }
-      ],
-      "recommendation": "第一颗恐龙蛋优先放入大鸡舍孵化器，12 天孵出恐龙；后续恐龙每 7 天产蛋，再补博物馆或做恐龙蛋黄酱。",
-      "usedIn": [
-        "孵恐龙",
-        "博物馆",
-        "恐龙蛋黄酱"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/恐龙蛋"
-      ]
-    },
-    {
       "id": "dwarf_scrolls",
       "name": "矮人卷轴",
       "nameEn": "Dwarf Scrolls",
@@ -16424,12 +16355,1358 @@
       ],
       "recommendation": "四卷都要捐给博物馆才能拿矮人语教程，之后才能正常和矮人交易；缺某一卷时按层数定点刷，比全矿井乱跑更快。",
       "usedIn": [
-        "博物馆",
+        "博物馆捐赠",
         "矮人语教程",
         "鬼鱼鱼塘任务"
       ],
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/矮人卷轴_I"
+      ]
+    },
+    {
+      "id": "dwarf_scroll_i",
+      "name": "矮人卷轴 I",
+      "nameEn": "Dwarf Scroll I",
+      "aliases": [
+        "矮人卷轴 I",
+        "Dwarf Scroll I",
+        "矮人卷轴1",
+        "矮人卷轴一",
+        "dwarf scroll 1"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井/骷髅洞穴锄地",
+          "detail": "任意层锄地有低概率获得。"
+        },
+        {
+          "type": "怪物掉落",
+          "detail": "蝙蝠、臭虫、苍蝇、掘地虫、绿色史莱姆、蛆、岩石蟹、石魔等低概率掉落。"
+        }
+      ],
+      "recommendation": "缺卷轴 I 时可以在矿井浅层顺手打怪和锄地；如果只是补四卷，矿井电梯层反复刷会比随缘挖更稳。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "矮人语教程"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dwarf_scroll_ii",
+      "name": "矮人卷轴 II",
+      "nameEn": "Dwarf Scroll II",
+      "aliases": [
+        "矮人卷轴 II",
+        "Dwarf Scroll II",
+        "矮人卷轴2",
+        "矮人卷轴二",
+        "dwarf scroll 2"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井锄地",
+          "detail": "矿井 1-39 层锄地有低概率获得。"
+        },
+        {
+          "type": "怪物掉落",
+          "detail": "幽灵、冰霜蝙蝠、煤尘精灵和蓝色史莱姆等低概率掉落。"
+        }
+      ],
+      "recommendation": "缺卷轴 II 时优先刷矿井冰冻层，顺手刷煤尘精灵还能补煤炭。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "矮人语教程"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dwarf_scroll_iii",
+      "name": "矮人卷轴 III",
+      "nameEn": "Dwarf Scroll III",
+      "aliases": [
+        "矮人卷轴 III",
+        "Dwarf Scroll III",
+        "矮人卷轴3",
+        "矮人卷轴三",
+        "dwarf scroll 3"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "蓝色史莱姆掉率较高，其他多种怪物也会低概率掉落。"
+        },
+        {
+          "type": "刷法",
+          "detail": "矿井冰冻层和熔岩层都能顺路碰到对应怪物。"
+        }
+      ],
+      "recommendation": "缺卷轴 III 时刷蓝色史莱姆更直接；如果同时缺煤，可以在冰冻层连刷。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "矮人语教程"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dwarf_scroll_iv",
+      "name": "矮人卷轴 IV",
+      "nameEn": "Dwarf Scroll IV",
+      "aliases": [
+        "矮人卷轴 IV",
+        "Dwarf Scroll IV",
+        "矮人卷轴4",
+        "矮人卷轴四",
+        "dwarf scroll 4"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井锄地",
+          "detail": "矿井 80 层以后锄地有低概率获得。"
+        },
+        {
+          "type": "怪物掉落",
+          "detail": "多数怪物有极低概率掉落，但飞蛇、骷髅、荒野石魔、碳幽灵、铱蝠、铱蟹和幽灵头骨等除外。"
+        }
+      ],
+      "recommendation": "缺卷轴 IV 时常用 95 层入口附近反复锄地；四卷捐齐后才解锁矮人语教程。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "矮人语教程"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "chipped_amphora",
+      "name": "有缺口的土罐",
+      "nameEn": "Chipped Amphora",
+      "aliases": [
+        "有缺口的土罐",
+        "Chipped Amphora",
+        "缺口土罐",
+        "陶罐",
+        "破土罐"
+      ],
+      "acquisitions": [
+        {
+          "type": "小镇远古斑点",
+          "detail": "小镇远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "这是小镇池古物；冬季远古斑点更多，缺它时每天扫小镇更合适。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "arrowhead",
+      "name": "箭头",
+      "nameEn": "Arrowhead",
+      "aliases": [
+        "箭头",
+        "Arrowhead",
+        "箭矢头",
+        "箭镞"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "深山、森林和公交车站远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "公交车站、深山和森林都能补；后期差最后几件时可用古物宝藏碰池子。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "ancient_doll",
+      "name": "古代玩偶",
+      "nameEn": "Ancient Doll",
+      "aliases": [
+        "古代玩偶",
+        "Ancient Doll",
+        "古代娃娃",
+        "ancient doll"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "深山、森林、公交车站和小镇远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/节日/宝藏",
+          "detail": "钓鱼宝箱、冬日星盛宴礼物和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "古代玩偶有较多来源；如果做重混儿童收集包或想拿秘密物品，建议第一件捐后再留一件。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "重混儿童收集包",
+        "贾斯喜爱礼物",
+        "秘密物品"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "elvish_jewelry",
+      "name": "精灵珠宝",
+      "nameEn": "Elvish Jewelry",
+      "aliases": [
+        "精灵珠宝",
+        "Elvish Jewelry",
+        "精灵首饰",
+        "elven jewelry"
+      ],
+      "acquisitions": [
+        {
+          "type": "森林远古斑点",
+          "detail": "森林远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "森林池古物，平时看到森林远古斑点就挖；后期缺口用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "chewing_stick",
+      "name": "咀嚼洁齿棒",
+      "nameEn": "Chewing Stick",
+      "aliases": [
+        "咀嚼洁齿棒",
+        "Chewing Stick",
+        "咀嚼棒",
+        "洁齿棒"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "深山、森林和小镇远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/钓鱼/宝藏",
+          "detail": "掘地虫掉落，钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "想主动刷可去矿井找掘地虫；否则扫深山、森林、小镇远古斑点。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "ornamental_fan",
+      "name": "装饰用扇子",
+      "nameEn": "Ornamental Fan",
+      "aliases": [
+        "装饰用扇子",
+        "Ornamental Fan",
+        "装饰扇",
+        "扇子"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "海滩、森林和小镇远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "海滩概率相对更高；冬季每天扫海滩能顺便补多件海滩古物。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dinosaur_egg",
+      "name": "恐龙蛋",
+      "nameEn": "Dinosaur Egg",
+      "aliases": [
+        "恐龙蛋",
+        "Dinosaur Egg",
+        "恐龙怎么养"
+      ],
+      "acquisitions": [
+        {
+          "type": "史前层",
+          "detail": "骷髅洞穴史前层可采集，霸王喷火龙也会掉落。"
+        },
+        {
+          "type": "古物/钓鱼",
+          "detail": "深山远古斑点和钓鱼宝箱有低概率获得。"
+        },
+        {
+          "type": "其他",
+          "detail": "电影院抓娃娃机、满好感宠物狗每日首次抚摸也可能给。"
+        }
+      ],
+      "recommendation": "第一颗恐龙蛋优先放入大鸡舍孵化器，12 天孵出恐龙；后续恐龙每 7 天产蛋，再补博物馆或做恐龙蛋黄酱。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "孵恐龙",
+        "恐龙蛋黄酱"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "rare_disc",
+      "name": "稀有圆盘",
+      "nameEn": "Rare Disc",
+      "aliases": [
+        "稀有圆盘",
+        "Rare Disc",
+        "rare disc",
+        "黑色圆盘"
+      ],
+      "acquisitions": [
+        {
+          "type": "怪物掉落",
+          "detail": "蝙蝠、暗影狂徒、暗影萨满和蜘蛛等低概率掉落。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "属于较烦人的古物缺口；后期可刷暗影怪/蝙蝠，或用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "烧焦的祭品奖励条件"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "ancient_sword",
+      "name": "古剑",
+      "nameEn": "Ancient Sword",
+      "aliases": [
+        "古剑",
+        "Ancient Sword",
+        "古代剑",
+        "古剑残骸"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "森林和深山远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "森林和深山都能出；第一件捐掉，重复品可放鱼缸装饰或送阿比盖尔。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鱼缸装饰",
+        "阿比盖尔喜欢的礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "rusty_spoon",
+      "name": "生锈的汤匙",
+      "nameEn": "Rusty Spoon",
+      "aliases": [
+        "生锈的汤匙",
+        "Rusty Spoon",
+        "锈汤匙",
+        "旧汤匙"
+      ],
+      "acquisitions": [
+        {
+          "type": "小镇远古斑点",
+          "detail": "小镇远古斑点较常见。"
+        },
+        {
+          "type": "矿井/钓鱼/宝藏",
+          "detail": "矿井或骷髅洞穴锄地、钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "缺它时优先扫小镇远古斑点；浣熊也可能要求它，重复品可留一把。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "浣熊请求"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "rusty_spur",
+      "name": "生锈的靴刺",
+      "nameEn": "Rusty Spur",
+      "aliases": [
+        "生锈的靴刺",
+        "Rusty Spur",
+        "锈靴刺",
+        "靴刺"
+      ],
+      "acquisitions": [
+        {
+          "type": "农场远古斑点",
+          "detail": "农场远古斑点概率较高。"
+        },
+        {
+          "type": "矿井/钓鱼/宝藏",
+          "detail": "矿井或骷髅洞穴锄地、钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "这是农场池古物；冬季农场远古斑点多时顺手挖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "rusty_cog",
+      "name": "生锈的齿轮",
+      "nameEn": "Rusty Cog",
+      "aliases": [
+        "生锈的齿轮",
+        "Rusty Cog",
+        "锈齿轮",
+        "齿轮"
+      ],
+      "acquisitions": [
+        {
+          "type": "深山远古斑点",
+          "detail": "深山远古斑点较常见。"
+        },
+        {
+          "type": "矿井/钓鱼/宝藏",
+          "detail": "矿井或骷髅洞穴锄地、钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "缺生锈的齿轮时扫深山远古斑点，顺便看矿井锄地和钓鱼宝箱。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "chicken_statue_artifact",
+      "name": "鸡雕像",
+      "nameEn": "Chicken Statue",
+      "aliases": [
+        "鸡雕像",
+        "Chicken Statue",
+        "鸡雕像古物"
+      ],
+      "acquisitions": [
+        {
+          "type": "农场远古斑点",
+          "detail": "农场远古斑点较常见。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "捐赠后可获得鸡雕像家具；农场远古斑点看到就挖。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鸡雕像家具"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "ancient_seed",
+      "name": "上古种子",
+      "nameEn": "Ancient Seed",
+      "aliases": [
+        "上古种子",
+        "Ancient Seed",
+        "远古种子",
+        "古代种子",
+        "古代种子古物"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "森林和深山远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/怪物",
+          "detail": "钓鱼宝箱，臭虫、洞穴蝇、蛆、突变苍蝇和突变蛆等怪物低概率掉落。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "第一颗古代种子古物通常先捐博物馆，奖励可种植的上古种子配方和种子包；之后再滚温室收益。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "上古种子配方",
+        "上古水果"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_tool",
+      "name": "史前工具",
+      "nameEn": "Prehistoric Tool",
+      "aliases": [
+        "史前工具",
+        "Prehistoric Tool",
+        "史前挖掘工具"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "公交车站、森林和深山远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "公交车站概率较高；补古物时公交车站、森林、深山一起扫。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dried_starfish",
+      "name": "干海星",
+      "nameEn": "Dried Starfish",
+      "aliases": [
+        "干海星",
+        "Dried Starfish",
+        "干燥海星"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩远古斑点",
+          "detail": "海滩远古斑点概率较高。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "部分鱼塘任务可能需要；第一件先捐，之后可留一件。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "anchor_artifact",
+      "name": "锚",
+      "nameEn": "Anchor",
+      "aliases": [
+        "锚",
+        "Anchor",
+        "船锚"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩远古斑点",
+          "detail": "海滩远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "海滩古物缺口之一；冬季扫海滩效率更高。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鱼缸装饰"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "glass_shards",
+      "name": "玻璃碎片",
+      "nameEn": "Glass Shards",
+      "aliases": [
+        "玻璃碎片",
+        "Glass Shards",
+        "碎玻璃"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩远古斑点",
+          "detail": "海滩远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "海滩古物缺口之一；第一件捐博物馆即可。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "bone_flute",
+      "name": "骨笛",
+      "nameEn": "Bone Flute",
+      "aliases": [
+        "骨笛",
+        "Bone Flute",
+        "骨制长笛"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "深山、森林和小镇远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/宝藏",
+          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
+        }
+      ],
+      "recommendation": "捐赠骨笛并满足古物数量条件可拿长笛块；重复品可进碎骨机。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "长笛块",
+        "碎骨机",
+        "阿比盖尔喜欢的礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_handaxe",
+      "name": "史前手斧",
+      "nameEn": "Prehistoric Handaxe",
+      "aliases": [
+        "史前手斧",
+        "Prehistoric Handaxe",
+        "史前斧头",
+        "手斧"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "公交车站、深山和森林远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "公交车站、深山和森林都能出；缺它时冬季扫这三个区域。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dwarvish_helm",
+      "name": "矮人头盔",
+      "nameEn": "Dwarvish Helm",
+      "aliases": [
+        "矮人头盔",
+        "Dwarvish Helm",
+        "矮人帽",
+        "dwarf helm"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井锄地",
+          "detail": "矿井 1-39 层锄地有低概率获得。"
+        },
+        {
+          "type": "晶球/宝藏",
+          "detail": "普通晶球、万象晶球和古物宝藏可能开出。"
+        }
+      ],
+      "recommendation": "缺矮人头盔时刷普通晶球或浅层矿井；后期也可用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "dwarf_gadget",
+      "name": "矮人小工具",
+      "nameEn": "Dwarf Gadget",
+      "aliases": [
+        "矮人小工具",
+        "Dwarf Gadget",
+        "矮人装置",
+        "矮人机器"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井锄地",
+          "detail": "矿井 40-79 层锄地有低概率获得。"
+        },
+        {
+          "type": "晶球/宝藏",
+          "detail": "岩浆晶球、万象晶球和古物宝藏都可能开出。"
+        }
+      ],
+      "recommendation": "既要捐博物馆，也用于制作农场电脑；第一件通常先捐，第二件留制作。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "农场电脑",
+        "玛鲁喜爱礼物",
+        "烧焦的祭品奖励条件"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "ancient_drum",
+      "name": "古代鼓",
+      "nameEn": "Ancient Drum",
+      "aliases": [
+        "古代鼓",
+        "Ancient Drum",
+        "古鼓"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "公交车站、森林和小镇远古斑点可能挖到。"
+        },
+        {
+          "type": "晶球/宝藏",
+          "detail": "冰封晶球、万象晶球和古物宝藏可能开出。"
+        }
+      ],
+      "recommendation": "捐赠古代鼓并满足古物数量条件可拿鼓块。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鼓块"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "golden_mask",
+      "name": "黄金面具",
+      "nameEn": "Golden Mask",
+      "aliases": [
+        "黄金面具",
+        "Golden Mask",
+        "金面具"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠远古斑点",
+          "detail": "沙漠远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "沙漠解锁后每天顺路看远古斑点；缺沙漠古物时用古物宝藏补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "golden_relic",
+      "name": "黄金遗物",
+      "nameEn": "Golden Relic",
+      "aliases": [
+        "黄金遗物",
+        "Golden Relic",
+        "金遗物"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠远古斑点",
+          "detail": "沙漠远古斑点可挖到。"
+        },
+        {
+          "type": "古物宝藏",
+          "detail": "古物宝藏也可能开出。"
+        }
+      ],
+      "recommendation": "部分鱼塘任务会要黄金遗物；第一件先捐，后续留一件备用。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "鱼塘任务"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "strange_doll_green",
+      "name": "诡异玩偶（绿）",
+      "nameEn": "Strange Doll (green)",
+      "aliases": [
+        "诡异玩偶（绿）",
+        "Strange Doll (green)",
+        "绿色诡异玩偶",
+        "绿诡异玩偶",
+        "green strange doll"
+      ],
+      "acquisitions": [
+        {
+          "type": "秘密纸条 #17",
+          "detail": "按秘密纸条 #17 的提示挖掘可获得。"
+        },
+        {
+          "type": "低概率来源",
+          "detail": "农场、公交车站、小镇、森林、深山、海滩远古斑点，矿井/骷髅洞穴锄地和钓鱼宝箱也可能获得。"
+        }
+      ],
+      "recommendation": "最稳是按秘密纸条 #17 定点挖；随机远古斑点概率很低，不建议硬等。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "贾斯喜爱礼物",
+        "秘密物品"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "strange_doll_yellow",
+      "name": "诡异玩偶（黄）",
+      "nameEn": "Strange Doll (yellow)",
+      "aliases": [
+        "诡异玩偶（黄）",
+        "Strange Doll (yellow)",
+        "黄色诡异玩偶",
+        "黄诡异玩偶",
+        "yellow strange doll"
+      ],
+      "acquisitions": [
+        {
+          "type": "秘密纸条 #18",
+          "detail": "按秘密纸条 #18 的提示挖掘可获得。"
+        },
+        {
+          "type": "低概率来源",
+          "detail": "农场、公交车站、小镇、森林、深山、海滩远古斑点，矿井/骷髅洞穴锄地和钓鱼宝箱也可能获得。"
+        }
+      ],
+      "recommendation": "最稳是按秘密纸条 #18 定点挖；随机来源概率很低。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "贾斯喜爱礼物"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_scapula",
+      "name": "史前肩胛骨",
+      "nameEn": "Prehistoric Scapula",
+      "aliases": [
+        "史前肩胛骨",
+        "Prehistoric Scapula",
+        "肩胛骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "森林和小镇远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "骷髅掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "史前骨头类缺口可集中挖骨头矿；未到姜岛前看森林和小镇远古斑点。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "树懒骨架",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_tibia",
+      "name": "史前胫骨",
+      "nameEn": "Prehistoric Tibia",
+      "aliases": [
+        "史前胫骨",
+        "Prehistoric Tibia",
+        "胫骨",
+        "腿骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "铁路和森林远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "霸王喷火龙掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "缺胫骨时铁路远古斑点很关键；后期史前层刷霸王喷火龙也能顺便补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "树懒骨架",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_skull",
+      "name": "史前头骨",
+      "nameEn": "Prehistoric Skull",
+      "aliases": [
+        "史前头骨",
+        "Prehistoric Skull",
+        "史前颅骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "深山远古斑点",
+          "detail": "深山远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "幽灵头骨掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "未到姜岛前看深山远古斑点；解锁姜岛后骨头矿是补骨头类的稳定路线。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "树懒骨架",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "skeletal_hand",
+      "name": "手部骨骼",
+      "nameEn": "Skeletal Hand",
+      "aliases": [
+        "手部骨骼",
+        "Skeletal Hand",
+        "手骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "边远森林和海滩远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "幽灵头骨掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "骨头类第一件先捐，重复可进碎骨机；缺它时扫边远森林和海滩。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_rib",
+      "name": "史前肋骨",
+      "nameEn": "Prehistoric Rib",
+      "aliases": [
+        "史前肋骨",
+        "Prehistoric Rib",
+        "肋骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "小镇和农场远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "霸王喷火龙掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "史前骨头类缺口可集中挖骨头矿；史前层刷霸王喷火龙也有机会补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "树懒骨架",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "prehistoric_vertebra",
+      "name": "史前脊骨",
+      "nameEn": "Prehistoric Vertebra",
+      "aliases": [
+        "史前脊骨",
+        "Prehistoric Vertebra",
+        "脊骨",
+        "脊椎骨"
+      ],
+      "acquisitions": [
+        {
+          "type": "公交车站远古斑点",
+          "detail": "公交车站远古斑点可挖到。"
+        },
+        {
+          "type": "怪物/骨头矿",
+          "detail": "霸王喷火龙掉落，姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "缺脊骨时每天看公交车站远古斑点；后期刷史前层和骨头矿补。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "树懒骨架",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "skeletal_tail",
+      "name": "尾部骨骼",
+      "nameEn": "Skeletal Tail",
+      "aliases": [
+        "尾部骨骼",
+        "Skeletal Tail",
+        "尾骨",
+        "骨尾"
+      ],
+      "acquisitions": [
+        {
+          "type": "矿井/骷髅洞穴锄地",
+          "detail": "任意层锄地可获得。"
+        },
+        {
+          "type": "钓鱼/骨头矿",
+          "detail": "钓鱼宝箱和姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "尾部骨骼没有普通区域远古斑点来源；矿井锄地、钓鱼宝箱和骨头矿更靠谱。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "nautilus_fossil",
+      "name": "鹦鹉螺化石",
+      "nameEn": "Nautilus Fossil",
+      "aliases": [
+        "鹦鹉螺化石",
+        "Nautilus Fossil",
+        "鹦鹉螺古物",
+        "nautilus fossil"
+      ],
+      "acquisitions": [
+        {
+          "type": "海滩远古斑点",
+          "detail": "海滩远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/骨头矿",
+          "detail": "钓鱼宝箱和姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "注意它是古物“鹦鹉螺化石”，不是冬季沙滩采集物“鹦鹉螺”。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "amphibian_fossil",
+      "name": "两栖动物化石",
+      "nameEn": "Amphibian Fossil",
+      "aliases": [
+        "两栖动物化石",
+        "Amphibian Fossil",
+        "两栖化石"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "森林和深山远古斑点可挖到。"
+        },
+        {
+          "type": "钓鱼/骨头矿",
+          "detail": "钓鱼宝箱和姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "森林、深山和钓鱼宝箱都能出；后期缺化石类可挖骨头矿。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "palm_fossil",
+      "name": "棕榈化石",
+      "nameEn": "Palm Fossil",
+      "aliases": [
+        "棕榈化石",
+        "Palm Fossil",
+        "棕榈树化石"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "沙漠、森林和海滩远古斑点可挖到。"
+        },
+        {
+          "type": "骨头矿",
+          "detail": "姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "沙漠概率较高；解锁巴士后每天顺路看沙漠远古斑点。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
+      ]
+    },
+    {
+      "id": "trilobite",
+      "name": "三叶虫",
+      "nameEn": "Trilobite",
+      "aliases": [
+        "三叶虫",
+        "Trilobite",
+        "三叶虫化石"
+      ],
+      "acquisitions": [
+        {
+          "type": "远古斑点",
+          "detail": "海滩、森林和深山远古斑点可挖到。"
+        },
+        {
+          "type": "骨头矿",
+          "detail": "姜岛骨头矿也可能产出。"
+        }
+      ],
+      "recommendation": "三叶虫在海滩、森林、深山都有来源；补化石类时骨头矿也能顺手出。",
+      "usedIn": [
+        "博物馆捐赠",
+        "潘妮/矮人喜欢的礼物",
+        "裁缝/染色",
+        "碎骨机"
+      ],
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/古物",
+        "https://stardewvalleywiki.com/Artifacts"
       ]
     },
     {
@@ -18267,339 +19544,6 @@
         "https://zh.stardewvalleywiki.com/陶瓷碎片",
         "https://zh.stardewvalleywiki.com/矿物",
         "https://stardewvalleywiki.com/Minerals"
-      ]
-    },
-    {
-      "id": "dwarf_gadget",
-      "name": "矮人小工具",
-      "aliases": [
-        "dwarf gadget",
-        "矮人装置",
-        "矮人机器"
-      ],
-      "acquisitions": [
-        {
-          "type": "矿井锄地",
-          "detail": "矿井 40-79 层锄地有低概率获得。"
-        },
-        {
-          "type": "晶球",
-          "detail": "岩浆晶球、万象晶球和古物宝藏都可能开出。"
-        }
-      ],
-      "recommendation": "既要捐博物馆，也用于制作农场电脑；第一件通常先捐，第二件留制作。",
-      "usedIn": [
-        "博物馆捐赠",
-        "农场电脑"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "rare_disc",
-      "name": "稀有圆盘",
-      "aliases": [
-        "rare disc",
-        "稀有圆盘"
-      ],
-      "acquisitions": [
-        {
-          "type": "怪物",
-          "detail": "蝙蝠、暗影狂徒、暗影萨满、蜘蛛等有低概率掉落。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "属于较烦人的古物缺口；后期可刷对应怪物或用古物宝藏补。",
-      "usedIn": [
-        "博物馆捐赠",
-        "烧焦的祭品奖励条件"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "ancient_drum",
-      "name": "古代鼓",
-      "aliases": [
-        "ancient drum",
-        "古鼓"
-      ],
-      "acquisitions": [
-        {
-          "type": "远古斑点",
-          "detail": "公交车站、森林和小镇的远古斑点可能挖到。"
-        },
-        {
-          "type": "晶球",
-          "detail": "冰封晶球、万象晶球和古物宝藏可能开出。"
-        }
-      ],
-      "recommendation": "捐赠古代鼓并满足古物数量条件可拿鼓块。",
-      "usedIn": [
-        "博物馆捐赠",
-        "鼓块"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "bone_flute",
-      "name": "骨笛",
-      "aliases": [
-        "bone flute"
-      ],
-      "acquisitions": [
-        {
-          "type": "远古斑点",
-          "detail": "深山、森林、小镇远古斑点可能挖到。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "捐赠骨笛并满足古物数量条件可拿长笛块。",
-      "usedIn": [
-        "博物馆捐赠",
-        "长笛块"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "chicken_statue_artifact",
-      "name": "鸡雕像",
-      "aliases": [
-        "chicken statue",
-        "鸡雕像古物"
-      ],
-      "acquisitions": [
-        {
-          "type": "远古斑点",
-          "detail": "农场远古斑点较常见。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "捐赠后可获得鸡雕像家具；农场远古斑点看到就挖。",
-      "usedIn": [
-        "博物馆捐赠",
-        "鸡雕像家具"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "golden_mask",
-      "name": "黄金面具",
-      "aliases": [
-        "golden mask",
-        "金面具"
-      ],
-      "acquisitions": [
-        {
-          "type": "沙漠",
-          "detail": "沙漠远古斑点可挖到。"
-        },
-        {
-          "type": "古物宝藏",
-          "detail": "古物宝藏也可能开出。"
-        }
-      ],
-      "recommendation": "沙漠解锁后每天顺路看远古斑点；缺沙漠古物时用古物宝藏补。",
-      "usedIn": [
-        "博物馆捐赠"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "golden_relic",
-      "name": "黄金遗物",
-      "aliases": [
-        "golden relic",
-        "金遗物"
-      ],
-      "acquisitions": [
-        {
-          "type": "沙漠",
-          "detail": "沙漠远古斑点可挖到。"
-        },
-        {
-          "type": "古物宝藏",
-          "detail": "古物宝藏也可能开出。"
-        }
-      ],
-      "recommendation": "部分鱼塘任务会要黄金遗物；第一件先捐，后续留一件备用。",
-      "usedIn": [
-        "博物馆捐赠",
-        "鱼塘任务"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "dried_starfish",
-      "name": "干海星",
-      "aliases": [
-        "dried starfish",
-        "干燥海星"
-      ],
-      "acquisitions": [
-        {
-          "type": "海滩",
-          "detail": "海滩远古斑点较常见。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "部分鱼塘任务可能需要；第一件先捐，之后可留一件。",
-      "usedIn": [
-        "博物馆捐赠",
-        "鱼塘任务"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "anchor_artifact",
-      "name": "锚",
-      "aliases": [
-        "anchor",
-        "船锚"
-      ],
-      "acquisitions": [
-        {
-          "type": "海滩",
-          "detail": "海滩远古斑点可能挖到。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "海滩古物缺口之一；冬季扫海滩效率更高。",
-      "usedIn": [
-        "博物馆捐赠"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "glass_shards",
-      "name": "玻璃碎片",
-      "aliases": [
-        "glass shards",
-        "碎玻璃"
-      ],
-      "acquisitions": [
-        {
-          "type": "海滩",
-          "detail": "海滩远古斑点可能挖到。"
-        },
-        {
-          "type": "其他",
-          "detail": "钓鱼宝箱和古物宝藏也可能获得。"
-        }
-      ],
-      "recommendation": "海滩古物缺口之一；第一件捐博物馆即可。",
-      "usedIn": [
-        "博物馆捐赠"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "prehistoric_skull",
-      "name": "史前头骨",
-      "aliases": [
-        "prehistoric skull"
-      ],
-      "acquisitions": [
-        {
-          "type": "骨头矿",
-          "detail": "姜岛挖骨头矿可获得多种史前骨头。"
-        },
-        {
-          "type": "怪物",
-          "detail": "骷髅等怪物也可能掉落相关骨头。"
-        }
-      ],
-      "recommendation": "史前骨头类捐赠会给树懒骨架组件；姜岛骨头矿是后期补骨头的好路线。",
-      "usedIn": [
-        "博物馆捐赠",
-        "树懒骨架"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "skeletal_hand",
-      "name": "手部骨骼",
-      "aliases": [
-        "skeletal hand",
-        "手骨"
-      ],
-      "acquisitions": [
-        {
-          "type": "远古斑点",
-          "detail": "海滩、森林等区域远古斑点可能挖到。"
-        },
-        {
-          "type": "骨头矿",
-          "detail": "骨头矿和古物宝藏可作为补充来源。"
-        }
-      ],
-      "recommendation": "骨头类第一件先捐，重复可进碎骨机。",
-      "usedIn": [
-        "博物馆捐赠",
-        "碎骨机"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
-      ]
-    },
-    {
-      "id": "prehistoric_rib",
-      "name": "史前肋骨",
-      "aliases": [
-        "prehistoric rib"
-      ],
-      "acquisitions": [
-        {
-          "type": "远古斑点",
-          "detail": "小镇、农场等区域远古斑点可能挖到。"
-        },
-        {
-          "type": "骨头矿",
-          "detail": "姜岛骨头矿可补史前骨头类。"
-        }
-      ],
-      "recommendation": "史前骨头类缺口可集中挖骨头矿补。",
-      "usedIn": [
-        "博物馆捐赠",
-        "树懒骨架"
-      ],
-      "sourceUrls": [
-        "https://zh.stardewvalleywiki.com/古物"
       ]
     },
     {

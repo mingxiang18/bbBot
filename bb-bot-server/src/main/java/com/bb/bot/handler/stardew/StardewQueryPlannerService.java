@@ -55,6 +55,7 @@ public class StardewQueryPlannerService {
                         - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
+                        - 具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏，例如“古代玩偶怎么获得”“矮人卷轴 II 哪里刷”“诡异玩偶黄怎么拿”，归为 RESOURCE。
                         - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
@@ -108,6 +109,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeForgeEnchantingQuery(q)) {
             return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeSpecificArtifactResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
         }
         if (looksLikeSpecificMineralResourceQuery(q)) {
             return StardewGuideIntent.RESOURCE;
@@ -230,6 +234,34 @@ public class StardewQueryPlannerService {
                 "pyrite", "ocean stone", "ghost crystal", "jasper", "celestine", "marble",
                 "sandstone", "granite", "basalt", "limestone", "soapstone", "hematite",
                 "mudstone", "obsidian", "slate", "fairy stone", "star shards");
+    }
+
+    private boolean looksLikeSpecificArtifactResourceQuery(String query) {
+        if (!containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "在哪", "来源", "掉落", "谁掉", "开哪个", "开什么", "古物", "文物", "卷轴")) {
+            return false;
+        }
+        if (containsAny(query, "缺古物", "全套古物", "古物怎么补", "文物怎么补", "博物馆怎么补", "博物馆缺")) {
+            return false;
+        }
+        return containsAny(query,
+                "矮人卷轴", "有缺口的土罐", "土罐", "箭头", "箭镞", "古代玩偶", "古代娃娃",
+                "精灵珠宝", "精灵首饰", "咀嚼洁齿棒", "咀嚼棒", "装饰用扇子", "装饰扇",
+                "恐龙蛋", "稀有圆盘", "古剑", "古代剑", "生锈的汤匙", "生锈的靴刺",
+                "生锈的齿轮", "鸡雕像", "古代种子", "上古种子", "史前工具", "干海星",
+                "干燥海星", "船锚", "玻璃碎片", "骨笛", "史前手斧", "矮人头盔",
+                "矮人小工具", "古代鼓", "黄金面具", "黄金遗物", "诡异玩偶", "绿色诡异玩偶",
+                "黄色诡异玩偶", "史前肩胛骨", "史前胫骨", "史前头骨", "手部骨骼",
+                "史前肋骨", "史前脊骨", "尾部骨骼", "鹦鹉螺化石", "两栖动物化石",
+                "棕榈化石", "三叶虫",
+                "dwarf scroll", "chipped amphora", "arrowhead", "ancient doll", "elvish jewelry",
+                "chewing stick", "ornamental fan", "dinosaur egg", "rare disc", "ancient sword",
+                "rusty spoon", "rusty spur", "rusty cog", "chicken statue", "ancient seed",
+                "prehistoric tool", "dried starfish", "anchor", "glass shards", "bone flute",
+                "prehistoric handaxe", "dwarvish helm", "dwarf gadget", "ancient drum",
+                "golden mask", "golden relic", "strange doll", "prehistoric scapula",
+                "prehistoric tibia", "prehistoric skull", "skeletal hand", "prehistoric rib",
+                "prehistoric vertebra", "skeletal tail", "nautilus fossil", "amphibian fossil",
+                "palm fossil", "trilobite");
     }
 
     private boolean looksLikeBookQuery(String query) {

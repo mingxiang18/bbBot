@@ -59,7 +59,7 @@ class StardewQueryPlannerServiceTest {
 
         assertThat(plan.isNeedMoreInfo()).isFalse();
         assertThat(plan.getIntents()).hasSize(1);
-        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MUSEUM);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("矮人卷轴在哪刷");
     }
 
@@ -292,6 +292,25 @@ class StardewQueryPlannerServiceTest {
         assertThat(marble.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(starShards.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(museum.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MUSEUM);
+    }
+
+    @Test
+    void localFallbackClassifiesSpecificArtifactQueriesAsResourcesAndBroadMuseumQueriesAsMuseum() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        StardewQueryPlan ancientDoll = planner.plan("古代玩偶这个古物怎么获得");
+        StardewQueryPlan dwarfScrollTwo = planner.plan("矮人卷轴 II 哪里刷");
+        StardewQueryPlan strangeDollYellow = planner.plan("黄色诡异玩偶怎么拿");
+        StardewQueryPlan broadMuseum = planner.plan("博物馆缺古物怎么补");
+
+        assertThat(ancientDoll.getIntents()).hasSize(1);
+        assertThat(ancientDoll.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(dwarfScrollTwo.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(strangeDollYellow.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(broadMuseum.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MUSEUM);
     }
 
     @Test

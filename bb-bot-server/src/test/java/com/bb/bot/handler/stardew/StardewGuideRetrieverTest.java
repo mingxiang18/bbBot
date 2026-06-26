@@ -222,6 +222,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedResourceIntentRetrievesSpecificArtifactsWithoutMuseumGuideCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.RESOURCE, "古代玩偶怎么获得"),
+                intent(StardewGuideIntent.RESOURCE, "矮人卷轴 II 哪里刷"),
+                intent(StardewGuideIntent.RESOURCE, "黄色诡异玩偶怎么拿"),
+                intent(StardewGuideIntent.RESOURCE, "鹦鹉螺化石哪里找")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("古代玩偶、矮人卷轴 II、黄色诡异玩偶、鹦鹉螺化石怎么拿", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("resource");
+        assertThat(joinAnswers(evidence))
+                .contains("古代玩偶获取方式", "冬日星盛宴", "古物宝藏")
+                .contains("矮人卷轴 II获取方式", "矿井 1-39", "煤尘精灵")
+                .contains("诡异玩偶（黄）获取方式", "秘密纸条 #18")
+                .contains("鹦鹉螺化石获取方式", "不是冬季沙滩采集物")
+                .doesNotContain("95 件", "42 件古物", "53 件矿物");
+    }
+
+    @Test
     void typedBuildingIntentRetrievesLateGameAndCommunityBuildingEvidence() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.BUILDING, "沙漠方尖塔需要什么"),

@@ -791,6 +791,33 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：173 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 全古物/文物资源获取补齐：
+
+- 按“完整一类数据”要求补齐博物馆 42 个古物/文物资源，不再只保留矮人小工具、稀有圆盘等高频缺口。
+- 全古物集合覆盖：
+  - 4 个矮人卷轴：矮人卷轴 I、II、III、IV，并保留 `dwarf_scrolls` 聚合条目用于“四卷怎么补”的总问法。
+  - 常规远古斑点/宝藏古物：有缺口的土罐、箭头、古代玩偶、精灵珠宝、咀嚼洁齿棒、装饰用扇子、古剑、生锈的汤匙/靴刺/齿轮、鸡雕像、古代种子、史前工具、干海星、锚、玻璃碎片、骨笛、史前手斧、矮人头盔、矮人小工具、古代鼓、黄金面具、黄金遗物。
+  - 低概率和特殊来源：恐龙蛋、稀有圆盘、诡异玩偶（绿/黄）。
+  - 化石/骨头类：史前肩胛骨、史前胫骨、史前头骨、手部骨骼、史前肋骨、史前脊骨、尾部骨骼、鹦鹉螺化石、两栖动物化石、棕榈化石、三叶虫。
+- 每个古物条目包含获取方式、推荐补缺路线、博物馆捐赠用途和来源；特殊用途补充了矮人语教程、农场电脑、鱼塘任务、碎骨机、秘密纸条、恐龙孵化等高频信息。
+- 检索框架调整：
+  - `StardewQueryPlannerService` prompt 明确“具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏”归 `RESOURCE`，“博物馆整体补全/缺古物路线”归 `MUSEUM`。
+  - fallback 新增 `looksLikeSpecificArtifactResourceQuery`，古代玩偶、矮人卷轴 II、黄色诡异玩偶、鹦鹉螺化石等具体古物查询不再因为包含“古物/卷轴”而误归博物馆总览。
+  - `StardewGuideTool` 描述补全“全 42 古物/文物、具体古物怎么获得/哪里刷”。
+- 测试补充：
+  - `StardewKnowledgeRepositoryTest` 强制校验 42 个古物资源 id 全存在，每个都有获取方式、博物馆捐赠用途和来源。
+  - `StardewGuideServiceTest` 覆盖旧 `answer(String)` 与 typed `RESOURCE` 路径下的古代玩偶、矮人卷轴 II、黄色诡异玩偶、鹦鹉螺化石、史前脊骨。
+  - `StardewGuideRetrieverTest` 覆盖 typed `RESOURCE` 多古物检索，确认不串到博物馆 95 件/42 古物/53 矿物总览。
+  - `StardewQueryPlannerServiceTest` 覆盖 AI 不可用时具体古物归 `RESOURCE`、博物馆缺古物归 `MUSEUM`。
+
+本轮验证结果：
+
+- JSON 轻量校验：`resources=161`，`artifacts=42`，`missing=[]`，`dup=[]`，`withoutMuseumUse=[]`，`withoutSource=[]`。
+- `git diff --check`：无 whitespace 问题。
+- `StardewKnowledgeRepositoryTest,StardewGuideServiceTest,StardewGuideRetrieverTest,StardewQueryPlannerServiceTest`：166 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：177 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：

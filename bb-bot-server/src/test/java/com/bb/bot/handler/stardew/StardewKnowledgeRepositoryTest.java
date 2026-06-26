@@ -30,7 +30,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(134);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(161);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
@@ -696,6 +696,68 @@ class StardewKnowledgeRepositoryTest {
         assertThat(resourceIds).containsAll(mineralIds);
         assertThat(repository.resources().stream()
                 .filter(resource -> mineralIds.contains(resource.getId()))
+                .collect(Collectors.toList()))
+                .allSatisfy(resource -> {
+                    assertThat(resource.getAcquisitions()).isNotEmpty();
+                    assertThat(resource.getUsedIn()).contains("博物馆捐赠");
+                    assertThat(resource.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void allFortyTwoMuseumArtifactsAreCoveredAsResources() {
+        List<String> artifactIds = List.of(
+                "dwarf_scroll_i",
+                "dwarf_scroll_ii",
+                "dwarf_scroll_iii",
+                "dwarf_scroll_iv",
+                "chipped_amphora",
+                "arrowhead",
+                "ancient_doll",
+                "elvish_jewelry",
+                "chewing_stick",
+                "ornamental_fan",
+                "dinosaur_egg",
+                "rare_disc",
+                "ancient_sword",
+                "rusty_spoon",
+                "rusty_spur",
+                "rusty_cog",
+                "chicken_statue_artifact",
+                "ancient_seed",
+                "prehistoric_tool",
+                "dried_starfish",
+                "anchor_artifact",
+                "glass_shards",
+                "bone_flute",
+                "prehistoric_handaxe",
+                "dwarvish_helm",
+                "dwarf_gadget",
+                "ancient_drum",
+                "golden_mask",
+                "golden_relic",
+                "strange_doll_green",
+                "strange_doll_yellow",
+                "prehistoric_scapula",
+                "prehistoric_tibia",
+                "prehistoric_skull",
+                "skeletal_hand",
+                "prehistoric_rib",
+                "prehistoric_vertebra",
+                "skeletal_tail",
+                "nautilus_fossil",
+                "amphibian_fossil",
+                "palm_fossil",
+                "trilobite"
+        );
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(artifactIds).hasSize(42);
+        assertThat(resourceIds).containsAll(artifactIds);
+        assertThat(repository.resources().stream()
+                .filter(resource -> artifactIds.contains(resource.getId()))
                 .collect(Collectors.toList()))
                 .allSatisfy(resource -> {
                     assertThat(resource.getAcquisitions()).isNotEmpty();
