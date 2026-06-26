@@ -328,6 +328,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedIslandIntentRetrievesExplorationEvidenceWithoutResourceDungeonFishOrOrderCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.ISLAND, "姜岛怎么解锁"),
+                intent(StardewGuideIntent.ISLAND, "海盗湾怎么进"),
+                intent(StardewGuideIntent.ISLAND, "美人鱼谜题怎么做"),
+                intent(StardewGuideIntent.RESOURCE, "金核桃怎么获得"),
+                intent(StardewGuideIntent.DUNGEON, "火山地牢怎么过"),
+                intent(StardewGuideIntent.FISH, "黄貂鱼在哪钓")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("姜岛探索、金核桃、火山和黄貂鱼", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.ISLAND, StardewGuideIntent.RESOURCE, StardewGuideIntent.DUNGEON, StardewGuideIntent.FISH);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("island_detail", "resource", "dungeon_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("姜岛解锁", "硬木 x200", "海盗湾", "星形潮池", "美人鱼谜题", "长笛块")
+                .contains("金核桃获取方式", "火山地牢", "黄貂鱼")
+                .doesNotContain("姜岛地点/解锁对照：\n- 金核桃", "地下城/冒险地点对照：\n- 姜岛");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

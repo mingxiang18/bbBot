@@ -345,6 +345,64 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesIslandGuideQueriesWithoutStealingResourcesDungeonFishOrOrders() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan access = planner.plan("姜岛怎么解锁");
+        StardewQueryPlan farm = planner.plan("岛屿农场怎么修");
+        StardewQueryPlan pirateCove = planner.plan("海盗湾怎么进");
+        StardewQueryPlan mermaid = planner.plan("美人鱼谜题怎么做");
+        StardewQueryPlan fieldOffice = planner.plan("蜗牛教授怎么救");
+        StardewQueryPlan walnutResource = planner.plan("金核桃怎么获得");
+        StardewQueryPlan snakeSkull = planner.plan("蛇头骨哪里刷");
+        StardewQueryPlan volcano = planner.plan("火山地牢怎么过");
+        StardewQueryPlan stingray = planner.plan("黄貂鱼在哪钓");
+        StardewQueryPlan qiCrop = planner.plan("齐瓜怎么做");
+
+        assertThat(access.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(farm.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(pirateCove.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(mermaid.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(fieldOffice.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(walnutResource.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(snakeSkull.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(volcano.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(stingray.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH);
+        assertThat(qiCrop.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+    }
+
+    @Test
+    void localGuardrailPullsIslandGuidesBackFromBroadAiPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"GUIDE","keywords":["姜岛怎么解锁"],"constraints":{}},
+                            {"type":"SHOP","keywords":["岛屿商人怎么解锁"],"constraints":{}},
+                            {"type":"BUILDING","keywords":["海滩度假村怎么修"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["金核桃怎么获得"],"constraints":{}},
+                            {"type":"DUNGEON","keywords":["火山地牢怎么过"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("姜岛探索边界");
+
+        assertThat(plan.getIntents()).hasSize(5);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(plan.getIntents().get(4).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
@@ -620,18 +678,18 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
-    void localFallbackClassifiesIslandFieldOfficeQueriesBeforeMuseumRoute() {
+    void localFallbackClassifiesIslandFieldOfficeQueriesAsIslandBeforeMuseumRoute() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
 
         StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
 
         assertThat(planner.plan("岛屿办事处化石怎么捐").getIntents().get(0).getType())
-                .isEqualTo(StardewGuideIntent.GUIDE);
+                .isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(planner.plan("蜗牛教授化石奖励是什么").getIntents().get(0).getType())
-                .isEqualTo(StardewGuideIntent.GUIDE);
+                .isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(planner.plan("紫花和紫海星答案是多少").getIntents().get(0).getType())
-                .isEqualTo(StardewGuideIntent.GUIDE);
+                .isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(planner.plan("蛇头骨怎么获得").getIntents().get(0).getType())
                 .isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(planner.plan("蛇椎骨哪里刷").getIntents().get(0).getType())

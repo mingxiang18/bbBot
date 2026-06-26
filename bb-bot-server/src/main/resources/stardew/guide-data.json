@@ -23309,6 +23309,531 @@
       ]
     }
   ],
+  "islandGuides": [
+    {
+      "id": "ginger_island_access",
+      "name": "姜岛解锁/威利修船",
+      "nameEn": "Ginger Island Access",
+      "aliases": [
+        "Ginger Island",
+        "姜岛",
+        "上岛",
+        "怎么去姜岛",
+        "姜岛怎么解锁",
+        "威利修船",
+        "威利的船",
+        "船票"
+      ],
+      "region": "威利鱼店后屋 -> 姜岛南部码头。",
+      "unlock": "完成社区中心或 Joja 仓库后，威利会来信邀请你去鱼店后屋；修船需要硬木 x200、铱锭 x5、电池组 x5。修好后的次日可花 1,000g 买船票上岛。",
+      "overview": "首次上岛只开放南部码头和通往东部丛林的路。姜岛季节不限制作物生长，也不影响岛上鱼类；岛上许多区域和设施用金核桃交给鹦鹉解锁。",
+      "activities": [
+        "先跟随雷欧进入东部丛林，和雷欧小屋内的鹦鹉互动后会解开通往北部火山的路线。",
+        "威利鱼店开门时可买船票；用岛屿图腾或岛屿方尖塔可在鱼店关闭时上岛。",
+        "返回星露谷可从姜岛南部码头坐船免费回去。"
+      ],
+      "walnuts": [
+        "上岛后优先收集金核桃，用于西岛、农舍、度假村、挖掘场桥、商人、鹦鹉快线等解锁。",
+        "第一个关键节点是给雷欧小屋鹦鹉 1 个金核桃，让岛屿北部路线开放。"
+      ],
+      "rewards": [
+        "解锁姜岛探索、火山地牢、岛屿农场、金核桃系统和后期齐先生核桃房路线。"
+      ],
+      "recommendations": [
+        "修船前提前囤硬木、电池组和铱锭；硬木最容易卡。",
+        "第一次上岛带喷壶、武器、食物和一些炸弹，方便北部火山和挖掘场推进。"
+      ],
+      "note": "问硬木、电池组、铱锭具体怎么获得时走资源类目；问火山怎么过走地下城类目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Shop#Willy.27s_Boat",
+        "https://stardewvalleywiki.com/Ginger_Island"
+      ]
+    },
+    {
+      "id": "island_south_resort",
+      "name": "姜岛南部/海滩度假村",
+      "nameEn": "Island South / Beach Resort",
+      "aliases": [
+        "Island South",
+        "Beach Resort",
+        "姜岛南部",
+        "南岛",
+        "海滩度假村",
+        "岛屿度假村",
+        "度假村怎么修",
+        "姜岛度假村"
+      ],
+      "region": "姜岛南部，玩家第一次上岛的码头和海滩区域。",
+      "unlock": "南部码头随上岛解锁；西侧岛屿农舍修好后，可花 20 个金核桃把南部废墟修成海滩度假村。",
+      "overview": "南部是岛屿交通中心，连接东部丛林、北部火山路线和西岛入口。度假村修好后会清开东南部道路，并允许镇上部分居民来岛上度假。",
+      "activities": [
+        "使用岛屿图腾或岛屿方尖塔会传送到南部。",
+        "修好度假村后，非雨天且非节日的日子会有随机居民 11:00 到 18:00 在度假村活动。",
+        "度假村可通过更衣室门间的开关关闭或重新开放。"
+      ],
+      "walnuts": [
+        "修复海滩度假村需要 20 个金核桃，前置是岛屿农舍已修好。",
+        "度假村解锁后，东南部海盗湾和美人鱼谜题路线随之开放。"
+      ],
+      "rewards": [
+        "开放姜岛东南部、海盗湾、美人鱼谜题、黄貂鱼钓点和居民度假日程。"
+      ],
+      "recommendations": [
+        "如果目标是美人鱼、海盗湾或黄貂鱼，农舍之后尽快修度假村。",
+        "如果你正在找居民日程，先确认度假村是否开放，因为它会改变部分居民位置。"
+      ],
+      "note": "问某位居民今天是否在度假村，仍需要游戏内日期、天气和时间。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_South",
+        "https://stardewvalleywiki.com/Ginger_Island#Beach_Resort"
+      ]
+    },
+    {
+      "id": "island_southeast_pirate_cove",
+      "name": "姜岛东南部/海盗湾",
+      "nameEn": "Island Southeast / Pirate Cove",
+      "aliases": [
+        "Island Southeast",
+        "Pirate Cove",
+        "姜岛东南部",
+        "东南岛",
+        "海盗湾",
+        "海盗洞",
+        "海盗湾怎么进",
+        "飞镖小游戏",
+        "黄貂鱼"
+      ],
+      "region": "姜岛东南部，海滩度假村东侧。",
+      "unlock": "先修好海滩度假村，东南部道路会清开；海盗湾入口藏在星形潮池东侧。",
+      "overview": "东南部包含星形潮池、离岸大岩石和隐藏海盗湾。海盗湾是黄貂鱼的主要钓点，并在特定夜晚出现海盗活动。",
+      "activities": [
+        "海盗湾池塘和入口小水池可以钓鱼，其中黄貂鱼只在这里出现。",
+        "非雨天、季节偶数日 20:00 后海盗会到访海盗湾。",
+        "海盗到访时可玩飞镖，前三次获胜各给金核桃。穿海盗相关帽子或鹦鹉蛋饰品可每天从吧台拿蜂蜜酒。"
+      ],
+      "walnuts": [
+        "飞镖小游戏前三次胜利合计可拿 3 个金核桃。",
+        "钓起美食家雕像也属于该区域的隐藏收集。"
+      ],
+      "rewards": [
+        "黄貂鱼钓点、飞镖金核桃、海盗主题互动和蜂蜜酒。"
+      ],
+      "recommendations": [
+        "想去海盗湾，先确认度假村已经修好；入口不是显眼门，要从星形潮池右边找隐藏洞口。",
+        "想刷飞镖核桃，选非雨天偶数日晚上 8 点后去。"
+      ],
+      "note": "问黄貂鱼具体钓鱼条件时走鱼类类目；问海盗湾入口和活动走本类目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_Southeast",
+        "https://stardewvalleywiki.com/Ginger_Island#Pirate_Cove"
+      ]
+    },
+    {
+      "id": "island_mermaid_puzzle",
+      "name": "姜岛美人鱼谜题",
+      "nameEn": "Ginger Island Mermaid",
+      "aliases": [
+        "Mermaid",
+        "姜岛美人鱼",
+        "美人鱼谜题",
+        "长笛块谜题",
+        "五个长笛块",
+        "下雨美人鱼",
+        "美人鱼怎么做"
+      ],
+      "region": "姜岛东南部大岩石附近。",
+      "unlock": "需要先修好海滩度假村并进入东南部；美人鱼只在姜岛雨天出现。",
+      "overview": "玩家用 5 个长笛块按岸边石头提示调音，再从左到右跑过长笛块，就能完成美人鱼歌曲谜题。",
+      "activities": [
+        "在每组石头上方或下方放一个长笛块。",
+        "大石头代表 5，小石头代表 1；按每组石头数量调对应长笛块。",
+        "调好全部 5 个长笛块后，从左到右依次跑过。"
+      ],
+      "walnuts": [
+        "首次完成奖励 5 个金核桃。"
+      ],
+      "rewards": [
+        "5 个金核桃。"
+      ],
+      "recommendations": [
+        "先准备 5 个长笛块，再等姜岛雨天去东南部。",
+        "如果没下雨，先做别的核桃来源；岛上天气和星露谷本土天气不是同一个预报。"
+      ],
+      "note": "姜岛天气可在首次上岛后的电视天气预报中查看。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Mermaid"
+      ]
+    },
+    {
+      "id": "island_east_jungle_gem_birds",
+      "name": "姜岛东部/丛林与宝石鸟",
+      "nameEn": "Island East / Gem Birds",
+      "aliases": [
+        "Island East",
+        "Gem Birds",
+        "姜岛东部",
+        "东岛",
+        "丛林",
+        "雷欧小屋",
+        "Leo hut",
+        "香蕉神龛",
+        "宝石鸟",
+        "宝石鸟谜题",
+        "宝石祭坛"
+      ],
+      "region": "姜岛东部丛林，南部码头向东进入。",
+      "unlock": "首次上岛后先开放东部；跟随雷欧进入丛林并和小屋内鹦鹉互动，可推进北部路线。",
+      "overview": "东部是雷欧小屋、金核桃提示鹦鹉、香蕉神龛和宝石鸟谜题所在区域，也是蕨菜等觅食物刷新地点。",
+      "activities": [
+        "雷欧小屋内鹦鹉会提示各区域剩余金核桃。",
+        "雨天会在岛屿四个方向随机出现宝石鸟，掉落对应宝石。",
+        "把每个方向的宝石放到宝石鸟祭坛对应方位，可完成宝石鸟谜题。"
+      ],
+      "walnuts": [
+        "宝石鸟谜题完成后奖励 5 个金核桃。",
+        "香蕉神龛需要放香蕉，可获得隐藏金核桃。"
+      ],
+      "rewards": [
+        "金核桃提示、宝石鸟谜题奖励、香蕉神龛奖励和东部觅食资源。"
+      ],
+      "recommendations": [
+        "刚上岛先做东部小屋互动，因为它会打开北部火山路线。",
+        "宝石鸟每个存档组合固定但随机，建议雨天记录方向和掉落宝石。"
+      ],
+      "note": "问某个宝石如何获得时走资源类目；问宝石鸟谜题路线走本类目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_East",
+        "https://stardewvalleywiki.com/Ginger_Island#Gem_Birds"
+      ]
+    },
+    {
+      "id": "island_north_dig_site",
+      "name": "姜岛北部/挖掘场",
+      "nameEn": "Island North / Dig Site",
+      "aliases": [
+        "Island North",
+        "Dig Site",
+        "姜岛北部",
+        "北岛",
+        "挖掘场",
+        "姜岛蘑菇洞",
+        "蜗牛教授怎么救",
+        "教授被困",
+        "骨头矿点",
+        "粘土矿点"
+      ],
+      "region": "姜岛北部，通往火山、田野办事处和挖掘场。",
+      "unlock": "和雷欧小屋内鹦鹉互动后北部路线开放；挖掘场西侧断桥可花 10 个金核桃修复。挖掘场蘑菇洞入口有巨石，用任意炸弹炸开即可救出蜗牛教授。",
+      "overview": "北部承担姜岛推进主线：通往火山地牢、挖掘场、田野办事处、岛屿商人和蘑菇洞。",
+      "activities": [
+        "挖掘场类似采石场，会刷新石头、骨头矿点、粘土矿点和桃花心木种子。",
+        "炸开蘑菇洞巨石后救出蜗牛教授，田野办事处才可互动。",
+        "蘑菇洞每天生成随机蘑菇，觅食采集职业会影响收益。"
+      ],
+      "walnuts": [
+        "修复挖掘场桥需要 10 个金核桃。",
+        "火山入口附近、隐藏出口和北部地形有多处金核桃来源。"
+      ],
+      "rewards": [
+        "解锁挖掘场资源、蜗牛教授、田野办事处和蘑菇洞。"
+      ],
+      "recommendations": [
+        "北部优先级很高：先开北部，再根据金核桃情况修挖掘场桥。",
+        "救蜗牛教授时带任意炸弹即可，不需要特殊任务物品。"
+      ],
+      "note": "问火山地牢打法走地下城；问具体化石碎片来源走资源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_North",
+        "https://stardewvalleywiki.com/Ginger_Island#Dig_Site"
+      ]
+    },
+    {
+      "id": "island_field_office",
+      "name": "岛屿田野办事处/蜗牛教授",
+      "nameEn": "Island Field Office",
+      "aliases": [
+        "Island Field Office",
+        "Professor Snail",
+        "岛屿田野办事处",
+        "岛屿办事处",
+        "姜岛办事处",
+        "蜗牛教授",
+        "姜岛化石",
+        "化石捐赠",
+        "紫花",
+        "紫海星",
+        "紫色花",
+        "紫色海星",
+        "鸵鸟孵化器"
+      ],
+      "region": "姜岛北部中间，通往火山路上的帐篷。",
+      "unlock": "先修挖掘场桥，再用炸弹炸开蘑菇洞巨石救出蜗牛教授；教授回到办事处后才能捐化石和回答调查。",
+      "overview": "办事处负责姜岛化石收集、两道岛屿调查和鸵鸟孵化器配方，是岛屿后期完整度的重要节点。",
+      "activities": [
+        "向办公桌捐大型动物、蛇、木乃伊青蛙、木乃伊蝙蝠相关化石。",
+        "墙上调查题答案：紫色花 22 朵，紫色海星 18 个。",
+        "两道调查每天只能答一次，答错要等次日再试。"
+      ],
+      "walnuts": [
+        "大型动物化石完成奖励 6 个金核桃和香蕉树苗。",
+        "蛇化石完成奖励 3 个金核桃和芒果树苗。",
+        "木乃伊青蛙和木乃伊蝙蝠各奖励 1 个金核桃；每道岛屿调查各奖励 1 个金核桃。"
+      ],
+      "rewards": [
+        "全部四组化石和两道调查完成后，获得鸵鸟孵化器配方。"
+      ],
+      "recommendations": [
+        "先救教授再集中刷化石；具体缺哪个化石时用资源查询更准确。",
+        "紫花和紫海星答案可以直接记 22 和 18，别浪费第二天重答。"
+      ],
+      "note": "问蛇头骨、蛇椎骨、木乃伊蝙蝠等具体来源时走资源类目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_Field_Office",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "island_trader",
+      "name": "岛屿商人",
+      "nameEn": "Island Trader",
+      "aliases": [
+        "Island Trader",
+        "岛屿商人",
+        "姜岛商人",
+        "鸟商人",
+        "岛屿商人怎么解锁",
+        "银河之魂"
+      ],
+      "region": "姜岛北部火山路线旁的蓝鸟商人摊位。",
+      "unlock": "先修好岛屿农舍；之后可花 10 个金核桃解锁岛屿商人。",
+      "overview": "岛屿商人不是金币商店，而是以姜岛觅食物、火山晶石等物品进行以物易物，出售岛屿主题物品、树苗、家具和部分后期物品。",
+      "activities": [
+        "用姜岛觅食物、火山晶石等兑换商品。",
+        "部分商品是轮换库存，银河之魂等物品有额外可用条件。"
+      ],
+      "walnuts": [
+        "解锁商人需要 10 个金核桃，且前置为岛屿农舍已修好。"
+      ],
+      "rewards": [
+        "开放香蕉树苗、芒果树苗、岛屿主题家具、图腾和后期兑换物路线。"
+      ],
+      "recommendations": [
+        "如果你打算长期经营姜岛农场，商人优先级很高，因为树苗和兑换路线会加速岛屿收益。",
+        "问具体商品在哪里买或换什么时可以走商店类目。"
+      ],
+      "note": "本条回答商人解锁和定位；具体商品价格/兑换表由商店检索补充。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_Trader",
+        "https://stardewvalleywiki.com/Island_Trader"
+      ]
+    },
+    {
+      "id": "island_west_overview",
+      "name": "姜岛西部总览",
+      "nameEn": "Island West",
+      "aliases": [
+        "Island West",
+        "姜岛西部",
+        "西岛",
+        "西边乌龟",
+        "睡觉乌龟",
+        "姜岛西边怎么开",
+        "姜岛西部怎么解锁"
+      ],
+      "region": "姜岛西部，南部码头向西。",
+      "unlock": "西侧睡觉乌龟挡路；给旁边鹦鹉 10 个金核桃可唤醒乌龟。该鹦鹉需要先在雷欧小屋给第一个鹦鹉金核桃后才出现。",
+      "overview": "西岛是姜岛最大推进区域，包含岛屿农场、青蛙、伯蒂、沉船、老虎史莱姆树林、水晶谜题、齐先生核桃房和海滩资源。",
+      "activities": [
+        "西岛有大片可耕地和淡水/海水两类钓鱼区域。",
+        "农场、青蛙、核桃房和多个谜题都集中在这里。",
+        "西南海滩有珊瑚、海胆和贻贝矿点。"
+      ],
+      "walnuts": [
+        "解锁西岛需要 10 个金核桃。",
+        "西岛包含大量隐藏金核桃来源，是后续推进的核心区域。"
+      ],
+      "rewards": [
+        "开放岛屿农场、伯蒂任务线、齐先生核桃房、老虎史莱姆树林、水晶谜题和更多金核桃来源。"
+      ],
+      "recommendations": [
+        "西岛通常应在北部路线后尽快打开，因为它带来农场和大量核桃来源。",
+        "如果核桃紧张，先拿东部/北部容易核桃，再开西岛。"
+      ],
+      "note": "西岛包含多个子地点，问具体农场、青蛙、核桃房或水晶谜题时会返回对应条目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Island_West"
+      ]
+    },
+    {
+      "id": "island_farm_gourmand_frog",
+      "name": "岛屿农场/美食家青蛙",
+      "nameEn": "Island Farm / Gourmand Frog",
+      "aliases": [
+        "Island Farm",
+        "Gourmand Frog",
+        "岛屿农场",
+        "姜岛农场",
+        "岛屿农舍",
+        "岛上农舍",
+        "姜岛农舍",
+        "美食家青蛙",
+        "青蛙任务",
+        "甜瓜小麦大蒜",
+        "农场方尖碑",
+        "邮箱"
+      ],
+      "region": "姜岛西部东侧的大农场区域。",
+      "unlock": "先用 10 个金核桃打开西岛；岛屿农舍可花 20 个金核桃修复。农舍修复后，可再花 5 个金核桃建邮箱、20 个金核桃建农场方尖碑。",
+      "overview": "岛屿农场类似温室，不受季节限制，可放洒水器、种果树且不会刷乌鸦，是后期高收益作物和果树基地。",
+      "activities": [
+        "农舍修好后东北角出现美食家青蛙洞穴。",
+        "青蛙依次要求成熟但未收获的甜瓜、小麦、大蒜；可以同时种，但必须按顺序给他看。",
+        "农舍带厨房、床和出货箱，多人存档每位玩家有热带床。"
+      ],
+      "walnuts": [
+        "修岛屿农舍需要 20 个金核桃。",
+        "邮箱需要 5 个金核桃，农场方尖碑需要 20 个金核桃。",
+        "青蛙三次作物任务每次给 5 个金核桃，合计 15 个。"
+      ],
+      "rewards": [
+        "四季作物基地、岛上睡觉/出货点、美食家青蛙 15 个金核桃、回星露谷农场的方尖碑。"
+      ],
+      "recommendations": [
+        "西岛打开后优先修农舍，它会解锁度假村、商人前置和青蛙核桃。",
+        "青蛙作物不要收获，成熟后直接找青蛙对话确认。"
+      ],
+      "note": "问具体作物收益或种植天数时走作物类目；问岛屿农场机制走本类目。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#The_Farm",
+        "https://stardewvalleywiki.com/Ginger_Island#Gourmand_Frog"
+      ]
+    },
+    {
+      "id": "island_west_side_quests",
+      "name": "伯蒂小屋/沉船/打地鼠",
+      "nameEn": "Birdie's Shack / Shipwreck / Green Whack-a-Mole",
+      "aliases": [
+        "Birdie's Shack",
+        "Shipwreck",
+        "Green Whack-a-Mole",
+        "伯蒂小屋",
+        "老奶奶小屋",
+        "海盗妻子",
+        "沉船",
+        "姜岛沉船",
+        "绿色打地鼠",
+        "姜岛地鼠",
+        "姜岛西部支线"
+      ],
+      "region": "姜岛西部海滩和河西侧。",
+      "unlock": "打开西岛后可到达；伯蒂位于西侧小屋，沉船在农场下方东南海滩，绿色打地鼠在西部洞穴外的小孔区域。",
+      "overview": "这些是西岛散布的小型支线和隐藏金核桃来源，和海盗妻子任务、沉船探索、浇水壶打地鼠相关。",
+      "activities": [
+        "第一次和伯蒂对话会开启“海盗妻子”任务线。",
+        "进入东南海滩沉船可拿隐藏金核桃。",
+        "绿色打地鼠可用浇水壶打，也可用可放置物堵住洞后用斧头或镐子处理。"
+      ],
+      "walnuts": [
+        "沉船内有 1 个金核桃。",
+        "绿色打地鼠给 1 个金核桃。",
+        "海盗妻子任务线本身也会给金核桃奖励。"
+      ],
+      "rewards": [
+        "金核桃、伯蒂任务线推进和西岛隐藏收集。"
+      ],
+      "recommendations": [
+        "打开西岛后顺手把沉船和打地鼠核桃拿掉，成本低。",
+        "海盗妻子任务流程较长，问完整交换链时走普通任务类目。"
+      ],
+      "note": "本条负责地点和隐藏互动；“海盗妻子任务流程”仍归普通任务。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Birdie.27s_Shack",
+        "https://stardewvalleywiki.com/Ginger_Island#Shipwreck",
+        "https://stardewvalleywiki.com/Ginger_Island#Green_Whack-a-Mole"
+      ]
+    },
+    {
+      "id": "island_tiger_slime_qi_room",
+      "name": "老虎史莱姆树林/水晶谜题/齐先生核桃房",
+      "nameEn": "Tiger Slime Grove / Colored Crystals / Qi's Walnut Room",
+      "aliases": [
+        "Tiger Slime Grove",
+        "Colored Crystals Puzzle",
+        "Qi's Walnut Room",
+        "老虎史莱姆树林",
+        "老虎史莱姆",
+        "彩色水晶谜题",
+        "水晶谜题",
+        "狮子水晶",
+        "Simon Says",
+        "齐先生核桃房",
+        "核桃房",
+        "完美度追踪器",
+        "齐钻贩卖机"
+      ],
+      "region": "姜岛西部河西侧。",
+      "unlock": "打开西岛后可进入老虎史莱姆树林和水晶谜题洞穴；齐先生核桃房需要累计获得 100 个金核桃。",
+      "overview": "西岛后期区域同时包含战斗小区域、记忆小游戏和齐先生核桃房。核桃房是齐钻任务、完美度追踪和后期兑换核心。",
+      "activities": [
+        "老虎史莱姆树林每天刷新老虎史莱姆，也有桃花心木树生长。",
+        "水晶洞内点击狮子开始 Simon Says 记忆小游戏，失败会回到第 1 轮。",
+        "齐先生核桃房内有完美度追踪器、特别订单板和齐钻自动售货机。"
+      ],
+      "walnuts": [
+        "水晶谜题首次获胜给 3 个金核桃。",
+        "齐先生核桃房门槛是累计 100 个金核桃。"
+      ],
+      "rewards": [
+        "老虎史莱姆掉落来源、水晶谜题 3 个金核桃、齐先生核桃房、齐钻任务和完美度追踪。"
+      ],
+      "recommendations": [
+        "核桃房是后期目标，不要早期把所有核桃都攒着不花；先解锁能带来更多核桃的区域。",
+        "水晶谜题可以先观察节奏，记不住就录屏或写颜色顺序。"
+      ],
+      "note": "问齐瓜、五彩农场等齐先生任务走特别订单；问齐钻怎么获得/怎么花可走资源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Tiger_Slime_Grove",
+        "https://stardewvalleywiki.com/Ginger_Island#Colored_Crystals_Puzzle",
+        "https://stardewvalleywiki.com/Ginger_Island#Qi.27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "island_parrot_express",
+      "name": "鹦鹉快线/岛上交通",
+      "nameEn": "Parrot Express",
+      "aliases": [
+        "Parrot Express",
+        "鹦鹉快线",
+        "鹦鹉传送",
+        "岛上交通",
+        "姜岛传送",
+        "火山农场挖掘场丛林码头",
+        "快线怎么解锁"
+      ],
+      "region": "姜岛多个站点之间的岛内交通系统。",
+      "unlock": "需要打开岛屿四个方向，并从岛屿农场北侧穿过树丛到达鹦鹉快线站点；给该处鹦鹉 10 个金核桃解锁。挖掘场站点会在修好挖掘场桥后自动加入。",
+      "overview": "鹦鹉快线可在火山、农场、挖掘场、丛林、码头五个站点之间快速移动，减少姜岛日常跑图时间。",
+      "activities": [
+        "用于火山、岛屿农场、挖掘场、东部丛林和南部码头之间快速旅行。",
+        "挖掘场未修桥前不会作为可用站点。"
+      ],
+      "walnuts": [
+        "解锁鹦鹉快线需要 10 个金核桃。"
+      ],
+      "rewards": [
+        "显著节省姜岛跑图时间，尤其适合火山、农场和挖掘场日常循环。"
+      ],
+      "recommendations": [
+        "如果已经在岛上长期刷火山/农场/挖掘场，鹦鹉快线值得较早解锁。",
+        "前期核桃紧张时，先解锁会产出更多核桃或功能的农舍、挖掘场、度假村。"
+      ],
+      "note": "鹦鹉快线是岛内交通；从星露谷到姜岛仍靠威利船、岛屿图腾或岛屿方尖塔。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger_Island#Parrot_Express",
+        "https://stardewvalleywiki.com/Ginger_Island#Transportation"
+      ]
+    }
+  ],
   "dungeonGuides": [
     {
       "id": "the_mines",

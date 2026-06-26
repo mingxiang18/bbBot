@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, ISLAND, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -70,6 +70,7 @@ public class StardewQueryPlannerService {
                         - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
                         - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
                         - 鸡舍/畜棚动物本身的购买、成熟时间、产物、赚钱建议、兔脚/鸭毛/松露/大壶牛奶/羊毛/鸵鸟蛋等动物产物机制，例如“猪值得养吗”“兔子的脚怎么出”“奶牛为什么不出大壶奶”“动物有哪些”，归为 ANIMAL_CARE。
+                        - 姜岛整体探索、威利修船上岛、南/东/北/西岛区域、岛屿农场、度假村、海盗湾、美人鱼谜题、宝石鸟、蜗牛教授、田野办事处、挖掘场、岛屿商人、齐先生核桃房、鹦鹉快线、金核桃优先解锁顺序，例如“姜岛怎么解锁”“岛屿农场怎么修”“海盗湾怎么进”“美人鱼谜题怎么做”“蜗牛教授怎么救”，归为 ISLAND。
                         - 矿井、骷髅洞穴、火山地牢、采石场矿洞、突变虫穴、女巫沼泽等地下城/冒险地点的解锁、层数、路线、机制、奖励、怎么过、怎么冲层，例如“矿井多少层”“骷髅洞穴100层怎么冲”“火山地牢怎么过”“金镰刀在哪拿”，归为 DUNGEON。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
@@ -140,6 +141,14 @@ public class StardewQueryPlannerService {
                 || aiType == StardewGuideIntent.FARM_MAP)) {
             return true;
         }
+        if (localType == StardewGuideIntent.ISLAND
+                && (aiType == StardewGuideIntent.GUIDE
+                || aiType == StardewGuideIntent.RESOURCE
+                || aiType == StardewGuideIntent.SHOP
+                || aiType == StardewGuideIntent.FARM_MAP
+                || aiType == StardewGuideIntent.BUILDING)) {
+            return true;
+        }
         if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
             return true;
         }
@@ -163,6 +172,7 @@ public class StardewQueryPlannerService {
                 || localType == StardewGuideIntent.FESTIVAL
                 || localType == StardewGuideIntent.FARM_MAP
                 || localType == StardewGuideIntent.ANIMAL_CARE
+                || localType == StardewGuideIntent.ISLAND
                 || localType == StardewGuideIntent.DUNGEON
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
@@ -204,7 +214,7 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.RESOURCE;
         }
         if (looksLikeIslandFieldOfficeGuideQuery(q)) {
-            return StardewGuideIntent.GUIDE;
+            return StardewGuideIntent.ISLAND;
         }
         if (looksLikeForgeEnchantingQuery(q)) {
             return StardewGuideIntent.GUIDE;
@@ -235,6 +245,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeFarmMapQuery(q) && !looksLikeFarmBuildingQuery(q)) {
             return StardewGuideIntent.FARM_MAP;
+        }
+        if (looksLikeIslandGuideQuery(q)) {
+            return StardewGuideIntent.ISLAND;
         }
         if (looksLikeDungeonGuideQuery(q)) {
             return StardewGuideIntent.DUNGEON;
@@ -525,6 +538,40 @@ public class StardewQueryPlannerService {
                 "突变虫穴", "突变虫巢", "突变昆虫巢穴", "女巫沼泽", "女巫小屋",
                 "The Mines", "Skull Cavern", "Volcano Dungeon", "Quarry Mine",
                 "Mutant Bug Lair", "Witch's Swamp");
+    }
+
+    private boolean looksLikeIslandGuideQuery(String query) {
+        if (looksLikeDungeonGuideQuery(query)
+                || looksLikeMonsterDropQuery(query)
+                || looksLikeSpecificArtifactResourceQuery(query)
+                || looksLikeSpecificMineralResourceQuery(query)
+                || looksLikeIslandFieldOfficeResourceQuery(query)
+                || isSpecificResourceQuestion(query)
+                || isFishingQuestion(query)) {
+            return false;
+        }
+        boolean asksIslandGuide = containsAny(query,
+                "怎么解锁", "怎么去", "怎么上", "怎么进", "怎么修", "怎么开", "怎么救", "怎么做", "怎么玩",
+                "先做什么", "先解锁", "优先解锁", "路线", "攻略", "位置", "在哪", "多少", "几个", "顺序",
+                "答案", "谜题", "任务", "修船", "鹦鹉", "金核桃解锁", "核桃房", "快线", "度假村");
+        if (!asksIslandGuide) {
+            return false;
+        }
+        return containsAny(query,
+                "姜岛", "姜岛上", "岛屿", "金核桃", "黄金核桃",
+                "威利修船", "威利的船", "修船", "船票", "上岛",
+                "南岛", "东岛", "北岛", "西岛", "东南岛",
+                "岛屿农场", "姜岛农场", "岛屿农舍", "农舍", "岛屿度假村", "海滩度假村", "度假村",
+                "海盗湾", "海盗洞", "美人鱼", "美人鱼谜题", "长笛块",
+                "宝石鸟", "宝石鸟谜题", "香蕉神龛", "雷欧小屋", "Leo hut",
+                "蜗牛教授", "田野办事处", "岛屿办事处", "姜岛办事处", "挖掘场", "蘑菇洞",
+                "岛屿商人", "姜岛商人", "鸟商人",
+                "美食家青蛙", "青蛙任务", "老奶奶", "伯蒂", "海盗妻子", "沉船",
+                "老虎史莱姆树林", "水晶洞", "水晶谜题", "齐先生核桃房", "核桃房",
+                "鹦鹉快线", "鹦鹉传送", "Parrot Express",
+                "Ginger Island", "Island Farm", "Beach Resort", "Pirate Cove", "Mermaid",
+                "Gem Birds", "Island Field Office", "Professor Snail", "Island Trader",
+                "Qi's Walnut Room");
     }
 
     private boolean isSpecificResourceQuestion(String query) {

@@ -556,6 +556,50 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersIslandGuidesThroughTypedIntentWithoutResourceDungeonFishOrOrderCrossRouting() {
+        StardewGuideResult all = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 姜岛有哪些地点");
+        StardewGuideResult access = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 姜岛怎么解锁");
+        StardewGuideResult farm = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 岛屿农场怎么修");
+        StardewGuideResult pirateCove = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 海盗湾怎么进");
+        StardewGuideResult mermaid = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 美人鱼谜题怎么做");
+        StardewGuideResult fieldOffice = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 蜗牛教授紫花紫海星答案");
+        StardewGuideResult walnut = service.answerEvidence(StardewGuideIntent.RESOURCE, "星露谷 金核桃怎么获得");
+        StardewGuideResult snakeSkull = service.answerEvidence(StardewGuideIntent.RESOURCE, "星露谷 蛇头骨哪里刷");
+        StardewGuideResult volcano = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 火山地牢怎么过");
+        StardewGuideResult stingray = service.answerEvidence(StardewGuideIntent.FISH, "星露谷 黄貂鱼在哪钓");
+        StardewGuideResult qiCrop = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "星露谷 齐瓜怎么做");
+
+        assertThat(all.getIntent()).isEqualTo("island_available");
+        assertThat(all.getAnswer()).contains("姜岛地点/解锁对照", "姜岛解锁", "海滩度假村", "海盗湾", "岛屿农场", "鹦鹉快线");
+
+        assertThat(access.getIntent()).isEqualTo("island_detail");
+        assertThat(access.getAnswer()).contains("硬木 x200", "铱锭 x5", "电池组 x5", "1,000g")
+                .doesNotContain("地下城/冒险地点对照");
+        assertThat(access.getSourceUrls()).contains("https://stardewvalleywiki.com/Fish_Shop#Willy.27s_Boat");
+
+        assertThat(farm.getAnswer()).contains("20 个金核桃", "美食家青蛙", "甜瓜", "小麦", "大蒜");
+        assertThat(pirateCove.getAnswer()).contains("海盗湾", "星形潮池", "20:00", "黄貂鱼");
+        assertThat(mermaid.getAnswer()).contains("雨天", "5 个长笛块", "5 个金核桃");
+        assertThat(fieldOffice.getAnswer()).contains("蜗牛教授", "紫色花 22", "紫色海星 18", "鸵鸟孵化器");
+
+        assertThat(walnut.getIntent()).isEqualTo("resource");
+        assertThat(walnut.getAnswer()).contains("金核桃获取方式")
+                .doesNotContain("姜岛地点/解锁对照");
+        assertThat(snakeSkull.getIntent()).isEqualTo("resource");
+        assertThat(snakeSkull.getAnswer()).contains("蛇头骨获取方式")
+                .doesNotContain("姜岛地点/解锁对照");
+        assertThat(volcano.getIntent()).isEqualTo("dungeon_detail");
+        assertThat(volcano.getAnswer()).contains("火山地牢", "共 10 层")
+                .doesNotContain("姜岛地点/解锁对照");
+        assertThat(stingray.getIntent()).isIn("fish_detail", "fish_available");
+        assertThat(stingray.getAnswer()).contains("黄貂鱼")
+                .doesNotContain("姜岛地点/解锁对照");
+        assertThat(qiCrop.getIntent()).isEqualTo("special_order");
+        assertThat(qiCrop.getAnswer()).contains("齐瓜特别订单")
+                .doesNotContain("姜岛地点/解锁对照");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

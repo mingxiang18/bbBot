@@ -42,6 +42,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.farmMaps()).hasSize(8);
         assertThat(repository.farmAnimals()).hasSize(11);
+        assertThat(repository.islandGuides()).hasSize(13);
         assertThat(repository.dungeonGuides()).hasSize(6);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
@@ -138,6 +139,64 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(dungeon.getQuests()).isNotEmpty();
                     assertThat(dungeon.getRecommendations()).isNotEmpty();
                     assertThat(dungeon.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void fullIslandGuideSetIsCoveredAsTypedCategory() {
+        Set<String> islandIds = repository.islandGuides().stream()
+                .map(StardewData.IslandGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.islandGuides()).hasSize(13);
+        assertThat(islandIds).containsExactlyInAnyOrder(
+                "ginger_island_access",
+                "island_south_resort",
+                "island_southeast_pirate_cove",
+                "island_mermaid_puzzle",
+                "island_east_jungle_gem_birds",
+                "island_north_dig_site",
+                "island_field_office",
+                "island_trader",
+                "island_west_overview",
+                "island_farm_gourmand_frog",
+                "island_west_side_quests",
+                "island_tiger_slime_qi_room",
+                "island_parrot_express"
+        );
+
+        assertThat(repository.findIslandGuide("姜岛怎么解锁").orElseThrow().getId()).isEqualTo("ginger_island_access");
+        assertThat(repository.findIslandGuide("海滩度假村怎么修").orElseThrow().getId()).isEqualTo("island_south_resort");
+        assertThat(repository.findIslandGuide("海盗湾怎么进").orElseThrow().getId()).isEqualTo("island_southeast_pirate_cove");
+        assertThat(repository.findIslandGuide("美人鱼谜题怎么做").orElseThrow().getId()).isEqualTo("island_mermaid_puzzle");
+        assertThat(repository.findIslandGuide("宝石鸟谜题").orElseThrow().getId()).isEqualTo("island_east_jungle_gem_birds");
+        assertThat(repository.findIslandGuide("蜗牛教授怎么救").orElseThrow().getId()).isEqualTo("island_north_dig_site");
+        assertThat(repository.findIslandGuide("紫花紫海星答案").orElseThrow().getId()).isEqualTo("island_field_office");
+        assertThat(repository.findIslandGuide("岛屿商人怎么解锁").orElseThrow().getId()).isEqualTo("island_trader");
+        assertThat(repository.findIslandGuide("姜岛西边乌龟").orElseThrow().getId()).isEqualTo("island_west_overview");
+        assertThat(repository.findIslandGuide("美食家青蛙甜瓜小麦大蒜").orElseThrow().getId()).isEqualTo("island_farm_gourmand_frog");
+        assertThat(repository.findIslandGuide("绿色打地鼠").orElseThrow().getId()).isEqualTo("island_west_side_quests");
+        assertThat(repository.findIslandGuide("齐先生核桃房").orElseThrow().getId()).isEqualTo("island_tiger_slime_qi_room");
+        assertThat(repository.findIslandGuide("鹦鹉快线怎么解锁").orElseThrow().getId()).isEqualTo("island_parrot_express");
+    }
+
+    @Test
+    void allIslandGuidesHaveCoreFieldsAndSources() {
+        assertThat(repository.islandGuides())
+                .hasSize(13)
+                .allSatisfy(island -> {
+                    assertThat(island.getId()).isNotBlank();
+                    assertThat(island.getName()).isNotBlank();
+                    assertThat(island.getNameEn()).isNotBlank();
+                    assertThat(island.getAliases()).isNotEmpty();
+                    assertThat(island.getRegion()).isNotBlank();
+                    assertThat(island.getUnlock()).isNotBlank();
+                    assertThat(island.getOverview()).isNotBlank();
+                    assertThat(island.getActivities()).isNotEmpty();
+                    assertThat(island.getWalnuts()).isNotEmpty();
+                    assertThat(island.getRewards()).isNotEmpty();
+                    assertThat(island.getRecommendations()).isNotEmpty();
+                    assertThat(island.getSourceUrls()).isNotEmpty();
                 });
     }
 

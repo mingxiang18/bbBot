@@ -237,6 +237,7 @@ public class StardewGuideService {
             case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
             case FESTIVAL -> typedFestivalAnswer(query);
             case FARM_MAP -> typedFarmMapAnswer(query);
+            case ISLAND -> typedIslandAnswer(query);
             case DUNGEON -> typedDungeonAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
@@ -406,6 +407,14 @@ public class StardewGuideService {
             return farmMapDetailAnswer(farmMap.get());
         }
         return farmMapListAnswer(query, farmMap);
+    }
+
+    private StardewGuideResult typedIslandAnswer(String query) {
+        Optional<StardewData.IslandGuide> island = repository.findIslandGuide(query);
+        if (island.isPresent() && !isBroadIslandQuery(query)) {
+            return islandDetailAnswer(island.get());
+        }
+        return islandListAnswer(query, island);
     }
 
     private StardewGuideResult typedDungeonAnswer(String query) {
@@ -748,6 +757,57 @@ public class StardewGuideService {
             sb.append("提示：").append(dungeon.getNote()).append("\n");
         }
         return result("dungeon_detail", sb.toString().trim(), dungeon.getSourceUrls());
+    }
+
+    private StardewGuideResult islandDetailAnswer(StardewData.IslandGuide island) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(island.getName()).append("：\n");
+        if (StringUtils.isNotBlank(island.getRegion())) {
+            sb.append("区域：").append(island.getRegion()).append("\n");
+        }
+        if (StringUtils.isNotBlank(island.getUnlock())) {
+            sb.append("解锁：").append(island.getUnlock()).append("\n");
+        }
+        if (StringUtils.isNotBlank(island.getOverview())) {
+            sb.append("概览：").append(island.getOverview()).append("\n");
+        }
+        appendLines(sb, "可做事项", island.getActivities());
+        appendLines(sb, "金核桃/解锁", island.getWalnuts());
+        appendLines(sb, "奖励/产出", island.getRewards());
+        appendLines(sb, "建议", island.getRecommendations());
+        if (StringUtils.isNotBlank(island.getNote())) {
+            sb.append("提示：").append(island.getNote()).append("\n");
+        }
+        return result("island_detail", sb.toString().trim(), island.getSourceUrls());
+    }
+
+    private StardewGuideResult islandListAnswer(String query, Optional<StardewData.IslandGuide> preferred) {
+        List<StardewData.IslandGuide> matched = repository.islandGuides().stream()
+                .filter(island -> matchesIslandQuery(query, island))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::islandGuides);
+        }
+        if (matched.isEmpty()) {
+            return result("island_available", "没找到姜岛探索资料。可以试试：姜岛怎么解锁、岛屿农场、海盗湾、美人鱼谜题、蜗牛教授。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("姜岛地点/解锁对照：\n");
+        for (StardewData.IslandGuide island : matched) {
+            sb.append("- ").append(island.getName()).append("：");
+            if (StringUtils.isNotBlank(island.getUnlock())) {
+                sb.append(island.getUnlock());
+            } else if (StringUtils.isNotBlank(island.getOverview())) {
+                sb.append(island.getOverview());
+            } else {
+                sb.append("已记录姜岛探索资料");
+            }
+            if (island.getRecommendations() != null && !island.getRecommendations().isEmpty()) {
+                sb.append("；建议：").append(island.getRecommendations().get(0));
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：问具体地点名可以看路线、鹦鹉解锁、金核桃来源和推进顺序，例如“海盗湾怎么进”“岛屿农场先修什么”。");
+        return result("island_available", sb.toString().trim(), collectIslandSources(matched));
     }
 
     private StardewGuideResult dungeonListAnswer(String query, Optional<StardewData.DungeonGuide> preferred) {
@@ -2162,6 +2222,11 @@ public class StardewGuideService {
                 || (containsAny(query, "地下城", "冒险地点", "矿洞", "矿井") && containsAny(query, "哪些", "列表", "所有", "全部", "总览"));
     }
 
+    private boolean isBroadIslandQuery(String query) {
+        return containsAny(query, "姜岛有哪些", "岛上有哪些", "岛屿有哪些", "姜岛地点", "姜岛区域", "姜岛列表", "姜岛总览", "姜岛先做什么", "姜岛先解锁什么", "姜岛攻略")
+                || (containsAny(query, "姜岛", "岛屿", "金核桃解锁", "鹦鹉解锁") && containsAny(query, "哪些", "列表", "所有", "全部", "总览", "顺序", "先做", "先解锁"));
+    }
+
     private boolean isBroadStoryQuestQuery(String query) {
         return containsAny(query, "任务有哪些", "普通任务有哪些", "剧情任务有哪些", "任务列表", "普通任务列表", "剧情任务列表", "所有任务", "全部任务", "总览")
                 || (containsAny(query, "普通任务", "剧情任务", "任务日志") && containsAny(query, "哪些", "列表", "总览", "所有", "全部"));
@@ -2275,6 +2340,28 @@ public class StardewGuideService {
                 || containsAnyNormalized(q, dungeon.getQuests())
                 || containsAnyNormalized(q, dungeon.getRecommendations())
                 || containsNormalized(q, dungeon.getNote());
+    }
+
+    private boolean matchesIslandQuery(String query, StardewData.IslandGuide island) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.IslandGuide> direct = repository.findIslandGuide(query);
+        if (direct.isPresent() && direct.get().getId().equals(island.getId()) && !isBroadIslandQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "姜岛有哪些", "岛上有哪些", "岛屿有哪些", "姜岛地点", "姜岛区域", "姜岛列表", "全部姜岛", "所有姜岛")) {
+            return true;
+        }
+        return containsAnyNormalized(q, island.getAliases())
+                || containsNormalized(q, island.getName())
+                || containsNormalized(q, island.getNameEn())
+                || containsNormalized(q, island.getRegion())
+                || containsNormalized(q, island.getUnlock())
+                || containsNormalized(q, island.getOverview())
+                || containsAnyNormalized(q, island.getActivities())
+                || containsAnyNormalized(q, island.getWalnuts())
+                || containsAnyNormalized(q, island.getRewards())
+                || containsAnyNormalized(q, island.getRecommendations())
+                || containsNormalized(q, island.getNote());
     }
 
     private boolean containsAnimalProduct(String query, List<StardewData.AnimalProduct> products) {
@@ -3053,6 +3140,16 @@ public class StardewGuideService {
         for (StardewData.DungeonGuide dungeon : dungeons) {
             if (dungeon.getSourceUrls() != null) {
                 urls.addAll(dungeon.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectIslandSources(List<StardewData.IslandGuide> islands) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.IslandGuide island : islands) {
+            if (island.getSourceUrls() != null) {
+                urls.addAll(island.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);
