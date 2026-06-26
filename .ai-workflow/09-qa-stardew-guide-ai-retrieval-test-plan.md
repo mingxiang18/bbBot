@@ -31,7 +31,7 @@
 
 - JSON typed plan：AI 返回 JSON 时，服务应解析 `intents[].type`、`keywords`、`constraints`，再交给 retriever 检索。
 - Planner 不可用：LIGHT 模型返回空、异常或不可解析 JSON 时，应使用本地高置信 fallback plan，而不是调用旧自由文本 `StardewGuideService.answer`。
-- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING`、`FESTIVAL`、`FARM_MAP`、`ANIMAL_CARE`、`QUEST`、`ISLAND` 或 `DUNGEON`，以及普通任务与特别订单/资源/居民、农场地图与农场建筑、农场动物与农场建筑、姜岛探索与资源/地牢/鱼类/特别订单、地下城与资源/怪物/鱼类互相误判。
+- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING`、`FESTIVAL`、`FARM_MAP`、`ANIMAL_CARE`、`FRUIT_TREE`、`QUEST`、`ISLAND` 或 `DUNGEON`，以及普通任务与特别订单/资源/居民、农场地图与农场建筑、农场动物与农场建筑、果树与水果资源/作物/树苗商店、姜岛探索与资源/地牢/鱼类/特别订单、地下城与资源/怪物/鱼类互相误判。
 - 证据整合 prompt：最终整合 prompt 必须包含用户问题和 typed evidence，且不携带 `sourceUrls`、`gameVersion`、`lastCheckedAt` 这类内部字段。
 - 自然回复返回：当 CHAT 模型返回非空答案时，命令层直接使用该自然语言答案。
 - CHAT 空返回：应退回第一条 typed evidence 的原文答案；如果没有可靠证据，则给出补充条件提示。
@@ -119,6 +119,8 @@
 - `兔子的脚怎么出`、`猪松露怎么赚钱` 应走 `ANIMAL_CARE` 的动物详情，不能退成动物列表或资源泛答。
 - `后期养什么动物赚钱` 应走 `ANIMAL_CARE` 的动物对照列表，并突出猪、松露和松露油。
 - `鸡舍升级材料`、`畜棚多少钱` 应走 `BUILDING`，不能被农场动物抢走。
+- `果树怎么种`、`苹果树温室怎么种`、`夏季果树有哪些` 应走 `FRUIT_TREE`，不能误判为通用攻略、作物或水果资源。
+- `苹果怎么获得` 应走 `RESOURCE`，不能被苹果树抢走；`苹果树苗在哪里买` 应走 `SHOP`，不能被果树种植规则抢走。
 - `罗宾斧头在哪`、`刘易斯短裤怎么拿`、`神秘齐怎么做` 应走 `QUEST`，不能被资源、居民位置或特别订单抢走。
 - `罗宾资源冲刺奖励是什么`、`齐瓜怎么做` 应走 `SPECIAL_ORDER`，不能被 `QUEST` 抢走。
 - `姜岛怎么解锁`、`岛屿农场怎么修`、`海盗湾怎么进`、`美人鱼谜题怎么做`、`蜗牛教授怎么救` 应走 `ISLAND`。
@@ -141,7 +143,7 @@
 - 普通社区中心收集包、失踪的收集包、房间概览包 id 覆盖完整。
 - 每个收集包都有房间、奖励、物品和来源字段。
 - 高频资源、料理、工具、建筑、机器、商店、节日/活动条目能够成功加载。
-- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=11、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、islandGuides=13、dungeonGuides=6、guides=39。
+- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=11、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、fruitTrees=8、islandGuides=13、dungeonGuides=6、guides=39。
 
 ### 2.6 `StardewWikiApiClientTest`
 
@@ -309,7 +311,24 @@
 - 通用养殖问题仍可回到 `guide`，例如“动物怎么养、怎么提高心情”。
 - 鸡舍/畜棚升级材料和价格归 `BUILDING`，不能被动物数据抢走。
 
-### 3.9 普通任务/任务日志
+### 3.9 果树
+
+- `果树怎么种`
+- `苹果树温室怎么种`
+- `香蕉树姜岛会全年结果吗`
+- `夏季果树有哪些`
+- `芒果树苗怎么获得`
+- `苹果怎么获得`
+- `苹果树苗在哪里买`
+
+验收点：
+
+- 果树种植、成熟、结果季节、温室/姜岛、3x3 间隔和布局归 `FRUIT_TREE`。
+- 具体水果本身的获取/用途归 `RESOURCE`，不能被同名果树抢走。
+- 只问树苗购买或兑换归 `SHOP`；如果同时问“怎么种/温室/姜岛/成熟”，才进入果树种植资料。
+- 夏季果树列表应包含橙子树、桃子树、香蕉树、芒果树，不应混入苹果树或石榴树。
+
+### 3.10 普通任务/任务日志
 
 - `普通任务有哪些`
 - `罗宾斧头在哪`
@@ -329,7 +348,7 @@
 - 特别订单板和齐先生核桃房任务归 `SPECIAL_ORDER`，不能被 `QUEST` 抢走。
 - 带居民名或物品名的问题不能误走居民位置或资源泛答，例如罗宾斧头、刘易斯短裤。
 
-### 3.10 姜岛探索/鹦鹉解锁
+### 3.11 姜岛探索/鹦鹉解锁
 
 - `姜岛怎么解锁`
 - `威利修船要什么`
@@ -356,7 +375,7 @@
 - 火山地牢路线和打法归 `DUNGEON`；黄貂鱼钓点归 `FISH`；齐瓜、岛屿食材等齐先生任务归 `SPECIAL_ORDER`。
 - 列表问题能展示 13 个姜岛地点/解锁条目；具体地点问题返回单点详情。
 
-### 3.11 地下城/冒险地点
+### 3.12 地下城/冒险地点
 
 - `地下城有哪些`
 - `矿井多少层`
@@ -379,7 +398,7 @@
 - 具体资源来源、怪物掉落和鱼类钓点仍按 `RESOURCE`、`MONSTER_DROP`、`FISH` 回答，不能被地下城类目吞掉。
 - 矿井、骷髅洞穴、火山地牢这类高频问题可以被 AI 归为通用攻略，但本地高置信后处理应拉回 `DUNGEON`。
 
-### 3.12 料理、技能、进度
+### 3.13 料理、技能、进度
 
 - `骷髅洞穴吃什么料理`
 - `幸运午餐怎么做`
@@ -396,7 +415,7 @@
 - 技能要包含经验来源、升级路线、职业建议。
 - 进度类答案要可执行，避免只给泛泛解释。
 
-### 3.13 模糊与组合问题
+### 3.14 模糊与组合问题
 
 - `电影院还差几个东西，恐龙蛋黄酱怎么弄`
 - `小桶缺橡树树脂，树脂哪里来`
@@ -476,7 +495,7 @@ AI tool 验收：
   test
 ```
 
-当前结果：261 tests, 0 failures, 0 errors, 0 skipped。
+当前结果：265 tests, 0 failures, 0 errors, 0 skipped。
 
 模块编译：
 
@@ -498,7 +517,7 @@ AI tool 验收：
 - AI tool 输出契约确认不包含来源、版本、日期等面向用户不应展示的字段。
 - 命令回复确认不再拼接来源、数据版本、校验日期。
 - AI 空返回或异常时有本地检索回退。
-- 居民、工具、资源、收集包、鱼类、农场动物、普通任务、姜岛探索、地下城九类高频问题至少各有一条人工验收通过。
+- 居民、工具、资源、收集包、鱼类、农场动物、果树、普通任务、姜岛探索、地下城十类高频问题至少各有一条人工验收通过。
 - 明确记录未做存档解析，不对“当前真实游戏状态”做无依据承诺。
 
 ## 7. 后续测试补强

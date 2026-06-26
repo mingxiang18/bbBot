@@ -7,10 +7,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class StardewQueryPlannerService {
+
+    private static final Map<StardewGuideIntent, Set<StardewGuideIntent>> LOCAL_CORRECTION_SOURCES =
+            localCorrectionSources();
 
     private final AiChatService aiChatService;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -71,6 +78,7 @@ public class StardewQueryPlannerService {
                         - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
                         - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
                         - 鸡舍/畜棚动物本身的购买、成熟时间、产物、赚钱建议、兔脚/鸭毛/松露/大壶牛奶/羊毛/鸵鸟蛋等动物产物机制，例如“猪值得养吗”“兔子的脚怎么出”“奶牛为什么不出大壶奶”“动物有哪些”，归为 ANIMAL_CARE。
+                        - 果树/水果树的种植规则、树苗来源概览、成熟时间、结果季节、温室/姜岛全年结果、3x3 间隔和布局，例如“果树怎么种”“苹果树温室怎么种”“夏季果树有哪些”，归为 FRUIT_TREE；具体水果本身怎么获得/用途，例如“苹果怎么获得”，仍归为 RESOURCE；只问树苗在哪里买/怎么换，归为 SHOP。
                         - 姜岛整体探索、威利修船上岛、南/东/北/西岛区域、岛屿农场、度假村、海盗湾、美人鱼谜题、宝石鸟、蜗牛教授、田野办事处、挖掘场、岛屿商人、齐先生核桃房、鹦鹉快线、金核桃优先解锁顺序，例如“姜岛怎么解锁”“岛屿农场怎么修”“海盗湾怎么进”“美人鱼谜题怎么做”“蜗牛教授怎么救”，归为 ISLAND。
                         - 矿井、骷髅洞穴、火山地牢、采石场矿洞、突变虫穴、女巫沼泽等地下城/冒险地点的解锁、层数、路线、机制、奖励、怎么过、怎么冲层，例如“矿井多少层”“骷髅洞穴100层怎么冲”“火山地牢怎么过”“金镰刀在哪拿”，归为 DUNGEON。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
@@ -121,69 +129,70 @@ public class StardewQueryPlannerService {
         if (aiType == StardewGuideIntent.UNKNOWN) {
             return localType == StardewGuideIntent.QUEST;
         }
-        if (aiType == StardewGuideIntent.SPECIAL_ORDER
-                && (localType == StardewGuideIntent.FISH || localType == StardewGuideIntent.FISH_POND)) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.QUEST && localType == StardewGuideIntent.SPECIAL_ORDER) {
-            return true;
-        }
-        if (localType == StardewGuideIntent.QUEST
-                && (aiType == StardewGuideIntent.GUIDE
-                || aiType == StardewGuideIntent.RESOURCE
-                || aiType == StardewGuideIntent.VILLAGER_SCHEDULE
-                || aiType == StardewGuideIntent.VILLAGER_PROFILE)) {
-            return true;
-        }
-        if (localType == StardewGuideIntent.DUNGEON
-                && (aiType == StardewGuideIntent.GUIDE
-                || aiType == StardewGuideIntent.RESOURCE
-                || aiType == StardewGuideIntent.SKILL
-                || aiType == StardewGuideIntent.FARM_MAP)) {
-            return true;
-        }
-        if (localType == StardewGuideIntent.ISLAND
-                && (aiType == StardewGuideIntent.GUIDE
-                || aiType == StardewGuideIntent.RESOURCE
-                || aiType == StardewGuideIntent.SHOP
-                || aiType == StardewGuideIntent.FARM_MAP
-                || aiType == StardewGuideIntent.BUILDING)) {
-            return true;
-        }
-        if (localType == StardewGuideIntent.TOOL
-                && (aiType == StardewGuideIntent.GUIDE
-                || aiType == StardewGuideIntent.SHOP
-                || aiType == StardewGuideIntent.RESOURCE
-                || aiType == StardewGuideIntent.CRAFTING)) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FISH_POND) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FARM_MAP) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.FARM_MAP && localType == StardewGuideIntent.BUILDING) {
-            return true;
-        }
-        if (aiType == StardewGuideIntent.MACHINE && localType == StardewGuideIntent.CRAFTING) {
-            return true;
-        }
-        return aiType == StardewGuideIntent.GUIDE
-                && (localType == StardewGuideIntent.SKILL
-                || localType == StardewGuideIntent.SPECIAL_ORDER
-                || localType == StardewGuideIntent.CRAFTING
-                || localType == StardewGuideIntent.QUEST
-                || localType == StardewGuideIntent.FESTIVAL
-                || localType == StardewGuideIntent.FARM_MAP
-                || localType == StardewGuideIntent.ANIMAL_CARE
-                || localType == StardewGuideIntent.ISLAND
-                || localType == StardewGuideIntent.DUNGEON
-                || localType == StardewGuideIntent.FISH_POND
-                || localType == StardewGuideIntent.MONSTER_DROP);
+        return LOCAL_CORRECTION_SOURCES
+                .getOrDefault(localType, Set.of())
+                .contains(aiType);
+    }
+
+    private static Map<StardewGuideIntent, Set<StardewGuideIntent>> localCorrectionSources() {
+        EnumMap<StardewGuideIntent, Set<StardewGuideIntent>> corrections = new EnumMap<>(StardewGuideIntent.class);
+        corrections.put(StardewGuideIntent.FISH, EnumSet.of(StardewGuideIntent.SPECIAL_ORDER));
+        corrections.put(StardewGuideIntent.FISH_POND, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.BUILDING,
+                StardewGuideIntent.SPECIAL_ORDER
+        ));
+        corrections.put(StardewGuideIntent.SPECIAL_ORDER, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.QUEST
+        ));
+        corrections.put(StardewGuideIntent.QUEST, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.VILLAGER_SCHEDULE,
+                StardewGuideIntent.VILLAGER_PROFILE
+        ));
+        corrections.put(StardewGuideIntent.DUNGEON, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.SKILL,
+                StardewGuideIntent.FARM_MAP
+        ));
+        corrections.put(StardewGuideIntent.ISLAND, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.SHOP,
+                StardewGuideIntent.FARM_MAP,
+                StardewGuideIntent.BUILDING
+        ));
+        corrections.put(StardewGuideIntent.TOOL, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.SHOP,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.CRAFTING
+        ));
+        corrections.put(StardewGuideIntent.BUILDING, EnumSet.of(
+                StardewGuideIntent.FISH_POND,
+                StardewGuideIntent.FARM_MAP
+        ));
+        corrections.put(StardewGuideIntent.FARM_MAP, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.BUILDING
+        ));
+        corrections.put(StardewGuideIntent.CRAFTING, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.MACHINE
+        ));
+        corrections.put(StardewGuideIntent.SKILL, EnumSet.of(StardewGuideIntent.GUIDE));
+        corrections.put(StardewGuideIntent.FESTIVAL, EnumSet.of(StardewGuideIntent.GUIDE));
+        corrections.put(StardewGuideIntent.ANIMAL_CARE, EnumSet.of(StardewGuideIntent.GUIDE));
+        corrections.put(StardewGuideIntent.FRUIT_TREE, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.CROP
+        ));
+        corrections.put(StardewGuideIntent.MONSTER_DROP, EnumSet.of(StardewGuideIntent.GUIDE));
+        return Map.copyOf(corrections);
     }
 
     private StardewQueryPlan localFallbackPlan(String query) {
@@ -294,7 +303,10 @@ public class StardewQueryPlannerService {
         if (looksLikeBookQuery(q)) {
             return StardewGuideIntent.GUIDE;
         }
-        if (containsAny(q, "果树", "树苗", "温室怎么种")) {
+        if (looksLikeFruitTreeSaplingShopQuery(q)) {
+            return StardewGuideIntent.SHOP;
+        }
+        if (looksLikeFruitTreeGuideQuery(q)) {
             return StardewGuideIntent.FRUIT_TREE;
         }
         if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "兔脚", "兔子的脚", "恐龙", "猪", "鸵鸟",
@@ -356,6 +368,32 @@ public class StardewQueryPlannerService {
                 "奶桶", "挤奶桶", "剪刀", "剪羊毛",
                 "axe", "pickaxe", "hoe", "watering can", "trash can", "fishing rod", "pan", "scythe",
                 "backpack", "milk pail", "shears");
+    }
+
+    private boolean looksLikeFruitTreeSaplingShopQuery(String query) {
+        return containsAny(query, "树苗", "苹果树苗", "石榴树苗", "香蕉树苗", "芒果树苗",
+                "杏子树苗", "樱桃树苗", "橙子树苗", "桃子树苗")
+                && containsAny(query, "在哪里买", "哪里买", "谁卖", "购买", "怎么换", "兑换")
+                && !containsAny(query, "怎么种", "温室", "姜岛", "布局", "间隔", "3x3", "3×3", "成熟");
+    }
+
+    private boolean looksLikeFruitTreeGuideQuery(String query) {
+        if (looksLikeFruitTreeSaplingShopQuery(query)) {
+            return false;
+        }
+        boolean namesTree = containsAny(query,
+                "果树", "水果树", "树苗",
+                "杏子树", "杏树", "樱桃树", "橙子树", "橙树", "桃子树", "桃树",
+                "苹果树", "石榴树", "香蕉树", "芒果树",
+                "apricot tree", "cherry tree", "orange tree", "peach tree",
+                "apple tree", "pomegranate tree", "banana tree", "mango tree");
+        if (!namesTree) {
+            return false;
+        }
+        return containsAny(query,
+                "怎么种", "温室", "姜岛", "布局", "间隔", "3x3", "3×3",
+                "几天成熟", "成熟", "全年", "季节", "结果", "会结果", "有哪些", "列表", "推荐")
+                || containsAny(query, "果树", "水果树", "树苗");
     }
 
     private boolean looksLikeMasteryQuery(String query) {

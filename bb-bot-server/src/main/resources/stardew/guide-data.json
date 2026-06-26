@@ -1,6 +1,345 @@
 {
   "gameVersion": "1.6.15",
   "lastCheckedAt": "2026-06-26",
+  "fruitTrees": [
+    {
+      "id": "apricot_tree",
+      "name": "杏子树",
+      "nameEn": "Apricot Tree",
+      "aliases": [
+        "杏树",
+        "杏子树苗",
+        "apricot tree",
+        "apricot sapling"
+      ],
+      "fruit": "杏子",
+      "sapling": "杏子树苗",
+      "season": "春季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 2,000g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在春季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包",
+        "水果沙拉",
+        "新鲜水果任务"
+      ],
+      "recommendation": "便宜春季果树，适合补收集包和水果沙拉；赚钱优先级一般。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "cherry_tree",
+      "name": "樱桃树",
+      "nameEn": "Cherry Tree",
+      "aliases": [
+        "樱桃树苗",
+        "cherry tree",
+        "cherry sapling"
+      ],
+      "fruit": "樱桃",
+      "sapling": "樱桃树苗",
+      "season": "春季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 3,400g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在春季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包"
+      ],
+      "recommendation": "春季果树；如果只是补工匠收集包，六种普通果树水果任选其一即可。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "orange_tree",
+      "name": "橙子树",
+      "nameEn": "Orange Tree",
+      "aliases": [
+        "橙树",
+        "橙子树苗",
+        "orange tree",
+        "orange sapling"
+      ],
+      "fruit": "橙子",
+      "sapling": "橙子树苗",
+      "season": "夏季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 4,000g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在夏季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包",
+        "礼物"
+      ],
+      "recommendation": "夏季果树，温室边缘种下后全年稳定产水果。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "peach_tree",
+      "name": "桃子树",
+      "nameEn": "Peach Tree",
+      "aliases": [
+        "桃树",
+        "桃子树苗",
+        "peach tree",
+        "peach sapling"
+      ],
+      "fruit": "桃子",
+      "sapling": "桃子树苗",
+      "season": "夏季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 6,000g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在夏季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包",
+        "礼物"
+      ],
+      "recommendation": "夏季高价果树之一；如果温室/姜岛空间充裕，可以长期保留。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "apple_tree",
+      "name": "苹果树",
+      "nameEn": "Apple Tree",
+      "aliases": [
+        "苹果树苗",
+        "apple tree",
+        "apple sapling"
+      ],
+      "fruit": "苹果",
+      "sapling": "苹果树苗",
+      "season": "秋季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 4,000g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在秋季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包",
+        "饲料收集包",
+        "礼物"
+      ],
+      "recommendation": "社区中心路线很重要，饲料收集包需要 3 个苹果；要提前至少 28 天规划。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "pomegranate_tree",
+      "name": "石榴树",
+      "nameEn": "Pomegranate Tree",
+      "aliases": [
+        "石榴树苗",
+        "pomegranate tree",
+        "pomegranate sapling"
+      ],
+      "fruit": "石榴",
+      "sapling": "石榴树苗",
+      "season": "秋季",
+      "growthDays": 28,
+      "saplingSources": [
+        "皮埃尔杂货店 6,000g",
+        "旅行货车可能出售"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通农场成熟后只在秋季结果。",
+        "温室和姜岛上的成熟果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "工匠收集包",
+        "魔法师收集包",
+        "礼物"
+      ],
+      "recommendation": "魔法师收集包需要石榴；社区中心路线建议和苹果树一起提前种。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Pierre%27s_General_Store"
+      ]
+    },
+    {
+      "id": "banana_tree",
+      "name": "香蕉树",
+      "nameEn": "Banana Tree",
+      "aliases": [
+        "香蕉树苗",
+        "banana tree",
+        "banana sapling"
+      ],
+      "fruit": "香蕉",
+      "sapling": "香蕉树苗",
+      "season": "夏季",
+      "growthDays": 28,
+      "saplingSources": [
+        "姜岛商人用龙牙 x5 兑换",
+        "金色椰子可能开出",
+        "姜岛田野办事处大型动物化石收集奖励"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通星露谷区域成熟后只在夏季结果。",
+        "温室和姜岛上的成熟香蕉树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "姜岛探索",
+        "礼物",
+        "后期水果"
+      ],
+      "recommendation": "香蕉树是姜岛阶段重点果树；能在姜岛种就优先放姜岛，全年结果更省心。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Banana_Tree"
+      ]
+    },
+    {
+      "id": "mango_tree",
+      "name": "芒果树",
+      "nameEn": "Mango Tree",
+      "aliases": [
+        "芒果树苗",
+        "mango tree",
+        "mango sapling"
+      ],
+      "fruit": "芒果",
+      "sapling": "芒果树苗",
+      "season": "夏季",
+      "growthDays": 28,
+      "saplingSources": [
+        "姜岛商人用蚌 x75 兑换",
+        "金色椰子可能开出",
+        "老虎史莱姆可能掉落"
+      ],
+      "plantingRules": [
+        "树苗必须种在未开垦地面上，成熟前周围 3x3 范围要保持清空。",
+        "果树之间的 3x3 范围不能重叠；太近时游戏会阻止种植。",
+        "树肥不能用于果树；果树不需要浇水，冬季不会死亡。"
+      ],
+      "locationRules": [
+        "普通星露谷区域成熟后只在夏季结果。",
+        "温室和姜岛上的成熟芒果树全年每天结果。"
+      ],
+      "qualityRules": [
+        "成熟后每过一年果实品质提升一档，最高铱星。",
+        "1.6 起砍倒果树会掉同品质树苗，高品质树苗成长更快。"
+      ],
+      "usedIn": [
+        "姜岛探索",
+        "礼物",
+        "料理"
+      ],
+      "recommendation": "芒果树主要是姜岛阶段内容；蚌够多时可以直接从姜岛商人换树苗。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/果树",
+        "https://stardewvalleywiki.com/Fruit_Trees",
+        "https://stardewvalleywiki.com/Mango_Tree"
+      ]
+    }
+  ],
   "fish": [
     {
       "id": "pufferfish",

@@ -42,6 +42,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.farmMaps()).hasSize(8);
         assertThat(repository.farmAnimals()).hasSize(11);
+        assertThat(repository.fruitTrees()).hasSize(8);
         assertThat(repository.islandGuides()).hasSize(13);
         assertThat(repository.dungeonGuides()).hasSize(6);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
@@ -95,6 +96,51 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(animal.getBestFor()).isNotEmpty();
                     assertThat(animal.getRecommendations()).isNotEmpty();
                     assertThat(animal.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals");
+                });
+    }
+
+    @Test
+    void fullFruitTreeTableIsCoveredAsTypedCategory() {
+        Set<String> treeIds = repository.fruitTrees().stream()
+                .map(StardewData.FruitTreeGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.fruitTrees()).hasSize(8);
+        assertThat(treeIds).containsExactlyInAnyOrder(
+                "apricot_tree",
+                "cherry_tree",
+                "orange_tree",
+                "peach_tree",
+                "apple_tree",
+                "pomegranate_tree",
+                "banana_tree",
+                "mango_tree"
+        );
+
+        assertThat(repository.findFruitTree("苹果树温室怎么种").orElseThrow().getId()).isEqualTo("apple_tree");
+        assertThat(repository.findFruitTree("石榴树苗几天成熟").orElseThrow().getId()).isEqualTo("pomegranate_tree");
+        assertThat(repository.findFruitTree("香蕉树姜岛全年结果吗").orElseThrow().getId()).isEqualTo("banana_tree");
+        assertThat(repository.findFruitTree("芒果树苗怎么获得").orElseThrow().getId()).isEqualTo("mango_tree");
+    }
+
+    @Test
+    void allFruitTreesHaveCoreFieldsAndSources() {
+        assertThat(repository.fruitTrees())
+                .hasSize(8)
+                .allSatisfy(tree -> {
+                    assertThat(tree.getId()).isNotBlank();
+                    assertThat(tree.getName()).isNotBlank();
+                    assertThat(tree.getNameEn()).isNotBlank();
+                    assertThat(tree.getAliases()).isNotEmpty();
+                    assertThat(tree.getFruit()).isNotBlank();
+                    assertThat(tree.getSapling()).isNotBlank();
+                    assertThat(tree.getSeason()).isIn("春季", "夏季", "秋季");
+                    assertThat(tree.getGrowthDays()).isEqualTo(28);
+                    assertThat(tree.getSaplingSources()).isNotEmpty();
+                    assertThat(tree.getPlantingRules()).isNotEmpty();
+                    assertThat(tree.getLocationRules()).isNotEmpty();
+                    assertThat(tree.getQualityRules()).isNotEmpty();
+                    assertThat(tree.getSourceUrls()).contains("https://stardewvalleywiki.com/Fruit_Trees");
                 });
     }
 

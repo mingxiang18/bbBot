@@ -667,12 +667,22 @@ class StardewGuideServiceTest {
     @Test
     void answersFruitTreeAndFruitQuestions() {
         StardewGuideResult fruitTrees = service.answer("星露谷 果树怎么种，温室能种吗");
+        StardewGuideResult appleTree = service.answerEvidence(StardewGuideIntent.FRUIT_TREE, "星露谷 苹果树温室怎么种");
+        StardewGuideResult bananaTree = service.answerEvidence(StardewGuideIntent.FRUIT_TREE, "星露谷 香蕉树苗怎么获得，姜岛会结果吗");
+        StardewGuideResult summerTrees = service.answerEvidence(StardewGuideIntent.FRUIT_TREE, "星露谷 夏季果树有哪些");
         StardewGuideResult apple = service.answer("星露谷 苹果怎么获得，收集包要几个");
         StardewGuideResult pomegranate = service.answer("星露谷 石榴怎么获得");
         StardewGuideResult banana = service.answer("星露谷 香蕉怎么获得");
 
-        assertThat(fruitTrees.getIntent()).isEqualTo("guide");
-        assertThat(fruitTrees.getAnswer()).contains("28 天", "3x3", "温室", "姜岛");
+        assertThat(fruitTrees.getIntent()).isEqualTo("fruit_tree_available");
+        assertThat(fruitTrees.getAnswer()).contains("28 天", "3x3", "温室", "姜岛", "苹果树", "香蕉树");
+        assertThat(appleTree.getIntent()).isEqualTo("fruit_tree_detail");
+        assertThat(appleTree.getAnswer()).contains("苹果树", "苹果树苗", "秋季", "4,000g", "28 天", "3x3", "温室");
+        assertThat(bananaTree.getIntent()).isEqualTo("fruit_tree_detail");
+        assertThat(bananaTree.getAnswer()).contains("香蕉树", "龙牙 x5", "金色椰子", "姜岛", "全年每天结果");
+        assertThat(summerTrees.getIntent()).isEqualTo("fruit_tree_available");
+        assertThat(summerTrees.getAnswer()).contains("橙子树", "桃子树", "香蕉树", "芒果树")
+                .doesNotContain("苹果树：", "石榴树：");
         assertThat(apple.getIntent()).isEqualTo("resource");
         assertThat(apple.getAnswer()).contains("苹果树苗", "秋季", "饲料收集包需要 3 个苹果");
         assertThat(pomegranate.getIntent()).isEqualTo("resource");

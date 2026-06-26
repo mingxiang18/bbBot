@@ -64,8 +64,9 @@ class StardewGuideRetrieverTest {
         List<StardewGuideEvidence> evidence = retriever.retrieve("苹果树温室怎么种", plan);
 
         assertThat(evidence).isNotEmpty();
-        assertThat(evidence.get(0).intent()).isEqualTo("guide");
-        assertThat(evidence.get(0).answer()).contains("果树", "28 天", "3x3", "温室");
+        assertThat(evidence.get(0).intent()).isEqualTo("fruit_tree_detail");
+        assertThat(evidence.get(0).answer()).contains("苹果树", "28 天", "3x3", "温室");
+        assertThat(evidence.get(0).answer()).doesNotContain("苹果获取方式", "姜岛商人");
     }
 
     @Test

@@ -91,6 +91,9 @@ public class StardewGuideService {
         if (!books.isEmpty() && shouldPreferBookGuideOverShop(query)) {
             return bookAnswer(query, books);
         }
+        if (looksLikeFruitTreeCultivationQuery(query)) {
+            return typedFruitTreeAnswer(query);
+        }
         if (guide.isPresent() && shouldPreferGuideOverShop(query, guide.get())) {
             return guideAnswer(guide.get());
         }
@@ -224,7 +227,8 @@ public class StardewGuideService {
             case MONSTER_DROP -> typedMonsterDropAnswer(query);
             case FISH_POND -> typedFishPondAnswer(query);
             case ANIMAL_CARE -> typedAnimalCareAnswer(query);
-            case FRUIT_TREE, MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case FRUIT_TREE -> typedFruitTreeAnswer(query);
+            case MUSEUM, GUIDE -> typedGuideAnswer(query);
             case SKILL -> typedSkillAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
@@ -287,6 +291,14 @@ public class StardewGuideService {
             return fishPondDetailAnswer(fishPond.get());
         }
         return fishPondListAnswer(query);
+    }
+
+    private StardewGuideResult typedFruitTreeAnswer(String query) {
+        Optional<StardewData.FruitTreeGuide> fruitTree = repository.findFruitTree(query);
+        if (fruitTree.isPresent() && !isBroadFruitTreeQuery(query)) {
+            return fruitTreeDetailAnswer(fruitTree.get());
+        }
+        return fruitTreeListAnswer(query, fruitTree);
     }
 
     private StardewGuideResult typedGuideAnswer(String query) {
@@ -734,6 +746,60 @@ public class StardewGuideService {
         }
         sb.append("建议：前期鸡和奶牛最稳；中期按收集包补鸭、兔、山羊；后期赚钱重点看猪，姜岛后再考虑鸵鸟。问具体动物名可看产物、成熟时间和机制。");
         return result("farm_animal_available", sb.toString().trim(), collectFarmAnimalSources(matched));
+    }
+
+    private StardewGuideResult fruitTreeDetailAnswer(StardewData.FruitTreeGuide tree) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tree.getName()).append("：\n")
+                .append("果实：").append(StringUtils.defaultIfBlank(tree.getFruit(), "未记录")).append("\n")
+                .append("树苗：").append(StringUtils.defaultIfBlank(tree.getSapling(), "未记录")).append("\n")
+                .append("结果季节：").append(StringUtils.defaultIfBlank(tree.getSeason(), "未记录")).append("\n");
+        if (tree.getGrowthDays() != null) {
+            sb.append("成熟：").append(tree.getGrowthDays()).append(" 天；成熟后每天产 1 个果实，最多可在树上累积 3 个。\n");
+        }
+        appendLines(sb, "树苗来源", tree.getSaplingSources());
+        appendLines(sb, "种植规则", tree.getPlantingRules());
+        appendLines(sb, "温室/姜岛", tree.getLocationRules());
+        appendLines(sb, "品质/砍树", tree.getQualityRules());
+        if (tree.getUsedIn() != null && !tree.getUsedIn().isEmpty()) {
+            sb.append("常见用途：").append(String.join("、", tree.getUsedIn())).append("\n");
+        }
+        if (StringUtils.isNotBlank(tree.getRecommendation())) {
+            sb.append("建议：").append(tree.getRecommendation()).append("\n");
+        }
+        if (StringUtils.isNotBlank(tree.getNote())) {
+            sb.append("提示：").append(tree.getNote()).append("\n");
+        }
+        return result("fruit_tree_detail", sb.toString().trim(), tree.getSourceUrls());
+    }
+
+    private StardewGuideResult fruitTreeListAnswer(String query, Optional<StardewData.FruitTreeGuide> preferred) {
+        List<StardewData.FruitTreeGuide> matched = repository.fruitTrees().stream()
+                .filter(tree -> matchesFruitTreeQuery(query, tree))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::fruitTrees);
+        }
+        if (matched.isEmpty()) {
+            return result("fruit_tree_available", "没找到果树资料。可以试试：苹果树、石榴树、香蕉树苗、温室果树怎么种。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("果树对照：\n");
+        sb.append("通用规则：普通树苗 28 天成熟；成熟后对应季节每天结果；树苗周围 3x3 在成熟前要保持清空；温室和姜岛成熟果树全年结果。\n");
+        for (StardewData.FruitTreeGuide tree : matched) {
+            sb.append("- ").append(tree.getName())
+                    .append("：").append(StringUtils.defaultIfBlank(tree.getSeason(), "季节未记录"))
+                    .append("，果实 ").append(StringUtils.defaultIfBlank(tree.getFruit(), "未记录"))
+                    .append("，树苗 ").append(StringUtils.defaultIfBlank(tree.getSapling(), "未记录"));
+            if (tree.getSaplingSources() != null && !tree.getSaplingSources().isEmpty()) {
+                sb.append("；来源：").append(tree.getSaplingSources().get(0));
+            }
+            if (StringUtils.isNotBlank(tree.getRecommendation())) {
+                sb.append("；建议：").append(tree.getRecommendation());
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：补社区中心先看苹果/石榴；温室边缘和姜岛农场适合长期种果树。问具体树名可看树苗来源、价格/兑换和种植细节。");
+        return result("fruit_tree_available", sb.toString().trim(), collectFruitTreeSources(matched));
     }
 
     private StardewGuideResult dungeonDetailAnswer(StardewData.DungeonGuide dungeon) {
@@ -2205,6 +2271,26 @@ public class StardewGuideService {
         return looksLikeFarmAnimalListQuery(query);
     }
 
+    private boolean isBroadFruitTreeQuery(String query) {
+        return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "推荐", "哪个好", "哪些")
+                || (containsAny(query, "果树", "水果树", "树苗") && repository.findFruitTree(query).isEmpty())
+                || (containsAny(query, "春季", "春天", "夏季", "夏天", "秋季", "秋天", "冬季", "冬天")
+                && containsAny(query, "果树", "水果树"));
+    }
+
+    private boolean looksLikeFruitTreeCultivationQuery(String query) {
+        if (!containsAny(query, "果树", "水果树", "树苗", "苹果树", "石榴树", "香蕉树", "芒果树",
+                "杏子树", "樱桃树", "橙子树", "桃子树")) {
+            return false;
+        }
+        if (containsAny(query, "在哪里买", "哪里买", "谁卖", "购买", "怎么换", "兑换", "多少钱")
+                && !containsAny(query, "怎么种", "温室", "姜岛", "布局", "间隔", "3x3", "3×3", "成熟")) {
+            return false;
+        }
+        return containsAny(query, "怎么种", "温室", "姜岛", "布局", "间隔", "3x3", "3×3",
+                "几天成熟", "成熟", "全年", "季节", "结果", "树苗", "果树", "水果树");
+    }
+
     private boolean looksLikeFarmAnimalListQuery(String query) {
         return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "养什么")
                 || (containsAny(query, "推荐", "适合", "哪个好", "赚钱", "前期", "后期")
@@ -2215,6 +2301,37 @@ public class StardewGuideService {
     private boolean looksLikeAnimalCareGuideQuery(String query) {
         return containsAny(query, "怎么养", "心情", "好感", "喂", "摸", "干草", "草地", "不产", "不出", "为什么")
                 && !repository.findFarmAnimal(query).isPresent();
+    }
+
+    private boolean matchesFruitTreeQuery(String query, StardewData.FruitTreeGuide tree) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.FruitTreeGuide> direct = repository.findFruitTree(query);
+        if (direct.isPresent() && direct.get().getId().equals(tree.getId()) && !isBroadFruitTreeQuery(query)) {
+            return true;
+        }
+        if (containsAny(query, "春季", "春天", "春") && !"春季".equals(tree.getSeason())) {
+            return false;
+        }
+        if (containsAny(query, "夏季", "夏天", "夏") && !"夏季".equals(tree.getSeason())) {
+            return false;
+        }
+        if (containsAny(query, "秋季", "秋天", "秋") && !"秋季".equals(tree.getSeason())) {
+            return false;
+        }
+        if (containsAny(query, "冬季", "冬天", "冬")) {
+            return containsAny(query, "温室", "姜岛", "全年");
+        }
+        if (containsAny(query, "皮埃尔", "金币", "g") && !containsAnyNormalized(q, tree.getSaplingSources())) {
+            return false;
+        }
+        if (containsAny(query, "姜岛", "温室", "全年", "果树", "水果树", "树苗", "有哪些", "列表", "推荐")) {
+            return true;
+        }
+        return containsNormalized(q, tree.getName())
+                || containsNormalized(q, tree.getNameEn())
+                || containsNormalized(q, tree.getFruit())
+                || containsNormalized(q, tree.getSapling())
+                || containsAnyNormalized(q, tree.getAliases());
     }
 
     private boolean isBroadDungeonQuery(String query) {
@@ -3138,6 +3255,16 @@ public class StardewGuideService {
         for (StardewData.FarmAnimalGuide animal : animals) {
             if (animal.getSourceUrls() != null) {
                 urls.addAll(animal.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFruitTreeSources(List<StardewData.FruitTreeGuide> trees) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.FruitTreeGuide tree : trees) {
+            if (tree.getSourceUrls() != null) {
+                urls.addAll(tree.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

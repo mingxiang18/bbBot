@@ -115,6 +115,54 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFruitTreeCultivationSeparatelyFromFruitResourcesAndSaplingShops() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan planting = planner.plan("果树怎么种");
+        StardewQueryPlan greenhouse = planner.plan("苹果树温室怎么种");
+        StardewQueryPlan island = planner.plan("香蕉树姜岛会全年结果吗");
+        StardewQueryPlan appleFruit = planner.plan("苹果怎么获得");
+        StardewQueryPlan bananaSaplingShop = planner.plan("香蕉树苗怎么换");
+
+        assertThat(planting.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FRUIT_TREE);
+        assertThat(greenhouse.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FRUIT_TREE);
+        assertThat(island.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FRUIT_TREE);
+        assertThat(appleFruit.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(bananaSaplingShop.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
+    }
+
+    @Test
+    void localGuardrailPullsFruitTreeCultivationBackFromBroadAiPlansButNotShopQueries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {"type":"GUIDE","keywords":["果树怎么种"],"constraints":{}},
+                            {"type":"CROP","keywords":["苹果树温室怎么种"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["香蕉树姜岛会全年结果吗"],"constraints":{}},
+                            {"type":"SHOP","keywords":["香蕉树苗怎么换"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("果树边界");
+
+        assertThat(plan.getIntents()).hasSize(4);
+        assertThat(plan.getIntents()).extracting(StardewQueryPlan.PlannedIntent::getType)
+                .containsExactly(
+                        StardewGuideIntent.FRUIT_TREE,
+                        StardewGuideIntent.FRUIT_TREE,
+                        StardewGuideIntent.FRUIT_TREE,
+                        StardewGuideIntent.SHOP
+                );
+    }
+
+    @Test
     void aiClassificationRemainsPrimaryWhenItChoosesConcreteNonGuideIntent() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
