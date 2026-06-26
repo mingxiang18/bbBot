@@ -19239,6 +19239,880 @@
       "sourceUrls": [
         "https://stardewvalleywiki.com/Tortilla"
       ]
+    },
+    {
+      "id": "pink_cake",
+      "name": "粉红蛋糕",
+      "nameEn": "Pink Cake",
+      "aliases": [
+        "pink cake",
+        "粉色蛋糕"
+      ],
+      "ingredients": [
+        {
+          "name": "甜瓜",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年夏季 21 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "gift"
+      ],
+      "recommendation": "甜瓜有余量时适合补料理图鉴或送礼，不提供战斗/钓鱼类增益。",
+      "note": "需要厨房，配方来自酱料女皇。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pink_Cake"
+      ]
+    },
+    {
+      "id": "rhubarb_pie",
+      "name": "大黄派",
+      "nameEn": "Rhubarb Pie",
+      "aliases": [
+        "rhubarb pie",
+        "大黄馅饼"
+      ],
+      "ingredients": [
+        {
+          "name": "大黄",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "玛妮 7 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "gift"
+      ],
+      "recommendation": "沙漠解锁后可种大黄，适合中期补图鉴和回复。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Rhubarb_Pie"
+      ]
+    },
+    {
+      "id": "cookie",
+      "name": "曲奇饼",
+      "nameEn": "Cookie",
+      "aliases": [
+        "cookie",
+        "曲奇"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "艾芙琳 4 心事件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "gift"
+      ],
+      "recommendation": "材料简单，适合有鸡舍和磨坊材料后补料理收藏。",
+      "note": "需要触发艾芙琳事件学习配方。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cookie"
+      ]
+    },
+    {
+      "id": "spaghetti",
+      "name": "意大利面",
+      "nameEn": "Spaghetti",
+      "aliases": [
+        "spaghetti",
+        "意面"
+      ],
+      "ingredients": [
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "番茄",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "刘易斯 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "summer",
+        "gift"
+      ],
+      "recommendation": "番茄量产后成本低，适合作为普通回复料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Spaghetti"
+      ]
+    },
+    {
+      "id": "fried_eel",
+      "name": "炸鳗鱼",
+      "nameEn": "Fried Eel",
+      "aliases": [
+        "fried eel",
+        "鳗鱼料理"
+      ],
+      "ingredients": [
+        {
+          "name": "鳗鱼",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "乔治 3 心邮件",
+      "effect": "提升运气",
+      "buffs": [
+        {
+          "name": "运气",
+          "value": 1,
+          "duration": "约 7 分钟"
+        }
+      ],
+      "tags": [
+        "luck",
+        "fishing",
+        "mining"
+      ],
+      "recommendation": "材料比香辣鳗鱼更朴素，早中期想要一点运气时可以用。",
+      "note": "没有速度加成，骷髅洞穴通常仍优先香辣鳗鱼或幸运午餐。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fried_Eel"
+      ]
+    },
+    {
+      "id": "red_plate",
+      "name": "红之盛宴",
+      "nameEn": "Red Plate",
+      "aliases": [
+        "red plate",
+        "红盘子",
+        "红色盘子"
+      ],
+      "ingredients": [
+        {
+          "name": "红叶卷心菜",
+          "quantity": 1
+        },
+        {
+          "name": "萝卜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "艾米丽 7 心邮件",
+      "effect": "提升最大体力",
+      "buffs": [
+        {
+          "name": "最大体力",
+          "value": 50,
+          "duration": "约 3 分钟 30 秒"
+        }
+      ],
+      "tags": [
+        "max_energy",
+        "healing",
+        "summer"
+      ],
+      "recommendation": "适合体力紧张的农场日或矿洞日，但没有速度/运气。",
+      "note": "红叶卷心菜通常第 2 年才稳定获得。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Red_Plate"
+      ]
+    },
+    {
+      "id": "rice_pudding",
+      "name": "大米布丁",
+      "nameEn": "Rice Pudding",
+      "aliases": [
+        "rice pudding",
+        "米布丁"
+      ],
+      "ingredients": [
+        {
+          "name": "牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "大米",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "艾芙琳 7 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert"
+      ],
+      "recommendation": "有奶牛后材料稳定，适合补料理图鉴。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Rice_Pudding"
+      ]
+    },
+    {
+      "id": "ice_cream",
+      "name": "冰淇淋",
+      "nameEn": "Ice Cream",
+      "aliases": [
+        "ice cream",
+        "雪糕"
+      ],
+      "ingredients": [
+        {
+          "name": "牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "乔迪 7 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "gift"
+      ],
+      "recommendation": "材料少，适合有稳定牛奶后做回复或送礼。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ice_Cream"
+      ]
+    },
+    {
+      "id": "blueberry_tart",
+      "name": "蓝莓千层酥",
+      "nameEn": "Blueberry Tart",
+      "aliases": [
+        "blueberry tart",
+        "蓝莓馅饼",
+        "蓝莓挞"
+      ],
+      "ingredients": [
+        {
+          "name": "蓝莓",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "皮埃尔 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "summer"
+      ],
+      "recommendation": "夏季蓝莓大量产出后容易补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Blueberry_Tart"
+      ]
+    },
+    {
+      "id": "autumns_bounty",
+      "name": "秋日恩赐",
+      "nameEn": "Autumn's Bounty",
+      "aliases": [
+        "autumn's bounty",
+        "秋天的恩惠",
+        "秋季恩赐"
+      ],
+      "ingredients": [
+        {
+          "name": "山药",
+          "quantity": 1
+        },
+        {
+          "name": "南瓜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "德米特里厄斯 7 心邮件",
+      "effect": "提升觅食和防御",
+      "buffs": [
+        {
+          "name": "觅食",
+          "value": 2,
+          "duration": "约 7 分钟 41 秒"
+        },
+        {
+          "name": "防御",
+          "value": 2,
+          "duration": "约 7 分钟 41 秒"
+        }
+      ],
+      "tags": [
+        "foraging",
+        "defense",
+        "fall"
+      ],
+      "recommendation": "秋季材料集中，适合砍树、秘密森林或需要一点防御的探索日。",
+      "note": "不提供攻击或速度。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Autumn%27s_Bounty"
+      ]
+    },
+    {
+      "id": "super_meal",
+      "name": "超级大餐",
+      "nameEn": "Super Meal",
+      "aliases": [
+        "super meal",
+        "超级餐"
+      ],
+      "ingredients": [
+        {
+          "name": "小白菜",
+          "quantity": 1
+        },
+        {
+          "name": "蔓越莓",
+          "quantity": 1
+        },
+        {
+          "name": "洋蓟",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "肯特 7 心邮件",
+      "effect": "提升最大体力和速度",
+      "buffs": [
+        {
+          "name": "最大体力",
+          "value": 40,
+          "duration": "约 3 分钟 30 秒"
+        },
+        {
+          "name": "速度",
+          "value": 1,
+          "duration": "约 3 分钟 30 秒"
+        }
+      ],
+      "tags": [
+        "speed",
+        "max_energy",
+        "fall"
+      ],
+      "recommendation": "秋季作物齐后可做，适合长距离跑图或农场工作。",
+      "note": "速度食物会覆盖其他食物 buff，但可与咖啡类饮料叠加。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Super_Meal"
+      ]
+    },
+    {
+      "id": "cranberry_sauce",
+      "name": "蔓越莓酱",
+      "nameEn": "Cranberry Sauce",
+      "aliases": [
+        "cranberry sauce",
+        "蔓莓酱"
+      ],
+      "ingredients": [
+        {
+          "name": "蔓越莓",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "格斯 7 心邮件",
+      "effect": "提升采矿",
+      "buffs": [
+        {
+          "name": "采矿",
+          "value": 2,
+          "duration": "约 3 分钟 30 秒"
+        }
+      ],
+      "tags": [
+        "mining",
+        "fall"
+      ],
+      "recommendation": "适合下矿前临时提高采矿等级，材料比部分高级料理更简单。",
+      "note": "不提供运气或速度。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cranberry_Sauce"
+      ]
+    },
+    {
+      "id": "stuffing",
+      "name": "填料",
+      "nameEn": "Stuffing",
+      "aliases": [
+        "stuffing",
+        "馅料"
+      ],
+      "ingredients": [
+        {
+          "name": "面包",
+          "quantity": 1
+        },
+        {
+          "name": "蔓越莓",
+          "quantity": 1
+        },
+        {
+          "name": "榛子",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "潘姆 7 心邮件",
+      "effect": "提升防御",
+      "buffs": [
+        {
+          "name": "防御",
+          "value": 2,
+          "duration": "约 5 分钟 35 秒"
+        }
+      ],
+      "tags": [
+        "defense",
+        "combat",
+        "fall"
+      ],
+      "recommendation": "适合战斗压力大但不追求输出时使用。",
+      "note": "不提升战斗经验获取。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stuffing"
+      ]
+    },
+    {
+      "id": "algae_soup",
+      "name": "海藻汤",
+      "nameEn": "Algae Soup",
+      "aliases": [
+        "algae soup",
+        "绿藻汤"
+      ],
+      "ingredients": [
+        {
+          "name": "绿藻",
+          "quantity": 4
+        }
+      ],
+      "recipeSource": "克林特 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "early_game"
+      ],
+      "recommendation": "绿藻富余时可转成回复料理，早期钓鱼后容易做。",
+      "note": "不提供钓鱼 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Algae_Soup"
+      ]
+    },
+    {
+      "id": "pale_broth",
+      "name": "清汤",
+      "nameEn": "Pale Broth",
+      "aliases": [
+        "pale broth",
+        "白藻汤"
+      ],
+      "ingredients": [
+        {
+          "name": "白藻",
+          "quantity": 2
+        }
+      ],
+      "recipeSource": "玛妮 3 心邮件",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fishing",
+        "mining"
+      ],
+      "recommendation": "白藻够多时是很简单的回复料理。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pale_Broth"
+      ]
+    },
+    {
+      "id": "plum_pudding",
+      "name": "李子布丁",
+      "nameEn": "Plum Pudding",
+      "aliases": [
+        "plum pudding",
+        "梅子布丁"
+      ],
+      "ingredients": [
+        {
+          "name": "野梅",
+          "quantity": 2
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年冬季 7 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "foraging"
+      ],
+      "recommendation": "秋季采集野梅后可以留材料，冬季学到配方后补图鉴。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Plum_Pudding"
+      ]
+    },
+    {
+      "id": "artichoke_dip",
+      "name": "洋蓟蘸酱",
+      "nameEn": "Artichoke Dip",
+      "aliases": [
+        "artichoke dip",
+        "洋蓟酱"
+      ],
+      "ingredients": [
+        {
+          "name": "洋蓟",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年秋季 28 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "fall"
+      ],
+      "recommendation": "第 2 年秋季稳定种洋蓟后容易补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Artichoke_Dip"
+      ]
+    },
+    {
+      "id": "stir_fry",
+      "name": "炒菜",
+      "nameEn": "Stir Fry",
+      "aliases": [
+        "stir fry",
+        "蔬菜炒菜"
+      ],
+      "ingredients": [
+        {
+          "name": "山洞萝卜",
+          "quantity": 1
+        },
+        {
+          "name": "普通蘑菇",
+          "quantity": 1
+        },
+        {
+          "name": "羽衣甘蓝",
+          "quantity": 1
+        },
+        {
+          "name": "油",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年春季 7 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "spring",
+        "foraging"
+      ],
+      "recommendation": "早期学得很早，材料横跨采矿、采集和春季作物。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stir_Fry"
+      ]
+    },
+    {
+      "id": "roasted_hazelnuts",
+      "name": "烤榛子",
+      "nameEn": "Roasted Hazelnuts",
+      "aliases": [
+        "roasted hazelnuts",
+        "烘烤榛子"
+      ],
+      "ingredients": [
+        {
+          "name": "榛子",
+          "quantity": 3
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年夏季 28 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "foraging",
+        "fall"
+      ],
+      "recommendation": "秋季采集榛子多时成本很低。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Roasted_Hazelnuts"
+      ]
+    },
+    {
+      "id": "pumpkin_pie",
+      "name": "南瓜派",
+      "nameEn": "Pumpkin Pie",
+      "aliases": [
+        "pumpkin pie",
+        "南瓜馅饼"
+      ],
+      "ingredients": [
+        {
+          "name": "南瓜",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        },
+        {
+          "name": "牛奶",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年冬季 21 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "fall"
+      ],
+      "recommendation": "秋季南瓜和畜棚体系成型后适合补图鉴。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pumpkin_Pie"
+      ]
+    },
+    {
+      "id": "radish_salad",
+      "name": "萝卜沙拉",
+      "nameEn": "Radish Salad",
+      "aliases": [
+        "radish salad",
+        "小萝卜沙拉"
+      ],
+      "ingredients": [
+        {
+          "name": "油",
+          "quantity": 1
+        },
+        {
+          "name": "醋",
+          "quantity": 1
+        },
+        {
+          "name": "萝卜",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年春季 21 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "summer"
+      ],
+      "recommendation": "夏季种萝卜后容易做，主要用于补料理收藏。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Radish_Salad"
+      ]
+    },
+    {
+      "id": "fruit_salad",
+      "name": "水果沙拉",
+      "nameEn": "Fruit Salad",
+      "aliases": [
+        "fruit salad",
+        "果蔬沙拉"
+      ],
+      "ingredients": [
+        {
+          "name": "蓝莓",
+          "quantity": 1
+        },
+        {
+          "name": "甜瓜",
+          "quantity": 1
+        },
+        {
+          "name": "杏子",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年秋季 7 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "fruit_tree"
+      ],
+      "recommendation": "需要杏子，提前规划果树会更轻松。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fruit_Salad"
+      ]
+    },
+    {
+      "id": "blackberry_cobbler",
+      "name": "黑莓脆皮饼",
+      "nameEn": "Blackberry Cobbler",
+      "aliases": [
+        "blackberry cobbler",
+        "黑莓馅饼",
+        "黑莓脆饼"
+      ],
+      "ingredients": [
+        {
+          "name": "黑莓",
+          "quantity": 2
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 2 年秋季 14 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "foraging"
+      ],
+      "recommendation": "黑莓季大量采集后很适合补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Blackberry_Cobbler"
+      ]
+    },
+    {
+      "id": "cranberry_candy",
+      "name": "蔓越莓糖果",
+      "nameEn": "Cranberry Candy",
+      "aliases": [
+        "cranberry candy",
+        "蔓莓糖果"
+      ],
+      "ingredients": [
+        {
+          "name": "蔓越莓",
+          "quantity": 1
+        },
+        {
+          "name": "苹果",
+          "quantity": 1
+        },
+        {
+          "name": "糖",
+          "quantity": 1
+        }
+      ],
+      "recipeSource": "电视节目酱料女皇：第 1 年冬季 28 日",
+      "effect": "恢复体力和生命",
+      "buffs": [],
+      "tags": [
+        "healing",
+        "dessert",
+        "fruit_tree"
+      ],
+      "recommendation": "需要苹果，秋季果树或洞穴水果路线会更容易补齐。",
+      "note": "不提供 buff。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cranberry_Candy"
+      ]
     }
   ]
 }

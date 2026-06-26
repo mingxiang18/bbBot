@@ -887,6 +887,20 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void typedCookingEvidenceAnswersExpandedRecipeDetails() {
+        StardewGuideResult pinkCake = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 粉红蛋糕怎么做");
+        StardewGuideResult redPlate = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 红之盛宴效果");
+        StardewGuideResult autumnsBounty = service.answerEvidence(StardewGuideIntent.COOKING, "星露谷 秋日恩赐材料和效果");
+
+        assertThat(pinkCake.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(pinkCake.getAnswer()).contains("甜瓜 x1", "小麦粉 x1", "糖 x1", "鸡蛋 x1");
+        assertThat(redPlate.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(redPlate.getAnswer()).contains("红叶卷心菜 x1", "萝卜 x1", "最大体力 +50");
+        assertThat(autumnsBounty.getIntent()).isEqualTo("cooking_recipe");
+        assertThat(autumnsBounty.getAnswer()).contains("山药 x1", "南瓜 x1", "觅食 +2", "防御 +2");
+    }
+
+    @Test
     void answersCookingBuffRecommendationLists() {
         StardewGuideResult fishing = service.answer("星露谷 钓鱼料理有哪些");
         StardewGuideResult combat = service.answer("星露谷 战斗等级低吃什么食物");

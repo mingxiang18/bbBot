@@ -30,7 +30,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
-        assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(46);
+        assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(70);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
     }
 
@@ -377,7 +377,31 @@ class StardewKnowledgeRepositoryTest {
                 "chocolate_cake",
                 "sashimi",
                 "maki_roll",
-                "tortilla"
+                "tortilla",
+                "pink_cake",
+                "rhubarb_pie",
+                "cookie",
+                "spaghetti",
+                "fried_eel",
+                "red_plate",
+                "rice_pudding",
+                "ice_cream",
+                "blueberry_tart",
+                "autumns_bounty",
+                "super_meal",
+                "cranberry_sauce",
+                "stuffing",
+                "algae_soup",
+                "pale_broth",
+                "plum_pudding",
+                "artichoke_dip",
+                "stir_fry",
+                "roasted_hazelnuts",
+                "pumpkin_pie",
+                "radish_salad",
+                "fruit_salad",
+                "blackberry_cobbler",
+                "cranberry_candy"
         );
     }
 

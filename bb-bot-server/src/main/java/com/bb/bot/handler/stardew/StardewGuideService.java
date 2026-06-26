@@ -1393,7 +1393,13 @@ public class StardewGuideService {
                 || query.contains("面包") || query.contains("薄煎饼") || query.contains("薯饼")
                 || query.contains("鱼肉卷") || query.contains("烤鱼") || query.contains("炸鱿鱼")
                 || query.contains("蘑菇") || query.contains("火锅") || query.contains("山药")
-                || query.contains("玉米饼") || query.contains("鲤鱼惊喜");
+                || query.contains("玉米饼") || query.contains("鲤鱼惊喜")
+                || query.contains("派") || query.contains("曲奇") || query.contains("意大利面")
+                || query.contains("鳗鱼") || query.contains("布丁") || query.contains("冰淇淋")
+                || query.contains("千层酥") || query.contains("红之盛宴") || query.contains("秋日恩赐")
+                || query.contains("超级大餐") || query.contains("蔓越莓酱") || query.contains("填料")
+                || query.contains("蘸酱") || query.contains("炒菜") || query.contains("烤榛子")
+                || query.contains("脆皮饼") || query.contains("糖果");
     }
 
     private boolean isBroadCookingQuery(String query) {
