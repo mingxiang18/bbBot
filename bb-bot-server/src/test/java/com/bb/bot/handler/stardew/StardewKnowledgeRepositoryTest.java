@@ -22,7 +22,7 @@ class StardewKnowledgeRepositoryTest {
     void loadsBroadLocalKnowledgeBase() {
         assertThat(repository.gameVersion()).isEqualTo("1.6.15");
         assertThat(repository.fish()).hasSizeGreaterThanOrEqualTo(74);
-        assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(37);
+        assertThat(repository.bundles()).hasSizeGreaterThanOrEqualTo(58);
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
@@ -109,6 +109,37 @@ class StardewKnowledgeRepositoryTest {
                 "bulletin_board_room",
                 "vault_room",
                 "missing"
+        );
+    }
+
+    @Test
+    void remixedCommunityCenterBundlesAreCovered() {
+        Set<String> bundleIds = repository.bundles().stream()
+                .map(StardewData.Bundle::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(bundleIds).contains(
+                "remixed_sticky",
+                "remixed_forest",
+                "remixed_wild_medicine",
+                "remixed_spring_crops",
+                "remixed_summer_crops",
+                "remixed_fall_crops",
+                "remixed_rare_crops",
+                "remixed_fish_farmer",
+                "remixed_garden",
+                "remixed_brewers",
+                "remixed_quality_fish",
+                "remixed_master_fisher",
+                "remixed_adventurer",
+                "remixed_treasure_hunter",
+                "remixed_engineer",
+                "remixed_children",
+                "remixed_forager",
+                "remixed_home_cook",
+                "remixed_helper",
+                "remixed_spirits_eve",
+                "remixed_winter_star"
         );
     }
 

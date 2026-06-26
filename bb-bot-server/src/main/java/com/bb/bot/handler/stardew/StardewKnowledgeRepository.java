@@ -95,7 +95,10 @@ public class StardewKnowledgeRepository {
     public Optional<StardewData.Bundle> findBundle(String query) {
         String q = normalize(query);
         return bundles().stream()
-                .filter(b -> matches(q, b.getName(), b.getId(), b.getAliases()))
+                .map(b -> new BundleMatch(b, scoreBundle(q, b)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(BundleMatch::bundle)
                 .findFirst();
     }
 
@@ -314,6 +317,15 @@ public class StardewKnowledgeRepository {
         return score + keywordScore;
     }
 
+    private int scoreBundle(String q, StardewData.Bundle bundle) {
+        int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
+        boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
+        if (asksRemixed && (bundle.getId().startsWith("remixed_") || normalize(bundle.getName()).contains("重混"))) {
+            score += 500;
+        }
+        return score;
+    }
+
     private static <T> List<T> safe(List<T> value) {
         return value == null ? Collections.emptyList() : value;
     }
@@ -331,6 +343,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record GuideMatch(StardewData.GuideTopic guide, int score) {
+    }
+
+    private record BundleMatch(StardewData.Bundle bundle, int score) {
     }
 
     private record BuildingMatch(StardewData.Building building, int score) {

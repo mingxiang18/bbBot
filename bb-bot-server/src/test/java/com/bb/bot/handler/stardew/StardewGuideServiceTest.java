@@ -156,6 +156,26 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersRemixedCommunityCenterBundleRequirements() {
+        StardewGuideResult springCrops = service.answer("星露谷 重混春季作物收集包需要什么");
+        StardewGuideResult brewers = service.answer("星露谷 重混酿酒师收集包需要什么");
+        StardewGuideResult qualityFish = service.answer("星露谷 重混优质鱼收集包要什么");
+        StardewGuideResult adventurer = service.answer("星露谷 重混冒险家收集包交什么");
+        StardewGuideResult helper = service.answer("星露谷 重混帮手收集包需要什么");
+
+        assertThat(springCrops.getIntent()).isEqualTo("bundle");
+        assertThat(springCrops.getAnswer()).contains("春季作物收集包（重混）", "防风草", "胡萝卜", "6 选 4");
+        assertThat(brewers.getIntent()).isEqualTo("bundle");
+        assertThat(brewers.getAnswer()).contains("酿酒师收集包（重混）", "蜂蜜酒", "淡啤酒", "绿茶", "小桶");
+        assertThat(qualityFish.getIntent()).isEqualTo("bundle");
+        assertThat(qualityFish.getAnswer()).contains("优质鱼类收集包（重混）", "大嘴鲈鱼", "金星", "海之菜肴");
+        assertThat(adventurer.getIntent()).isEqualTo("bundle");
+        assertThat(adventurer.getAnswer()).contains("冒险家收集包（重混）", "骨头碎片", "5 选 4", "小磁铁戒指");
+        assertThat(helper.getIntent()).isEqualTo("bundle");
+        assertThat(helper.getAnswer()).contains("帮手收集包（重混）", "奖品券", "神秘盒", "星之果实茶");
+    }
+
+    @Test
     void resolvesVillagerLocationWithConditions() {
         StardewGuideResult result = service.answer("星露谷 阿比盖尔 夏季 12日 15:00 晴天在哪");
 

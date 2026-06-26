@@ -3517,6 +3517,783 @@
       ]
     },
     {
+      "id": "remixed_sticky",
+      "name": "黏黏收集包（重混）",
+      "room": "工艺室",
+      "aliases": [
+        "黏黏收集包",
+        "粘粘收集包",
+        "sticky bundle",
+        "重混黏黏包",
+        "重混工艺室树液"
+      ],
+      "reward": "木炭窑（1）",
+      "items": [
+        {
+          "name": "树液",
+          "quantity": 500,
+          "hint": "重混工艺室第 5 档可能抽到；砍树或史莱姆掉落"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_forest",
+      "name": "森林收集包（重混）",
+      "room": "工艺室",
+      "aliases": [
+        "森林收集包",
+        "forest bundle",
+        "重混森林包",
+        "重混工艺室森林"
+      ],
+      "reward": "木炭窑（1）",
+      "items": [
+        {
+          "name": "苔藓",
+          "quantity": 10,
+          "hint": "4 选 3；砍树可获得"
+        },
+        {
+          "name": "纤维",
+          "quantity": 200,
+          "hint": "4 选 3；清理杂草或收获纤维种子"
+        },
+        {
+          "name": "橡子",
+          "quantity": 10,
+          "hint": "4 选 3；摇/砍橡树"
+        },
+        {
+          "name": "枫树种子",
+          "quantity": 10,
+          "hint": "4 选 3；摇/砍枫树"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_wild_medicine",
+      "name": "野药收集包（重混）",
+      "room": "工艺室",
+      "aliases": [
+        "野药收集包",
+        "野生药物收集包",
+        "wild medicine bundle",
+        "重混野药包",
+        "重混工艺室野药"
+      ],
+      "reward": "野炊工具（2）",
+      "items": [
+        {
+          "name": "紫蘑菇",
+          "quantity": 5,
+          "hint": "矿井、蘑菇洞、森林农场或蘑菇木桩"
+        },
+        {
+          "name": "蕨菜",
+          "quantity": 5,
+          "hint": "夏季秘密森林、史前层或绿雨树"
+        },
+        {
+          "name": "白藻",
+          "quantity": 5,
+          "hint": "钓鱼或怪物掉落"
+        },
+        {
+          "name": "啤酒花",
+          "quantity": 5,
+          "hint": "夏季作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_rare_crops",
+      "name": "稀有作物收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "稀有作物收集包",
+        "rare crops bundle",
+        "重混稀有作物",
+        "上古水果甜宝石莓收集包"
+      ],
+      "reward": "罐头瓶（1）",
+      "items": [
+        {
+          "name": "上古水果",
+          "quantity": 1,
+          "hint": "春/夏/秋作物；上古种子种植"
+        },
+        {
+          "name": "甜宝石莓",
+          "quantity": 1,
+          "hint": "秋季作物；旅行货车购买稀有种子"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_fish_farmer",
+      "name": "鱼农收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "鱼农收集包",
+        "鱼塘收集包",
+        "fish farmer's bundle",
+        "fish farmers bundle",
+        "重混鱼农包",
+        "重混鱼塘包"
+      ],
+      "reward": "虫饵盒（1）",
+      "items": [
+        {
+          "name": "鱼籽",
+          "quantity": 15,
+          "hint": "鱼塘产物，也可能来自钓鱼宝箱"
+        },
+        {
+          "name": "腌鱼籽",
+          "quantity": 15,
+          "hint": "鱼籽进罐头瓶加工"
+        },
+        {
+          "name": "鱿鱼墨汁",
+          "quantity": 1,
+          "hint": "鱿鱼娃掉落，或鱿鱼/午夜鱿鱼鱼塘产物"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_garden",
+      "name": "花园收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "花园收集包",
+        "garden bundle",
+        "重混花园包",
+        "花卉收集包"
+      ],
+      "reward": "优质洒水器（1）",
+      "items": [
+        {
+          "name": "郁金香",
+          "quantity": 1,
+          "hint": "春季花卉作物"
+        },
+        {
+          "name": "蓝爵",
+          "quantity": 1,
+          "hint": "春季花卉作物"
+        },
+        {
+          "name": "夏季亮片",
+          "quantity": 1,
+          "hint": "夏季花卉作物"
+        },
+        {
+          "name": "向日葵",
+          "quantity": 1,
+          "hint": "夏/秋花卉作物"
+        },
+        {
+          "name": "玫瑰仙子",
+          "quantity": 1,
+          "hint": "秋季花卉作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_spring_crops",
+      "name": "春季作物收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "重混春季作物",
+        "随机春季作物收集包",
+        "remixed spring crops bundle",
+        "spring crops bundle remixed"
+      ],
+      "reward": "生长激素（20）",
+      "items": [
+        {
+          "name": "防风草",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物"
+        },
+        {
+          "name": "青豆",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物"
+        },
+        {
+          "name": "花椰菜",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物"
+        },
+        {
+          "name": "土豆",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物"
+        },
+        {
+          "name": "甘蓝菜",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物"
+        },
+        {
+          "name": "胡萝卜",
+          "quantity": 1,
+          "hint": "6 选 4；春季作物，1.6 新增"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_summer_crops",
+      "name": "夏季作物收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "重混夏季作物",
+        "随机夏季作物收集包",
+        "remixed summer crops bundle",
+        "summer crops bundle remixed"
+      ],
+      "reward": "优质洒水器（1）",
+      "items": [
+        {
+          "name": "番茄",
+          "quantity": 1,
+          "hint": "5 选 4；夏季作物"
+        },
+        {
+          "name": "辣椒",
+          "quantity": 1,
+          "hint": "5 选 4；夏季作物"
+        },
+        {
+          "name": "蓝莓",
+          "quantity": 1,
+          "hint": "5 选 4；夏季作物"
+        },
+        {
+          "name": "甜瓜",
+          "quantity": 1,
+          "hint": "5 选 4；夏季作物"
+        },
+        {
+          "name": "夏季南瓜",
+          "quantity": 1,
+          "hint": "5 选 4；夏季作物，1.6 新增"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_fall_crops",
+      "name": "秋季作物收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "重混秋季作物",
+        "随机秋季作物收集包",
+        "remixed fall crops bundle",
+        "fall crops bundle remixed"
+      ],
+      "reward": "蜂房（1）",
+      "items": [
+        {
+          "name": "玉米",
+          "quantity": 1,
+          "hint": "5 选 4；夏/秋作物"
+        },
+        {
+          "name": "茄子",
+          "quantity": 1,
+          "hint": "5 选 4；秋季作物"
+        },
+        {
+          "name": "南瓜",
+          "quantity": 1,
+          "hint": "5 选 4；秋季作物"
+        },
+        {
+          "name": "山药",
+          "quantity": 1,
+          "hint": "5 选 4；秋季作物，也可由掘地虫掉落"
+        },
+        {
+          "name": "西兰花",
+          "quantity": 1,
+          "hint": "5 选 4；秋季作物，1.6 新增"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_brewers",
+      "name": "酿酒师收集包（重混）",
+      "room": "茶水间",
+      "aliases": [
+        "酿酒师收集包",
+        "酿酒收集包",
+        "brewer's bundle",
+        "brewers bundle",
+        "重混酿酒师包",
+        "重混小桶包"
+      ],
+      "reward": "小桶（1）",
+      "items": [
+        {
+          "name": "蜂蜜酒",
+          "quantity": 1,
+          "hint": "蜂蜜进小桶"
+        },
+        {
+          "name": "淡啤酒",
+          "quantity": 1,
+          "hint": "啤酒花进小桶"
+        },
+        {
+          "name": "果酒",
+          "quantity": 1,
+          "hint": "任意水果进小桶"
+        },
+        {
+          "name": "果汁",
+          "quantity": 1,
+          "hint": "任意蔬菜进小桶"
+        },
+        {
+          "name": "绿茶",
+          "quantity": 1,
+          "hint": "茶叶进小桶"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_quality_fish",
+      "name": "优质鱼类收集包（重混）",
+      "room": "鱼缸",
+      "aliases": [
+        "优质鱼收集包",
+        "优质鱼类收集包",
+        "quality fish bundle",
+        "重混优质鱼"
+      ],
+      "reward": "海之菜肴（5）",
+      "items": [
+        {
+          "name": "大嘴鲈鱼",
+          "quantity": 1,
+          "quality": "金星",
+          "hint": "铱星也可；山湖 06:00-19:00"
+        },
+        {
+          "name": "西鲱",
+          "quantity": 1,
+          "quality": "金星",
+          "hint": "铱星也可；春/夏/秋雨天河流 09:00-02:00"
+        },
+        {
+          "name": "金枪鱼",
+          "quantity": 1,
+          "quality": "金星",
+          "hint": "铱星也可；夏/冬海洋 06:00-19:00"
+        },
+        {
+          "name": "大眼鱼",
+          "quantity": 1,
+          "quality": "金星",
+          "hint": "铱星也可；秋季雨天 12:00-02:00"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_master_fisher",
+      "name": "捕鱼大师收集包（重混）",
+      "room": "鱼缸",
+      "aliases": [
+        "捕鱼大师收集包",
+        "钓鱼大师收集包",
+        "master fisher's bundle",
+        "master fisher bundle",
+        "重混捕鱼大师"
+      ],
+      "reward": "海之菜肴（5）",
+      "items": [
+        {
+          "name": "岩浆鳗鱼",
+          "quantity": 1,
+          "hint": "矿井 100 层或火山地牢"
+        },
+        {
+          "name": "蝎鲤鱼",
+          "quantity": 1,
+          "hint": "沙漠池塘"
+        },
+        {
+          "name": "章鱼",
+          "quantity": 1,
+          "hint": "夏季海洋 06:00-13:00，难度较高"
+        },
+        {
+          "name": "水滴鱼",
+          "quantity": 1,
+          "hint": "夜市潜艇"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_adventurer",
+      "name": "冒险家收集包（重混）",
+      "room": "锅炉房",
+      "aliases": [
+        "冒险家收集包",
+        "adventurer's bundle",
+        "adventurers bundle",
+        "重混冒险家包",
+        "重混锅炉房冒险家"
+      ],
+      "reward": "小磁铁戒指（1）",
+      "items": [
+        {
+          "name": "史莱姆泥",
+          "quantity": 99,
+          "hint": "5 选 4；史莱姆掉落"
+        },
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 10,
+          "hint": "5 选 4；蝙蝠掉落"
+        },
+        {
+          "name": "太阳精华",
+          "quantity": 1,
+          "hint": "5 选 4；幽灵/鱿鱼娃/金属大头/木乃伊或科罗布斯"
+        },
+        {
+          "name": "虚空精华",
+          "quantity": 1,
+          "hint": "5 选 4；暗影怪/飞蛇或科罗布斯"
+        },
+        {
+          "name": "骨头碎片",
+          "quantity": 10,
+          "hint": "5 选 4；骷髅、骷髅洞穴箱桶或古物点"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_treasure_hunter",
+      "name": "宝藏猎人收集包（重混）",
+      "room": "锅炉房",
+      "aliases": [
+        "宝藏猎人收集包",
+        "treasure hunter's bundle",
+        "treasure hunter bundle",
+        "重混宝藏猎人"
+      ],
+      "reward": "幸运午餐（1）",
+      "items": [
+        {
+          "name": "紫水晶",
+          "quantity": 1,
+          "hint": "宝石节点、淘盘或钓鱼宝箱"
+        },
+        {
+          "name": "海蓝宝石",
+          "quantity": 1,
+          "hint": "宝石节点、淘盘或钓鱼宝箱"
+        },
+        {
+          "name": "钻石",
+          "quantity": 1,
+          "hint": "宝石节点、钻石矿点、宝石复制机等"
+        },
+        {
+          "name": "翡翠",
+          "quantity": 1,
+          "hint": "宝石节点、淘盘或钓鱼宝箱"
+        },
+        {
+          "name": "红宝石",
+          "quantity": 1,
+          "hint": "宝石节点、淘盘或钓鱼宝箱"
+        },
+        {
+          "name": "黄水晶",
+          "quantity": 1,
+          "hint": "宝石节点、淘盘或钓鱼宝箱"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_engineer",
+      "name": "工程师收集包（重混）",
+      "room": "锅炉房",
+      "aliases": [
+        "工程师收集包",
+        "engineer's bundle",
+        "engineers bundle",
+        "重混工程师包"
+      ],
+      "reward": "熔炉（2）",
+      "items": [
+        {
+          "name": "铱矿石",
+          "quantity": 1,
+          "hint": "矿井、骷髅洞穴、岩浆晶球或万象晶球等"
+        },
+        {
+          "name": "电池组",
+          "quantity": 1,
+          "hint": "避雷针，旅行货车也可能出售"
+        },
+        {
+          "name": "精炼石英",
+          "quantity": 5,
+          "hint": "熔炉烧石英/火水晶，或回收破损眼镜/破损CD"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_children",
+      "name": "儿童收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "儿童收集包",
+        "children's bundle",
+        "childrens bundle",
+        "重混儿童包"
+      ],
+      "reward": "电池组（3）",
+      "items": [
+        {
+          "name": "鲑莓",
+          "quantity": 10,
+          "hint": "春季 15-18 日灌木丛"
+        },
+        {
+          "name": "曲奇饼",
+          "quantity": 1,
+          "hint": "料理、母亲来信或艾芙琳赠礼"
+        },
+        {
+          "name": "古代玩偶",
+          "quantity": 1,
+          "hint": "山区/巴士站/森林/城镇古物点或钓鱼宝箱"
+        },
+        {
+          "name": "冰淇淋",
+          "quantity": 1,
+          "hint": "料理、夏季冰淇淋摊或绿洲周日"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_forager",
+      "name": "采集者收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "采集者收集包",
+        "forager's bundle",
+        "foragers bundle",
+        "重混采集者包",
+        "重混觅食包"
+      ],
+      "reward": "树液采集器（3）",
+      "items": [
+        {
+          "name": "鲑莓",
+          "quantity": 50,
+          "hint": "春季 15-18 日灌木丛"
+        },
+        {
+          "name": "黑莓",
+          "quantity": 50,
+          "hint": "秋季采集，尤其秋季 8-11 日灌木丛"
+        },
+        {
+          "name": "野梅",
+          "quantity": 15,
+          "hint": "秋季采集、秋季种子或水果蝙蝠洞"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_home_cook",
+      "name": "家庭厨师收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "家庭厨师收集包",
+        "家厨收集包",
+        "home cook's bundle",
+        "home cooks bundle",
+        "重混家庭厨师包"
+      ],
+      "reward": "全套早餐（5）",
+      "items": [
+        {
+          "name": "蛋",
+          "quantity": 10,
+          "hint": "任意蛋；包含鸭蛋、虚空蛋、鸵鸟蛋，不含恐龙蛋"
+        },
+        {
+          "name": "奶",
+          "quantity": 10,
+          "hint": "任意大小；牛奶或羊奶都可"
+        },
+        {
+          "name": "小麦粉",
+          "quantity": 100,
+          "hint": "磨坊加工小麦，或皮埃尔商店购买"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_helper",
+      "name": "帮手收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "帮手收集包",
+        "helper's bundle",
+        "helpers bundle",
+        "重混帮手包",
+        "奖品券收集包"
+      ],
+      "reward": "星之果实茶（1）",
+      "items": [
+        {
+          "name": "奖品券",
+          "quantity": 1,
+          "hint": "完成帮助请求任务等奖励"
+        },
+        {
+          "name": "神秘盒",
+          "quantity": 5,
+          "hint": "钓鱼、采矿、砍树等多种途径"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_spirits_eve",
+      "name": "万灵节收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "万灵节收集包",
+        "spirits eve bundle",
+        "spirit's eve bundle",
+        "重混万灵节包"
+      ],
+      "reward": "全套早餐（5）",
+      "items": [
+        {
+          "name": "南瓜灯",
+          "quantity": 1,
+          "hint": "万灵节购买或按配方制作"
+        },
+        {
+          "name": "玉米",
+          "quantity": 10,
+          "hint": "夏/秋作物"
+        },
+        {
+          "name": "蝙蝠翅膀",
+          "quantity": 10,
+          "hint": "矿井或骷髅洞穴蝙蝠掉落"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
+      "id": "remixed_winter_star",
+      "name": "冬日星盛宴收集包（重混）",
+      "room": "布告栏",
+      "aliases": [
+        "冬日星盛宴收集包",
+        "冬星收集包",
+        "winter star bundle",
+        "重混冬日星包"
+      ],
+      "reward": "神秘盒（3）",
+      "items": [
+        {
+          "name": "冬青树",
+          "quantity": 5,
+          "hint": "冬季采集"
+        },
+        {
+          "name": "李子布丁",
+          "quantity": 1,
+          "hint": "酱料女皇料理配方"
+        },
+        {
+          "name": "填料",
+          "quantity": 1,
+          "hint": "潘姆 7 心事件配方"
+        },
+        {
+          "name": "粉瓜",
+          "quantity": 5,
+          "hint": "冬季作物"
+        }
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Remixed_Bundles"
+      ]
+    },
+    {
       "id": "crafts_room",
       "name": "工艺室收集包",
       "room": "工艺室",

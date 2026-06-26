@@ -83,6 +83,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedBundleIntentRetrievesRemixedBundlesWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.BUNDLE, "重混春季作物收集包需要什么"),
+                intent(StardewGuideIntent.BUNDLE, "重混鱼农收集包需要什么"),
+                intent(StardewGuideIntent.BUNDLE, "重混冒险家收集包交什么"),
+                intent(StardewGuideIntent.BUNDLE, "重混冬日星盛宴收集包需要什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("重混春季作物、鱼农、冒险家、冬日星盛宴收集包怎么交", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.BUNDLE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("bundle");
+        assertThat(joinAnswers(evidence))
+                .contains("春季作物收集包（重混）", "胡萝卜", "6 选 4")
+                .contains("鱼农收集包（重混）", "鱼籽", "鱿鱼墨汁")
+                .contains("冒险家收集包（重混）", "骨头碎片", "5 选 4")
+                .contains("冬日星盛宴收集包（重混）", "粉瓜", "神秘盒")
+                .doesNotContain("夏季鱼类", "资源获取方式", "春季作物：", "工具升级");
+    }
+
+    @Test
     void machineIntentRetrievesCraftingDeviceDetails() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.MACHINE, "优质洒水器材料"),
