@@ -611,6 +611,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedFishPondIntentRetrievesPondEvidenceWithoutFishOrBuildingCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.FISH_POND, "鲟鱼鱼塘产什么"),
+                intent(StardewGuideIntent.FISH_POND, "鱼塘养什么好"),
+                intent(StardewGuideIntent.BUILDING, "鱼塘建造材料多少钱")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("鲟鱼鱼塘产什么，鱼塘建造材料多少钱", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.FISH_POND, StardewGuideIntent.BUILDING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("fish_pond_detail", "fish_pond_available", "building_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("鲟鱼鱼塘", "1-2 鱼籽", "鱼塘产物与推荐", "岩浆鳗鱼", "黄貂鱼")
+                .contains("花费：5,000g", "石头 x200")
+                .doesNotContain("夏季鱼类", "鱼类条件", "工具升级总览");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

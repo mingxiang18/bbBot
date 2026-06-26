@@ -72,6 +72,7 @@ public class StardewGuideRetriever {
             case VILLAGER_PROFILE -> ensureContains(withConstraints, "礼物");
             case RESOURCE -> ensureResourceAction(withConstraints);
             case MONSTER_DROP -> ensureContains(withConstraints, "掉什么");
+            case FISH_POND -> ensureContains(withConstraints, "鱼塘");
             case ANIMAL_CARE -> ensureContains(withConstraints, "动物养殖");
             case FRUIT_TREE -> ensureContains(withConstraints, "果树");
             case CROP -> ensureContains(withConstraints, "作物");

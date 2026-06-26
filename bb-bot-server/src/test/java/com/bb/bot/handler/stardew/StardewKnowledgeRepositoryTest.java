@@ -32,9 +32,58 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(161);
         assertThat(repository.monsterDrops()).hasSizeGreaterThanOrEqualTo(58);
+        assertThat(repository.fishPonds()).hasSize(73);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
+    }
+
+    @Test
+    void fullFishPondProductTableIsCovered() {
+        Set<String> pondIds = repository.fishPonds().stream()
+                .map(StardewData.FishPondGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.fishPonds()).hasSize(73);
+        assertThat(pondIds).contains(
+                "fish_pond_sturgeon",
+                "fish_pond_lava_eel",
+                "fish_pond_stingray",
+                "fish_pond_blobfish",
+                "fish_pond_legend",
+                "fish_pond_coral",
+                "fish_pond_sea_urchin"
+        );
+
+        StardewData.FishPondGuide sturgeon = repository.findFishPond("鲟鱼鱼塘产什么").orElseThrow();
+        assertThat(sturgeon.getProducts()).extracting(StardewData.FishPondProduct::getItem)
+                .contains("1-2 鱼籽");
+        assertThat(sturgeon.getQuests()).extracting(StardewData.FishPondQuest::getItemsRequired)
+                .contains("1 钻石", "1 鹦鹉螺壳");
+
+        StardewData.FishPondGuide stingray = repository.findFishPond("黄貂鱼鱼塘产什么").orElseThrow();
+        assertThat(stingray.getProducts()).extracting(StardewData.FishPondProduct::getItem)
+                .contains("1 龙牙", "1 电池组");
+
+        StardewData.FishPondGuide coral = repository.findFishPond("珊瑚鱼塘").orElseThrow();
+        assertThat(coral.getInitialCapacity()).isEqualTo(10);
+    }
+
+    @Test
+    void allFishPondGuidesHaveCoreFieldsAndSources() {
+        assertThat(repository.fishPonds())
+                .hasSize(73)
+                .allSatisfy(fishPond -> {
+                    assertThat(fishPond.getId()).isNotBlank();
+                    assertThat(fishPond.getFishName()).isNotBlank();
+                    assertThat(fishPond.getFishNameEn()).isNotBlank();
+                    assertThat(fishPond.getAliases()).isNotEmpty();
+                    assertThat(fishPond.getInitialCapacity()).isNotNull();
+                    assertThat(fishPond.getMaxCapacity()).isNotNull();
+                    assertThat(fishPond.getProducts()).isNotEmpty();
+                    assertThat(fishPond.getRecommendation()).isNotBlank();
+                    assertThat(fishPond.getSourceUrls()).contains("https://stardewvalleywiki.com/Fish_Pond");
+                });
     }
 
     @Test

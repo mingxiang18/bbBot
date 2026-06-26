@@ -28281,5 +28281,3976 @@
         "https://stardewvalleywiki.com/Wilderness_Golem"
       ]
     }
+  ],
+  "fishPonds": [
+    {
+      "id": "fish_pond_albacore",
+      "fishName": "青花鱼",
+      "fishNameEn": "Albacore",
+      "aliases": [
+        "青花鱼",
+        "Albacore",
+        "albacore",
+        "青花鱼鱼塘",
+        "青花鱼鱼塘产什么",
+        "青花鱼鱼塘要什么",
+        "青花鱼鱼籽",
+        "青花鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_anchovy",
+      "fishName": "鳀鱼",
+      "fishNameEn": "Anchovy",
+      "aliases": [
+        "鳀鱼",
+        "Anchovy",
+        "anchovy",
+        "鳀鱼鱼塘",
+        "鳀鱼鱼塘产什么",
+        "鳀鱼鱼塘要什么",
+        "鳀鱼鱼籽",
+        "鳀鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_angler",
+      "fishName": "鮟鱇鱼",
+      "fishNameEn": "Angler",
+      "aliases": [
+        "鮟鱇鱼",
+        "Angler",
+        "angler",
+        "鮟鱇鱼鱼塘",
+        "鮟鱇鱼鱼塘产什么",
+        "鮟鱇鱼鱼塘要什么",
+        "鮟鱇鱼鱼籽",
+        "鮟鱇鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "75%",
+          "dailyChance": "37.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "6.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_blobfish",
+      "fishName": "水滴鱼",
+      "fishNameEn": "Blobfish",
+      "aliases": [
+        "水滴鱼",
+        "Blobfish",
+        "blobfish",
+        "水滴鱼鱼塘",
+        "水滴鱼鱼塘产什么",
+        "水滴鱼鱼塘要什么",
+        "水滴鱼鱼籽",
+        "水滴鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "3 珊瑚，2 冰泪晶，或 2 海胆"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "5 咖啡豆，1 蛋黄酱，或 1 披萨"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 曲奇，1 绿茶，或 1 果酒"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 彩虹贝壳 或 1 大米布丁"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-2 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90-100%",
+          "dailyChance": "21-91%"
+        },
+        {
+          "item": "1 珍珠",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        },
+        {
+          "item": "5 农场传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "水滴鱼可产珍珠和传送图腾，夜市后适合长期养。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_blue_discus",
+      "fishName": "蓝铁饼鱼",
+      "fishNameEn": "Blue Discus",
+      "aliases": [
+        "蓝铁饼鱼",
+        "Blue Discus",
+        "blue discus",
+        "蓝铁饼鱼鱼塘",
+        "蓝铁饼鱼鱼塘产什么",
+        "蓝铁饼鱼鱼塘要什么",
+        "蓝铁饼鱼鱼籽",
+        "蓝铁饼鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 芋头"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 芋头"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "80-100%",
+          "dailyChance": "23-76%"
+        },
+        {
+          "item": "1 香蕉",
+          "requiredPopulation": 4,
+          "itemChance": "7-16%",
+          "dailyChance": "5-15%"
+        },
+        {
+          "item": "1 金色椰子",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_bream",
+      "fishName": "鲷鱼",
+      "fishNameEn": "Bream",
+      "aliases": [
+        "鲷鱼",
+        "Bream",
+        "bream",
+        "鲷鱼鱼塘",
+        "鲷鱼鱼塘产什么",
+        "鲷鱼鱼塘要什么",
+        "鲷鱼鱼籽",
+        "鲷鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_bullhead",
+      "fishName": "大头鱼",
+      "fishNameEn": "Bullhead",
+      "aliases": [
+        "大头鱼",
+        "Bullhead",
+        "bullhead",
+        "大头鱼鱼塘",
+        "大头鱼鱼塘产什么",
+        "大头鱼鱼塘要什么",
+        "大头鱼鱼籽",
+        "大头鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "10 虫肉，2-3 黏土，2-3 绿藻，或 5 史莱姆泥"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2-3 普通蘑菇，1-2 地晶，或 1 石灰石"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 泥石，1 蜗牛，或 5 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_carp",
+      "fishName": "鲤鱼",
+      "fishNameEn": "Carp",
+      "aliases": [
+        "鲤鱼",
+        "Carp",
+        "carp",
+        "鲤鱼鱼塘",
+        "鲤鱼鱼塘产什么",
+        "鲤鱼鱼塘要什么",
+        "鲤鱼鱼籽",
+        "鲤鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 绿藻"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 山洞萝卜"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "100%",
+          "dailyChance": "23-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_catfish",
+      "fishName": "鲶鱼",
+      "fishNameEn": "Catfish",
+      "aliases": [
+        "鲶鱼",
+        "Catfish",
+        "catfish",
+        "鲶鱼鱼塘",
+        "鲶鱼鱼塘产什么",
+        "鲶鱼鱼塘要什么",
+        "鲶鱼鱼籽",
+        "鲶鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 紫水晶，3 铜锭，3 红蘑菇，或 2 黄水晶"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 蝙蝠翅膀，2 地晶，5 混合种子，或 2-3 紫蘑菇"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 钻石，3 铁锭，1 蛋黄酱，或 1 腌菜"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "100%",
+          "dailyChance": "23-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_chub",
+      "fishName": "鲢鱼",
+      "fishNameEn": "Chub",
+      "aliases": [
+        "鲢鱼",
+        "Chub",
+        "chub",
+        "鲢鱼鱼塘",
+        "鲢鱼鱼塘产什么",
+        "鲢鱼鱼塘要什么",
+        "鲢鱼鱼籽",
+        "鲢鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_clam",
+      "fishName": "蛤",
+      "fishNameEn": "Clam",
+      "aliases": [
+        "蛤",
+        "Clam",
+        "clam",
+        "蛤鱼塘",
+        "蛤鱼塘产什么",
+        "蛤鱼塘要什么",
+        "蛤鱼籽",
+        "蛤产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_cockle",
+      "fishName": "鸟蛤",
+      "fishNameEn": "Cockle",
+      "aliases": [
+        "鸟蛤",
+        "Cockle",
+        "cockle",
+        "鸟蛤鱼塘",
+        "鸟蛤鱼塘产什么",
+        "鸟蛤鱼塘要什么",
+        "鸟蛤鱼籽",
+        "鸟蛤产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_coral",
+      "fishName": "珊瑚",
+      "fishNameEn": "Coral",
+      "aliases": [
+        "珊瑚",
+        "Coral",
+        "coral",
+        "珊瑚鱼塘",
+        "珊瑚鱼塘产什么",
+        "珊瑚鱼塘要什么",
+        "珊瑚鱼籽",
+        "珊瑚产物"
+      ],
+      "initialCapacity": 10,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [],
+      "products": [
+        {
+          "item": "1 白云石",
+          "requiredPopulation": 9,
+          "itemChance": "6%",
+          "dailyChance": "5-6%"
+        },
+        {
+          "item": "1 石灰石",
+          "requiredPopulation": 9,
+          "itemChance": "6%",
+          "dailyChance": "5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_crab",
+      "fishName": "螃蟹",
+      "fishNameEn": "Crab",
+      "aliases": [
+        "螃蟹",
+        "Crab",
+        "crab",
+        "螃蟹鱼塘",
+        "螃蟹鱼塘产什么",
+        "螃蟹鱼塘要什么",
+        "螃蟹鱼籽",
+        "螃蟹产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_crayfish",
+      "fishName": "小龙虾",
+      "fishNameEn": "Crayfish",
+      "aliases": [
+        "小龙虾",
+        "Crayfish",
+        "crayfish",
+        "小龙虾鱼塘",
+        "小龙虾鱼塘产什么",
+        "小龙虾鱼塘要什么",
+        "小龙虾鱼籽",
+        "小龙虾产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土 或 15 纤维"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉，1 山洞萝卜，或 5 硬木"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 营养棒，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "12-14%",
+          "dailyChance": "3-12%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "7-8%",
+          "dailyChance": "1.9-7%"
+        },
+        {
+          "item": "1-3 绿藻",
+          "requiredPopulation": 1,
+          "itemChance": "5%",
+          "dailyChance": "1.1-4%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "4-5%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "2-3 混合种子",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 山岭传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "8%",
+          "dailyChance": "7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_crimsonfish",
+      "fishName": "绯红鱼",
+      "fishNameEn": "Crimsonfish",
+      "aliases": [
+        "绯红鱼",
+        "Crimsonfish",
+        "crimsonfish",
+        "绯红鱼鱼塘",
+        "绯红鱼鱼塘产什么",
+        "绯红鱼鱼塘要什么",
+        "绯红鱼鱼籽",
+        "绯红鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-2 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "84%",
+          "dailyChance": "42%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "4%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_dorado",
+      "fishName": "麻哈脂鲤",
+      "fishNameEn": "Dorado",
+      "aliases": [
+        "麻哈脂鲤",
+        "Dorado",
+        "dorado",
+        "麻哈脂鲤鱼塘",
+        "麻哈脂鲤鱼塘产什么",
+        "麻哈脂鲤鱼塘要什么",
+        "麻哈脂鲤鱼籽",
+        "麻哈脂鲤产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 鲷鱼，2 鲤鱼，或 2 鲢鱼"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 大头鱼 或 2 大嘴鲈鱼"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 鬼鱼，2 沙鱼，或 2 木跃鱼"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "95-100%",
+          "dailyChance": "23-90%"
+        },
+        {
+          "item": "20 虫肉",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_eel",
+      "fishName": "鳗鱼",
+      "fishNameEn": "Eel",
+      "aliases": [
+        "鳗鱼",
+        "Eel",
+        "eel",
+        "鳗鱼鱼塘",
+        "鳗鱼鱼塘产什么",
+        "鳗鱼鱼塘要什么",
+        "鳗鱼鱼籽",
+        "鳗鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_flounder",
+      "fishName": "比目鱼",
+      "fishNameEn": "Flounder",
+      "aliases": [
+        "比目鱼",
+        "Flounder",
+        "flounder",
+        "比目鱼鱼塘",
+        "比目鱼鱼塘产什么",
+        "比目鱼鱼塘要什么",
+        "比目鱼鱼籽",
+        "比目鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 海果冻"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "92-100%",
+          "dailyChance": "23-87%"
+        },
+        {
+          "item": "1 海果冻",
+          "requiredPopulation": 7,
+          "itemChance": "5-8%",
+          "dailyChance": "4-7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_ghostfish",
+      "fishName": "鬼鱼",
+      "fishNameEn": "Ghostfish",
+      "aliases": [
+        "鬼鱼",
+        "Ghostfish",
+        "ghostfish",
+        "鬼鱼鱼塘",
+        "鬼鱼鱼塘产什么",
+        "鬼鱼鱼塘要什么",
+        "鬼鱼鱼籽",
+        "鬼鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "5 石英"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "5 山洞萝卜"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "5 白藻"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 矮人卷轴 I，1 矮人卷轴 II，或 2 精炼石英"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "72-100%",
+          "dailyChance": "23-73%"
+        },
+        {
+          "item": "1-3 石英",
+          "requiredPopulation": 3,
+          "itemChance": "8-17%",
+          "dailyChance": "3-17%"
+        },
+        {
+          "item": "5 白藻",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        },
+        {
+          "item": "1 精炼石英",
+          "requiredPopulation": 9,
+          "itemChance": "4%",
+          "dailyChance": "4%"
+        },
+        {
+          "item": "3 清汤",
+          "requiredPopulation": 9,
+          "itemChance": "1.9%",
+          "dailyChance": "1.7-1.8%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_glacierfish",
+      "fishName": "冰川鱼",
+      "fishNameEn": "Glacierfish",
+      "aliases": [
+        "冰川鱼",
+        "Glacierfish",
+        "glacierfish",
+        "冰川鱼鱼塘",
+        "冰川鱼鱼塘产什么",
+        "冰川鱼鱼塘要什么",
+        "冰川鱼鱼籽",
+        "冰川鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "79%",
+          "dailyChance": "39.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "5.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_glacierfish_jr",
+      "fishName": "小冰川鱼",
+      "fishNameEn": "Glacierfish Jr.",
+      "aliases": [
+        "小冰川鱼",
+        "Glacierfish Jr.",
+        "glacierfish jr.",
+        "小冰川鱼鱼塘",
+        "小冰川鱼鱼塘产什么",
+        "小冰川鱼鱼塘要什么",
+        "小冰川鱼鱼籽",
+        "小冰川鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "79%",
+          "dailyChance": "39.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "5.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_goby",
+      "fishName": "虾虎鱼",
+      "fishNameEn": "Goby",
+      "aliases": [
+        "虾虎鱼",
+        "Goby",
+        "goby",
+        "虾虎鱼鱼塘",
+        "虾虎鱼鱼塘产什么",
+        "虾虎鱼鱼塘要什么",
+        "虾虎鱼鱼籽",
+        "虾虎鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_halibut",
+      "fishName": "大比目鱼",
+      "fishNameEn": "Halibut",
+      "aliases": [
+        "大比目鱼",
+        "Halibut",
+        "halibut",
+        "大比目鱼鱼塘",
+        "大比目鱼鱼塘产什么",
+        "大比目鱼鱼塘要什么",
+        "大比目鱼鱼籽",
+        "大比目鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_herring",
+      "fishName": "鲱鱼",
+      "fishNameEn": "Herring",
+      "aliases": [
+        "鲱鱼",
+        "Herring",
+        "herring",
+        "鲱鱼鱼塘",
+        "鲱鱼鱼塘产什么",
+        "鲱鱼鱼塘要什么",
+        "鲱鱼鱼籽",
+        "鲱鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 珊瑚"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "100%",
+          "dailyChance": "23-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_ice_pip",
+      "fishName": "冰柱鱼",
+      "fishNameEn": "Ice Pip",
+      "aliases": [
+        "冰柱鱼",
+        "Ice Pip",
+        "ice pip",
+        "冰柱鱼鱼塘",
+        "冰柱鱼鱼塘产什么",
+        "冰柱鱼鱼塘要什么",
+        "冰柱鱼鱼籽",
+        "冰柱鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "5 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "10 铁矿石"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "5 冰泪晶"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 煤炭，1 Crystal Fruit，或 5 冰封晶球"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "4 铁锭 或 10 精炼石英"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "23-43%",
+          "dailyChance": "6-41%"
+        },
+        {
+          "item": "5 铁矿石",
+          "requiredPopulation": 3,
+          "itemChance": "8-10%",
+          "dailyChance": "4-8%"
+        },
+        {
+          "item": "1-5 冰封晶球",
+          "requiredPopulation": 9,
+          "itemChance": "16%",
+          "dailyChance": "14-15%"
+        },
+        {
+          "item": "5 冰泪晶",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 钻石",
+          "requiredPopulation": 9,
+          "itemChance": "0.8%",
+          "dailyChance": "0.7%"
+        }
+      ],
+      "recommendation": "冰柱鱼可产钻石/冰封晶球，偏后期高价值鱼塘。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_largemouth_bass",
+      "fishName": "大嘴鲈鱼",
+      "fishNameEn": "Largemouth Bass",
+      "aliases": [
+        "大嘴鲈鱼",
+        "Largemouth Bass",
+        "largemouth bass",
+        "大嘴鲈鱼鱼塘",
+        "大嘴鲈鱼鱼塘产什么",
+        "大嘴鲈鱼鱼塘要什么",
+        "大嘴鲈鱼鱼籽",
+        "大嘴鲈鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "10 虫肉，2-3 黏土，2-3 绿藻，或 5 史莱姆泥"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2-3 普通蘑菇，1-2 地晶，或 1 石灰石"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 泥石，1 蜗牛，或 5 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_lava_eel",
+      "fishName": "岩浆鳗鱼",
+      "fishNameEn": "Lava Eel",
+      "aliases": [
+        "岩浆鳗鱼",
+        "Lava Eel",
+        "lava eel",
+        "岩浆鳗鱼鱼塘",
+        "岩浆鳗鱼鱼塘产什么",
+        "岩浆鳗鱼鱼塘要什么",
+        "岩浆鳗鱼鱼籽",
+        "岩浆鳗鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "5 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "3 火水晶"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "1 玄武岩，2 钻石，或 1 矮人卷轴 III"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 超级炸弹"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 铱锭"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-3 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "72-90%",
+          "dailyChance": "18-74%"
+        },
+        {
+          "item": "5 金矿石",
+          "requiredPopulation": 3,
+          "itemChance": "7-10%",
+          "dailyChance": "4-8%"
+        },
+        {
+          "item": "1-3 洞穴果冻",
+          "requiredPopulation": 8,
+          "itemChance": "3-7%",
+          "dailyChance": "3-6%"
+        },
+        {
+          "item": "5 香辣鳗鱼",
+          "requiredPopulation": 9,
+          "itemChance": "3.6-3.9%",
+          "dailyChance": "3.4-3.5%"
+        },
+        {
+          "item": "5-10 岩浆晶球",
+          "requiredPopulation": 9,
+          "itemChance": "2-5%",
+          "dailyChance": "2-5%"
+        }
+      ],
+      "recommendation": "岩浆鳗鱼产物价值高，也能补香辣鳗鱼和岩浆晶球，后期收益很好。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_legend",
+      "fishName": "传说之鱼",
+      "fishNameEn": "Legend",
+      "aliases": [
+        "传说之鱼",
+        "Legend",
+        "legend",
+        "传说之鱼鱼塘",
+        "传说之鱼鱼塘产什么",
+        "传说之鱼鱼塘要什么",
+        "传说之鱼鱼籽",
+        "传说之鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "43%",
+          "dailyChance": "21.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "14.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_legend_ii",
+      "fishName": "传说之鱼二代",
+      "fishNameEn": "Legend II",
+      "aliases": [
+        "传说之鱼二代",
+        "Legend II",
+        "legend ii",
+        "传说之鱼二代鱼塘",
+        "传说之鱼二代鱼塘产什么",
+        "传说之鱼二代鱼塘要什么",
+        "传说之鱼二代鱼籽",
+        "传说之鱼二代产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "43%",
+          "dailyChance": "21.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "14.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_lingcod",
+      "fishName": "蛇齿单线鱼",
+      "fishNameEn": "Lingcod",
+      "aliases": [
+        "蛇齿单线鱼",
+        "Lingcod",
+        "lingcod",
+        "蛇齿单线鱼鱼塘",
+        "蛇齿单线鱼鱼塘产什么",
+        "蛇齿单线鱼鱼塘要什么",
+        "蛇齿单线鱼鱼籽",
+        "蛇齿单线鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 鲷鱼，2 鲤鱼，或 2 鲢鱼"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 大头鱼 或 2 大嘴鲈鱼"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 鬼鱼，2 沙鱼，或 2 木跃鱼"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "95-100%",
+          "dailyChance": "23-90%"
+        },
+        {
+          "item": "20 虫肉",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_lionfish",
+      "fishName": "狮子鱼",
+      "fishNameEn": "Lionfish",
+      "aliases": [
+        "狮子鱼",
+        "Lionfish",
+        "lionfish",
+        "狮子鱼鱼塘",
+        "狮子鱼鱼塘产什么",
+        "狮子鱼鱼塘要什么",
+        "狮子鱼鱼籽",
+        "狮子鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 姜 或 1 菠萝"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 芒果"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "71-100%",
+          "dailyChance": "23-67%"
+        },
+        {
+          "item": "2-5 芋头块茎",
+          "requiredPopulation": 4,
+          "itemChance": "10-28%",
+          "dailyChance": "20-26%"
+        },
+        {
+          "item": "1 虎纹史莱姆蛋",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_lobster",
+      "fishName": "龙虾",
+      "fishNameEn": "Lobster",
+      "aliases": [
+        "龙虾",
+        "Lobster",
+        "lobster",
+        "龙虾鱼塘",
+        "龙虾鱼塘产什么",
+        "龙虾鱼塘要什么",
+        "龙虾鱼籽",
+        "龙虾产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_midnight_carp",
+      "fishName": "午夜鲤鱼",
+      "fishNameEn": "Midnight Carp",
+      "aliases": [
+        "午夜鲤鱼",
+        "Midnight Carp",
+        "midnight carp",
+        "午夜鲤鱼鱼塘",
+        "午夜鲤鱼鱼塘产什么",
+        "午夜鲤鱼鱼塘要什么",
+        "午夜鲤鱼鱼籽",
+        "午夜鲤鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "10 煤炭"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 河果冻"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "92-100%",
+          "dailyChance": "23-87%"
+        },
+        {
+          "item": "1 河果冻",
+          "requiredPopulation": 7,
+          "itemChance": "5-8%",
+          "dailyChance": "4-7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_midnight_squid",
+      "fishName": "午夜鱿鱼",
+      "fishNameEn": "Midnight Squid",
+      "aliases": [
+        "午夜鱿鱼",
+        "Midnight Squid",
+        "midnight squid",
+        "午夜鱿鱼鱼塘",
+        "午夜鱿鱼鱼塘产什么",
+        "午夜鱿鱼鱼塘要什么",
+        "午夜鱿鱼鱼籽",
+        "午夜鱿鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚 或 2 海胆"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 沙丁鱼"
+        },
+        {
+          "population": 8,
+          "itemsRequired": "1 海洋石"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-2 鱿鱼墨汁",
+          "requiredPopulation": 1,
+          "itemChance": "20-97%",
+          "dailyChance": "5-92%"
+        }
+      ],
+      "recommendation": "稳定补鱿鱼墨汁，做料理和任务很方便。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_ms_angler",
+      "fishName": "雌鮟鱇鱼",
+      "fishNameEn": "Ms. Angler",
+      "aliases": [
+        "雌鮟鱇鱼",
+        "Ms. Angler",
+        "ms. angler",
+        "雌鮟鱇鱼鱼塘",
+        "雌鮟鱇鱼鱼塘产什么",
+        "雌鮟鱇鱼鱼塘要什么",
+        "雌鮟鱇鱼鱼籽",
+        "雌鮟鱇鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "75%",
+          "dailyChance": "37.5%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "6.25%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_mussel",
+      "fishName": "蚌",
+      "fishNameEn": "Mussel",
+      "aliases": [
+        "蚌",
+        "Mussel",
+        "mussel",
+        "蚌鱼塘",
+        "蚌鱼塘产什么",
+        "蚌鱼塘要什么",
+        "蚌鱼籽",
+        "蚌产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_mutant_carp",
+      "fishName": "变种鲤鱼",
+      "fishNameEn": "Mutant Carp",
+      "aliases": [
+        "变种鲤鱼",
+        "Mutant Carp",
+        "mutant carp",
+        "变种鲤鱼鱼塘",
+        "变种鲤鱼鱼塘产什么",
+        "变种鲤鱼鱼塘要什么",
+        "变种鲤鱼鱼籽",
+        "变种鲤鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "72%",
+          "dailyChance": "36%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_octopus",
+      "fishName": "章鱼",
+      "fishNameEn": "Octopus",
+      "aliases": [
+        "章鱼",
+        "Octopus",
+        "octopus",
+        "章鱼鱼塘",
+        "章鱼鱼塘产什么",
+        "章鱼鱼塘要什么",
+        "章鱼鱼籽",
+        "章鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚，1 蜂蜜，1 牡蛎，或 3 精炼石英"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 干海星，2 绿宝石，2-3 万象晶球，或 2-3 紫蘑菇"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 绿茶"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "83-100%",
+          "dailyChance": "23-79%"
+        },
+        {
+          "item": "1-10 万象晶球",
+          "requiredPopulation": 9,
+          "itemChance": "17%",
+          "dailyChance": "15-16%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_oyster",
+      "fishName": "牡蛎",
+      "fishNameEn": "Oyster",
+      "aliases": [
+        "牡蛎",
+        "Oyster",
+        "oyster",
+        "牡蛎鱼塘",
+        "牡蛎鱼塘产什么",
+        "牡蛎鱼塘要什么",
+        "牡蛎鱼籽",
+        "牡蛎产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_perch",
+      "fishName": "河鲈",
+      "fishNameEn": "Perch",
+      "aliases": [
+        "河鲈",
+        "Perch",
+        "perch",
+        "河鲈鱼塘",
+        "河鲈鱼塘产什么",
+        "河鲈鱼塘要什么",
+        "河鲈鱼籽",
+        "河鲈产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_periwinkle",
+      "fishName": "玉黍螺",
+      "fishNameEn": "Periwinkle",
+      "aliases": [
+        "玉黍螺",
+        "Periwinkle",
+        "periwinkle",
+        "玉黍螺鱼塘",
+        "玉黍螺鱼塘产什么",
+        "玉黍螺鱼塘要什么",
+        "玉黍螺鱼籽",
+        "玉黍螺产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土 或 15 纤维"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉，1 山洞萝卜，或 5 硬木"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 营养棒，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "12-14%",
+          "dailyChance": "3-12%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "7-8%",
+          "dailyChance": "1.9-7%"
+        },
+        {
+          "item": "1-3 绿藻",
+          "requiredPopulation": 1,
+          "itemChance": "5%",
+          "dailyChance": "1.1-4%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "4-5%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "2-3 混合种子",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 山岭传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "8%",
+          "dailyChance": "7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_pike",
+      "fishName": "狗鱼",
+      "fishNameEn": "Pike",
+      "aliases": [
+        "狗鱼",
+        "Pike",
+        "pike",
+        "狗鱼鱼塘",
+        "狗鱼鱼塘产什么",
+        "狗鱼鱼塘要什么",
+        "狗鱼鱼籽",
+        "狗鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 鲷鱼，2 鲤鱼，或 2 鲢鱼"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 大头鱼 或 2 大嘴鲈鱼"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 鬼鱼，2 沙鱼，或 2 木跃鱼"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "95-100%",
+          "dailyChance": "23-90%"
+        },
+        {
+          "item": "20 虫肉",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_pufferfish",
+      "fishName": "河豚",
+      "fishNameEn": "Pufferfish",
+      "aliases": [
+        "河豚",
+        "Pufferfish",
+        "pufferfish",
+        "河豚鱼塘",
+        "河豚鱼塘产什么",
+        "河豚鱼塘要什么",
+        "河豚鱼籽",
+        "河豚产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_radioactive_carp",
+      "fishName": "放射性鲤鱼",
+      "fishNameEn": "Radioactive Carp",
+      "aliases": [
+        "放射性鲤鱼",
+        "Radioactive Carp",
+        "radioactive carp",
+        "放射性鲤鱼鱼塘",
+        "放射性鲤鱼鱼塘产什么",
+        "放射性鲤鱼鱼塘要什么",
+        "放射性鲤鱼鱼籽",
+        "放射性鲤鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-4 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "72%",
+          "dailyChance": "36%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_rainbow_trout",
+      "fishName": "虹鳟鱼",
+      "fishNameEn": "Rainbow Trout",
+      "aliases": [
+        "虹鳟鱼",
+        "Rainbow Trout",
+        "rainbow trout",
+        "虹鳟鱼鱼塘",
+        "虹鳟鱼鱼塘产什么",
+        "虹鳟鱼鱼塘要什么",
+        "虹鳟鱼鱼籽",
+        "虹鳟鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚，1 蜂蜜，1 牡蛎，或 3 精炼石英"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 干海星，2 绿宝石，2-3 万象晶球，或 2-3 紫蘑菇"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 钻石，3 金锭，1 铱矿石，1 果酱，或 1 腌菜"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "98-100%",
+          "dailyChance": "23-93%"
+        },
+        {
+          "item": "1 彩虹贝壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        },
+        {
+          "item": "1 五彩碎片",
+          "requiredPopulation": 9,
+          "itemChance": "0.1%",
+          "dailyChance": "0.09%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_red_mullet",
+      "fishName": "红鲻鱼",
+      "fishNameEn": "Red Mullet",
+      "aliases": [
+        "红鲻鱼",
+        "Red Mullet",
+        "red mullet",
+        "红鲻鱼鱼塘",
+        "红鲻鱼鱼塘产什么",
+        "红鲻鱼鱼塘要什么",
+        "红鲻鱼鱼籽",
+        "红鲻鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_red_snapper",
+      "fishName": "红鲷鱼",
+      "fishNameEn": "Red Snapper",
+      "aliases": [
+        "红鲷鱼",
+        "Red Snapper",
+        "red snapper",
+        "红鲷鱼鱼塘",
+        "红鲷鱼鱼塘产什么",
+        "红鲷鱼鱼塘要什么",
+        "红鲷鱼鱼籽",
+        "红鲷鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_salmon",
+      "fishName": "鲑鱼",
+      "fishNameEn": "Salmon",
+      "aliases": [
+        "鲑鱼",
+        "Salmon",
+        "salmon",
+        "鲑鱼鱼塘",
+        "鲑鱼鱼塘产什么",
+        "鲑鱼鱼塘要什么",
+        "鲑鱼鱼籽",
+        "鲑鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sandfish",
+      "fishName": "沙鱼",
+      "fishNameEn": "Sandfish",
+      "aliases": [
+        "沙鱼",
+        "Sandfish",
+        "sandfish",
+        "沙鱼鱼塘",
+        "沙鱼鱼塘产什么",
+        "沙鱼鱼塘要什么",
+        "沙鱼鱼籽",
+        "沙鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 仙人掌果子 或 3 椰子"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 黄金遗物"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-3 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "75-88%",
+          "dailyChance": "17-82%"
+        },
+        {
+          "item": "2-5 仙人掌种子",
+          "requiredPopulation": 10,
+          "itemChance": "5%",
+          "dailyChance": "5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sardine",
+      "fishName": "沙丁鱼",
+      "fishNameEn": "Sardine",
+      "aliases": [
+        "沙丁鱼",
+        "Sardine",
+        "sardine",
+        "沙丁鱼鱼塘",
+        "沙丁鱼鱼塘产什么",
+        "沙丁鱼鱼塘要什么",
+        "沙丁鱼鱼籽",
+        "沙丁鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_scorpion_carp",
+      "fishName": "蝎鲤鱼",
+      "fishNameEn": "Scorpion Carp",
+      "aliases": [
+        "蝎鲤鱼",
+        "Scorpion Carp",
+        "scorpion carp",
+        "蝎鲤鱼鱼塘",
+        "蝎鲤鱼鱼塘产什么",
+        "蝎鲤鱼鱼塘要什么",
+        "蝎鲤鱼鱼籽",
+        "蝎鲤鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 仙人掌果子 或 3 椰子"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 黄金遗物"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-3 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "75-88%",
+          "dailyChance": "17-82%"
+        },
+        {
+          "item": "2-5 仙人掌种子",
+          "requiredPopulation": 10,
+          "itemChance": "5%",
+          "dailyChance": "5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sea_cucumber",
+      "fishName": "海参",
+      "fishNameEn": "Sea Cucumber",
+      "aliases": [
+        "海参",
+        "Sea Cucumber",
+        "sea cucumber",
+        "海参鱼塘",
+        "海参鱼塘产什么",
+        "海参鱼塘要什么",
+        "海参鱼籽",
+        "海参产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sea_urchin",
+      "fishName": "海胆",
+      "fishNameEn": "Sea Urchin",
+      "aliases": [
+        "海胆",
+        "Sea Urchin",
+        "sea urchin",
+        "海胆鱼塘",
+        "海胆鱼塘产什么",
+        "海胆鱼塘要什么",
+        "海胆鱼籽",
+        "海胆产物"
+      ],
+      "initialCapacity": 10,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-5 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "10-53%",
+          "dailyChance": "2.3-50%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_shad",
+      "fishName": "西鲱",
+      "fishNameEn": "Shad",
+      "aliases": [
+        "西鲱",
+        "Shad",
+        "shad",
+        "西鲱鱼塘",
+        "西鲱鱼塘产什么",
+        "西鲱鱼塘要什么",
+        "西鲱鱼籽",
+        "西鲱产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_shrimp",
+      "fishName": "虾",
+      "fishNameEn": "Shrimp",
+      "aliases": [
+        "虾",
+        "Shrimp",
+        "shrimp",
+        "虾鱼塘",
+        "虾鱼塘产什么",
+        "虾鱼塘要什么",
+        "虾鱼籽",
+        "虾产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉 或 5 石英"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 海胆，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "11-13%",
+          "dailyChance": "3-10%"
+        },
+        {
+          "item": "1-3 海草",
+          "requiredPopulation": 1,
+          "itemChance": "8-9%",
+          "dailyChance": "2-8%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "6-8%",
+          "dailyChance": "1.9-6%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "1-3%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 珊瑚",
+          "requiredPopulation": 5,
+          "itemChance": "6%",
+          "dailyChance": "4-6%"
+        },
+        {
+          "item": "1 海胆",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 海滩传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 鹦鹉螺壳",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_slimejack",
+      "fishName": "史莱姆鱼",
+      "fishNameEn": "Slimejack",
+      "aliases": [
+        "史莱姆鱼",
+        "Slimejack",
+        "slimejack",
+        "史莱姆鱼鱼塘",
+        "史莱姆鱼鱼塘产什么",
+        "史莱姆鱼鱼塘要什么",
+        "史莱姆鱼鱼籽",
+        "史莱姆鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "20 史莱姆泥"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "10 虫肉"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 海藻汤 或 5 野性鱼饵"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 石化史莱姆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "46-80%",
+          "dailyChance": "18-57%"
+        },
+        {
+          "item": "1 绿藻",
+          "requiredPopulation": 3,
+          "itemChance": "6-10%",
+          "dailyChance": "4-8%"
+        },
+        {
+          "item": "10-50 史莱姆泥",
+          "requiredPopulation": 9,
+          "itemChance": "34%",
+          "dailyChance": "30-32%"
+        },
+        {
+          "item": "1 绿色史莱姆蛋",
+          "requiredPopulation": 9,
+          "itemChance": "2%",
+          "dailyChance": "1.7-1.9%"
+        }
+      ],
+      "recommendation": "史莱姆鱼可补史莱姆泥和绿色史莱姆蛋，适合史莱姆路线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_smallmouth_bass",
+      "fishName": "小嘴鲈鱼",
+      "fishNameEn": "Smallmouth Bass",
+      "aliases": [
+        "小嘴鲈鱼",
+        "Smallmouth Bass",
+        "smallmouth bass",
+        "小嘴鲈鱼鱼塘",
+        "小嘴鲈鱼鱼塘产什么",
+        "小嘴鲈鱼鱼塘要什么",
+        "小嘴鲈鱼鱼籽",
+        "小嘴鲈鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_snail",
+      "fishName": "蜗牛",
+      "fishNameEn": "Snail",
+      "aliases": [
+        "蜗牛",
+        "Snail",
+        "snail",
+        "蜗牛鱼塘",
+        "蜗牛鱼塘产什么",
+        "蜗牛鱼塘要什么",
+        "蜗牛鱼籽",
+        "蜗牛产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "5 黏土 或 15 纤维"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 虫肉，1 山洞萝卜，或 5 硬木"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 营养棒，5 太阳精华，或 1 野性鱼饵"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "12-14%",
+          "dailyChance": "3-12%"
+        },
+        {
+          "item": "1 垃圾",
+          "requiredPopulation": 1,
+          "itemChance": "7-8%",
+          "dailyChance": "1.9-7%"
+        },
+        {
+          "item": "1-3 绿藻",
+          "requiredPopulation": 1,
+          "itemChance": "5%",
+          "dailyChance": "1.1-4%"
+        },
+        {
+          "item": "1 浮木",
+          "requiredPopulation": 1,
+          "itemChance": "4-5%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的眼镜",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "1-4%"
+        },
+        {
+          "item": "1 破损的光盘",
+          "requiredPopulation": 1,
+          "itemChance": "4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "1 湿报纸",
+          "requiredPopulation": 1,
+          "itemChance": "3-4%",
+          "dailyChance": "0.9-3%"
+        },
+        {
+          "item": "2-3 混合种子",
+          "requiredPopulation": 5,
+          "itemChance": "4-5%",
+          "dailyChance": "3-4%"
+        },
+        {
+          "item": "1 山岭传送图腾",
+          "requiredPopulation": 9,
+          "itemChance": "8%",
+          "dailyChance": "7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_son_of_crimsonfish",
+      "fishName": "绯红鱼之子",
+      "fishNameEn": "Son of Crimsonfish",
+      "aliases": [
+        "绯红鱼之子",
+        "Son of Crimsonfish",
+        "son of crimsonfish",
+        "绯红鱼之子鱼塘",
+        "绯红鱼之子鱼塘产什么",
+        "绯红鱼之子鱼塘要什么",
+        "绯红鱼之子鱼籽",
+        "绯红鱼之子产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 1,
+      "spawnFrequency": "不增殖（鱼王鱼塘上限 1）",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-2 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "84%",
+          "dailyChance": "42%"
+        },
+        {
+          "item": "1-2 鱼籽（仅上一项未触发时）",
+          "requiredPopulation": 1,
+          "itemChance": "50%",
+          "dailyChance": "4%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_spook_fish",
+      "fishName": "幽灵鱼",
+      "fishNameEn": "Spook Fish",
+      "aliases": [
+        "幽灵鱼",
+        "Spook Fish",
+        "spook fish",
+        "幽灵鱼鱼塘",
+        "幽灵鱼鱼塘产什么",
+        "幽灵鱼鱼塘要什么",
+        "幽灵鱼鱼籽",
+        "幽灵鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 紫水晶，3 珊瑚，3 铁锭，1 牡蛎，3 红蘑菇，或 3 精炼石英"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 干海星，2 绿宝石，1 花岗岩，2-3 万象晶球，或 2-3 紫蘑菇"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 钻石，3 金锭，1 铱矿石，1 蛋黄酱，或 1 腌菜"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "100%",
+          "dailyChance": "23-95%"
+        },
+        {
+          "item": "1 宝箱",
+          "requiredPopulation": 9,
+          "itemChance": "0.3%",
+          "dailyChance": "0.3%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_squid",
+      "fishName": "鱿鱼",
+      "fishNameEn": "Squid",
+      "aliases": [
+        "鱿鱼",
+        "Squid",
+        "squid",
+        "鱿鱼鱼塘",
+        "鱿鱼鱼塘产什么",
+        "鱿鱼鱼塘要什么",
+        "鱿鱼鱼籽",
+        "鱿鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚 或 1 海胆"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 沙丁鱼"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱿鱼墨汁",
+          "requiredPopulation": 1,
+          "itemChance": "25-100%",
+          "dailyChance": "6-95%"
+        }
+      ],
+      "recommendation": "稳定补鱿鱼墨汁，做料理和任务很方便。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_stingray",
+      "fishName": "黄貂鱼",
+      "fishNameEn": "Stingray",
+      "aliases": [
+        "黄貂鱼",
+        "Stingray",
+        "stingray",
+        "黄貂鱼鱼塘",
+        "黄貂鱼鱼塘产什么",
+        "黄貂鱼鱼塘要什么",
+        "黄貂鱼鱼籽",
+        "黄貂鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "7 火山晶石"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 龙牙"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "80-100%",
+          "dailyChance": "18-77%"
+        },
+        {
+          "item": "1 岩浆菇",
+          "requiredPopulation": 4,
+          "itemChance": "5%",
+          "dailyChance": "2%"
+        },
+        {
+          "item": "2-5 火山晶石",
+          "requiredPopulation": 7,
+          "itemChance": "8-10%",
+          "dailyChance": "7-9%"
+        },
+        {
+          "item": "1 龙牙",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "5%"
+        },
+        {
+          "item": "1 电池组",
+          "requiredPopulation": 9,
+          "itemChance": "10%",
+          "dailyChance": "9-10%"
+        }
+      ],
+      "recommendation": "黄貂鱼可产龙牙、电池组和火山晶石，姜岛阶段很实用。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_stonefish",
+      "fishName": "石鱼",
+      "fishNameEn": "Stonefish",
+      "aliases": [
+        "石鱼",
+        "Stonefish",
+        "stonefish",
+        "石鱼鱼塘",
+        "石鱼鱼塘产什么",
+        "石鱼鱼塘要什么",
+        "石鱼鱼籽",
+        "石鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "5 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "10 铜矿石"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "5 地晶"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "10 煤炭 或 5 晶球"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "4 铜锭 或 5 精炼石英"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "23-43%",
+          "dailyChance": "6-41%"
+        },
+        {
+          "item": "5 铜矿石",
+          "requiredPopulation": 3,
+          "itemChance": "8-10%",
+          "dailyChance": "4-8%"
+        },
+        {
+          "item": "1-5 晶球",
+          "requiredPopulation": 9,
+          "itemChance": "16%",
+          "dailyChance": "14-15%"
+        },
+        {
+          "item": "30 石头",
+          "requiredPopulation": 9,
+          "itemChance": "7%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 钻石",
+          "requiredPopulation": 9,
+          "itemChance": "0.8%",
+          "dailyChance": "0.7%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sturgeon",
+      "fishName": "鲟鱼",
+      "fishNameEn": "Sturgeon",
+      "aliases": [
+        "鲟鱼",
+        "Sturgeon",
+        "sturgeon",
+        "鲟鱼鱼塘",
+        "鲟鱼鱼塘产什么",
+        "鲟鱼鱼塘要什么",
+        "鲟鱼鱼籽",
+        "鲟鱼产物",
+        "鲟鱼鱼籽酱",
+        "鱼籽酱",
+        "鱼子酱",
+        "鱼籽"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "1 钻石"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "1 果酱，2 枫糖浆，或 1 腌菜"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 万象晶球"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 鹦鹉螺壳"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-2 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "20-100%",
+          "dailyChance": "5-95%"
+        }
+      ],
+      "recommendation": "鲟鱼鱼籽可加工成鱼籽酱，是中期以后稳定收益线，通常优先建一口。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_sunfish",
+      "fishName": "太阳鱼",
+      "fishNameEn": "Sunfish",
+      "aliases": [
+        "太阳鱼",
+        "Sunfish",
+        "sunfish",
+        "太阳鱼鱼塘",
+        "太阳鱼鱼塘产什么",
+        "太阳鱼鱼塘要什么",
+        "太阳鱼鱼籽",
+        "太阳鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "1 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "2 橡子 或 2 晶球"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 紫水晶 或 3 混合种子"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "83-90%",
+          "dailyChance": "21-79%"
+        },
+        {
+          "item": "1 太阳精华",
+          "requiredPopulation": 10,
+          "itemChance": "8%",
+          "dailyChance": "8%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_super_cucumber",
+      "fishName": "大海参",
+      "fishNameEn": "Super Cucumber",
+      "aliases": [
+        "大海参",
+        "Super Cucumber",
+        "super cucumber",
+        "大海参鱼塘",
+        "大海参鱼塘产什么",
+        "大海参鱼塘要什么",
+        "大海参鱼籽",
+        "大海参产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 珊瑚，1 蜂蜜，1 牡蛎，3 浮木，或 3 精炼石英"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 干海星，2 绿宝石，2-3 万象晶球，或 2-3 紫蘑菇"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 钻石，3 金锭，1 铱矿石，1 果酱，1 腌菜，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90-100%",
+          "dailyChance": "23-86%"
+        },
+        {
+          "item": "1-3 铱矿石",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        },
+        {
+          "item": "1-3 紫水晶",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_tiger_trout",
+      "fishName": "虎纹鳟鱼",
+      "fishNameEn": "Tiger Trout",
+      "aliases": [
+        "虎纹鳟鱼",
+        "Tiger Trout",
+        "tiger trout",
+        "虎纹鳟鱼鱼塘",
+        "虎纹鳟鱼鱼塘产什么",
+        "虎纹鳟鱼鱼塘要什么",
+        "虎纹鳟鱼鱼籽",
+        "虎纹鳟鱼产物"
+      ],
+      "initialCapacity": 10,
+      "maxCapacity": 10,
+      "spawnFrequency": "初始 10 条，无需扩容",
+      "quests": [],
+      "products": [
+        {
+          "item": "1-2 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "100%",
+          "dailyChance": "23-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_tilapia",
+      "fishName": "罗非鱼",
+      "fishNameEn": "Tilapia",
+      "aliases": [
+        "罗非鱼",
+        "Tilapia",
+        "tilapia",
+        "罗非鱼鱼塘",
+        "罗非鱼鱼塘产什么",
+        "罗非鱼鱼塘要什么",
+        "罗非鱼鱼籽",
+        "罗非鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_tuna",
+      "fishName": "金枪鱼",
+      "fishNameEn": "Tuna",
+      "aliases": [
+        "金枪鱼",
+        "Tuna",
+        "tuna",
+        "金枪鱼鱼塘",
+        "金枪鱼鱼塘产什么",
+        "金枪鱼鱼塘要什么",
+        "金枪鱼鱼籽",
+        "金枪鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 浮木，1 冰封晶球，或 1-2 海草"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "2 蛤 或 2 珊瑚"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 海蓝宝石，1 蚌，或 2 海胆"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "70-100%",
+          "dailyChance": "16-95%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_void_salmon",
+      "fishName": "虚空鲑鱼",
+      "fishNameEn": "Void Salmon",
+      "aliases": [
+        "虚空鲑鱼",
+        "Void Salmon",
+        "void salmon",
+        "虚空鲑鱼鱼塘",
+        "虚空鲑鱼鱼塘产什么",
+        "虚空鲑鱼鱼塘要什么",
+        "虚空鲑鱼鱼籽",
+        "虚空鲑鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "4 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "5 虚空精华"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "10 蝙蝠翅膀"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 钻石 或 1 虚空蛋"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 铱矿石"
+        }
+      ],
+      "products": [
+        {
+          "item": "1-3 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "87-100%",
+          "dailyChance": "23-83%"
+        },
+        {
+          "item": "5-10 虚空精华",
+          "requiredPopulation": 8,
+          "itemChance": "8%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1 虚空蛋",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        }
+      ],
+      "recommendation": "虚空鲑鱼可补虚空蛋/虚空精华，偏后期功能性。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_walleye",
+      "fishName": "大眼鱼",
+      "fishNameEn": "Walleye",
+      "aliases": [
+        "大眼鱼",
+        "Walleye",
+        "walleye",
+        "大眼鱼鱼塘",
+        "大眼鱼鱼塘产什么",
+        "大眼鱼鱼塘要什么",
+        "大眼鱼鱼籽",
+        "大眼鱼产物"
+      ],
+      "initialCapacity": 3,
+      "maxCapacity": 10,
+      "spawnFrequency": "3 天",
+      "quests": [
+        {
+          "population": 3,
+          "itemsRequired": "3 橡子，10 虫肉，3 枫树种子，或 3 松果"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "3 金矿石，1 枫糖浆，或 5 混合种子"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "1 小龙虾，1 蜂蜜，2 翡翠，或 1 玉黍螺"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "90%",
+          "dailyChance": "21-86%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    },
+    {
+      "id": "fish_pond_woodskip",
+      "fishName": "木跃鱼",
+      "fishNameEn": "Woodskip",
+      "aliases": [
+        "木跃鱼",
+        "Woodskip",
+        "woodskip",
+        "木跃鱼鱼塘",
+        "木跃鱼鱼塘产什么",
+        "木跃鱼鱼塘要什么",
+        "木跃鱼鱼籽",
+        "木跃鱼产物"
+      ],
+      "initialCapacity": 1,
+      "maxCapacity": 10,
+      "spawnFrequency": "2 天",
+      "quests": [
+        {
+          "population": 1,
+          "itemsRequired": "10 硬木"
+        },
+        {
+          "population": 3,
+          "itemsRequired": "2-3 普通蘑菇 或 2-3 红蘑菇"
+        },
+        {
+          "population": 5,
+          "itemsRequired": "1 橡树树脂 或 1 松焦油"
+        },
+        {
+          "population": 7,
+          "itemsRequired": "2 翡翠 或 1 茶叶"
+        }
+      ],
+      "products": [
+        {
+          "item": "1 鱼籽",
+          "requiredPopulation": 1,
+          "itemChance": "47-66%",
+          "dailyChance": "15-45%"
+        },
+        {
+          "item": "1-10 木材",
+          "requiredPopulation": 1,
+          "itemChance": "20-27%",
+          "dailyChance": "5-22%"
+        },
+        {
+          "item": "5 硬木",
+          "requiredPopulation": 6,
+          "itemChance": "8-10%",
+          "dailyChance": "6-7%"
+        },
+        {
+          "item": "1-5 橡子",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        },
+        {
+          "item": "1-5 枫树种子",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4-5%"
+        },
+        {
+          "item": "1-5 松果",
+          "requiredPopulation": 9,
+          "itemChance": "5%",
+          "dailyChance": "4%"
+        }
+      ],
+      "recommendation": "主要用于鱼籽和对应副产物；如果只追收益，优先鲟鱼、岩浆鳗鱼、水滴鱼、冰柱鱼或黄貂鱼。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fish_Pond"
+      ]
+    }
   ]
 }

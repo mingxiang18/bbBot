@@ -1060,6 +1060,29 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFishPondDetailsAndRecommendationsWithoutBuildingCrossRouting() {
+        StardewGuideResult sturgeon = service.answerEvidence(StardewGuideIntent.FISH_POND, "星露谷 鲟鱼鱼塘产什么");
+        StardewGuideResult lavaEel = service.answerEvidence(StardewGuideIntent.FISH_POND, "星露谷 岩浆鳗鱼鱼塘要什么");
+        StardewGuideResult recommendations = service.answerEvidence(StardewGuideIntent.FISH_POND, "星露谷 鱼塘养什么好");
+        StardewGuideResult building = service.answerEvidence(StardewGuideIntent.BUILDING, "星露谷 鱼塘建造材料多少钱");
+
+        assertThat(sturgeon.getIntent()).isEqualTo("fish_pond_detail");
+        assertThat(sturgeon.getAnswer()).contains("鲟鱼鱼塘", "初始 1", "上限 10", "1-2 鱼籽", "鱼籽酱");
+        assertThat(sturgeon.getSourceUrls()).contains("https://stardewvalleywiki.com/Fish_Pond");
+
+        assertThat(lavaEel.getIntent()).isEqualTo("fish_pond_detail");
+        assertThat(lavaEel.getAnswer()).contains("岩浆鳗鱼鱼塘", "扩容任务", "3 火水晶", "1 铱锭", "5 香辣鳗鱼", "岩浆晶球");
+
+        assertThat(recommendations.getIntent()).isEqualTo("fish_pond_available");
+        assertThat(recommendations.getAnswer()).contains("鲟鱼", "岩浆鳗鱼", "冰柱鱼", "水滴鱼", "黄貂鱼", "午夜鱿鱼");
+        assertThat(recommendations.getAnswer()).doesNotContain("花费：", "罗宾");
+
+        assertThat(building.getIntent()).isEqualTo("building_detail");
+        assertThat(building.getAnswer()).contains("鱼塘", "花费：5,000g", "石头 x200", "海草 x5", "绿藻 x5");
+        assertThat(building.getAnswer()).doesNotContain("鱼塘产物与推荐", "扩容任务");
+    }
+
+    @Test
     void explicitUnknownEvidenceDoesNotFallBackToLegacyFreeTextRoute() {
         StardewGuideResult result = service.answerEvidence(StardewGuideIntent.UNKNOWN, "星露谷 鸡舍升级材料");
 

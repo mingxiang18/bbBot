@@ -44,7 +44,7 @@ public class StardewQueryPlannerService {
                           ]
                         }
                         type 只能从这些枚举中选择：
-                        FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP,
+                        FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, MACHINE, SHOP,
                         COOKING, SKILL, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
@@ -57,6 +57,8 @@ public class StardewQueryPlannerService {
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
                         - 具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏，例如“古代玩偶怎么获得”“矮人卷轴 II 哪里刷”“诡异玩偶黄怎么拿”，归为 RESOURCE。
                         - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
+                        - 问鱼塘养什么好、某种鱼鱼塘产什么、鱼塘扩容任务、鱼籽/鱼籽酱、鱼塘要什么任务物品，例如“鲟鱼鱼塘产什么”“岩浆鳗鱼鱼塘要什么”“鱼塘养什么好”，归为 FISH_POND。
+                        - 问鱼塘建筑本身的建造材料、价格、占地、罗宾建造，例如“鱼塘建造材料多少钱”，归为 BUILDING。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
@@ -120,6 +122,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeMonsterDropQuery(q)) {
             return StardewGuideIntent.MONSTER_DROP;
+        }
+        if (looksLikeFishPondQuery(q) && !looksLikeFishPondBuildingQuery(q)) {
+            return StardewGuideIntent.FISH_POND;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -239,6 +244,18 @@ public class StardewQueryPlannerService {
                 "ghost", "rock crab", "lava crab", "mummy", "serpent", "shadow brute",
                 "shadow shaman", "squid kid", "pepper rex", "lava lurk", "magma sprite",
                 "magma sparker", "magma duggy", "hot head", "blue squid", "spider");
+    }
+
+    private boolean looksLikeFishPondQuery(String query) {
+        return containsAny(query, "鱼塘", "鱼籽", "鱼子酱", "鱼籽酱", "roe", "pond")
+                && containsAny(query, "产什么", "产出", "产物", "养什么", "放什么", "扩容", "任务",
+                "要什么", "要啥", "需要什么", "鱼籽", "鱼子酱", "鱼籽酱", "推荐", "roe", "pond");
+    }
+
+    private boolean looksLikeFishPondBuildingQuery(String query) {
+        return containsAny(query, "鱼塘")
+                && containsAny(query, "建造", "建筑", "罗宾", "多少钱", "价格", "材料", "占地", "尺寸")
+                && !containsAny(query, "产什么", "产出", "产物", "养什么", "放什么", "扩容", "任务", "鱼籽", "鱼子酱", "鱼籽酱");
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {

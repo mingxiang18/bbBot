@@ -94,6 +94,23 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFishPondProductQueriesSeparatelyFromBuildingAndFishing() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan sturgeonProducts = planner.plan("鲟鱼鱼塘产什么");
+        StardewQueryPlan pondRecommendations = planner.plan("鱼塘养什么好");
+        StardewQueryPlan pondBuilding = planner.plan("鱼塘建造材料多少钱");
+        StardewQueryPlan summerFishing = planner.plan("夏天能钓什么鱼");
+
+        assertThat(sturgeonProducts.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH_POND);
+        assertThat(pondRecommendations.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH_POND);
+        assertThat(pondBuilding.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+        assertThat(summerFishing.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

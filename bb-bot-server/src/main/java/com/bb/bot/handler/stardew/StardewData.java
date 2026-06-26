@@ -20,6 +20,7 @@ public class StardewData {
     private List<Villager> villagers = new ArrayList<>();
     private List<ResourceGuide> resources = new ArrayList<>();
     private List<MonsterDropGuide> monsterDrops = new ArrayList<>();
+    private List<FishPondGuide> fishPonds = new ArrayList<>();
     private List<CookingRecipe> cookingRecipes = new ArrayList<>();
     private List<BookGuide> books = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
@@ -243,6 +244,35 @@ public class StardewData {
         private List<String> drops = new ArrayList<>();
         private String recommendation;
         private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class FishPondGuide {
+        private String id;
+        private String fishName;
+        private String fishNameEn;
+        private List<String> aliases = new ArrayList<>();
+        private Integer initialCapacity;
+        private Integer maxCapacity;
+        private String spawnFrequency;
+        private List<FishPondQuest> quests = new ArrayList<>();
+        private List<FishPondProduct> products = new ArrayList<>();
+        private String recommendation;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class FishPondQuest {
+        private Integer population;
+        private String itemsRequired;
+    }
+
+    @Data
+    public static class FishPondProduct {
+        private String item;
+        private Integer requiredPopulation;
+        private String itemChance;
+        private String dailyChance;
     }
 
     @Data

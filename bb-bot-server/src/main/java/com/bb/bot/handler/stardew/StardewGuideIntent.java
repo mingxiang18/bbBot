@@ -7,6 +7,7 @@ public enum StardewGuideIntent {
     VILLAGER_PROFILE,
     RESOURCE,
     MONSTER_DROP,
+    FISH_POND,
     ANIMAL_CARE,
     FRUIT_TREE,
     CROP,

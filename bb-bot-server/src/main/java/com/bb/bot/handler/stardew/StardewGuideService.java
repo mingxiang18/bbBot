@@ -61,6 +61,7 @@ public class StardewGuideService {
         Optional<ShopStockMatch> shopItem = findShopStock(query);
         Optional<StardewData.ResourceGuide> resource = repository.findResource(query);
         Optional<StardewData.MonsterDropGuide> monsterDrop = repository.findMonsterDrop(query);
+        Optional<StardewData.FishPondGuide> fishPond = repository.findFishPond(query);
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
@@ -107,6 +108,12 @@ public class StardewGuideService {
         }
         if (monsterDrop.isPresent() && looksLikeMonsterDropQuery(query)) {
             return monsterDropAnswer(monsterDrop.get());
+        }
+        if (looksLikeFishPondQuery(query) && !looksLikeFishPondBuildingQuery(query)) {
+            if (fishPond.isPresent() && !isBroadFishPondQuery(query)) {
+                return fishPondDetailAnswer(fishPond.get());
+            }
+            return fishPondListAnswer(query);
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -194,6 +201,7 @@ public class StardewGuideService {
             case VILLAGER_PROFILE -> typedVillagerProfileAnswer(query);
             case RESOURCE -> typedResourceAnswer(query);
             case MONSTER_DROP -> typedMonsterDropAnswer(query);
+            case FISH_POND -> typedFishPondAnswer(query);
             case ANIMAL_CARE, FRUIT_TREE, SKILL, MUSEUM, GUIDE -> typedGuideAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
@@ -241,6 +249,14 @@ public class StardewGuideService {
         return repository.findMonsterDrop(query)
                 .map(this::monsterDropAnswer)
                 .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应怪物掉落。可以试试：煤尘精灵掉什么、飞蛇掉什么、熔岩潜伏怪掉什么。"));
+    }
+
+    private StardewGuideResult typedFishPondAnswer(String query) {
+        Optional<StardewData.FishPondGuide> fishPond = repository.findFishPond(query);
+        if (fishPond.isPresent() && !isBroadFishPondQuery(query)) {
+            return fishPondDetailAnswer(fishPond.get());
+        }
+        return fishPondListAnswer(query);
     }
 
     private StardewGuideResult typedGuideAnswer(String query) {
@@ -872,6 +888,90 @@ public class StardewGuideService {
         return result("monster_drop", sb.toString().trim(), monster.getSourceUrls());
     }
 
+    private StardewGuideResult fishPondDetailAnswer(StardewData.FishPondGuide fishPond) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(fishPond.getFishName()).append("鱼塘：\n")
+                .append("容量：初始 ").append(fishPond.getInitialCapacity() == null ? "?" : fishPond.getInitialCapacity())
+                .append("，上限 ").append(fishPond.getMaxCapacity() == null ? "?" : fishPond.getMaxCapacity()).append("\n");
+        if (StringUtils.isNotBlank(fishPond.getSpawnFrequency())) {
+            sb.append("自然增殖：").append(fishPond.getSpawnFrequency()).append("\n");
+        }
+        if (fishPond.getQuests() != null && !fishPond.getQuests().isEmpty()) {
+            sb.append("扩容任务：\n");
+            for (StardewData.FishPondQuest quest : fishPond.getQuests()) {
+                sb.append("- 人口 ").append(quest.getPopulation()).append("：").append(quest.getItemsRequired()).append("\n");
+            }
+        }
+        if (fishPond.getProducts() != null && !fishPond.getProducts().isEmpty()) {
+            sb.append("产物：\n");
+            for (StardewData.FishPondProduct product : fishPond.getProducts()) {
+                sb.append("- 人口 ").append(product.getRequiredPopulation()).append("：").append(product.getItem());
+                if (StringUtils.isNotBlank(product.getItemChance())) {
+                    sb.append("，产物池概率 ").append(product.getItemChance());
+                }
+                if (StringUtils.isNotBlank(product.getDailyChance())) {
+                    sb.append("，每日约 ").append(product.getDailyChance());
+                }
+                sb.append("\n");
+            }
+        }
+        if (StringUtils.isNotBlank(fishPond.getRecommendation())) {
+            sb.append("建议：").append(fishPond.getRecommendation()).append("\n");
+        }
+        return result("fish_pond_detail", sb.toString().trim(), fishPond.getSourceUrls());
+    }
+
+    private StardewGuideResult fishPondListAnswer(String query) {
+        List<StardewData.FishPondGuide> fishPonds = repository.fishPonds().stream()
+                .sorted(Comparator.comparingInt(this::fishPondPriority).thenComparing(StardewData.FishPondGuide::getFishName))
+                .toList();
+        if (fishPonds.isEmpty()) {
+            return result("fish_pond_available", "暂时没有鱼塘产物数据。可以具体问：鲟鱼鱼塘产什么、岩浆鳗鱼鱼塘要什么。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("鱼塘产物与推荐：\n");
+        sb.append("优先考虑：鲟鱼做鱼籽酱线；岩浆鳗鱼/冰柱鱼/水滴鱼偏高价值；黄貂鱼补龙牙/电池组；午夜鱿鱼补鱿鱼墨汁。\n");
+        int limit = Math.min(80, fishPonds.size());
+        for (int i = 0; i < limit; i++) {
+            StardewData.FishPondGuide pond = fishPonds.get(i);
+            sb.append(i + 1).append(". ").append(pond.getFishName())
+                    .append("：").append(primaryFishPondProducts(pond));
+            if (StringUtils.isNotBlank(pond.getSpawnFrequency())) {
+                sb.append("，增殖 ").append(pond.getSpawnFrequency());
+            }
+            if (pond.getInitialCapacity() != null && pond.getInitialCapacity() != 3) {
+                sb.append("，初始容量 ").append(pond.getInitialCapacity());
+            }
+            sb.append("\n");
+        }
+        if (fishPonds.size() > limit) {
+            sb.append("还有 ").append(fishPonds.size() - limit).append(" 条结果，可问具体鱼名查看扩容任务和完整概率。\n");
+        }
+        sb.append("建议：具体问“某鱼鱼塘产什么/要什么任务物品”，会返回完整扩容任务和产物概率。");
+        return result("fish_pond_available", sb.toString(), collectFishPondSources(fishPonds));
+    }
+
+    private int fishPondPriority(StardewData.FishPondGuide fishPond) {
+        String name = StringUtils.defaultString(fishPond.getFishName());
+        if (List.of("鲟鱼", "岩浆鳗鱼", "冰柱鱼", "水滴鱼", "黄貂鱼", "午夜鱿鱼", "史莱姆鱼", "虚空鲑鱼").contains(name)) {
+            return 0;
+        }
+        if (StringUtils.defaultString(fishPond.getRecommendation()).contains("优先")) {
+            return 1;
+        }
+        return 2;
+    }
+
+    private String primaryFishPondProducts(StardewData.FishPondGuide fishPond) {
+        if (fishPond.getProducts() == null || fishPond.getProducts().isEmpty()) {
+            return "暂无产物记录";
+        }
+        return fishPond.getProducts().stream()
+                .limit(4)
+                .map(StardewData.FishPondProduct::getItem)
+                .distinct()
+                .collect(java.util.stream.Collectors.joining("；"));
+    }
+
     private StardewGuideResult cookingRecipeAnswer(StardewData.CookingRecipe recipe) {
         StringBuilder sb = new StringBuilder();
         sb.append(recipe.getName()).append("：\n")
@@ -1397,6 +1497,17 @@ public class StardewGuideService {
                 || query.contains("战利品") || query.contains("在哪刷") || query.contains("哪里刷");
     }
 
+    private boolean looksLikeFishPondQuery(String query) {
+        return query.contains("鱼塘") || query.contains("鱼籽酱") || query.contains("鱼子酱")
+                || (query.contains("鱼籽") && !query.contains("钓"));
+    }
+
+    private boolean looksLikeFishPondBuildingQuery(String query) {
+        return query.contains("鱼塘")
+                && containsAny(query, "建造", "建筑", "罗宾", "多少钱", "价格", "材料", "占地", "尺寸")
+                && !containsAny(query, "产什么", "产出", "产物", "养什么", "放什么", "扩容", "任务", "鱼籽", "鱼子酱", "鱼籽酱");
+    }
+
     private boolean isFishingQuestion(String query) {
         return query.contains("钓") || query.contains("什么鱼") || query.contains("哪些鱼")
                 || query.contains("能抓") || query.contains("可抓") || query.contains("蟹笼");
@@ -1672,6 +1783,18 @@ public class StardewGuideService {
                 || query.contains("可捕")
                 || query.contains("抓什么")
                 || isBroadJellyQuery(query);
+    }
+
+    private boolean isBroadFishPondQuery(String query) {
+        String normalized = StardewKnowledgeRepository.normalize(query);
+        return "鱼塘".equals(normalized)
+                || query.contains("鱼塘攻略")
+                || query.contains("养什么")
+                || query.contains("放什么")
+                || query.contains("推荐")
+                || query.contains("有哪些")
+                || query.contains("列表")
+                || query.contains("产物");
     }
 
     private boolean isBroadJellyQuery(String query) {
@@ -1960,6 +2083,16 @@ public class StardewGuideService {
         for (StardewData.CookingRecipe recipe : recipes) {
             if (recipe.getSourceUrls() != null) {
                 urls.addAll(recipe.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFishPondSources(List<StardewData.FishPondGuide> fishPonds) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.FishPondGuide fishPond : fishPonds) {
+            if (fishPond.getSourceUrls() != null) {
+                urls.addAll(fishPond.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

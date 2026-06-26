@@ -26,10 +26,10 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, cookingRecipes={}, books={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
-                    data.getResources().size(), data.getMonsterDrops().size(), data.getCookingRecipes().size(),
+                    data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
                     data.getBooks().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
@@ -83,6 +83,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.MonsterDropGuide> monsterDrops() {
         return safe(data.getMonsterDrops());
+    }
+
+    public List<StardewData.FishPondGuide> fishPonds() {
+        return safe(data.getFishPonds());
     }
 
     public List<StardewData.CookingRecipe> cookingRecipes() {
@@ -139,6 +143,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(MonsterDropMatch::monster)
+                .findFirst();
+    }
+
+    public Optional<StardewData.FishPondGuide> findFishPond(String query) {
+        String q = normalize(query);
+        return fishPonds().stream()
+                .map(f -> new FishPondMatch(f, scoreSearchable(q, f.getFishName(), f.getFishNameEn(), f.getAliases())))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(FishPondMatch::fishPond)
                 .findFirst();
     }
 
@@ -385,5 +399,8 @@ public class StardewKnowledgeRepository {
     }
 
     private record MonsterDropMatch(StardewData.MonsterDropGuide monster, int score) {
+    }
+
+    private record FishPondMatch(StardewData.FishPondGuide fishPond, int score) {
     }
 }
