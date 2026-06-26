@@ -673,6 +673,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedSpecialOrderIntentRetrievesOrdersWithoutGuideMachineOrFishPondCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.SPECIAL_ORDER, "罗宾资源冲刺奖励是什么"),
+                intent(StardewGuideIntent.SPECIAL_ORDER, "齐瓜怎么做"),
+                intent(StardewGuideIntent.SPECIAL_ORDER, "特别订单有哪些"),
+                intent(StardewGuideIntent.FISH_POND, "岩浆鳗鱼鱼塘要什么任务物品")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("罗宾资源冲刺、齐瓜和鱼塘任务分别怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.SPECIAL_ORDER, StardewGuideIntent.FISH_POND);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("special_order", "special_order_list", "fish_pond_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("罗宾的资源冲刺特别订单", "石箱配方")
+                .contains("齐瓜特别订单", "出货 500 个齐果", "100 齐钻")
+                .contains("特别订单对照", "鹈鹕镇特别订单板", "齐先生核桃房特别订单板")
+                .contains("岩浆鳗鱼鱼塘", "扩容任务")
+                .doesNotContain("机器/加工设备", "工具升级总览", "鱼类条件：", "鱼塘产物与推荐：");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

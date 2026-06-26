@@ -35,6 +35,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.fishPonds()).hasSize(73);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
+        assertThat(repository.specialOrders()).hasSizeGreaterThanOrEqualTo(28);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
 
@@ -205,6 +206,76 @@ class StardewKnowledgeRepositoryTest {
                 "animals",
                 "combat"
         );
+    }
+
+    @Test
+    void specialOrdersAreCoveredAsFullTownAndQiBoards() {
+        Set<String> ids = repository.specialOrders().stream()
+                .map(StardewData.SpecialOrderGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.specialOrders()).hasSize(28);
+        assertThat(ids).contains(
+                "special_order_island_ingredients",
+                "special_order_cave_patrol",
+                "special_order_aquatic_overpopulation",
+                "special_order_biome_balance",
+                "special_order_rock_rejuvenation",
+                "special_order_gifts_for_george",
+                "special_order_fragments_of_the_past",
+                "special_order_gus_famous_omelet",
+                "special_order_crop_order",
+                "special_order_community_cleanup",
+                "special_order_the_strong_stuff",
+                "special_order_pierres_prime_produce",
+                "special_order_robins_project",
+                "special_order_robins_resource_rush",
+                "special_order_juicy_bugs_wanted",
+                "special_order_tropical_fish",
+                "special_order_a_curious_substance",
+                "special_order_prismatic_jelly",
+                "qi_order_qis_crop",
+                "qi_order_lets_play_a_game",
+                "qi_order_four_precious_stones",
+                "qi_order_hungry_challenge",
+                "qi_order_qis_cuisine",
+                "qi_order_qis_kindness",
+                "qi_order_extended_family",
+                "qi_order_danger_in_the_deep",
+                "qi_order_skull_cavern_invasion",
+                "qi_order_prismatic_grange"
+        );
+        assertThat(repository.specialOrders())
+                .filteredOn(order -> "鹈鹕镇特别订单板".equals(order.getBoard()))
+                .hasSize(18);
+        assertThat(repository.specialOrders())
+                .filteredOn(order -> "齐先生核桃房特别订单板".equals(order.getBoard()))
+                .hasSize(10);
+
+        assertThat(repository.findSpecialOrder("罗宾资源冲刺奖励是什么").orElseThrow().getId())
+                .isEqualTo("special_order_robins_resource_rush");
+        assertThat(repository.findSpecialOrder("岛屿食材要什么").orElseThrow().getId())
+                .isEqualTo("special_order_island_ingredients");
+        assertThat(repository.findSpecialOrder("齐瓜怎么做").orElseThrow().getId())
+                .isEqualTo("qi_order_qis_crop");
+        assertThat(repository.findSpecialOrder("五彩农场交什么").orElseThrow().getId())
+                .isEqualTo("qi_order_prismatic_grange");
+    }
+
+    @Test
+    void allSpecialOrdersHaveCoreFieldsAndSources() {
+        assertThat(repository.specialOrders())
+                .allSatisfy(order -> {
+                    assertThat(order.getId()).isNotBlank();
+                    assertThat(order.getName()).isNotBlank();
+                    assertThat(order.getAliases()).isNotEmpty();
+                    assertThat(order.getBoard()).isNotBlank();
+                    assertThat(order.getTimeframe()).isNotBlank();
+                    assertThat(order.getRequirements()).isNotEmpty();
+                    assertThat(order.getRewards()).isNotEmpty();
+                    assertThat(order.getRecommendation()).isNotBlank();
+                    assertThat(order.getSourceUrls()).isNotEmpty();
+                });
     }
 
     @Test

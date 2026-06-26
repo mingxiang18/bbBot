@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getSpecialOrders().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -95,6 +95,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.BookGuide> books() {
         return safe(data.getBooks());
+    }
+
+    public List<StardewData.SpecialOrderGuide> specialOrders() {
+        return safe(data.getSpecialOrders());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -223,6 +227,20 @@ public class StardewKnowledgeRepository {
                 .findFirst();
     }
 
+    public Optional<StardewData.SpecialOrderGuide> findSpecialOrder(String query) {
+        return findSpecialOrders(query).stream().findFirst();
+    }
+
+    public List<StardewData.SpecialOrderGuide> findSpecialOrders(String query) {
+        String q = normalize(query);
+        return specialOrders().stream()
+                .map(order -> new SpecialOrderMatch(order, scoreSpecialOrder(q, order)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(SpecialOrderMatch::order)
+                .toList();
+    }
+
     public Optional<StardewData.BookGuide> findBook(String query) {
         return findBooks(query).stream().findFirst();
     }
@@ -346,6 +364,41 @@ public class StardewKnowledgeRepository {
         return score + keywordScore;
     }
 
+    private int scoreSpecialOrder(String q, StardewData.SpecialOrderGuide order) {
+        int score = scoreSearchable(q, order.getName(), order.getNameEn(), order.getAliases());
+        String board = normalize(order.getBoard());
+        if (!board.isEmpty() && q.contains(board)) {
+            score += 20;
+        }
+        String requester = normalize(order.getRequester());
+        if (!requester.isEmpty() && q.contains(requester)) {
+            score += 20;
+        }
+        if (score == 0) {
+            return 0;
+        }
+        List<String> extra = new ArrayList<>();
+        extra.add(order.getPrerequisite());
+        extra.add(order.getTimeframe());
+        extra.add(order.getRepeatable());
+        if (order.getRequirements() != null) {
+            extra.addAll(order.getRequirements());
+        }
+        if (order.getRewards() != null) {
+            extra.addAll(order.getRewards());
+        }
+        if (order.getTips() != null) {
+            extra.addAll(order.getTips());
+        }
+        for (String value : extra) {
+            String normalized = normalize(value);
+            if (!normalized.isEmpty() && q.contains(normalized)) {
+                score += Math.min(30, Math.max(5, normalized.length() / 2));
+            }
+        }
+        return score;
+    }
+
     private int scoreBundle(String q, StardewData.Bundle bundle) {
         int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
         boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
@@ -393,6 +446,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record BookMatch(StardewData.BookGuide book, int score) {
+    }
+
+    private record SpecialOrderMatch(StardewData.SpecialOrderGuide order, int score) {
     }
 
     private record ResourceMatch(StardewData.ResourceGuide resource, int score, int firstIndex) {

@@ -21715,6 +21715,925 @@
       ]
     }
   ],
+  "specialOrders": [
+    {
+      "id": "special_order_island_ingredients",
+      "name": "岛屿食材",
+      "nameEn": "Island Ingredients",
+      "aliases": [
+        "Island Ingredients",
+        "卡洛琳岛屿食材",
+        "热带烹饪",
+        "100 生姜",
+        "100 菠萝",
+        "100 芋头"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "卡洛琳",
+      "prerequisite": "解锁姜岛后可能出现。",
+      "timeframe": "28 天",
+      "requirements": [
+        "收获并出货 100 个芋头根、生姜或菠萝中的一种；必须在订单期间收获。",
+        "虎纹史莱姆掉落的生姜也计入进度。"
+      ],
+      "rewards": [
+        "金币奖励为基础作物售价的 50%。",
+        "第一次完成获得太阳能板配方。"
+      ],
+      "repeatable": "是",
+      "recommendation": "优先选你已经在姜岛规模化种植的作物；生姜路线适合每天顺手挖和刷虎纹史莱姆。",
+      "tips": [
+        "菠萝和芋头适合提前准备田地和肥料，但收获必须发生在订单期间。",
+        "如果是为了太阳能板配方，接到后值得优先完成。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_cave_patrol",
+      "name": "洞穴巡逻",
+      "nameEn": "Cave Patrol",
+      "aliases": [
+        "Cave Patrol",
+        "克林特洞穴巡逻",
+        "杀 50 怪",
+        "晶球破开器任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "克林特",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "击杀 50 个指定怪物之一：蝙蝠、煤尘精灵、骷髅或蛆。"
+      ],
+      "rewards": [
+        "每次完成获得 6,000g。",
+        "第一次完成获得晶球破开器配方。",
+        "之后完成会收到樱桃炸弹、炸弹或茄子帕尔玛奶酪等邮件奖励。"
+      ],
+      "repeatable": "是",
+      "recommendation": "为了晶球破开器配方非常值得做；煤尘精灵路线还能顺带刷煤。",
+      "tips": [
+        "煤尘精灵在矿井 40-79 层密度高。",
+        "骷髅在矿井 71-79 层集中，蛆和洞穴蝇适合矿井浅层。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_aquatic_overpopulation",
+      "name": "水生物泛滥",
+      "nameEn": "Aquatic Overpopulation",
+      "aliases": [
+        "Aquatic Overpopulation",
+        "德米特里厄斯鱼类泛滥",
+        "钓 10 条鱼",
+        "农场电脑任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "德米特里厄斯",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "按季节捕获 10 条指定鱼：春季可为比目鱼、大比目鱼、大嘴鲈鱼、沙丁鱼、太阳鱼。",
+        "夏季可为麻哈脂鲤、虹鳟鱼、红鲻鱼、罗非鱼、金枪鱼。",
+        "秋季可为长鳍金枪鱼、午夜鲤鱼、鲑鱼、虎纹鳟鱼。",
+        "冬季可为蛇齿单线鱼、河鲈、鱿鱼。"
+      ],
+      "rewards": [
+        "金币奖励等于这些鱼的出售价值。",
+        "第一次完成获得农场电脑配方。"
+      ],
+      "repeatable": "是",
+      "recommendation": "看到目标鱼条件简单时接；有针对性鱼饵后效率更高。",
+      "tips": [
+        "奖励按鱼品质计算，但不吃钓鱼职业售价加成。",
+        "具体鱼的季节、天气和时间可继续问鱼名。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_biome_balance",
+      "name": "生态平衡",
+      "nameEn": "Biome Balance",
+      "aliases": [
+        "Biome Balance",
+        "生态平衡",
+        "钓 20 条河鱼",
+        "钓 20 条海鱼",
+        "钓 20 条湖鱼"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "德米特里厄斯",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "捕获 20 条指定生态位鱼类：河鱼、海鱼或湖鱼。"
+      ],
+      "rewards": [
+        "1,500g。",
+        "第一次完成获得农场电脑配方。"
+      ],
+      "repeatable": "是",
+      "recommendation": "比指定单一鱼更宽松，适合顺手钓；为了农场电脑配方可以优先做。",
+      "tips": [
+        "任务看类别，不看具体鱼名；选当天最容易钓的地点即可。",
+        "海边全天鱼多，通常比找特定天气鱼舒服。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_rock_rejuvenation",
+      "name": "岩石再生",
+      "nameEn": "Rock Rejuvenation",
+      "aliases": [
+        "Rock Rejuvenation",
+        "艾米丽宝石任务",
+        "缝纫机任务",
+        "红宝石黄水晶绿宝石翡翠紫水晶"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "艾米丽",
+      "prerequisite": "能够使用艾米丽家的缝纫机。",
+      "timeframe": "7 天",
+      "requirements": [
+        "交给艾米丽红宝石 x1、黄水晶 x1、绿宝石 x1、翡翠 x1、紫水晶 x1。",
+        "这些宝石可以在接任务前提前准备。"
+      ],
+      "rewards": [
+        "1,000g。",
+        "艾米丽好感 +250。",
+        "获得缝纫机和岩石再生仪式剧情。"
+      ],
+      "repeatable": "否",
+      "recommendation": "材料可提前囤，奖励永久缝纫机，建议看到就做。",
+      "tips": [
+        "宝石复制机能降低准备成本。",
+        "如果还缺宝石，可问具体宝石在哪里刷。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_gifts_for_george",
+      "name": "给乔治的礼物",
+      "nameEn": "Gifts for George",
+      "aliases": [
+        "Gifts for George",
+        "乔治韭葱",
+        "艾芙琳韭葱任务",
+        "咖啡机任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "艾芙琳",
+      "prerequisite": "春季。",
+      "timeframe": "28 天",
+      "requirements": [
+        "收集 12 个韭葱，并放到艾芙琳家的炉子上。",
+        "韭葱必须在订单期间收集；春季种子长出的韭葱也计入。"
+      ],
+      "rewards": [
+        "2,000g。",
+        "咖啡机。",
+        "乔治家的韭葱惊喜剧情。"
+      ],
+      "repeatable": "否",
+      "recommendation": "咖啡机是长期收益物品，春季看到建议接；可以提前准备春季种子来提高韭葱来源。",
+      "tips": [
+        "秘密森林和山路采集点都可能刷春季采集物。",
+        "咖啡机每天产 1 杯咖啡。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_fragments_of_the_past",
+      "name": "过去的碎片",
+      "nameEn": "Fragments of the past",
+      "aliases": [
+        "Fragments of the past",
+        "冈瑟骨头任务",
+        "100 骨头",
+        "骨头磨坊任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "冈瑟",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "收集任意组合 100 个骨头类物品，并倒进博物馆柜台箱子。",
+        "骨头碎片、化石腿骨、化石肋骨、化石头骨、化石脊柱、化石尾巴、木乃伊蝙蝠、木乃伊青蛙、蛇头骨、蛇椎骨等都可计入。",
+        "物品必须在订单期间收集。"
+      ],
+      "rewards": [
+        "3,500g。",
+        "骨头磨坊配方。"
+      ],
+      "repeatable": "否",
+      "recommendation": "解锁姜岛挖掘场后更好做；未解锁姜岛时可刷矿井骷髅层。",
+      "tips": [
+        "矿井 71-79 层骷髅适合刷骨头碎片。",
+        "姜岛挖掘场骨头矿点效率更高。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_gus_famous_omelet",
+      "name": "格斯的著名煎蛋卷",
+      "nameEn": "Gus' Famous Omelet",
+      "aliases": [
+        "Gus' Famous Omelet",
+        "格斯煎蛋卷",
+        "24 个蛋",
+        "迷你冰箱任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "格斯",
+      "prerequisite": "无。",
+      "timeframe": "14 天",
+      "requirements": [
+        "收集 24 个蛋并放进星之果实餐吧冰箱。",
+        "蛋可以来自任意动物，也可以购买；必须在订单开始后获得。"
+      ],
+      "rewards": [
+        "每次完成获得 3,000g。",
+        "第一次完成获得迷你冰箱。",
+        "第一次完成触发巨大煎蛋卷剧情。"
+      ],
+      "repeatable": "是",
+      "recommendation": "有稳定鸡舍后很容易；想拿迷你冰箱时值得优先做。",
+      "tips": [
+        "自动采集器收集的蛋也计入。",
+        "鸡蛋、鸭蛋、恐龙蛋都可用。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_crop_order",
+      "name": "作物订单",
+      "nameEn": "Crop Order",
+      "aliases": [
+        "Crop Order",
+        "刘易斯作物订单",
+        "出货 100 作物",
+        "迷你出货箱任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "刘易斯",
+      "prerequisite": "非冬季。",
+      "timeframe": "28 天",
+      "requirements": [
+        "收获并出货 100 个指定季节作物。",
+        "春季可能是花椰菜、大蒜、绿豆、土豆；夏季可能是蓝莓、辣椒、甜瓜、萝卜、番茄、小麦；秋季可能是苋菜、洋蓟、小白菜、蔓越莓、茄子、葡萄、南瓜、山药。",
+        "作物必须在订单期间收获。"
+      ],
+      "rewards": [
+        "金币奖励为基础品质作物售价的 50%，农耕人职业可加成。",
+        "第一次完成会通过邮件获得迷你出货箱。"
+      ],
+      "repeatable": "是",
+      "recommendation": "如果当季刚好能大面积种目标作物就接；月底剩余时间少时谨慎接。",
+      "tips": [
+        "订单期限会随公告板刷新日递减，越晚接越少天。",
+        "多次收获作物要确认剩余天数足够成熟。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_community_cleanup",
+      "name": "社区清理",
+      "nameEn": "Community Cleanup",
+      "aliases": [
+        "Community Cleanup",
+        "莱纳斯垃圾任务",
+        "清理垃圾",
+        "纤维种子任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "莱纳斯",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "收集 20 个垃圾物品，并倒进火车站垃圾箱。",
+        "Joja 可乐和腐烂的植物不计入；蟹笼、垃圾桶和钓鱼获得的垃圾都可计入。"
+      ],
+      "rewards": [
+        "500g。",
+        "莱纳斯好感 +250。",
+        "纤维种子配方。",
+        "山湖社区清理剧情。"
+      ],
+      "repeatable": "否",
+      "recommendation": "纤维种子很实用，冬季也能种；建议看到就做。",
+      "tips": [
+        "矿井 20/60/100 层小水池钓垃圾很稳定。",
+        "不放鱼饵钓垃圾也能降低成本。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_the_strong_stuff",
+      "name": "烈酒",
+      "nameEn": "The Strong Stuff",
+      "aliases": [
+        "The Strong Stuff",
+        "潘姆土豆汁",
+        "土豆汁任务",
+        "FIBS 电视"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "潘姆",
+      "prerequisite": "春季。",
+      "timeframe": "14 天",
+      "requirements": [
+        "收集 12 个土豆汁并放进潘姆家厨房。",
+        "土豆汁必须在订单期间从小桶收取。"
+      ],
+      "rewards": [
+        "3,000g。",
+        "潘姆好感 +250。",
+        "拖车里的土豆汁剧情。",
+        "解锁 F.I.B.S. 电视频道。"
+      ],
+      "repeatable": "否",
+      "recommendation": "需要小桶和土豆储备；如果春季小桶少，接前先看剩余天数。",
+      "tips": [
+        "土豆汁加工时间较长，最好多小桶并行。",
+        "电视频道是收藏向奖励。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_pierres_prime_produce",
+      "name": "皮埃尔的优质农产品",
+      "nameEn": "Pierre's Prime Produce",
+      "aliases": [
+        "Pierre's Prime Produce",
+        "皮埃尔优质农产品",
+        "25 金星蔬菜",
+        "金星蔬菜任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "皮埃尔",
+      "prerequisite": "无。",
+      "timeframe": "28 天",
+      "requirements": [
+        "收获 25 个金星蔬菜，并把 25 个金星蔬菜放进皮埃尔杂货店箱子。",
+        "必须是金星蔬菜；铱星蔬菜不计入。"
+      ],
+      "rewards": [
+        "2,500g。",
+        "杂货店剧情。",
+        "剧情后第二天通过邮件获得迷你出货箱。"
+      ],
+      "repeatable": "否",
+      "recommendation": "有肥料和大面积蔬菜时再接；防风草、土豆、小麦等便宜蔬菜更适合刷品质。",
+      "tips": [
+        "收获计数和提交计数分开，提交的蔬菜不必和收获的是同一种。",
+        "祝尼魔屋收获的作物要从屋内取出后才计入。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_robins_project",
+      "name": "罗宾的项目",
+      "nameEn": "Robin's Project",
+      "aliases": [
+        "Robin's Project",
+        "罗宾项目",
+        "80 硬木",
+        "豪华红色双人床任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "罗宾",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "收集 80 个硬木；必须在订单期间收集。"
+      ],
+      "rewards": [
+        "2,000g。",
+        "罗宾好感 +250。",
+        "木匠店剧情。",
+        "豪华红色双人床可在罗宾处购买。"
+      ],
+      "repeatable": "否",
+      "recommendation": "有秘密森林、硬木树桩或桃花心木树后再接；7 天内 80 硬木早期压力很大。",
+      "tips": [
+        "秘密森林每天稳定硬木。",
+        "农场硬木树桩和桃花心木树能显著降低压力。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_robins_resource_rush",
+      "name": "罗宾的资源冲刺",
+      "nameEn": "Robin's Resource Rush",
+      "aliases": [
+        "Robin's Resource Rush",
+        "罗宾资源冲刺",
+        "1000 木材",
+        "1000 石头",
+        "石箱配方任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "罗宾",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "收集 1000 个木材或 1000 个石头。",
+        "可以从罗宾商店购买；木材削片机产出的木材也计入。"
+      ],
+      "rewards": [
+        "2,500g。",
+        "石箱配方。"
+      ],
+      "repeatable": "是",
+      "recommendation": "后期有钱可直接购买材料完成；前期为了石箱配方可以接，但别硬砍到影响其他进度。",
+      "tips": [
+        "分解木箱等可利用拆解机快速计入收集进度。",
+        "如果已有大量金币，买石头通常比手敲省时间。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_juicy_bugs_wanted",
+      "name": "需要多汁虫子！",
+      "nameEn": "Juicy Bugs Wanted!",
+      "aliases": [
+        "Juicy Bugs Wanted",
+        "威利虫肉任务",
+        "100 虫肉",
+        "优质浮标任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "威利",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "收集 100 个虫肉，并倒进鱼店旁边的箱子。",
+        "虫肉必须在订单期间收集。"
+      ],
+      "rewards": [
+        "3,000g。",
+        "优质浮标配方。",
+        "海滩剧情。"
+      ],
+      "repeatable": "否",
+      "recommendation": "为了优质浮标配方值得做；矿井 15-29 层虫类密度高。",
+      "tips": [
+        "怪物香水可提高刷虫肉效率。",
+        "下水道突变虫穴也适合刷虫肉。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_tropical_fish",
+      "name": "热带鱼",
+      "nameEn": "Tropical Fish",
+      "aliases": [
+        "Tropical Fish",
+        "威利热带鱼",
+        "黄貂鱼蓝铁饼鱼狮子鱼",
+        "豪华鱼缸任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "威利",
+      "prerequisite": "解锁姜岛并建成岛屿度假村。",
+      "timeframe": "7 天",
+      "requirements": [
+        "交付黄貂鱼 x5、蓝铁饼鱼 x5、狮子鱼 x5。"
+      ],
+      "rewards": [
+        "2,500g。",
+        "豪华鱼缸。"
+      ],
+      "repeatable": "否",
+      "recommendation": "姜岛钓鱼熟悉后再接；三种鱼地点不同，建议提前规划路线。",
+      "tips": [
+        "黄貂鱼在海盗湾，蓝铁饼鱼在姜岛河流/池塘，狮子鱼在姜岛海洋。",
+        "可以继续问具体鱼名确认时间、天气和位置。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_a_curious_substance",
+      "name": "奇特物质",
+      "nameEn": "A Curious Substance",
+      "aliases": [
+        "A Curious Substance",
+        "法师灵外质",
+        "灵外质任务",
+        "迷你图腾任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "法师",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "获得灵外质 x1；只有订单期间幽灵类怪物才会掉落。"
+      ],
+      "rewards": [
+        "2,500g。",
+        "迷你图腾配方。"
+      ],
+      "repeatable": "否",
+      "recommendation": "接到后去矿井幽灵层集中刷；没接任务时刷不到灵外质。",
+      "tips": [
+        "普通幽灵、碳幽灵、腐臭幽灵都可掉。",
+        "带怪物香水可以提高遇怪速度。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "special_order_prismatic_jelly",
+      "name": "五彩胶冻",
+      "nameEn": "Prismatic Jelly",
+      "aliases": [
+        "Prismatic Jelly",
+        "五彩史莱姆",
+        "五彩胶冻任务",
+        "怪物香水任务"
+      ],
+      "board": "鹈鹕镇特别订单板",
+      "requester": "法师",
+      "prerequisite": "无。",
+      "timeframe": "7 天",
+      "requirements": [
+        "找到并击杀五彩史莱姆，带回五彩胶冻 x1。"
+      ],
+      "rewards": [
+        "5,000g。",
+        "怪物香水配方。"
+      ],
+      "repeatable": "否",
+      "recommendation": "为了怪物香水配方很值得做；反复刷新低层矿井找史莱姆最省心。",
+      "tips": [
+        "五彩史莱姆只在订单期间出现。",
+        "幸运和怪物密度会影响体感耗时，准备好食物和电梯刷新。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
+    },
+    {
+      "id": "qi_order_qis_crop",
+      "name": "齐瓜",
+      "nameEn": "Qi's Crop",
+      "aliases": [
+        "Qi's Crop",
+        "齐先生齐瓜",
+        "齐豆",
+        "齐果",
+        "500 齐果"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "28 天",
+      "requirements": [
+        "找到齐豆，种成齐果，并通过出货箱出货 500 个齐果。",
+        "卖给皮埃尔不计入。"
+      ],
+      "rewards": [
+        "100 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "这是高奖励高压力任务；需要大面积农田、种子复制节奏和洒水器支持。",
+      "tips": [
+        "先把第一批齐豆尽快种下，再用种子生产器扩大规模。",
+        "任务结束后未收获的巨大齐果会保留，可之后敲开。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_lets_play_a_game",
+      "name": "来玩游戏吧",
+      "nameEn": "Let's Play A Game",
+      "aliases": [
+        "Let's Play A Game",
+        "祝尼魔赛车",
+        "Junimo Kart",
+        "50000 分"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "7 天",
+      "requirements": [
+        "在祝尼魔赛车无尽模式获得 50,000 分。"
+      ],
+      "rewards": [
+        "20 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "纯小游戏技术任务，不消耗农场资源；不擅长祝尼魔赛车时优先跳过。",
+      "tips": [
+        "1.6.3 后奖励为 20 齐钻。",
+        "适合喜欢小游戏或已经练熟路线的玩家。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_four_precious_stones",
+      "name": "四颗宝石",
+      "nameEn": "Four Precious Stones",
+      "aliases": [
+        "Four Precious Stones",
+        "四颗五彩碎片",
+        "4 五彩碎片",
+        "齐先生宝石任务"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "28 天",
+      "requirements": [
+        "收集五彩碎片 x4，并放进齐先生收集箱。",
+        "五彩碎片必须在订单期间获得。"
+      ],
+      "rewards": [
+        "40 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "如果已经能稳定刷骷髅洞穴深层可以接；五彩碎片紧张时别硬接。",
+      "tips": [
+        "1.6.3 起五彩碎片必须在任务期间获得才计入。",
+        "好运日、炸弹、楼梯和高层铱矿是核心。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_hungry_challenge",
+      "name": "齐先生的饥饿挑战",
+      "nameEn": "Qi's Hungry Challenge",
+      "aliases": [
+        "Qi's Hungry Challenge",
+        "饥饿挑战",
+        "不能吃喝",
+        "无食物骷髅洞穴"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "7 天",
+      "requirements": [
+        "不在骷髅洞穴内吃喝任何食物或饮料，到达骷髅洞穴 100 层。",
+        "可以使用楼梯。进入洞穴前吃的 buff 会按正常持续时间保留。"
+      ],
+      "rewards": [
+        "25 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "用楼梯和炸弹最稳；别在洞内误吃咖啡或回血食物。",
+      "tips": [
+        "任务期间大史莱姆可能掉带心的回血物。",
+        "吸血戒指、仙女盒、吸血附魔等被动回血可用。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_qis_cuisine",
+      "name": "齐氏料理",
+      "nameEn": "Qi's Cuisine",
+      "aliases": [
+        "Qi's Cuisine",
+        "齐先生料理",
+        "新鲜料理",
+        "100000g 料理"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "14 天",
+      "requirements": [
+        "出货 100,000g 的新鲜烹饪物品。",
+        "接单后做出的料理会带有“新鲜”标记，只有这些料理计入。"
+      ],
+      "rewards": [
+        "25 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "适合有大量金币或厨房材料储备时做；缺钱阶段不推荐硬做。",
+      "tips": [
+        "可购买或酿造大量咖啡，再做三倍浓缩咖啡。",
+        "也可大量小麦/面粉做面包，但需要数量很多。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_qis_kindness",
+      "name": "齐的善意",
+      "nameEn": "Qi's Kindness",
+      "aliases": [
+        "Qi's Kindness",
+        "齐先生善意",
+        "50 个最爱礼物",
+        "送 50 礼物"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "7 天",
+      "requirements": [
+        "一周内送出 50 份居民最爱礼物。",
+        "每位居民每天最多计 1 份，一周每人最多 2 份；共有 34 位可送礼居民。",
+        "星之果实茶不计入此任务。"
+      ],
+      "rewards": [
+        "40 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "提前囤通用最爱和居民最爱时很好做；临时准备会很累。",
+      "tips": [
+        "最快两天完成：第一天送 34 人，第二天再送 16 人。",
+        "可继续问具体居民最爱礼物。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_extended_family",
+      "name": "大家族",
+      "nameEn": "Extended Family",
+      "aliases": [
+        "Extended Family",
+        "传说鱼二代",
+        "大家族任务",
+        "雌鮟鱇鱼",
+        "小冰川鱼",
+        "绯红鱼之子",
+        "放射性鲤鱼",
+        "传说之鱼二代"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "3 天",
+      "requirements": [
+        "钓起雌鮟鱇鱼、小冰川鱼、绯红鱼之子、放射性鲤鱼和传说之鱼二代。",
+        "地点与原版传说鱼对应；传说之鱼二代不需要下雨。"
+      ],
+      "rewards": [
+        "20 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "期限只有 3 天，钓鱼等级、海之菜肴/海泡布丁、陷阱浮标和传送能力都很关键。",
+      "tips": [
+        "传说之鱼二代同样需要达到钓鱼 10 级或用 buff 临时达到。",
+        "如果只问有哪些鱼，鱼类检索会给更适合的鱼条件表。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_danger_in_the_deep",
+      "name": "深处的危险",
+      "nameEn": "Danger In The Deep",
+      "aliases": [
+        "Danger In The Deep",
+        "危险矿井",
+        "矿井重置",
+        "挑战神龛"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "7 天",
+      "requirements": [
+        "一周内到达矿井底层。",
+        "可以使用楼梯。任务会重置矿井电梯进度，并让矿井变成危险版本。"
+      ],
+      "rewards": [
+        "50 齐钻。",
+        "完成后可解锁/使用挑战神龛切换危险矿井。"
+      ],
+      "repeatable": "是",
+      "recommendation": "奖励很高，准备足够楼梯、炸弹和回血食物再接；想刷放射性矿石也很重要。",
+      "tips": [
+        "任务会重置冒险家公会部分可购买装备解锁状态。",
+        "危险矿井怪物强度高，别按普通矿井装备进去。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_skull_cavern_invasion",
+      "name": "骷髅洞穴入侵",
+      "nameEn": "Skull Cavern Invasion",
+      "aliases": [
+        "Skull Cavern Invasion",
+        "骷髅洞穴入侵",
+        "危险骷髅洞穴",
+        "骷髅洞穴 100 层"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "7 天",
+      "requirements": [
+        "在强力怪物入侵状态下到达骷髅洞穴 100 层。",
+        "可以使用楼梯。"
+      ],
+      "rewards": [
+        "40 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "按骷髅洞穴冲层配置处理：好运日、三倍浓缩咖啡、幸运/速度食物、炸弹和楼梯。",
+      "tips": [
+        "目标是到 100 层，不是清怪；不必要战斗尽量绕开。",
+        "危险怪物伤害高，戒指和武器附魔要提前准备。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "qi_order_prismatic_grange",
+      "name": "齐先生的五彩农场",
+      "nameEn": "Qi's Prismatic Grange",
+      "aliases": [
+        "Qi's Prismatic Grange",
+        "五彩农场",
+        "五彩格兰奇",
+        "100 红橙黄绿蓝紫",
+        "颜色物品任务"
+      ],
+      "board": "齐先生核桃房特别订单板",
+      "requester": "齐先生",
+      "prerequisite": "解锁齐先生核桃房。",
+      "timeframe": "14 天",
+      "requirements": [
+        "向齐先生收集箱放入红、橙、黄、绿、蓝、紫各 100 个符合颜色的物品。",
+        "物品不需要在订单期间获得；投入后不会返还。"
+      ],
+      "rewards": [
+        "35 齐钻。"
+      ],
+      "repeatable": "是",
+      "recommendation": "适合后期有大量库存或金币时做；别投入稀缺材料。",
+      "tips": [
+        "可用便宜购买路线：红色意大利面、橙色铜矿石、黄色干草、绿色沙拉、蓝色 Joja 可乐、紫色虚空精华。",
+        "颜色判定比染料罐更严格，只认符合列表的物品。"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    }
+  ],
   "guides": [
     {
       "id": "tool_upgrades",

@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, MACHINE, SHOP,
-                        COOKING, SKILL, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, SPECIAL_ORDER, SKILL, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -63,6 +63,7 @@ public class StardewQueryPlannerService {
                         - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
                         - 问鱼塘养什么好、某种鱼鱼塘产什么、鱼塘扩容任务、鱼籽/鱼籽酱、鱼塘要什么任务物品，例如“鲟鱼鱼塘产什么”“岩浆鳗鱼鱼塘要什么”“鱼塘养什么好”，归为 FISH_POND。
                         - 问鱼塘建筑本身的建造材料、价格、占地、罗宾建造，例如“鱼塘建造材料多少钱”，归为 BUILDING。
+                        - 问特别订单/特殊订单/订单板/齐先生核桃房任务的需求、奖励、期限、怎么做，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”“齐瓜怎么做”“五彩农场交什么”，归为 SPECIAL_ORDER。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
@@ -76,11 +77,13 @@ public class StardewQueryPlannerService {
             return localFallbackPlan(cleanedQuery);
         }
         for (StardewQueryPlan.PlannedIntent intent : plan.getIntents()) {
+            String keyword = intent.getKeywords() == null || intent.getKeywords().isEmpty()
+                    ? cleanedQuery
+                    : String.join(" ", intent.getKeywords());
             if (intent.getType() == null) {
-                String keyword = intent.getKeywords() == null || intent.getKeywords().isEmpty()
-                        ? cleanedQuery
-                        : intent.getKeywords().get(0);
                 intent.setType(inferIntent(keyword));
+            } else {
+                intent.setType(normalizeIntentType(intent.getType(), keyword));
             }
             if (intent.getKeywords() == null || intent.getKeywords().isEmpty()) {
                 intent.setKeywords(List.of(cleanedQuery));
@@ -90,6 +93,35 @@ public class StardewQueryPlannerService {
             }
         }
         return plan;
+    }
+
+    private StardewGuideIntent normalizeIntentType(StardewGuideIntent aiType, String keyword) {
+        StardewGuideIntent localType = inferIntent(keyword);
+        if (localType == StardewGuideIntent.UNKNOWN || localType == aiType) {
+            return aiType;
+        }
+        if (shouldPreferLocalIntent(aiType, localType)) {
+            return localType;
+        }
+        return aiType;
+    }
+
+    private boolean shouldPreferLocalIntent(StardewGuideIntent aiType, StardewGuideIntent localType) {
+        if (aiType == StardewGuideIntent.SPECIAL_ORDER
+                && (localType == StardewGuideIntent.FISH || localType == StardewGuideIntent.FISH_POND)) {
+            return true;
+        }
+        if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
+            return true;
+        }
+        if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FISH_POND) {
+            return true;
+        }
+        return aiType == StardewGuideIntent.GUIDE
+                && (localType == StardewGuideIntent.SKILL
+                || localType == StardewGuideIntent.SPECIAL_ORDER
+                || localType == StardewGuideIntent.FISH_POND
+                || localType == StardewGuideIntent.MONSTER_DROP);
     }
 
     private StardewQueryPlan localFallbackPlan(String query) {
@@ -141,6 +173,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeFishPondQuery(q) && !looksLikeFishPondBuildingQuery(q)) {
             return StardewGuideIntent.FISH_POND;
+        }
+        if (looksLikeSpecialOrderQuery(q)) {
+            return StardewGuideIntent.SPECIAL_ORDER;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -317,6 +352,22 @@ public class StardewQueryPlannerService {
         return containsAny(query, "鱼塘")
                 && containsAny(query, "建造", "建筑", "罗宾", "多少钱", "价格", "材料", "占地", "尺寸")
                 && !containsAny(query, "产什么", "产出", "产物", "养什么", "放什么", "扩容", "任务", "鱼籽", "鱼子酱", "鱼籽酱");
+    }
+
+    private boolean looksLikeSpecialOrderQuery(String query) {
+        if (containsAny(query, "鱼塘") && containsAny(query, "扩容", "任务", "产物", "鱼籽", "鱼子酱", "鱼籽酱")) {
+            return false;
+        }
+        if (containsAny(query, "大家族") && containsAny(query, "传说鱼", "哪些鱼", "什么鱼")) {
+            return false;
+        }
+        return containsAny(query,
+                "特别订单", "特殊订单", "订单板", "特别任务", "特殊任务", "齐先生任务", "齐先生挑战",
+                "核桃房任务", "核桃房订单", "罗宾资源冲刺", "罗宾的项目", "岛屿食材",
+                "齐瓜", "齐豆", "齐果", "五彩农场", "五彩格兰奇", "大家族", "深处的危险",
+                "骷髅洞穴入侵", "齐氏料理", "齐的善意", "四颗宝石", "饥饿挑战",
+                "Island Ingredients", "Cave Patrol", "Qi's Crop", "Qi's Cuisine", "Qi's Kindness",
+                "Danger In The Deep", "Skull Cavern Invasion", "Qi's Prismatic Grange");
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {

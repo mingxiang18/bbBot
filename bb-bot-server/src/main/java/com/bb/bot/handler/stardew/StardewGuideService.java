@@ -63,6 +63,7 @@ public class StardewGuideService {
         Optional<StardewData.MonsterDropGuide> monsterDrop = repository.findMonsterDrop(query);
         Optional<StardewData.FishPondGuide> fishPond = repository.findFishPond(query);
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
+        Optional<StardewData.SpecialOrderGuide> specialOrder = repository.findSpecialOrder(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
 
@@ -117,6 +118,9 @@ public class StardewGuideService {
                 return fishPondDetailAnswer(fishPond.get());
             }
             return fishPondListAnswer(query);
+        }
+        if (specialOrder.isPresent() && looksLikeSpecialOrderQuery(query)) {
+            return specialOrderAnswer(specialOrder.get());
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -212,6 +216,7 @@ public class StardewGuideService {
             case MACHINE -> typedMachineAnswer(query);
             case SHOP -> typedShopAnswer(query);
             case COOKING -> typedCookingAnswer(query);
+            case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
     }
@@ -325,6 +330,14 @@ public class StardewGuideService {
         return cookingListAnswer(query, cookingRecipe);
     }
 
+    private StardewGuideResult typedSpecialOrderAnswer(String query) {
+        Optional<StardewData.SpecialOrderGuide> specialOrder = repository.findSpecialOrder(query);
+        if (specialOrder.isPresent() && !isBroadSpecialOrderQuery(query)) {
+            return specialOrderAnswer(specialOrder.get());
+        }
+        return specialOrderListAnswer(query, specialOrder);
+    }
+
     private boolean looksLikeSpecificCookingRecipeQuery(String query) {
         return query.contains("怎么做") || query.contains("材料") || query.contains("配方")
                 || query.contains("效果") || query.contains("来源");
@@ -345,6 +358,98 @@ public class StardewGuideService {
             sb.append("建议：").append(guide.getRecommendation()).append("\n");
         }
         return result("guide", sb.toString().trim(), guide.getSourceUrls());
+    }
+
+    private StardewGuideResult specialOrderAnswer(StardewData.SpecialOrderGuide order) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(order.getName()).append("特别订单：\n");
+        if (StringUtils.isNotBlank(order.getBoard())) {
+            sb.append("任务板：").append(order.getBoard()).append("\n");
+        }
+        if (StringUtils.isNotBlank(order.getRequester())) {
+            sb.append("委托人：").append(order.getRequester()).append("\n");
+        }
+        if (StringUtils.isNotBlank(order.getPrerequisite())) {
+            sb.append("前置条件：").append(order.getPrerequisite()).append("\n");
+        }
+        if (StringUtils.isNotBlank(order.getTimeframe())) {
+            sb.append("期限：").append(order.getTimeframe()).append("\n");
+        }
+        appendLines(sb, "需求", order.getRequirements());
+        appendLines(sb, "奖励", order.getRewards());
+        if (StringUtils.isNotBlank(order.getRepeatable())) {
+            sb.append("可重复：").append(order.getRepeatable()).append("\n");
+        }
+        appendLines(sb, "要点", order.getTips());
+        if (StringUtils.isNotBlank(order.getRecommendation())) {
+            sb.append("建议：").append(order.getRecommendation()).append("\n");
+        }
+        return result("special_order", sb.toString().trim(), order.getSourceUrls());
+    }
+
+    private StardewGuideResult specialOrderListAnswer(String query, Optional<StardewData.SpecialOrderGuide> preferred) {
+        String normalized = StardewKnowledgeRepository.normalize(query);
+        String boardFilter = containsAny(normalized, "齐先生", "齐钻", "核桃房", "qi")
+                ? "齐先生核桃房特别订单板"
+                : containsAny(normalized, "城镇", "鹈鹕镇", "刘易斯", "特别订单板")
+                ? "鹈鹕镇特别订单板"
+                : "";
+        List<StardewData.SpecialOrderGuide> orders = repository.specialOrders().stream()
+                .filter(order -> StringUtils.isBlank(boardFilter) || boardFilter.equals(order.getBoard()))
+                .toList();
+        if (orders.isEmpty()) {
+            return preferred.map(this::specialOrderAnswer)
+                    .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应特别订单。可以试试：罗宾资源冲刺、岛屿食材、齐瓜、五彩农场。"));
+        }
+        StringBuilder sb = new StringBuilder("特别订单对照：\n");
+        appendSpecialOrderGroup(sb, "鹈鹕镇特别订单板", orders);
+        appendSpecialOrderGroup(sb, "齐先生核桃房特别订单板", orders);
+        sb.append(specialOrderExampleSuggestion(boardFilter));
+        return result("special_order_list", sb.toString().trim(),
+                List.of("https://stardewvalleywiki.com/Quests", "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"));
+    }
+
+    private String specialOrderExampleSuggestion(String boardFilter) {
+        if ("鹈鹕镇特别订单板".equals(boardFilter)) {
+            return "建议：问具体订单名可以看完整需求、奖励和做法，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”。";
+        }
+        if ("齐先生核桃房特别订单板".equals(boardFilter)) {
+            return "建议：问具体订单名可以看完整需求、奖励和做法，例如“齐瓜怎么做”“五彩农场交什么”。";
+        }
+        return "建议：问具体订单名可以看完整需求、奖励和做法，例如“罗宾资源冲刺奖励是什么”“齐瓜怎么做”。";
+    }
+
+    private void appendSpecialOrderGroup(StringBuilder sb, String board, List<StardewData.SpecialOrderGuide> orders) {
+        List<StardewData.SpecialOrderGuide> group = orders.stream()
+                .filter(order -> board.equals(order.getBoard()))
+                .toList();
+        if (group.isEmpty()) {
+            return;
+        }
+        sb.append(board).append("：\n");
+        for (StardewData.SpecialOrderGuide order : group) {
+            sb.append("- ").append(order.getName()).append("：")
+                    .append(order.getTimeframe()).append("；")
+                    .append(firstOrDefault(order.getRequirements(), "查看具体订单获取需求")).append("；奖励 ")
+                    .append(firstOrDefault(order.getRewards(), "见订单详情")).append("\n");
+        }
+    }
+
+    private void appendLines(StringBuilder sb, String title, List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return;
+        }
+        sb.append(title).append("：\n");
+        for (String line : lines) {
+            sb.append("- ").append(line).append("\n");
+        }
+    }
+
+    private String firstOrDefault(List<String> values, String fallback) {
+        if (values == null || values.isEmpty()) {
+            return fallback;
+        }
+        return values.get(0);
     }
 
     private StardewGuideResult bookAnswer(String query, List<StardewData.BookGuide> books) {
@@ -1511,6 +1616,21 @@ public class StardewGuideService {
                 && !containsAny(query, "产什么", "产出", "产物", "养什么", "放什么", "扩容", "任务", "鱼籽", "鱼子酱", "鱼籽酱");
     }
 
+    private boolean looksLikeSpecialOrderQuery(String query) {
+        if (containsAny(query, "大家族", "大家庭")
+                && containsAny(query, "传说鱼", "传说之鱼", "哪些鱼", "什么鱼", "钓")) {
+            return false;
+        }
+        if (looksLikeFishPondQuery(query) && containsAny(query, "扩容", "任务", "产什么", "产出", "产物", "鱼籽", "鱼子酱", "鱼籽酱")) {
+            return false;
+        }
+        return containsAny(query,
+                "特别订单", "特殊订单", "订单板", "特别任务", "特殊任务", "齐先生任务", "齐先生挑战",
+                "核桃房任务", "核桃房订单", "罗宾资源冲刺", "罗宾的项目", "岛屿食材",
+                "齐瓜", "齐豆", "齐果", "五彩农场", "五彩格兰奇", "大家族", "深处的危险",
+                "骷髅洞穴入侵", "齐氏料理", "齐的善意", "四颗宝石", "饥饿挑战");
+    }
+
     private boolean isFishingQuestion(String query) {
         return query.contains("钓") || query.contains("什么鱼") || query.contains("哪些鱼")
                 || query.contains("能抓") || query.contains("可抓") || query.contains("蟹笼");
@@ -1811,6 +1931,21 @@ public class StardewGuideService {
                 || query.contains("有哪些")
                 || query.contains("列表")
                 || query.contains("产物");
+    }
+
+    private boolean isBroadSpecialOrderQuery(String query) {
+        String normalized = StardewKnowledgeRepository.normalize(query);
+        return "特别订单".equals(normalized)
+                || "特殊订单".equals(normalized)
+                || query.contains("特别订单有哪些")
+                || query.contains("特殊订单有哪些")
+                || query.contains("订单板有哪些")
+                || query.contains("任务板有哪些")
+                || query.contains("特别订单列表")
+                || query.contains("特殊订单列表")
+                || query.contains("特别订单总览")
+                || query.contains("齐先生任务有哪些")
+                || query.contains("核桃房任务有哪些");
     }
 
     private boolean isBroadJellyQuery(String query) {

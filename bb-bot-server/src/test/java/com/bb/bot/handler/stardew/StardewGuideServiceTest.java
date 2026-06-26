@@ -463,6 +463,37 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersSpecialOrdersAndQiOrdersWithoutCrossRouting() {
+        StardewGuideResult townList = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "鹈鹕镇特别订单有哪些");
+        StardewGuideResult qiList = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "齐先生任务有哪些");
+        StardewGuideResult robinRush = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "罗宾资源冲刺奖励是什么");
+        StardewGuideResult islandIngredients = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "岛屿食材要什么");
+        StardewGuideResult qiCrop = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "齐瓜怎么做");
+        StardewGuideResult prismaticGrange = service.answerEvidence(StardewGuideIntent.SPECIAL_ORDER, "五彩农场交什么");
+        StardewGuideResult fishPond = service.answerEvidence(StardewGuideIntent.FISH_POND, "岩浆鳗鱼鱼塘要什么任务物品");
+        StardewGuideResult legendaryFish = service.answer("星露谷 大家族任务传说鱼有哪些");
+
+        assertThat(townList.getIntent()).isEqualTo("special_order_list");
+        assertThat(townList.getAnswer()).contains("鹈鹕镇特别订单板", "岛屿食材", "罗宾的资源冲刺", "五彩胶冻")
+                .doesNotContain("齐先生核桃房特别订单板", "齐瓜");
+        assertThat(qiList.getIntent()).isEqualTo("special_order_list");
+        assertThat(qiList.getAnswer()).contains("齐先生核桃房特别订单板", "齐瓜", "五彩农场", "深处的危险")
+                .doesNotContain("罗宾的资源冲刺");
+        assertThat(robinRush.getIntent()).isEqualTo("special_order");
+        assertThat(robinRush.getAnswer()).contains("罗宾的资源冲刺特别订单", "收集 1000 个木材", "石箱配方", "可重复：是")
+                .doesNotContain("鱼塘产物与推荐");
+        assertThat(islandIngredients.getAnswer()).contains("岛屿食材特别订单", "收获并出货 100 个", "太阳能板配方", "虎纹史莱姆");
+        assertThat(qiCrop.getAnswer()).contains("齐瓜特别订单", "出货 500 个齐果", "100 齐钻", "种子生产器");
+        assertThat(prismaticGrange.getAnswer()).contains("齐先生的五彩农场特别订单", "红、橙、黄、绿、蓝、紫各 100 个", "35 齐钻", "投入后不会返还");
+        assertThat(fishPond.getIntent()).isEqualTo("fish_pond_detail");
+        assertThat(fishPond.getAnswer()).contains("岩浆鳗鱼鱼塘", "扩容任务")
+                .doesNotContain("特别订单对照", "齐瓜特别订单");
+        assertThat(legendaryFish.getIntent()).isEqualTo("fish_available");
+        assertThat(legendaryFish.getAnswer()).contains("传说之鱼二代", "大家族")
+                .doesNotContain("特别订单对照");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

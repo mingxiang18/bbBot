@@ -377,6 +377,29 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesSpecialOrdersWithoutStealingFishPondOrLegendaryFishQueries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("特别订单有哪些").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("罗宾资源冲刺奖励是什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("岛屿食材要什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("齐瓜怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("五彩农场交什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("岩浆鳗鱼鱼塘要什么任务物品").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.FISH_POND);
+        assertThat(planner.plan("大家族任务传说鱼有哪些").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.FISH);
+    }
+
+    @Test
     void localFallbackStillClassifiesSkullCavernFoodQuestionsAsCooking() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
@@ -514,5 +537,41 @@ class StardewQueryPlannerServiceTest {
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.TOOL);
         assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("斧头升级需要什么");
         assertThat(plan.getIntents().get(0).getConstraints()).isNotNull();
+    }
+
+    @Test
+    void normalizesUnsafeAiIntentTypesWithLocalHighConfidenceBoundaries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {
+                              "type": "SPECIAL_ORDER",
+                              "keywords": ["大家族任务传说鱼有哪些"],
+                              "constraints": {}
+                            },
+                            {
+                              "type": "SPECIAL_ORDER",
+                              "keywords": ["岩浆鳗鱼鱼塘要什么任务物品"],
+                              "constraints": {}
+                            },
+                            {
+                              "type": "GUIDE",
+                              "keywords": ["战斗等级低怎么快速升级"],
+                              "constraints": {}
+                            }
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("大家族任务传说鱼有哪些，岩浆鳗鱼鱼塘要什么任务物品，战斗等级低怎么快速升级");
+
+        assertThat(plan.getIntents()).hasSize(3);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.FISH_POND);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.SKILL);
     }
 }
