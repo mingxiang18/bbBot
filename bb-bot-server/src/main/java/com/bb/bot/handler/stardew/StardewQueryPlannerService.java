@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -70,6 +70,7 @@ public class StardewQueryPlannerService {
                         - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
                         - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
                         - 鸡舍/畜棚动物本身的购买、成熟时间、产物、赚钱建议、兔脚/鸭毛/松露/大壶牛奶/羊毛/鸵鸟蛋等动物产物机制，例如“猪值得养吗”“兔子的脚怎么出”“奶牛为什么不出大壶奶”“动物有哪些”，归为 ANIMAL_CARE。
+                        - 矿井、骷髅洞穴、火山地牢、采石场矿洞、突变虫穴、女巫沼泽等地下城/冒险地点的解锁、层数、路线、机制、奖励、怎么过、怎么冲层，例如“矿井多少层”“骷髅洞穴100层怎么冲”“火山地牢怎么过”“金镰刀在哪拿”，归为 DUNGEON。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
                         - 问加工机器/制作物怎么用、材料、配方，例如“小桶怎么做”“鱼熏机材料”“洒水器怎么做”，也归为 CRAFTING；MACHINE 仅作为兼容类型。
@@ -132,6 +133,13 @@ public class StardewQueryPlannerService {
                 || aiType == StardewGuideIntent.VILLAGER_PROFILE)) {
             return true;
         }
+        if (localType == StardewGuideIntent.DUNGEON
+                && (aiType == StardewGuideIntent.GUIDE
+                || aiType == StardewGuideIntent.RESOURCE
+                || aiType == StardewGuideIntent.SKILL
+                || aiType == StardewGuideIntent.FARM_MAP)) {
+            return true;
+        }
         if (aiType == StardewGuideIntent.FISH_POND && localType == StardewGuideIntent.BUILDING) {
             return true;
         }
@@ -155,6 +163,7 @@ public class StardewQueryPlannerService {
                 || localType == StardewGuideIntent.FESTIVAL
                 || localType == StardewGuideIntent.FARM_MAP
                 || localType == StardewGuideIntent.ANIMAL_CARE
+                || localType == StardewGuideIntent.DUNGEON
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
     }
@@ -227,6 +236,9 @@ public class StardewQueryPlannerService {
         if (looksLikeFarmMapQuery(q) && !looksLikeFarmBuildingQuery(q)) {
             return StardewGuideIntent.FARM_MAP;
         }
+        if (looksLikeDungeonGuideQuery(q)) {
+            return StardewGuideIntent.DUNGEON;
+        }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
         }
@@ -234,7 +246,8 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.SHOP;
         }
         if (containsAny(q, "在哪", "位置", "日程", "行程", "几点")
-                && !containsAny(q, "哪里买", "在哪里买", "怎么获得", "哪里刷", "在哪刷")) {
+                && !containsAny(q, "哪里买", "在哪里买", "怎么获得", "哪里刷", "在哪刷")
+                && !isFishingQuestion(q)) {
             return StardewGuideIntent.VILLAGER_SCHEDULE;
         }
         if (containsAny(q, "喜欢", "讨厌", "礼物", "生日", "红心", "好感")) {
@@ -290,7 +303,7 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "钓", "鱼", "蟹笼", "果冻")) {
             return StardewGuideIntent.FISH;
         }
-        if (containsAny(q, "怎么获得", "获取", "哪里刷", "在哪刷", "来源", "掉落", "怎么弄", "怎么拿", "哪里有")) {
+        if (containsAny(q, "怎么获得", "获取", "怎么刷", "哪里刷", "在哪刷", "来源", "掉落", "怎么弄", "怎么拿", "哪里有")) {
             return StardewGuideIntent.RESOURCE;
         }
         if (containsAny(q, "攻略", "推荐", "路线", "怎么玩", "怎么解锁")) {
@@ -487,6 +500,40 @@ public class StardewQueryPlannerService {
                 || (containsAny(query, "建筑", "建造", "升级", "材料", "多少钱", "价格", "费用")
                 && !containsAny(query, "地图", "类型", "布局", "开局农场", "标准农场", "河流农场", "森林农场",
                 "山顶农场", "荒野农场", "四角农场", "海滩农场", "草原农场"));
+    }
+
+    private boolean looksLikeDungeonGuideQuery(String query) {
+        if (looksLikeMonsterDropQuery(query)
+                || looksLikeSpecificArtifactResourceQuery(query)
+                || looksLikeSpecificMineralResourceQuery(query)
+                || isSpecificResourceQuestion(query)
+                || isFishingQuestion(query)) {
+            return false;
+        }
+        boolean asksDungeonGuide = containsAny(query,
+                "怎么过", "路线", "攻略", "解锁", "怎么去", "在哪", "位置", "多少层", "几层", "冲层",
+                "到100层", "100层", "一百层", "怎么下", "怎么进", "怎么开启", "怎么打开", "奖励", "拿什么",
+                "金镰刀", "黄金镰刀", "锻造", "火山锻造", "入口", "捷径", "电梯", "楼梯");
+        if (!asksDungeonGuide) {
+            return false;
+        }
+        return containsAny(query,
+                "矿井", "矿洞", "矿山", "普通矿井", "危险矿井", "挑战神龛",
+                "骷髅洞穴", "骷髅矿洞", "沙漠矿洞", "沙漠洞穴", "齐先生挑战",
+                "火山地牢", "火山矿洞", "火山", "姜岛火山", "火山锻造",
+                "采石场矿洞", "采石场矿井", "金镰刀", "黄金镰刀",
+                "突变虫穴", "突变虫巢", "突变昆虫巢穴", "女巫沼泽", "女巫小屋",
+                "The Mines", "Skull Cavern", "Volcano Dungeon", "Quarry Mine",
+                "Mutant Bug Lair", "Witch's Swamp");
+    }
+
+    private boolean isSpecificResourceQuestion(String query) {
+        return containsAny(query, "怎么获得", "获取", "哪里刷", "在哪刷", "来源", "掉落", "怎么弄", "怎么拿", "哪里有")
+                && !containsAny(query, "金镰刀", "黄金镰刀", "解锁", "怎么去", "怎么进", "入口", "路线", "攻略", "多少层", "几层", "冲层");
+    }
+
+    private boolean isFishingQuestion(String query) {
+        return containsAny(query, "钓", "什么鱼", "哪些鱼", "能抓", "可抓", "鱼王", "蟹笼");
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {

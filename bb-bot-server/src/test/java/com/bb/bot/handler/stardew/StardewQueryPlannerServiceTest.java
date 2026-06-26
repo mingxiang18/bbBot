@@ -295,6 +295,56 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesDungeonGuideQueriesWithoutStealingResourcesMonstersOrFish() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan mines = planner.plan("矿井多少层");
+        StardewQueryPlan skull = planner.plan("骷髅洞穴100层怎么冲");
+        StardewQueryPlan volcano = planner.plan("火山地牢怎么过");
+        StardewQueryPlan scythe = planner.plan("金镰刀在哪拿");
+        StardewQueryPlan iridium = planner.plan("铱矿石怎么刷");
+        StardewQueryPlan dustSprite = planner.plan("煤尘精灵掉什么");
+        StardewQueryPlan voidSalmon = planner.plan("虚空鲑鱼在哪钓");
+
+        assertThat(mines.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(skull.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(volcano.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(scythe.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(iridium.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(dustSprite.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MONSTER_DROP);
+        assertThat(voidSalmon.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH);
+    }
+
+    @Test
+    void localGuardrailPullsDungeonGuidesBackFromBroadAiPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"GUIDE","keywords":["骷髅洞穴100层怎么冲"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["金镰刀在哪拿"],"constraints":{}},
+                            {"type":"SKILL","keywords":["火山地牢怎么过"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["铱矿石怎么刷"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("地下城攻略和资源边界");
+
+        assertThat(plan.getIntents()).hasSize(4);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

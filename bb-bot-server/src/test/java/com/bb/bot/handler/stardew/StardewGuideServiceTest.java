@@ -521,6 +521,41 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersDungeonGuidesThroughTypedIntentWithoutResourceMonsterOrFishCrossRouting() {
+        StardewGuideResult all = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 地下城有哪些");
+        StardewGuideResult mines = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 矿井多少层");
+        StardewGuideResult skull = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 骷髅洞穴100层怎么冲");
+        StardewGuideResult volcano = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 火山地牢怎么过");
+        StardewGuideResult scythe = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 金镰刀在哪拿");
+        StardewGuideResult iridium = service.answerEvidence(StardewGuideIntent.RESOURCE, "星露谷 铱矿石怎么刷");
+        StardewGuideResult dustSprite = service.answerEvidence(StardewGuideIntent.MONSTER_DROP, "星露谷 煤尘精灵掉什么");
+        StardewGuideResult voidSalmon = service.answerEvidence(StardewGuideIntent.FISH, "星露谷 虚空鲑鱼在哪钓");
+
+        assertThat(all.getIntent()).isEqualTo("dungeon_available");
+        assertThat(all.getAnswer()).contains("地下城/冒险地点对照", "矿井", "骷髅洞穴", "火山地牢", "采石场矿洞", "突变虫穴", "女巫沼泽");
+
+        assertThat(mines.getIntent()).isEqualTo("dungeon_detail");
+        assertThat(mines.getAnswer()).contains("共 120 层", "电梯每 5 层", "骷髅钥匙")
+                .doesNotContain("矿物怎么补", "博物馆");
+        assertThat(mines.getSourceUrls()).contains("https://stardewvalleywiki.com/The_Mines");
+
+        assertThat(skull.getAnswer()).contains("没有电梯", "100 层", "楼梯", "铱蛇奶")
+                .doesNotContain("没找到这个资源");
+        assertThat(volcano.getAnswer()).contains("共 10 层", "喷壶", "锻造台", "金核桃");
+        assertThat(scythe.getAnswer()).contains("采石场矿洞", "死神雕像", "金镰刀");
+
+        assertThat(iridium.getIntent()).isEqualTo("resource");
+        assertThat(iridium.getAnswer()).contains("铱矿石获取方式")
+                .doesNotContain("地下城/冒险地点对照");
+        assertThat(dustSprite.getIntent()).isEqualTo("monster_drop");
+        assertThat(dustSprite.getAnswer()).contains("煤尘精灵")
+                .doesNotContain("地下城/冒险地点对照");
+        assertThat(voidSalmon.getIntent()).isIn("fish", "fish_detail", "fish_available");
+        assertThat(voidSalmon.getAnswer()).contains("虚空鲑鱼")
+                .doesNotContain("地下城/冒险地点对照");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

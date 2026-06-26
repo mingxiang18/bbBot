@@ -306,6 +306,28 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedDungeonIntentRetrievesAdventureLocationEvidenceWithoutResourceMonsterOrFishCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.DUNGEON, "骷髅洞穴100层怎么冲"),
+                intent(StardewGuideIntent.DUNGEON, "火山地牢怎么过"),
+                intent(StardewGuideIntent.DUNGEON, "金镰刀在哪拿"),
+                intent(StardewGuideIntent.RESOURCE, "铱矿石怎么刷"),
+                intent(StardewGuideIntent.MONSTER_DROP, "煤尘精灵掉什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("地下城攻略、铱矿和煤尘精灵", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.DUNGEON, StardewGuideIntent.RESOURCE, StardewGuideIntent.MONSTER_DROP);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("dungeon_detail", "resource", "monster_drop");
+        assertThat(joinAnswers(evidence))
+                .contains("骷髅洞穴", "100 层", "火山地牢", "锻造台", "采石场矿洞", "金镰刀")
+                .contains("铱矿石获取方式", "煤尘精灵")
+                .doesNotContain("地下城/冒险地点对照：\n- 铱矿石", "没找到对应攻略条目");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

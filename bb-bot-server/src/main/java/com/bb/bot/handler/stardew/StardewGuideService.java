@@ -237,6 +237,7 @@ public class StardewGuideService {
             case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
             case FESTIVAL -> typedFestivalAnswer(query);
             case FARM_MAP -> typedFarmMapAnswer(query);
+            case DUNGEON -> typedDungeonAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
     }
@@ -405,6 +406,14 @@ public class StardewGuideService {
             return farmMapDetailAnswer(farmMap.get());
         }
         return farmMapListAnswer(query, farmMap);
+    }
+
+    private StardewGuideResult typedDungeonAnswer(String query) {
+        Optional<StardewData.DungeonGuide> dungeon = repository.findDungeonGuide(query);
+        if (dungeon.isPresent() && !isBroadDungeonQuery(query)) {
+            return dungeonDetailAnswer(dungeon.get());
+        }
+        return dungeonListAnswer(query, dungeon);
     }
 
     private StardewGuideResult typedAnimalCareAnswer(String query) {
@@ -716,6 +725,55 @@ public class StardewGuideService {
         }
         sb.append("建议：前期鸡和奶牛最稳；中期按收集包补鸭、兔、山羊；后期赚钱重点看猪，姜岛后再考虑鸵鸟。问具体动物名可看产物、成熟时间和机制。");
         return result("farm_animal_available", sb.toString().trim(), collectFarmAnimalSources(matched));
+    }
+
+    private StardewGuideResult dungeonDetailAnswer(StardewData.DungeonGuide dungeon) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(dungeon.getName()).append("：\n");
+        if (StringUtils.isNotBlank(dungeon.getLocation())) {
+            sb.append("位置：").append(dungeon.getLocation()).append("\n");
+        }
+        if (StringUtils.isNotBlank(dungeon.getUnlock())) {
+            sb.append("解锁：").append(dungeon.getUnlock()).append("\n");
+        }
+        if (StringUtils.isNotBlank(dungeon.getFloorSummary())) {
+            sb.append("结构：").append(dungeon.getFloorSummary()).append("\n");
+        }
+        appendLines(sb, "机制", dungeon.getMechanics());
+        appendLines(sb, "怪物/威胁", dungeon.getMonsters());
+        appendLines(sb, "奖励/产出", dungeon.getLoot());
+        appendLines(sb, "相关任务", dungeon.getQuests());
+        appendLines(sb, "建议", dungeon.getRecommendations());
+        if (StringUtils.isNotBlank(dungeon.getNote())) {
+            sb.append("提示：").append(dungeon.getNote()).append("\n");
+        }
+        return result("dungeon_detail", sb.toString().trim(), dungeon.getSourceUrls());
+    }
+
+    private StardewGuideResult dungeonListAnswer(String query, Optional<StardewData.DungeonGuide> preferred) {
+        List<StardewData.DungeonGuide> matched = repository.dungeonGuides().stream()
+                .filter(dungeon -> matchesDungeonQuery(query, dungeon))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::dungeonGuides);
+        }
+        if (matched.isEmpty()) {
+            return result("dungeon_available", "没找到地下城/冒险地点资料。可以试试：矿井、骷髅洞穴、火山地牢、采石场矿洞。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("地下城/冒险地点对照：\n");
+        for (StardewData.DungeonGuide dungeon : matched) {
+            sb.append("- ").append(dungeon.getName()).append("：")
+                    .append(StringUtils.defaultIfBlank(dungeon.getUnlock(), "解锁条件未记录"));
+            if (StringUtils.isNotBlank(dungeon.getFloorSummary())) {
+                sb.append("；").append(dungeon.getFloorSummary());
+            }
+            if (dungeon.getRecommendations() != null && !dungeon.getRecommendations().isEmpty()) {
+                sb.append("；建议：").append(dungeon.getRecommendations().get(0));
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：问具体地点名可以看解锁、层数/结构、机制、奖励和路线，例如“骷髅洞穴100层怎么冲”“火山地牢怎么过”。");
+        return result("dungeon_available", sb.toString().trim(), collectDungeonSources(matched));
     }
 
     private String animalProductSummary(StardewData.AnimalProduct product) {
@@ -2099,6 +2157,11 @@ public class StardewGuideService {
                 && !repository.findFarmAnimal(query).isPresent();
     }
 
+    private boolean isBroadDungeonQuery(String query) {
+        return containsAny(query, "地下城有哪些", "冒险地点有哪些", "矿洞有哪些", "矿井有哪些", "地点列表", "地下城列表", "冒险地点列表", "总览", "全部地下城")
+                || (containsAny(query, "地下城", "冒险地点", "矿洞", "矿井") && containsAny(query, "哪些", "列表", "所有", "全部", "总览"));
+    }
+
     private boolean isBroadStoryQuestQuery(String query) {
         return containsAny(query, "任务有哪些", "普通任务有哪些", "剧情任务有哪些", "任务列表", "普通任务列表", "剧情任务列表", "所有任务", "全部任务", "总览")
                 || (containsAny(query, "普通任务", "剧情任务", "任务日志") && containsAny(query, "哪些", "列表", "总览", "所有", "全部"));
@@ -2189,6 +2252,29 @@ public class StardewGuideService {
                 || containsNormalized(q, animal.getAcquisition())
                 || containsNormalized(q, animal.getProduceFrequency())
                 || containsNormalized(q, animal.getNote());
+    }
+
+    private boolean matchesDungeonQuery(String query, StardewData.DungeonGuide dungeon) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.DungeonGuide> direct = repository.findDungeonGuide(query);
+        if (direct.isPresent() && direct.get().getId().equals(dungeon.getId()) && !isBroadDungeonQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "地下城有哪些", "冒险地点有哪些", "矿洞有哪些", "地下城列表", "冒险地点列表", "全部地下城", "所有地下城")) {
+            return true;
+        }
+        return containsAnyNormalized(q, dungeon.getAliases())
+                || containsNormalized(q, dungeon.getName())
+                || containsNormalized(q, dungeon.getNameEn())
+                || containsNormalized(q, dungeon.getLocation())
+                || containsNormalized(q, dungeon.getUnlock())
+                || containsNormalized(q, dungeon.getFloorSummary())
+                || containsAnyNormalized(q, dungeon.getMechanics())
+                || containsAnyNormalized(q, dungeon.getMonsters())
+                || containsAnyNormalized(q, dungeon.getLoot())
+                || containsAnyNormalized(q, dungeon.getQuests())
+                || containsAnyNormalized(q, dungeon.getRecommendations())
+                || containsNormalized(q, dungeon.getNote());
     }
 
     private boolean containsAnimalProduct(String query, List<StardewData.AnimalProduct> products) {
@@ -2957,6 +3043,16 @@ public class StardewGuideService {
         for (StardewData.FarmAnimalGuide animal : animals) {
             if (animal.getSourceUrls() != null) {
                 urls.addAll(animal.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectDungeonSources(List<StardewData.DungeonGuide> dungeons) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.DungeonGuide dungeon : dungeons) {
+            if (dungeon.getSourceUrls() != null) {
+                urls.addAll(dungeon.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

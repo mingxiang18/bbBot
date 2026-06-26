@@ -22,6 +22,7 @@ public enum StardewGuideIntent {
     SKILL,
     FESTIVAL,
     FARM_MAP,
+    DUNGEON,
     MUSEUM,
     GUIDE,
     UNKNOWN

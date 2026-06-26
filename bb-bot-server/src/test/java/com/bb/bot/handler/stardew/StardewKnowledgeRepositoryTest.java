@@ -42,6 +42,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.farmMaps()).hasSize(8);
         assertThat(repository.farmAnimals()).hasSize(11);
+        assertThat(repository.dungeonGuides()).hasSize(6);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
 
@@ -93,6 +94,50 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(animal.getBestFor()).isNotEmpty();
                     assertThat(animal.getRecommendations()).isNotEmpty();
                     assertThat(animal.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals");
+                });
+    }
+
+    @Test
+    void fullDungeonGuideSetIsCoveredAsTypedCategory() {
+        Set<String> dungeonIds = repository.dungeonGuides().stream()
+                .map(StardewData.DungeonGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.dungeonGuides()).hasSize(6);
+        assertThat(dungeonIds).containsExactlyInAnyOrder(
+                "the_mines",
+                "skull_cavern",
+                "volcano_dungeon",
+                "quarry_mine",
+                "mutant_bug_lair",
+                "witchs_swamp"
+        );
+
+        assertThat(repository.findDungeonGuide("矿井多少层").orElseThrow().getId()).isEqualTo("the_mines");
+        assertThat(repository.findDungeonGuide("骷髅洞穴100层怎么冲").orElseThrow().getId()).isEqualTo("skull_cavern");
+        assertThat(repository.findDungeonGuide("火山地牢怎么过").orElseThrow().getId()).isEqualTo("volcano_dungeon");
+        assertThat(repository.findDungeonGuide("金镰刀在哪拿").orElseThrow().getId()).isEqualTo("quarry_mine");
+        assertThat(repository.findDungeonGuide("突变虫穴史莱姆鱼").orElseThrow().getId()).isEqualTo("mutant_bug_lair");
+        assertThat(repository.findDungeonGuide("女巫沼泽魔法墨水").orElseThrow().getId()).isEqualTo("witchs_swamp");
+    }
+
+    @Test
+    void allDungeonGuidesHaveCoreFieldsAndSources() {
+        assertThat(repository.dungeonGuides())
+                .hasSize(6)
+                .allSatisfy(dungeon -> {
+                    assertThat(dungeon.getId()).isNotBlank();
+                    assertThat(dungeon.getName()).isNotBlank();
+                    assertThat(dungeon.getNameEn()).isNotBlank();
+                    assertThat(dungeon.getAliases()).isNotEmpty();
+                    assertThat(dungeon.getLocation()).isNotBlank();
+                    assertThat(dungeon.getUnlock()).isNotBlank();
+                    assertThat(dungeon.getFloorSummary()).isNotBlank();
+                    assertThat(dungeon.getMechanics()).isNotEmpty();
+                    assertThat(dungeon.getLoot()).isNotEmpty();
+                    assertThat(dungeon.getQuests()).isNotEmpty();
+                    assertThat(dungeon.getRecommendations()).isNotEmpty();
+                    assertThat(dungeon.getSourceUrls()).isNotEmpty();
                 });
     }
 
