@@ -10,7 +10,9 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -148,6 +150,46 @@ class StardewGuideAssistantServiceTest {
                 .doesNotContain("罗宾", "建造费用", "木材");
         verify(aiChatService).chat(anyList(), eq(ModelTier.LIGHT));
         verify(aiChatService, never()).chat(anyList(), eq(ModelTier.CHAT));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void usesRetrieverEvidenceInsteadOfLegacyFreeTextServiceOnPublishPath() {
+        StardewGuideService guideService = mock(StardewGuideService.class);
+        StardewGuideRetriever retriever = mock(StardewGuideRetriever.class);
+        AiChatService aiChatService = mock(AiChatService.class);
+        StardewGuideAssistantService assistantService = new StardewGuideAssistantService(
+                guideService,
+                new StardewQueryPlannerService(aiChatService),
+                retriever,
+                aiChatService
+        );
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"BUILDING","keywords":["鸡舍升级材料"],"constraints":{}}
+                          ]
+                        }
+                        """);
+        when(retriever.retrieve(eq("星露谷 鸡舍升级材料"), any(StardewQueryPlan.class)))
+                .thenReturn(List.of(new StardewGuideEvidence(
+                        StardewGuideIntent.BUILDING,
+                        "鸡舍升级材料 建筑",
+                        "building_detail",
+                        "鸡舍升级：找罗宾，升级费用和材料按建筑表处理。"
+                )));
+        when(aiChatService.chat(anyList(), eq(ModelTier.CHAT)))
+                .thenReturn("鸡舍升级去找罗宾，按建筑升级材料和费用准备。");
+
+        String answer = assistantService.answer("星露谷 鸡舍升级材料");
+
+        assertThat(answer).contains("鸡舍升级", "罗宾");
+        verify(retriever).retrieve(eq("星露谷 鸡舍升级材料"), any(StardewQueryPlan.class));
+        verify(guideService, never()).answer(anyString());
+        verify(guideService, never()).answerEvidence(any(), anyString());
     }
 
     private String textOf(ChatMessage message) {

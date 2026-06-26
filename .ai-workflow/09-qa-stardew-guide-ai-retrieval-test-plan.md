@@ -2,8 +2,8 @@
 
 > 阶段：QA test plan
 > 日期：2026-06-26
-> 分支：`ai/feature-stardew-guide-cooking`
-> 范围：`/星露谷` 命令入口、`stardew_guide` AI tool、关键词检索、证据整合、自然语言回复
+> 分支：`master`
+> 范围：`/星露谷` 命令入口、`stardew_guide` AI tool、AI 分类计划、typed evidence 检索、证据整合、自然语言回复
 > 明确排除：不做存档解析，不读取或推断玩家本地存档
 
 ## 1. 测试目标
@@ -11,31 +11,31 @@
 本轮改造的核心不是继续堆确定性命令分支，而是让命令入口和 AI tool 统一成可扩展的攻略问答路径：
 
 1. 用户自然语言输入问题。
-2. AI 将问题扩展成适合检索的关键词或短句。
-3. 本地结构化知识库和 Wiki 兜底产出可引用的攻略资料。
-4. AI 根据资料整合成自然、简洁、可执行的中文回复。
+2. AI 将问题拆成 1-4 个 typed intent，并抽取适合检索的中文关键词、季节、地点、天气、时间、居民等条件。
+3. `StardewGuideRetriever` 只按 typed plan 调用 `StardewGuideService.answerEvidence(type, query)` 获取结构化证据。
+4. `StardewGuideAssistantService` 根据资料整合成自然、简洁、可执行的中文回复。
 5. 回复不展示内部字段，例如数据版本、校验日期、来源链接、Wiki、本地库、证据编号或关键词。
 
 测试需要证明两个方向：
 
 - 功能方向：常见玩家问题能被检索、整合、自然回答。
-- 稳定方向：AI 输出格式松散、AI 为空、AI 抛异常、问题含歧义时不会直接失败或胡说。
+- 稳定方向：AI 输出格式松散、AI 为空、AI 抛异常、问题含歧义时不会直接失败或胡说；typed miss 不会偷偷回落到旧自由文本路由导致问 A 答 B。
 
 ## 2. 自动化测试范围
 
 ### 2.1 `StardewGuideAssistantServiceTest`
 
-覆盖 AI 编排层，即 `/星露谷` 命令目前新增的主路径。
+覆盖 AI 编排层，即 `/星露谷` 命令和 `stardew_guide` tool 共用的主路径。
 
 必测用例：
 
-- JSON 关键词输出：AI 返回 JSON 字符串数组时，服务应把原始问题和扩展关键词都送入检索，再把检索结果合并进最终整合 prompt。
-- 宽松列表输出：AI 返回编号列表或普通行列表时，也应能解析为查询词。
-- 证据整合 prompt：最终整合 prompt 必须包含用户问题和检索资料，且不携带 `sourceUrls`、`gameVersion`、`lastCheckedAt` 这类内部字段。
+- JSON typed plan：AI 返回 JSON 时，服务应解析 `intents[].type`、`keywords`、`constraints`，再交给 retriever 检索。
+- Planner 不可用：LIGHT 模型返回空、异常或不可解析 JSON 时，应使用本地高置信 fallback plan，而不是调用旧自由文本 `StardewGuideService.answer`。
+- 证据整合 prompt：最终整合 prompt 必须包含用户问题和 typed evidence，且不携带 `sourceUrls`、`gameVersion`、`lastCheckedAt` 这类内部字段。
 - 自然回复返回：当 CHAT 模型返回非空答案时，命令层直接使用该自然语言答案。
-- AI 空返回回退：LIGHT 或 CHAT 返回空时，应退回 `StardewGuideService.answer` 的单次本地检索答案。
-- AI 异常回退：LIGHT 或 CHAT 调用抛异常时，应退回单次本地检索答案，而不是让命令入口直接失败。
-- 关键词契约：获取、制作、升级、购买、位置、收集包类问题的扩展词应尽量保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”，避免只用裸物品名导致旧路由误命中。
+- CHAT 空返回：应退回第一条 typed evidence 的原文答案；如果没有可靠证据，则给出补充条件提示。
+- 发布路径边界：Assistant 不应调用旧 `StardewGuideService.answer(String)`；旧入口只保留兼容和历史回归。
+- 关键词契约：获取、制作、升级、购买、位置、收集包类问题的 `keywords` 应保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”，避免只用裸物品名降低检索质量。
 
 代表问题：
 
@@ -76,7 +76,7 @@
 
 ### 2.4 `StardewGuideServiceTest`
 
-覆盖本地检索和路由回归。虽然新方向是 AI 检索整合，但底层资料质量仍决定最终答案质量。
+覆盖本地 typed evidence 和历史兼容回归。新发布路径应优先新增 `answerEvidence(type, query)`、`StardewGuideRetrieverTest` 和 `StardewGuideAssistantServiceTest`，旧 `answer(String)` 只用于保护存量行为。
 
 必测领域：
 

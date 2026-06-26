@@ -14,6 +14,8 @@
 
 当前职责边界保持为：`StardewQueryPlannerService` 负责 AI 分类、关键词抽取和高置信防串路纠偏；`StardewGuideRetriever` 只按 typed plan 组装检索 query 并取证据；`StardewGuideService.answerEvidence` 只提供 typed evidence API；`StardewGuideAssistantService` 只根据证据生成自然回复。旧 `answer(String)` 仅保留兼容，不作为正常 `/星露谷` 和 AI tool 主链路。
 
+当前机制判断：方向合理，职责基本清晰。AI 负责理解用户意图和生成检索计划，本地代码负责少量高置信纠偏、确定性证据检索和安全兜底，最终回答再交给 AI 做表达整合。后续优化不应继续扩大旧自由文本路由，也不应让 retriever 自己猜类型；如果新增“制作配方、节日、农场布局”等类目，应先扩 typed intent 和结构化证据，再补 planner 分类规则和防串路测试。
+
 本轮新增 planner 后处理：AI 返回具体类型后，如果命中“特别订单 vs 传说鱼/鱼塘”“鱼塘产物 vs 鱼塘建筑”“通用攻略 vs 技能/特别订单/鱼塘/怪物掉落”等高风险边界，使用本地高置信规则纠偏；但不会把 `UNKNOWN` 或明确 typed miss 强行改写成旧自由文本路由，避免问 A 答 B。
 
 技能类目已从通用攻略拆出 `skillGuides` 专用 typed 数据。`SKILL` intent 现在优先返回 `skill_guide` / `skill_guide_list` evidence，通用 `GUIDE` 仍保留精通、锻造、博物馆等攻略兜底。
@@ -28,7 +30,7 @@
 
 ## 验证结论
 
-最近一次星露谷聚焦单元测试通过：`206 tests, 0 failures`。
+最近一次星露谷聚焦单元测试通过：`207 tests, 0 failures`。
 
 最近一次 `bb-bot-server` reactor compile 通过：`BUILD SUCCESS`。
 
@@ -39,3 +41,5 @@ JSON 轻量校验通过：`resources=181`，`guides=39`，`specialOrders=28`，`
 ## 后续原则
 
 后续优先补齐姜岛/火山材料、建筑、机器、工具、制作、商店和居民复杂规则的偏门数据。每轮补数都要同步补 typed intent、防串路单元测试、JSON 校验、聚焦单元测试、reactor compile 和 `git diff --check`。
+
+测试重心也应逐步迁移：新增类目优先覆盖 `StardewQueryPlannerServiceTest`、`StardewGuideRetrieverTest`、typed `StardewGuideService.answerEvidence` 和 `StardewGuideAssistantServiceTest`；旧 `answer(String)` 测试只保留存量兼容和少量关键回归，避免为了旧路由继续堆命中规则。
