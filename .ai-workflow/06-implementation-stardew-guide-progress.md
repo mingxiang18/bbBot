@@ -37,7 +37,7 @@
    - 居民日程
    - 居民生日和礼物偏好
    - 资源获取
-   - 通用攻略条目，如工具升级、建筑、作物推荐、技能、进度解锁、烹饪/制作、火山锻造/附魔
+   - 通用攻略条目，如工具升级、建筑、作物推荐、技能、进度解锁、烹饪/制作、精通系统、火山锻造/附魔
 3. 本地结构化知识库未命中时，走官方中文 Wiki API 兜底：
    - `query&list=search`
    - `parse&prop=text|displaytitle`
@@ -58,7 +58,7 @@
 - 资源获取：91 项，覆盖硬木、电池组、铱矿石、五彩碎片、上古种子、布料、三种钓鱼果冻，煤炭、黏土、纤维、苔藓、精炼石英、三类树液采集物、干草、海草/绿藻、树液、铜铁金矿石等高频材料，以及太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、鱼籽酱、龙牙、远古斑点、古物宝藏、四类晶球、基础矿物/宝石、一批高频博物馆古物、动物产品和果树水果
 - 料理/饮品：83 道，覆盖官方 81 种可烹饪菜品，并额外保留咖啡、魔法糖冰棍等玩家常问但不属于厨房烹饪的实用食物/饮品条目；支持骷髅洞穴/钓鱼/采矿/战斗/耕种/觅食/姜岛料理、普通回复、配方材料、buff 效果等查询
 - 书籍/力量书/技能书：26 本，覆盖 1.6 全部常见书籍条目，包括价格目录、风之道、马之书、老滑腿、怪物图鉴、洞穴系统地图、矮人安全手册、捕蟹的艺术、海之宝石、伍迪的秘密、浣熊日志、星之书、五类技能书、酱料女皇食谱等；支持具体书名效果、重复阅读、获取方式、是否值得优先读
-- 通用攻略：36 项，新增火山锻造与附魔，覆盖武器宝石锻造、工具/武器附魔、无限武器、银河之魂和戒指合成
+- 通用攻略：36 项，新增火山锻造与附魔，并加厚精通系统；覆盖武器宝石锻造、工具/武器附魔、无限武器、银河之魂、戒指合成、精通点、五系精通奖励和精通优先级
 
 这不是完整星露谷数据集。当前靠 Wiki 兜底补足未建模问题。
 
@@ -112,6 +112,7 @@
 - 夏季作物推荐
 - 沙漠解锁、温室修复与种植建议、骷髅洞穴准备
 - 博物馆捐赠、鱼塘、烹饪、制作、精通系统等机制类攻略
+- 精通系统：精通点怎么刷、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、铁砧和迷你锻造台
 - 书商/技能书、职业重置、技能食物 buff
 - 火山锻造/附魔：银河剑怎么锻造、工具附魔哪个好、无限武器怎么做、银河之魂怎么用、戒指合成怎么做
 - 本地库没有建模的问题走 Wiki 兜底，如姜岛金核桃
@@ -720,6 +721,26 @@ mysql(misu-mysql-local) Up
 - `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：162 tests, 0 failures。
 - `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
 
+2026-06-26 精通系统攻略加厚：
+
+- 在现有 `mastery` 通用攻略上加厚，不新增旁路命令；继续保持“AI 分类 -> 关键词检索 -> 证据整合 -> 自然回复”主链路。
+- 按官方 Mastery/Iridium Scythe/Advanced Iridium Rod/Challenge Bait/Anvil/Mini-Forge 等页面补齐：精通洞穴解锁、精通点来源、五级花费、五系精通奖励、关键配方材料、奖励细节和优先级建议。
+- 精通点规则补充：五项技能 10 级后进入统一精通条；第 1-5 个精通分别要 10,000 / 15,000 / 20,000 / 25,000 / 30,000 点，合计 100,000；耕种经验按 50% 转精通点，其余技能按 100%。
+- 奖励覆盖：铱金镰刀、祝福雕像、金色动物饼干、矮人之王雕像、重型熔炉、神秘树种子、宝藏图腾、高级铱金鱼竿、挑战鱼饵、金色钓鱼宝箱、铁砧、迷你锻造台和小饰品。
+- 路由保护：`StardewQueryPlannerService` fallback 将精通奖励名和“精通先选哪个/精通点怎么刷”归为 `GUIDE`，避免 `高级铱金鱼竿怎么获得` 被鱼类或资源路径抢答；`StardewGuideRetriever` 对 GUIDE 精通问题补 `精通系统` hint。
+- 测试补充：
+  - `StardewGuideServiceTest` 覆盖精通优先级、高级铱金鱼竿、挑战鱼饵、铁砧和小饰品。
+  - `StardewGuideRetrieverTest` 覆盖 typed `GUIDE` 多关键词检索，确认不串到鱼类、机器或资源。
+  - `StardewQueryPlannerServiceTest` 覆盖 AI 不可用时精通奖励问题 fallback 分类归 `GUIDE`。
+
+本轮验证结果：
+
+- JSON 轻量校验：`guides=36`，`masterySections=5`，`masterySources=13`，重复 id 为空。
+- `git diff --check`：无 whitespace 问题。
+- `StardewKnowledgeRepositoryTest,StardewGuideServiceTest,StardewGuideRetrieverTest,StardewQueryPlannerServiceTest,StardewGuideToolTest`：155 tests, 0 failures。
+- `StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest`：165 tests, 0 failures。
+- `-pl bb-bot-server -am -DskipTests compile`：BUILD SUCCESS。
+
 ## 真实网络验证
 
 已用 `curl` 验证官方中文 Wiki API：
@@ -744,7 +765,7 @@ mysql(misu-mysql-local) Up
 - 工具升级已结构化首批 6 类工具，鱼竿/鱼饵/浮标搭配已在钓鱼技能攻略中补一版高频路线；火山锻造、武器/工具附魔、无限武器和戒指合成已补一版攻略；但特殊工具、全部钓具数值、全部附魔概率/武器数值和后期搭配还未完整结构化。
 - 机器/加工/制作设备/常用 craftable 已扩到 80 个核心条目，已补肥料、图腾、戒指、怪物香水、仙尘、鱼饵、钓具、蟹笼；但重型树液采集器、虫饵盒、豪华虫饵盒、木材削片机、地板/围栏/照明/装饰、后期精通设备和全制作清单还未完整结构化。
 - 资源获取已扩到 91 项，新增一批博物馆、古物、矿物、晶球、稀有物品、动物产品、果树水果和首批高频怪物掉落；但全 42 件古物、全 53 件矿物、全怪物掉落表、全姜岛/火山材料、全鱼塘产物和特殊货币还未完整结构化。
-- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通概览、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，火山锻造/附魔已补一版通用攻略；后续还需继续补技能相关装备、全部附魔概率、精通装备和更细的场景化路线。
+- 技能攻略目前覆盖五大基础技能、战斗/钓鱼/采矿/耕种/觅食快速升级细分路线、精通系统奖励/配方/优先级、职业重置、首批料理/饮料 buff 数值和叠加规则；料理数据已扩到 83 道，书籍/力量书/技能书已补 26 本结构化详情，火山锻造/附魔已补一版通用攻略；后续还需继续补技能相关装备、全部附魔概率、精通小饰品全数值和更细的场景化路线。
 
 ## 后续补齐方向
 
@@ -755,7 +776,7 @@ mysql(misu-mysql-local) Up
    - 全作物、果树、季节、成熟天数、基础收益、收集包用途；首批 30 个核心作物已结构化
    - 全建筑、房屋升级、动物、机器；首批核心农场建筑、房屋升级、后期魔法建筑/社区升级和 80 个核心机器/制作设备/常用 craftable 已结构化，后续补多人小屋样式、宠物碗、岛屿农舍、温室等特殊建筑和全部机器设备
    - 全工具、鱼竿、附魔、锻造、特殊工具和使用路线；首批工具升级费用/材料已结构化，火山锻造/武器和工具附魔/无限武器/戒指合成已补一版高频攻略
-   - 全技能升级、职业选择、经验获取、快速升级路线、Mastery、技能书、职业重置、技能食物 buff、技能相关装备和附魔搭配
+   - 全技能升级、职业选择、经验获取、快速升级路线、Mastery、技能书、职业重置、技能食物 buff、技能相关装备和附魔搭配；Mastery 已补五系奖励和高频配方，后续继续补小饰品全掉落/全数值
    - 矿井、骷髅洞穴、火山、怪物掉落、博物馆、烹饪、制作；首批 91 个高频资源获取条目已结构化，已补煤炭、太阳精华、虚空精华、蝙蝠翅膀、史莱姆泥、虫肉、骨头碎片等高频怪物掉落，后续继续补全 42 件古物、53 件矿物和完整怪物掉落表
 2. 测试覆盖：
    - 每个 intent 至少 happy path + miss + alias + 条件过滤

@@ -504,6 +504,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedGuideIntentRetrievesMasteryEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.GUIDE, "精通先选哪个"),
+                intent(StardewGuideIntent.GUIDE, "高级铱金鱼竿怎么获得"),
+                intent(StardewGuideIntent.GUIDE, "挑战鱼饵怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("精通先选哪个，高级铱金鱼竿和挑战鱼饵怎么弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("精通系统", "精通洞穴", "高级铱金鱼竿", "挑战鱼饵")
+                .contains("10,000 / 15,000 / 20,000 / 25,000 / 30,000", "骨头碎片 x5", "苔藓 x2")
+                .doesNotContain("夏季鱼类", "鱼类条件", "机器/加工设备", "资源获取方式");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

@@ -967,6 +967,23 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersMasteryRewardsAndPriorityGuideLocally() {
+        StardewGuideResult priority = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 精通先选哪个");
+        StardewGuideResult rod = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 高级铱金鱼竿怎么获得");
+        StardewGuideResult bait = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 挑战鱼饵怎么做");
+        StardewGuideResult trinkets = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 铁砧和小饰品怎么用");
+
+        assertThat(priority.getIntent()).isEqualTo("guide");
+        assertThat(priority.getAnswer()).contains("10,000 / 15,000 / 20,000 / 25,000 / 30,000", "合计 100,000");
+        assertThat(priority.getAnswer()).contains("耕种精通", "采矿精通", "觅食精通", "钓鱼精通", "战斗精通");
+        assertThat(priority.getAnswer()).contains("铱金镰刀", "祝福雕像", "金色动物饼干", "矮人之王雕像", "重型熔炉");
+        assertThat(rod.getAnswer()).contains("高级铱金鱼竿", "钓鱼精通", "25,000g", "2 个钓具");
+        assertThat(bait.getAnswer()).contains("挑战鱼饵", "骨头碎片 x5", "苔藓 x2", "一次制作 5 个");
+        assertThat(trinkets.getAnswer()).contains("铁砧", "小饰品", "铱锭 x3", "迷你锻造台");
+        assertThat(priority.getSourceUrls()).contains("https://stardewvalleywiki.com/Mastery");
+    }
+
+    @Test
     void explicitUnknownEvidenceDoesNotFallBackToLegacyFreeTextRoute() {
         StardewGuideResult result = service.answerEvidence(StardewGuideIntent.UNKNOWN, "星露谷 鸡舍升级材料");
 

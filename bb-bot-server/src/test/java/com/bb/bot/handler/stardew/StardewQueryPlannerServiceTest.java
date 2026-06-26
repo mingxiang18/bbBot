@@ -340,6 +340,20 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesMasteryRewardQueriesAsGuide() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("精通先选哪个，高级铱金鱼竿怎么获得，挑战鱼饵怎么做");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(plan.getIntents().get(0).getKeywords())
+                .containsExactly("精通先选哪个，高级铱金鱼竿怎么获得，挑战鱼饵怎么做");
+    }
+
+    @Test
     void normalizesMissingIntentFields() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
