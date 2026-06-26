@@ -27,7 +27,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(6);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
-        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(9);
+        assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(15);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
@@ -207,6 +207,31 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(tool.getRecommendation()).isNotBlank();
                     assertThat(tool.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void commonMerchantsAndExchangeShopsAreCovered() {
+        Set<String> shopIds = repository.shops().stream()
+                .map(StardewData.Shop::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(shopIds).contains(
+                "pierres_general_store",
+                "blacksmith",
+                "carpenters_shop",
+                "marnies_ranch",
+                "willys_fish_shop",
+                "krobus_shop",
+                "traveling_cart",
+                "desert_trader",
+                "bookseller",
+                "adventurers_guild",
+                "dwarf_shop",
+                "oasis",
+                "island_trader",
+                "qis_walnut_room",
+                "stardrop_saloon"
+        );
     }
 
     @Test

@@ -155,6 +155,32 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackKeepsMerchantHourQueriesOnShopRoute() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("冒险家公会几点开");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("冒险家公会几点开");
+    }
+
+    @Test
+    void localFallbackClassifiesExchangeMerchantQueriesAsShop() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("齐钻商店卖什么");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("齐钻商店卖什么");
+    }
+
+    @Test
     void localFallbackClassifiesBuffStackingRulesAsGuide() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

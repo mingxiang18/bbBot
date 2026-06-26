@@ -389,6 +389,13 @@ class StardewGuideServiceTest {
         StardewGuideResult bookseller = service.answer("星露谷 书商什么时候来");
         StardewGuideResult desertTrader = service.answer("星露谷 沙漠商人楼梯怎么换");
         StardewGuideResult robin = service.answer("星露谷 罗宾商店几点开门");
+        StardewGuideResult adventurersGuild = service.answerEvidence(StardewGuideIntent.SHOP, "冒险家公会几点开");
+        StardewGuideResult lavaKatana = service.answerEvidence(StardewGuideIntent.SHOP, "熔岩武士刀在哪里买");
+        StardewGuideResult bomb = service.answerEvidence(StardewGuideIntent.SHOP, "炸弹在哪里买");
+        StardewGuideResult starfruitSeeds = service.answerEvidence(StardewGuideIntent.SHOP, "杨桃种子在哪里买");
+        StardewGuideResult bananaSapling = service.answerEvidence(StardewGuideIntent.SHOP, "香蕉树苗怎么换");
+        StardewGuideResult horseFlute = service.answerEvidence(StardewGuideIntent.SHOP, "马笛在哪里买");
+        StardewGuideResult coffee = service.answerEvidence(StardewGuideIntent.SHOP, "咖啡在哪里买");
 
         assertThat(bookseller.getIntent()).isEqualTo("shop");
         assertThat(bookseller.getAnswer()).contains("每个季节随机来访 2 天", "日历", "Joja");
@@ -396,6 +403,20 @@ class StardewGuideServiceTest {
         assertThat(desertTrader.getAnswer()).contains("沙漠商人", "楼梯", "翡翠 x1", "星期日");
         assertThat(robin.getIntent()).isEqualTo("shop");
         assertThat(robin.getAnswer()).contains("木匠", "09:00-17:00", "周二");
+        assertThat(adventurersGuild.getIntent()).isEqualTo("shop");
+        assertThat(adventurersGuild.getAnswer()).contains("冒险家公会", "14:00-02:00", "入门", "史莱姆");
+        assertThat(lavaKatana.getIntent()).isEqualTo("shop_item");
+        assertThat(lavaKatana.getAnswer()).contains("冒险家公会", "熔岩武士刀", "25,000g", "矿井底层");
+        assertThat(bomb.getIntent()).isEqualTo("shop_item");
+        assertThat(bomb.getAnswer()).contains("矮人商店", "炸弹", "1,000g", "常驻");
+        assertThat(starfruitSeeds.getIntent()).isEqualTo("shop_item");
+        assertThat(starfruitSeeds.getAnswer()).contains("绿洲", "杨桃种子", "400g", "常驻");
+        assertThat(bananaSapling.getIntent()).isEqualTo("shop_item");
+        assertThat(bananaSapling.getAnswer()).contains("姜岛商人", "香蕉树苗", "龙牙 x5");
+        assertThat(horseFlute.getIntent()).isEqualTo("shop_item");
+        assertThat(horseFlute.getAnswer()).contains("齐先生核桃房", "马笛", "50 齐钻");
+        assertThat(coffee.getIntent()).isEqualTo("shop_item");
+        assertThat(coffee.getAnswer()).contains("星之果实餐吧", "咖啡", "300g", "12:00-00:00");
     }
 
     @Test

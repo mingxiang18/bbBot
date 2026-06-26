@@ -10411,6 +10411,808 @@
         "https://stardewvalleywiki.com/Bookseller",
         "https://stardewvalleywiki.com/Books"
       ]
+    },
+    {
+      "id": "adventurers_guild",
+      "name": "冒险家公会",
+      "nameEn": "Adventurer's Guild",
+      "aliases": [
+        "冒险家公会",
+        "公会",
+        "马龙",
+        "marlon",
+        "guild",
+        "武器在哪里买",
+        "银河剑",
+        "银河锤",
+        "熔岩武士刀",
+        "戒指在哪里买",
+        "物品恢复"
+      ],
+      "location": "矿井东侧，深山区域",
+      "openHours": "14:00-02:00",
+      "closed": "节日当天大门关闭",
+      "unlockCondition": "完成“入门”任务，杀死 10 只史莱姆后开放",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "熔岩武士刀",
+          "aliases": [
+            "lava katana",
+            "熔岩刀"
+          ],
+          "price": 25000,
+          "availability": "到达矿井底层后",
+          "note": "中后期过渡武器，拿到银河剑前可用"
+        },
+        {
+          "name": "银河剑",
+          "aliases": [
+            "galaxy sword",
+            "五彩碎片武器"
+          ],
+          "price": 50000,
+          "availability": "带五彩碎片到沙漠三柱获得银河剑后可重新购买",
+          "note": "首次不是购买获得，是用五彩碎片触发"
+        },
+        {
+          "name": "银河匕首",
+          "aliases": [
+            "galaxy dagger"
+          ],
+          "price": 35000,
+          "availability": "获得银河剑后",
+          "note": "匕首路线可选"
+        },
+        {
+          "name": "银河锤",
+          "aliases": [
+            "galaxy hammer",
+            "银河之锤"
+          ],
+          "price": 75000,
+          "availability": "获得银河剑后",
+          "note": "高伤害锤类武器，后期可考虑"
+        },
+        {
+          "name": "太空之靴",
+          "aliases": [
+            "space boots",
+            "太空靴"
+          ],
+          "price": 5000,
+          "availability": "到达矿井 110 层后",
+          "note": "防御和免疫都不错的过渡靴"
+        },
+        {
+          "name": "窃贼戒指",
+          "aliases": [
+            "burglar's ring",
+            "burglar ring",
+            "双倍掉落戒指"
+          ],
+          "price": 20000,
+          "availability": "击杀 500 个煤尘精灵完成讨伐目标后",
+          "note": "刷资源、刷怪物掉落非常关键"
+        },
+        {
+          "name": "史莱姆克星戒指",
+          "aliases": [
+            "slime charmer ring",
+            "史莱姆戒指"
+          ],
+          "price": 25000,
+          "availability": "击杀 1000 个史莱姆完成讨伐目标后",
+          "note": "免疫史莱姆伤害和减速，史莱姆屋/矿洞都好用"
+        },
+        {
+          "name": "物品恢复服务",
+          "aliases": [
+            "物品恢复",
+            "找回物品",
+            "死了掉东西"
+          ],
+          "currency": "费用按丢失物品价值变化",
+          "availability": "矿井、骷髅洞穴或火山死亡后",
+          "note": "每次可找马龙恢复 1 件丢失物品"
+        }
+      ],
+      "recommendation": "战斗线优先推进讨伐目标拿戒指；武器过渡可买熔岩武士刀，五彩碎片到手后尽快换银河剑。",
+      "note": "冒险家公会也负责怪物讨伐奖励和死亡后的物品恢复。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Adventurer%27s_Guild",
+        "https://zh.stardewvalleywiki.com/冒险家公会"
+      ]
+    },
+    {
+      "id": "dwarf_shop",
+      "name": "矮人商店",
+      "nameEn": "Dwarf",
+      "aliases": [
+        "矮人",
+        "矮人商店",
+        "dwarf",
+        "矿井矮人",
+        "炸弹在哪里买",
+        "生命药水在哪里买",
+        "大石箱配方",
+        "矮人安全手册"
+      ],
+      "location": "矿井入口右侧的矮人房间",
+      "openHours": "常驻；能与矮人对话后可购买",
+      "unlockCondition": "入口石头需钢镐或炸弹打开；捐赠 4 张矮人卷轴获得矮人语教程后才能交流",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "矮人安全手册",
+          "aliases": [
+            "dwarvish safety manual",
+            "安全手册"
+          ],
+          "price": 4000,
+          "availability": "能与矮人交易后",
+          "note": "读后减少炸弹伤害"
+        },
+        {
+          "name": "大石箱配方",
+          "aliases": [
+            "big stone chest recipe",
+            "大石头箱子配方"
+          ],
+          "price": 5000,
+          "availability": "能与矮人交易后",
+          "note": "解锁大石箱制作"
+        },
+        {
+          "name": "生命药水",
+          "aliases": [
+            "life elixir",
+            "回血药"
+          ],
+          "price": 2000,
+          "availability": "常驻",
+          "note": "下矿救命用，平时可自己做或靠怪物掉落补"
+        },
+        {
+          "name": "蒜油",
+          "aliases": [
+            "oil of garlic",
+            "大蒜油"
+          ],
+          "price": 3000,
+          "availability": "常驻",
+          "note": "降低弱怪骚扰，刷特定怪时慎用"
+        },
+        {
+          "name": "樱桃炸弹",
+          "aliases": [
+            "cherry bomb"
+          ],
+          "price": 450,
+          "availability": "常驻",
+          "note": "小范围开矿"
+        },
+        {
+          "name": "炸弹",
+          "aliases": [
+            "bomb",
+            "普通炸弹"
+          ],
+          "price": 1000,
+          "availability": "常驻",
+          "note": "矿洞常用爆破工具"
+        },
+        {
+          "name": "超级炸弹",
+          "aliases": [
+            "mega bomb",
+            "大炸弹"
+          ],
+          "price": 1600,
+          "availability": "常驻",
+          "note": "骷髅洞穴冲层更常用"
+        },
+        {
+          "name": "矿工特供",
+          "aliases": [
+            "miner's treat",
+            "矿工糖果"
+          ],
+          "price": 1000,
+          "availability": "常驻",
+          "note": "采矿增益和磁力，适合下矿"
+        },
+        {
+          "name": "稀有稻草人 #6",
+          "aliases": [
+            "rarecrow 6",
+            "矮人稻草人"
+          ],
+          "price": 2500,
+          "availability": "常驻",
+          "note": "稀有稻草人收藏项"
+        }
+      ],
+      "recommendation": "能稳定刷矿后炸弹可自己做；急着冲骷髅洞穴时直接买炸弹/超级炸弹能省大量准备时间。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dwarf",
+        "https://zh.stardewvalleywiki.com/矮人"
+      ]
+    },
+    {
+      "id": "oasis",
+      "name": "绿洲",
+      "nameEn": "Oasis",
+      "aliases": [
+        "绿洲",
+        "桑迪",
+        "oasis",
+        "sandy",
+        "杨桃种子",
+        "大黄种子",
+        "甜菜种子",
+        "仙人掌种子",
+        "高级生长激素在哪里买",
+        "豪华生长激素在哪里买"
+      ],
+      "location": "卡利科沙漠",
+      "openHours": "09:00-23:50",
+      "closed": "沙漠节期间关闭；秋季 15 日 13:00 后关闭",
+      "unlockCondition": "修复巴士后可前往沙漠",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "仙人掌种子",
+          "aliases": [
+            "cactus seeds",
+            "仙人掌果子种子"
+          ],
+          "price": 150,
+          "availability": "常驻",
+          "note": "通常只能在室内或姜岛种植"
+        },
+        {
+          "name": "大黄种子",
+          "aliases": [
+            "rhubarb seeds"
+          ],
+          "price": 100,
+          "availability": "常驻",
+          "note": "春季高收益作物之一"
+        },
+        {
+          "name": "杨桃种子",
+          "aliases": [
+            "starfruit seeds",
+            "星果种子"
+          ],
+          "price": 400,
+          "availability": "常驻",
+          "note": "夏季和温室高收益核心作物"
+        },
+        {
+          "name": "甜菜种子",
+          "aliases": [
+            "beet seeds"
+          ],
+          "price": 20,
+          "availability": "常驻",
+          "note": "秋季作物，也用于磨坊制糖"
+        },
+        {
+          "name": "椰子",
+          "aliases": [
+            "coconut"
+          ],
+          "price": 200,
+          "availability": "星期一",
+          "note": "可补礼物、配方和沙漠相关材料"
+        },
+        {
+          "name": "万象晶球",
+          "aliases": [
+            "omni geode",
+            "万象晶球 x3"
+          ],
+          "currency": "500g 购买 3 个",
+          "availability": "星期三",
+          "note": "补博物馆、矿物和古物宝藏兑换"
+        },
+        {
+          "name": "高级生长激素",
+          "aliases": [
+            "deluxe speed-gro",
+            "豪华生长激素"
+          ],
+          "price": 80,
+          "availability": "星期四",
+          "note": "缩短作物生长期，配合杨桃/远古水果规划"
+        },
+        {
+          "name": "蜂蜜",
+          "aliases": [
+            "honey"
+          ],
+          "price": 200,
+          "availability": "星期五",
+          "note": "料理、送礼和工匠物品补漏"
+        }
+      ],
+      "recommendation": "解锁沙漠后，杨桃种子是夏季/温室高收益主线；星期四的高级生长激素也很适合高价值作物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Oasis",
+        "https://zh.stardewvalleywiki.com/绿洲"
+      ]
+    },
+    {
+      "id": "island_trader",
+      "name": "姜岛商人",
+      "nameEn": "Island Trader",
+      "aliases": [
+        "姜岛商人",
+        "岛屿商人",
+        "island trader",
+        "香蕉树苗",
+        "芒果树苗",
+        "菠萝种子",
+        "芋头块茎",
+        "银河之魂"
+      ],
+      "location": "姜岛北部",
+      "openHours": "常驻",
+      "unlockCondition": "修复姜岛农舍后，花 10 个金核桃解锁",
+      "currency": "以物换物",
+      "stock": [
+        {
+          "name": "农场传送图腾",
+          "aliases": [
+            "warp totem farm",
+            "农场图腾"
+          ],
+          "currency": "芋头 x5",
+          "availability": "常驻",
+          "note": "姜岛回农场的消耗品"
+        },
+        {
+          "name": "芋头块茎",
+          "aliases": [
+            "taro tuber",
+            "芋头种子"
+          ],
+          "currency": "骨头碎片 x2",
+          "availability": "常驻",
+          "note": "姜岛水边种植很方便"
+        },
+        {
+          "name": "菠萝种子",
+          "aliases": [
+            "pineapple seeds"
+          ],
+          "currency": "岩浆菇 x1",
+          "availability": "常驻",
+          "note": "姜岛/温室可循环收获"
+        },
+        {
+          "name": "金椰子",
+          "aliases": [
+            "golden coconut"
+          ],
+          "currency": "椰子 x10",
+          "availability": "敲开过至少 1 个金椰子后",
+          "note": "补姜岛收集和稀有物品"
+        },
+        {
+          "name": "香蕉树苗",
+          "aliases": [
+            "banana sapling",
+            "香蕉树"
+          ],
+          "currency": "龙牙 x5",
+          "availability": "常驻",
+          "note": "姜岛后期重要水果树苗"
+        },
+        {
+          "name": "芒果树苗",
+          "aliases": [
+            "mango sapling",
+            "芒果树"
+          ],
+          "currency": "蚌 x75",
+          "availability": "常驻",
+          "note": "姜岛水果树苗，蚌可从海滩和蟹笼积累"
+        },
+        {
+          "name": "桃花心木种子",
+          "aliases": [
+            "mahogany seed",
+            "硬木树种子"
+          ],
+          "currency": "魟鱼 x1",
+          "availability": "常驻",
+          "note": "补硬木树种植"
+        },
+        {
+          "name": "香蕉布丁配方",
+          "aliases": [
+            "banana pudding recipe",
+            "香蕉布丁"
+          ],
+          "currency": "骨头碎片 x30",
+          "availability": "常驻",
+          "note": "姜岛料理配方"
+        },
+        {
+          "name": "豪华保湿土壤配方",
+          "aliases": [
+            "deluxe retaining soil recipe",
+            "豪华保湿土配方"
+          ],
+          "currency": "火山晶石 x50",
+          "availability": "常驻",
+          "note": "省浇水的高阶土壤配方"
+        },
+        {
+          "name": "银河之魂",
+          "aliases": [
+            "galaxy soul"
+          ],
+          "currency": "放射性锭 x10",
+          "availability": "每季最后一天；完成齐先生危险矿洞相关解锁后",
+          "note": "用于把银河武器锻造成无限武器"
+        }
+      ],
+      "recommendation": "姜岛商人优先换树苗、菠萝种子和豪华保湿土壤配方；银河之魂属于后期武器路线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Island_Trader",
+        "https://zh.stardewvalleywiki.com/姜岛商人"
+      ]
+    },
+    {
+      "id": "qis_walnut_room",
+      "name": "齐先生核桃房",
+      "nameEn": "Qi's Walnut Room",
+      "aliases": [
+        "齐先生核桃房",
+        "齐钻商店",
+        "核桃房",
+        "walnut room",
+        "qi gems",
+        "齐钻",
+        "马笛",
+        "城镇钥匙",
+        "银河之魂"
+      ],
+      "location": "姜岛西部",
+      "openHours": "常驻",
+      "unlockCondition": "找到 100 个金核桃后开放",
+      "currency": "齐钻",
+      "stock": [
+        {
+          "name": "祝尼魔箱",
+          "aliases": [
+            "junimo chest",
+            "祝尼魔宝箱"
+          ],
+          "currency": "首次 30 齐钻得 2 个，之后 15 齐钻/个",
+          "availability": "常驻",
+          "note": "跨地点共享的小型储物网络"
+        },
+        {
+          "name": "马笛",
+          "aliases": [
+            "horse flute",
+            "召唤马"
+          ],
+          "currency": "50 齐钻",
+          "availability": "常驻",
+          "note": "在户外召唤马，跑图质变"
+        },
+        {
+          "name": "皮埃尔遗失的存货清单",
+          "aliases": [
+            "pierre's missing stocklist",
+            "皮埃尔存货清单"
+          ],
+          "currency": "50 齐钻",
+          "availability": "常驻",
+          "note": "让皮埃尔出售更多非当季种子"
+        },
+        {
+          "name": "料斗",
+          "aliases": [
+            "hopper"
+          ],
+          "currency": "10 齐钻",
+          "availability": "常驻",
+          "note": "自动向机器喂入原料"
+        },
+        {
+          "name": "施肥器",
+          "aliases": [
+            "enricher"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "给洒水器加肥料附件"
+        },
+        {
+          "name": "压力喷嘴",
+          "aliases": [
+            "pressure nozzle",
+            "喷嘴"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "扩展洒水器范围，购买时一组 4 个"
+        },
+        {
+          "name": "分解机",
+          "aliases": [
+            "deconstructor",
+            "拆解机"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "拆解已制作物品回收主要材料"
+        },
+        {
+          "name": "城镇钥匙",
+          "aliases": [
+            "key to the town",
+            "钥匙"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "允许更自由进入大多数居民房屋"
+        },
+        {
+          "name": "银河之魂",
+          "aliases": [
+            "galaxy soul"
+          ],
+          "currency": "40 齐钻",
+          "availability": "常驻",
+          "note": "无限武器锻造材料"
+        },
+        {
+          "name": "魔法鱼饵",
+          "aliases": [
+            "magic bait"
+          ],
+          "currency": "5 齐钻购买 20 个",
+          "availability": "常驻",
+          "note": "无视季节、时间和天气钓鱼"
+        },
+        {
+          "name": "齐氏调味料",
+          "aliases": [
+            "qi seasoning",
+            "齐调味料"
+          ],
+          "currency": "10 齐钻购买 10 个",
+          "availability": "常驻",
+          "note": "提升料理品质和效果"
+        },
+        {
+          "name": "重型树液采集器配方",
+          "aliases": [
+            "heavy tapper recipe",
+            "重型采集器配方"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "更快采集树液类产物"
+        },
+        {
+          "name": "超级生长激素配方",
+          "aliases": [
+            "hyper speed-gro recipe",
+            "超级生长肥料配方"
+          ],
+          "currency": "30 齐钻",
+          "availability": "常驻",
+          "note": "高阶加速肥料配方"
+        },
+        {
+          "name": "魔法鱼饵配方",
+          "aliases": [
+            "magic bait recipe"
+          ],
+          "currency": "20 齐钻",
+          "availability": "常驻",
+          "note": "长期钓鱼补图鉴很实用"
+        },
+        {
+          "name": "迷你出货箱",
+          "aliases": [
+            "mini-shipping bin",
+            "迷你出货箱"
+          ],
+          "currency": "60 齐钻",
+          "availability": "常驻",
+          "note": "远离农场主出货箱时更方便"
+        },
+        {
+          "name": "蓝草种子配方",
+          "aliases": [
+            "blue grass starter recipe",
+            "蓝草配方"
+          ],
+          "currency": "40 齐钻",
+          "availability": "1.6 内容，达到条件后可买",
+          "note": "动物路线后期补强"
+        },
+        {
+          "name": "金蛋",
+          "aliases": [
+            "golden egg",
+            "黄金蛋"
+          ],
+          "currency": "100 齐钻",
+          "availability": "达到完美后",
+          "note": "解锁金鸡相关内容"
+        }
+      ],
+      "recommendation": "通常优先马笛、城镇钥匙、压力喷嘴/施肥器；银河之魂、配方和金蛋按后期路线补。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room",
+        "https://zh.stardewvalleywiki.com/齐先生核桃房"
+      ]
+    },
+    {
+      "id": "stardrop_saloon",
+      "name": "星之果实餐吧",
+      "nameEn": "The Stardrop Saloon",
+      "aliases": [
+        "星之果实餐吧",
+        "星之果实酒吧",
+        "酒吧",
+        "格斯",
+        "gus",
+        "saloon",
+        "咖啡在哪里买",
+        "沙拉在哪里买",
+        "披萨在哪里买",
+        "三倍浓缩咖啡配方"
+      ],
+      "location": "鹈鹕镇中心",
+      "openHours": "12:00-00:00",
+      "currency": "gold",
+      "stock": [
+        {
+          "name": "啤酒",
+          "aliases": [
+            "beer"
+          ],
+          "price": 400,
+          "availability": "常驻",
+          "note": "潘姆等居民礼物，也可自己酿"
+        },
+        {
+          "name": "沙拉",
+          "aliases": [
+            "salad"
+          ],
+          "price": 220,
+          "availability": "常驻",
+          "note": "莉亚喜欢，前期送礼方便"
+        },
+        {
+          "name": "面包",
+          "aliases": [
+            "bread"
+          ],
+          "price": 120,
+          "availability": "常驻",
+          "note": "料理材料和补能量"
+        },
+        {
+          "name": "意大利面",
+          "aliases": [
+            "spaghetti"
+          ],
+          "price": 240,
+          "availability": "常驻",
+          "note": "刘易斯喜欢"
+        },
+        {
+          "name": "披萨",
+          "aliases": [
+            "pizza"
+          ],
+          "price": 600,
+          "availability": "常驻",
+          "note": "山姆喜欢，送礼方便但价格偏高"
+        },
+        {
+          "name": "咖啡",
+          "aliases": [
+            "coffee"
+          ],
+          "price": 300,
+          "availability": "常驻",
+          "note": "提供速度增益，前期可直接买，长期建议种咖啡豆或换三倍浓缩咖啡"
+        },
+        {
+          "name": "薯饼配方",
+          "aliases": [
+            "hashbrowns recipe"
+          ],
+          "price": 50,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "煎蛋卷配方",
+          "aliases": [
+            "omelet recipe"
+          ],
+          "price": 100,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "薄煎饼配方",
+          "aliases": [
+            "pancakes recipe"
+          ],
+          "price": 100,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "面包配方",
+          "aliases": [
+            "bread recipe"
+          ],
+          "price": 100,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "玉米饼配方",
+          "aliases": [
+            "tortilla recipe"
+          ],
+          "price": 100,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "披萨配方",
+          "aliases": [
+            "pizza recipe"
+          ],
+          "price": 150,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "寿司卷配方",
+          "aliases": [
+            "maki roll recipe"
+          ],
+          "price": 300,
+          "availability": "常驻",
+          "note": "料理配方"
+        },
+        {
+          "name": "三倍浓缩咖啡配方",
+          "aliases": [
+            "triple shot espresso recipe",
+            "三倍咖啡配方"
+          ],
+          "price": 5000,
+          "availability": "常驻",
+          "note": "速度流核心饮料配方"
+        }
+      ],
+      "recommendation": "前期咖啡和常用送礼食物很方便；长期速度流建议学三倍浓缩咖啡配方或去沙漠商人换成品。",
+      "note": "格斯在柜台后或留下钱箱时均可购买。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/The_Stardrop_Saloon",
+        "https://zh.stardewvalleywiki.com/星之果实餐吧"
+      ]
     }
   ],
   "villagers": [

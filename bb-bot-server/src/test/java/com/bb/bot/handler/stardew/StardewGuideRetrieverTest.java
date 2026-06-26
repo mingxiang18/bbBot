@@ -304,6 +304,29 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedShopIntentRetrievesCommonMerchantEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.SHOP, "熔岩武士刀在哪里买"),
+                intent(StardewGuideIntent.SHOP, "香蕉树苗怎么换"),
+                intent(StardewGuideIntent.SHOP, "马笛在哪里买"),
+                intent(StardewGuideIntent.SHOP, "咖啡在哪里买")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("星露谷 熔岩武士刀、香蕉树苗、马笛和咖啡在哪里弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.SHOP);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("shop_item");
+        assertThat(joinAnswers(evidence))
+                .contains("冒险家公会", "熔岩武士刀", "25,000g")
+                .contains("姜岛商人", "香蕉树苗", "龙牙 x5")
+                .contains("齐先生核桃房", "马笛", "50 齐钻")
+                .contains("星之果实餐吧", "咖啡", "300g")
+                .doesNotContain("夏季鱼类", "工具升级", "建筑材料", "果树怎么种");
+    }
+
+    @Test
     void typedGuideIntentRetrievesFoodBuffRulesEvidence() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.GUIDE, "料理buff和饮料buff怎么叠加"));
 

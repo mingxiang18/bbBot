@@ -98,6 +98,9 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
         }
+        if (looksLikeShopNameQuery(q) && containsAny(q, "几点", "营业", "开门", "关门", "卖什么", "买", "购买", "兑换", "换什么", "在哪里买")) {
+            return StardewGuideIntent.SHOP;
+        }
         if (containsAny(q, "在哪", "位置", "日程", "行程", "几点")
                 && !containsAny(q, "哪里买", "在哪里买", "怎么获得", "哪里刷", "在哪刷")) {
             return StardewGuideIntent.VILLAGER_SCHEDULE;
@@ -172,6 +175,15 @@ public class StardewQueryPlannerService {
                 "伍迪的秘密", "浣熊日志", "神秘之书", "友谊 101", "宝物鉴定指南",
                 "Book Of Stars", "Price Catalogue", "Way Of The Wind", "Horse: The Book",
                 "Queen Of Sauce Cookbook");
+    }
+
+    private boolean looksLikeShopNameQuery(String query) {
+        return containsAny(query,
+                "皮埃尔", "杂货店", "铁匠", "克林特", "罗宾", "木匠", "玛妮", "威利",
+                "鱼店", "科罗布斯", "旅行货车", "货车", "沙漠商人", "书商",
+                "冒险家公会", "公会", "矮人商店", "矮人", "绿洲", "桑迪",
+                "姜岛商人", "岛屿商人", "齐先生核桃房", "齐钻商店", "核桃房",
+                "星之果实餐吧", "星之果实酒吧", "酒吧", "格斯");
     }
 
     private boolean looksLikeCookingFoodQuery(String query) {
