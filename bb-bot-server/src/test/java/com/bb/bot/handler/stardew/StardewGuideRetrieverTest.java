@@ -199,6 +199,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedMonsterDropIntentRetrievesMonsterTableWithoutResourceCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MONSTER_DROP, "煤尘精灵掉什么"),
+                intent(StardewGuideIntent.MONSTER_DROP, "飞蛇在哪刷"),
+                intent(StardewGuideIntent.RESOURCE, "虚空精华哪里刷")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("煤尘精灵和飞蛇掉什么，虚空精华哪里刷", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.MONSTER_DROP, StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("monster_drop", "resource");
+        assertThat(joinAnswers(evidence))
+                .contains("煤尘精灵掉落表", "煤炭 (50%)")
+                .contains("飞蛇掉落表", "骷髅洞穴", "兔子的脚")
+                .contains("虚空精华获取方式", "科罗布斯")
+                .doesNotContain("怪物图鉴：");
+    }
+
+    @Test
     void typedResourceIntentRetrievesSpecificMineralsWithoutMuseumGuideCrossRouting() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.RESOURCE, "黄水晶哪里找"),

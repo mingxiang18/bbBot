@@ -60,6 +60,7 @@ public class StardewGuideService {
         Optional<StardewData.Shop> shop = repository.findShop(query);
         Optional<ShopStockMatch> shopItem = findShopStock(query);
         Optional<StardewData.ResourceGuide> resource = repository.findResource(query);
+        Optional<StardewData.MonsterDropGuide> monsterDrop = repository.findMonsterDrop(query);
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
@@ -103,6 +104,9 @@ public class StardewGuideService {
                 && !isFishingQuestion(query)
                 && (!isMachineCraftingQuestion(query, machine) || shouldPreferResourceOverMachine(query, resource.get(), machine))) {
             return resourceAnswer(query, resource.get());
+        }
+        if (monsterDrop.isPresent() && looksLikeMonsterDropQuery(query)) {
+            return monsterDropAnswer(monsterDrop.get());
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -189,6 +193,7 @@ public class StardewGuideService {
             case VILLAGER_SCHEDULE -> typedVillagerScheduleAnswer(query);
             case VILLAGER_PROFILE -> typedVillagerProfileAnswer(query);
             case RESOURCE -> typedResourceAnswer(query);
+            case MONSTER_DROP -> typedMonsterDropAnswer(query);
             case ANIMAL_CARE, FRUIT_TREE, SKILL, MUSEUM, GUIDE -> typedGuideAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
@@ -230,6 +235,12 @@ public class StardewGuideService {
         return repository.findResource(query)
                 .map(resource -> resourceAnswer(query, resource))
                 .orElseGet(() -> wikiFallbackAnswer(query, "没找到这个资源。可以试试：硬木、电池组、铱矿石、五彩碎片、上古种子。"));
+    }
+
+    private StardewGuideResult typedMonsterDropAnswer(String query) {
+        return repository.findMonsterDrop(query)
+                .map(this::monsterDropAnswer)
+                .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应怪物掉落。可以试试：煤尘精灵掉什么、飞蛇掉什么、熔岩潜伏怪掉什么。"));
     }
 
     private StardewGuideResult typedGuideAnswer(String query) {
@@ -837,6 +848,30 @@ public class StardewGuideService {
         return result("resource", sb.toString().trim(), r.getSourceUrls());
     }
 
+    private StardewGuideResult monsterDropAnswer(StardewData.MonsterDropGuide monster) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(monster.getName()).append("掉落表：\n");
+        if (monster.getLocations() != null && !monster.getLocations().isEmpty()) {
+            sb.append("出现地点：").append(String.join("、", monster.getLocations())).append("\n");
+        }
+        if (StringUtils.isNotBlank(monster.getFloors())) {
+            sb.append("楼层/条件：").append(monster.getFloors()).append("\n");
+        }
+        if (StringUtils.isNotBlank(monster.getXp())) {
+            sb.append("战斗经验：").append(monster.getXp()).append("\n");
+        }
+        if (monster.getDrops() != null && !monster.getDrops().isEmpty()) {
+            sb.append("掉落：\n");
+            for (String drop : monster.getDrops()) {
+                sb.append("- ").append(drop).append("\n");
+            }
+        }
+        if (StringUtils.isNotBlank(monster.getRecommendation())) {
+            sb.append("建议：").append(monster.getRecommendation()).append("\n");
+        }
+        return result("monster_drop", sb.toString().trim(), monster.getSourceUrls());
+    }
+
     private StardewGuideResult cookingRecipeAnswer(StardewData.CookingRecipe recipe) {
         StringBuilder sb = new StringBuilder();
         sb.append(recipe.getName()).append("：\n")
@@ -1355,6 +1390,11 @@ public class StardewGuideService {
     private boolean looksLikeResourceQuery(String query) {
         return query.contains("怎么") || query.contains("获取") || query.contains("获得")
                 || query.contains("哪里") || query.contains("刷") || query.contains("来源");
+    }
+
+    private boolean looksLikeMonsterDropQuery(String query) {
+        return query.contains("掉什么") || query.contains("掉落表") || query.contains("掉落")
+                || query.contains("战利品") || query.contains("在哪刷") || query.contains("哪里刷");
     }
 
     private boolean isFishingQuestion(String query) {

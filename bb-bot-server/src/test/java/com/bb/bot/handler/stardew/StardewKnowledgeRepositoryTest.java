@@ -31,6 +31,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(161);
+        assertThat(repository.monsterDrops()).hasSizeGreaterThanOrEqualTo(58);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
@@ -818,6 +819,50 @@ class StardewKnowledgeRepositoryTest {
                 "bug_meat",
                 "bone_fragment"
         );
+    }
+
+    @Test
+    void fullMonsterDropTableIsCovered() {
+        Set<String> monsterIds = repository.monsterDrops().stream()
+                .map(StardewData.MonsterDropGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.monsterDrops()).hasSize(58);
+        assertThat(monsterIds).contains(
+                "monster_dust_sprite",
+                "monster_serpent",
+                "monster_royal_serpent",
+                "monster_lava_lurk",
+                "monster_pepper_rex",
+                "monster_blue_squid",
+                "monster_shadow_brute",
+                "monster_skeleton",
+                "monster_slimes",
+                "monster_bats",
+                "monster_wilderness_golem"
+        );
+        assertThat(repository.findMonsterDrop("煤尘精灵掉什么")).hasValueSatisfying(monster ->
+                assertThat(monster.getDrops()).contains("煤炭 (50%)"));
+        assertThat(repository.findMonsterDrop("飞蛇在哪刷")).hasValueSatisfying(monster -> {
+            assertThat(monster.getName()).isEqualTo("飞蛇");
+            assertThat(monster.getLocations()).contains("骷髅洞穴");
+        });
+        assertThat(repository.findMonsterDrop("熔岩潜伏怪掉落")).hasValueSatisfying(monster ->
+                assertThat(monster.getDrops()).contains("龙牙 (15%)"));
+    }
+
+    @Test
+    void allMonsterDropGuidesHaveCoreFieldsAndSources() {
+        assertThat(repository.monsterDrops())
+                .allSatisfy(monster -> {
+                    assertThat(monster.getId()).isNotBlank();
+                    assertThat(monster.getName()).isNotBlank();
+                    assertThat(monster.getAliases()).isNotEmpty();
+                    assertThat(monster.getLocations()).isNotEmpty();
+                    assertThat(monster.getDrops()).isNotEmpty();
+                    assertThat(monster.getRecommendation()).isNotBlank();
+                    assertThat(monster.getSourceUrls()).isNotEmpty();
+                });
     }
 
     @Test

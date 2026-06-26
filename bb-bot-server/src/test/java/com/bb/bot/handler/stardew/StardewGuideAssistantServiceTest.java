@@ -60,7 +60,7 @@ class StardewGuideAssistantServiceTest {
         verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.CHAT));
         String plannerPrompt = textOf(promptCaptor.getAllValues().get(0).get(0));
         String synthesisPrompt = textOf(promptCaptor.getAllValues().get(1).get(1));
-        assertThat(plannerPrompt).contains("type 只能从这些枚举中选择", "RESOURCE", "BUNDLE");
+        assertThat(plannerPrompt).contains("type 只能从这些枚举中选择", "RESOURCE", "BUNDLE", "MONSTER_DROP");
         assertThat(synthesisPrompt)
                 .contains("用户问题", "检索到的资料")
                 .contains("类型：RESOURCE", "查询：恐龙蛋怎么获得", "恐龙蛋获取方式")

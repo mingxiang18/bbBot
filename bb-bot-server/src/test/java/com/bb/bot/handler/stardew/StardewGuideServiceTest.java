@@ -291,6 +291,27 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersMonsterDropTableWithoutCrossRoutingToResourceOrBookGuides() {
+        StardewGuideResult dustSprite = service.answerEvidence(StardewGuideIntent.MONSTER_DROP, "煤尘精灵掉什么");
+        StardewGuideResult serpent = service.answerEvidence(StardewGuideIntent.MONSTER_DROP, "飞蛇在哪刷");
+        StardewGuideResult lavaLurk = service.answerEvidence(StardewGuideIntent.MONSTER_DROP, "熔岩潜伏怪掉落");
+        StardewGuideResult monsterCompendium = service.answerEvidence(StardewGuideIntent.GUIDE, "怪物图鉴有什么用");
+        StardewGuideResult voidEssence = service.answerEvidence(StardewGuideIntent.RESOURCE, "虚空精华哪里刷");
+
+        assertThat(dustSprite.getIntent()).isEqualTo("monster_drop");
+        assertThat(dustSprite.getAnswer()).contains("煤尘精灵掉落表", "矿井", "41-79", "煤炭 (50%)");
+        assertThat(dustSprite.getAnswer()).doesNotContain("煤炭获取方式");
+        assertThat(serpent.getIntent()).isEqualTo("monster_drop");
+        assertThat(serpent.getAnswer()).contains("飞蛇掉落表", "骷髅洞穴", "虚空精华 (99%)", "兔子的脚");
+        assertThat(lavaLurk.getIntent()).isEqualTo("monster_drop");
+        assertThat(lavaLurk.getAnswer()).contains("熔岩潜伏怪掉落表", "火山地牢", "龙牙 (15%)");
+        assertThat(monsterCompendium.getIntent()).isEqualTo("book_detail");
+        assertThat(monsterCompendium.getAnswer()).contains("怪物图鉴", "双倍战利品");
+        assertThat(voidEssence.getIntent()).isEqualTo("resource");
+        assertThat(voidEssence.getAnswer()).contains("虚空精华获取方式", "科罗布斯", "飞蛇");
+    }
+
+    @Test
     void answersRareItemResourceGuides() {
         StardewGuideResult dinosaurEgg = service.answer("星露谷 恐龙蛋怎么获得");
         StardewGuideResult dinosaurMayonnaise = service.answer("星露谷 恐龙蛋黄酱怎么做");

@@ -77,6 +77,23 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesMonsterDropQueriesSeparatelyFromResourceQueries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan dustSprite = planner.plan("煤尘精灵掉什么");
+        StardewQueryPlan serpent = planner.plan("飞蛇在哪刷");
+        StardewQueryPlan voidEssence = planner.plan("虚空精华哪里刷");
+        StardewQueryPlan monsterCompendium = planner.plan("怪物图鉴有什么用");
+
+        assertThat(dustSprite.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MONSTER_DROP);
+        assertThat(serpent.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.MONSTER_DROP);
+        assertThat(voidEssence.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(monsterCompendium.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GUIDE);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

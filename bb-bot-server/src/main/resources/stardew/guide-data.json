@@ -26242,5 +26242,2044 @@
         "https://stardewvalleywiki.com/Moss_Soup"
       ]
     }
+  ],
+  "monsterDrops": [
+    {
+      "id": "monster_armored_bug",
+      "name": "装甲虫",
+      "nameEn": "Armored Bug",
+      "aliases": [
+        "armored bug",
+        "Armored Bug",
+        "装甲虫",
+        "装甲虫掉什么",
+        "装甲虫掉落",
+        "装甲虫在哪刷",
+        "装甲虫哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "全部",
+      "xp": "1",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (76%)",
+        "虫排 (10%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Armored_Bug"
+      ]
+    },
+    {
+      "id": "monster_armored_bug_dangerous",
+      "name": "装甲虫（危险）",
+      "nameEn": "Armored Bug (dangerous)",
+      "aliases": [
+        "armored bug (dangerous)",
+        "Armored Bug (dangerous)",
+        "装甲虫（危险）",
+        "装甲虫",
+        "装甲虫（危险）掉什么",
+        "装甲虫（危险）掉落",
+        "装甲虫（危险）在哪刷",
+        "装甲虫（危险）哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "全部",
+      "xp": "1",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (76%)",
+        "虫排 (10%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Armored_Bug_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_bats",
+      "name": "蝙蝠（各变种）",
+      "nameEn": "Bats",
+      "aliases": [
+        "bats",
+        "Bats",
+        "蝙蝠（各变种）",
+        "蝙蝠",
+        "普通蝙蝠",
+        "冰霜蝙蝠",
+        "熔岩蝙蝠",
+        "铱蝠",
+        "蝙蝠（各变种）掉什么",
+        "蝙蝠（各变种）掉落",
+        "蝙蝠（各变种）在哪刷",
+        "蝙蝠（各变种）哪里刷"
+      ],
+      "locations": [
+        "矿井",
+        "骷髅洞穴"
+      ],
+      "floors": "见变种表",
+      "xp": "随蝙蝠变种变化",
+      "drops": [
+        "普通蝙蝠、冰霜蝙蝠、熔岩蝙蝠：主要用于刷蝙蝠翅膀。",
+        "铱蝠：骷髅洞穴后期变种，偏向太阳精华、铱矿石、铱锭、电池组等后期掉落。",
+        "矿井到底后：多数矿井怪物额外有极低概率掉落钻石或五彩碎片。"
+      ],
+      "recommendation": "蝙蝠翅膀主要刷矿井蝙蝠层；铱蝠偏后期，掉落重点不是蝙蝠翅膀。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bats"
+      ]
+    },
+    {
+      "id": "monster_blue_squid",
+      "name": "蓝鱿鱼",
+      "nameEn": "Blue Squid",
+      "aliases": [
+        "blue squid",
+        "Blue Squid",
+        "蓝鱿鱼",
+        "蓝色鱿鱼",
+        "蓝鱿鱼掉什么",
+        "蓝鱿鱼掉落",
+        "蓝鱿鱼在哪刷",
+        "蓝鱿鱼哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "11-29",
+      "xp": "15",
+      "drops": [
+        "炸弹 (10%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (5%)",
+        "超级炸弹 (5%)",
+        "太阳精华 (75%)",
+        "鱿鱼墨汁 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "想补鱿鱼墨汁和太阳精华时可刷鱿鱼娃/蓝鱿鱼；远程攻击注意走位。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Blue_Squid"
+      ]
+    },
+    {
+      "id": "monster_bug",
+      "name": "臭虫",
+      "nameEn": "Bug",
+      "aliases": [
+        "bug",
+        "Bug",
+        "臭虫",
+        "臭虫掉什么",
+        "臭虫掉落",
+        "臭虫在哪刷",
+        "臭虫哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "1-39",
+      "xp": "1",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (76%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bug"
+      ]
+    },
+    {
+      "id": "monster_bug_dangerous",
+      "name": "臭虫（危险）",
+      "nameEn": "Bug (dangerous)",
+      "aliases": [
+        "bug (dangerous)",
+        "Bug (dangerous)",
+        "臭虫（危险）",
+        "臭虫",
+        "臭虫（危险）掉什么",
+        "臭虫（危险）掉落",
+        "臭虫（危险）在哪刷",
+        "臭虫（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "1-39",
+      "xp": "1",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (76%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Bug_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_carbon_ghost",
+      "name": "碳幽灵",
+      "nameEn": "Carbon Ghost",
+      "aliases": [
+        "carbon ghost",
+        "Carbon Ghost",
+        "碳幽灵",
+        "碳幽灵掉什么",
+        "碳幽灵掉落",
+        "碳幽灵在哪刷",
+        "碳幽灵哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴",
+        "危险矿井"
+      ],
+      "floors": "骷髅洞穴木乃伊层；危险矿井 31-39 层",
+      "xp": "20",
+      "drops": [
+        "万象晶球 (99%)",
+        "精炼石英 (10%)",
+        "接取“奇特物质”任务时： 灵外质 (9.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "灵外质任务期间优先刷幽灵类；平时刷太阳精华/万象晶球可顺路处理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Carbon_Ghost"
+      ]
+    },
+    {
+      "id": "monster_cave_fly",
+      "name": "洞穴蝇",
+      "nameEn": "Cave Fly",
+      "aliases": [
+        "cave fly",
+        "Cave Fly",
+        "洞穴蝇",
+        "洞穴蝇掉什么",
+        "洞穴蝇掉落",
+        "洞穴蝇在哪刷",
+        "洞穴蝇哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "11-29",
+      "xp": "10",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (90%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cave_Fly"
+      ]
+    },
+    {
+      "id": "monster_cave_fly_dangerous",
+      "name": "洞穴蝇（危险）",
+      "nameEn": "Cave Fly (dangerous)",
+      "aliases": [
+        "cave fly (dangerous)",
+        "Cave Fly (dangerous)",
+        "洞穴蝇（危险）",
+        "洞穴蝇",
+        "洞穴蝇（危险）掉什么",
+        "洞穴蝇（危险）掉落",
+        "洞穴蝇（危险）在哪刷",
+        "洞穴蝇（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "41-69",
+      "xp": "10",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (90%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cave_Fly_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_duggy",
+      "name": "掘地虫",
+      "nameEn": "Duggy",
+      "aliases": [
+        "duggy",
+        "Duggy",
+        "掘地虫",
+        "地鼠",
+        "掘地虫掉什么",
+        "掘地虫掉落",
+        "掘地虫在哪刷",
+        "掘地虫哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "2-29",
+      "xp": "10",
+      "drops": [
+        "樱桃炸弹 (25%)",
+        "咀嚼洁齿棒 (2%)",
+        "钻石 (1%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "地晶 (10%)",
+        "晶球 (25%)",
+        "山药 (3%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Duggy"
+      ]
+    },
+    {
+      "id": "monster_duggy_dangerous",
+      "name": "掘地虫（危险）",
+      "nameEn": "Duggy (dangerous)",
+      "aliases": [
+        "duggy (dangerous)",
+        "Duggy (dangerous)",
+        "掘地虫（危险）",
+        "掘地虫",
+        "掘地虫（危险）掉什么",
+        "掘地虫（危险）掉落",
+        "掘地虫（危险）在哪刷",
+        "掘地虫（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "1-29",
+      "xp": "10",
+      "drops": [
+        "樱桃炸弹 (25%)",
+        "咀嚼洁齿棒 (2%)",
+        "钻石 (1%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "地晶 (10%)",
+        "晶球 (25%)",
+        "山药 (3%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Duggy_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_dust_sprite",
+      "name": "煤尘精灵",
+      "nameEn": "Dust Sprite",
+      "aliases": [
+        "dust sprite",
+        "Dust Sprite",
+        "煤尘精灵",
+        "灰尘精灵",
+        "煤球怪",
+        "煤尘精灵刷煤",
+        "煤尘精灵掉什么",
+        "煤尘精灵掉落",
+        "煤尘精灵在哪刷",
+        "煤尘精灵哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "41-79",
+      "xp": "2",
+      "drops": [
+        "煤炭 (50%)",
+        "咖啡豆 (1%)",
+        "水晶果 (2%)",
+        "矮人卷轴 II (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "冰泪晶 (2%)",
+        "金锭 (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "缺煤炭优先刷矿井 41-79 层煤尘精灵；怪物香水、窃贼戒指和电梯循环能明显提高效率。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dust_Sprite"
+      ]
+    },
+    {
+      "id": "monster_dust_sprite_dangerous",
+      "name": "煤尘精灵（危险）",
+      "nameEn": "Dust Sprite (dangerous)",
+      "aliases": [
+        "dust sprite (dangerous)",
+        "Dust Sprite (dangerous)",
+        "煤尘精灵（危险）",
+        "煤尘精灵",
+        "煤尘精灵（危险）掉什么",
+        "煤尘精灵（危险）掉落",
+        "煤尘精灵（危险）在哪刷",
+        "煤尘精灵（危险）哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "41-69",
+      "xp": "2",
+      "drops": [
+        "煤炭 (50%)",
+        "咖啡豆 (1%)",
+        "水晶果 (2%)",
+        "冰泪晶 (2%)",
+        "矮人卷轴 II (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "缺煤炭优先刷矿井 41-79 层煤尘精灵；怪物香水、窃贼戒指和电梯循环能明显提高效率。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dust_Sprite_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_dwarvish_sentry",
+      "name": "矮人哨兵",
+      "nameEn": "Dwarvish Sentry",
+      "aliases": [
+        "dwarvish sentry",
+        "Dwarvish Sentry",
+        "矮人哨兵",
+        "矮人哨兵掉什么",
+        "矮人哨兵掉落",
+        "矮人哨兵在哪刷",
+        "矮人哨兵哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "15",
+      "drops": [
+        "紫水晶 (10%)",
+        "海蓝宝石 (10%)",
+        "钻石 (10%)",
+        "绿宝石 (10%)",
+        "翡翠 (10%)",
+        "红宝石 (10%)",
+        "黄水晶 (10%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Dwarvish_Sentry"
+      ]
+    },
+    {
+      "id": "monster_false_magma_cap",
+      "name": "假岩浆菇",
+      "nameEn": "False Magma Cap",
+      "aliases": [
+        "false magma cap",
+        "False Magma Cap",
+        "假岩浆菇",
+        "假岩浆菇掉什么",
+        "假岩浆菇掉落",
+        "假岩浆菇在哪刷",
+        "假岩浆菇哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "14",
+      "drops": [
+        "火山晶石 (50%)",
+        "火山晶石 (20%)",
+        "岩浆菇 (99%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/False_Magma_Cap"
+      ]
+    },
+    {
+      "id": "monster_ghost",
+      "name": "幽灵",
+      "nameEn": "Ghost",
+      "aliases": [
+        "ghost",
+        "Ghost",
+        "幽灵",
+        "幽灵掉什么",
+        "幽灵掉落",
+        "幽灵在哪刷",
+        "幽灵哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "51-79",
+      "xp": "15",
+      "drops": [
+        "矮人卷轴 II (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "鬼鱼 (8%)",
+        "金矿石 (1-3, 20%)",
+        "精炼石英 (8%)",
+        "太阳精华 (95%)",
+        "太阳精华 (10%)",
+        "接取“奇特物质”任务时： 灵外质 (9.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "灵外质任务期间优先刷幽灵类；平时刷太阳精华/万象晶球可顺路处理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ghost"
+      ]
+    },
+    {
+      "id": "monster_grub",
+      "name": "蛆",
+      "nameEn": "Grub",
+      "aliases": [
+        "grub",
+        "Grub",
+        "蛆",
+        "蛆掉什么",
+        "蛆掉落",
+        "蛆在哪刷",
+        "蛆哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "15-29",
+      "xp": "2",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (60%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "稻苗 (10% (5%+5%))",
+        "鱼饵和浮标 (??%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Grub"
+      ]
+    },
+    {
+      "id": "monster_grub_dangerous",
+      "name": "蛆（危险）",
+      "nameEn": "Grub (dangerous)",
+      "aliases": [
+        "grub (dangerous)",
+        "Grub (dangerous)",
+        "蛆（危险）",
+        "蛆",
+        "蛆（危险）掉什么",
+        "蛆（危险）掉落",
+        "蛆（危险）在哪刷",
+        "蛆（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "41-69",
+      "xp": "2",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (60%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "稻苗 (10%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Grub_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_haunted_skull",
+      "name": "闹鬼骷髅",
+      "nameEn": "Haunted Skull",
+      "aliases": [
+        "haunted skull",
+        "Haunted Skull",
+        "闹鬼骷髅",
+        "飞头骷髅",
+        "闹鬼骷髅掉什么",
+        "闹鬼骷髅掉落",
+        "闹鬼骷髅在哪刷",
+        "闹鬼骷髅哪里刷"
+      ],
+      "locations": [
+        "采石场矿井",
+        "矿井随机地牢层"
+      ],
+      "floors": "全部",
+      "xp": "15",
+      "drops": [
+        "海蓝宝石戒指 (1.3%)",
+        "黑暗剑 (1.3%)",
+        "地晶 (1.3%)",
+        "魔法糖冰棍 (0.13%)",
+        "超级炸弹 (1.3%)",
+        "橡树树脂 (1.3%)",
+        "史前头骨 (1.3%)",
+        "红宝石戒指 (1.3%)",
+        "手部骨骼 (1.3%)",
+        "太阳精华 (1.3%)",
+        "虚空精华 (1.3%)Gray Baggy Pants (0.22%)",
+        "Dark Bandana Shirt (0.22%)",
+        "Dark Highlight Shirt (0.22%)Gray Relaxed Fit Pants (0.22%)",
+        "Skeleton Shirt (0.22%)",
+        "Skull Shirt (0.22%)",
+        "Cursed Mannequin (M)",
+        "(0.43%)",
+        "Cursed Mannequin (F)",
+        "(0.43%)",
+        "仅冬季： 稻苗 (21.43%)",
+        "完成金库收集包后： 古物宝藏 (1.3%)",
+        "未完成金库收集包时： 万象晶球 (1.3%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Haunted_Skull"
+      ]
+    },
+    {
+      "id": "monster_haunted_skull_dangerous",
+      "name": "闹鬼骷髅（危险）",
+      "nameEn": "Haunted Skull (dangerous)",
+      "aliases": [
+        "haunted skull (dangerous)",
+        "Haunted Skull (dangerous)",
+        "闹鬼骷髅（危险）",
+        "闹鬼骷髅",
+        "闹鬼骷髅（危险）掉什么",
+        "闹鬼骷髅（危险）掉落",
+        "闹鬼骷髅（危险）在哪刷",
+        "闹鬼骷髅（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "71-79 and on dungeon floors",
+      "xp": "15",
+      "drops": [
+        "海蓝宝石戒指 (1.3%)",
+        "古物宝藏 (1.3%)",
+        "炸弹 (2%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "超级炸弹 (1.3%)",
+        "稀有圆盘 (0.1%)",
+        "红宝石戒指 (1.3%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Haunted_Skull_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_hot_head",
+      "name": "火焰头",
+      "nameEn": "Hot Head",
+      "aliases": [
+        "hot head",
+        "Hot Head",
+        "火焰头",
+        "热头",
+        "火焰头掉什么",
+        "火焰头掉落",
+        "火焰头在哪刷",
+        "火焰头哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "16",
+      "drops": [
+        "炸弹 (10%)",
+        "煤炭 (10%)",
+        "铜矿石 (10%)",
+        "铜矿石 (10%)",
+        "矮人卷轴 III (0.05%)",
+        "矮人卷轴 IV (0.01%)",
+        "铁矿石 (10%)",
+        "铁矿石 (10%)",
+        "菠萝种子 (10%)",
+        "菠萝种子 (10%)",
+        "太阳精华 (65%)",
+        "侍从头盔",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Hot_Head"
+      ]
+    },
+    {
+      "id": "monster_iridium_crab",
+      "name": "铱蟹",
+      "nameEn": "Iridium Crab",
+      "aliases": [
+        "iridium crab",
+        "Iridium Crab",
+        "铱蟹",
+        "铱蟹掉什么",
+        "铱蟹掉落",
+        "铱蟹在哪刷",
+        "铱蟹哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "26+",
+      "xp": "20",
+      "drops": [
+        "蟹黄糕 (50%)",
+        "铱矿石 (50%)",
+        "铱矿石 (50%)",
+        "铱矿石 (50%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Iridium_Crab"
+      ]
+    },
+    {
+      "id": "monster_iridium_golem",
+      "name": "铱石魔",
+      "nameEn": "Iridium Golem",
+      "aliases": [
+        "iridium golem",
+        "Iridium Golem",
+        "铱石魔",
+        "铱石魔掉什么",
+        "铱石魔掉落",
+        "铱石魔在哪刷",
+        "铱石魔哪里刷"
+      ],
+      "locations": [
+        "荒野农场"
+      ],
+      "floors": "不适用",
+      "xp": "15",
+      "drops": [
+        "鱼饵和浮标 (0.2%)",
+        "西兰花种子 (50%, 见备注)",
+        "胡萝卜种子 (50%, 见备注)",
+        "煤炭 (10%)",
+        "战斗季刊 (0.2%)",
+        "钻石 (0.1%)",
+        "地晶 (0.5%)",
+        "纤维 (90%)",
+        "纤维 (50%)",
+        "铱锭 (3%, 判定两次)",
+        "铱环 (0.1%)",
+        "铱矿石 (20%)",
+        "生命帽 (0.02%)",
+        "采矿月刊 (0.2%)",
+        "混合种子 (50%)",
+        "混合种子 (20%)",
+        "万象晶球 (5%)",
+        "粉瓜种子 (50%, 见备注)",
+        "星露谷年鉴 (0.2%)",
+        "西葫芦种子 (50%, 见备注)",
+        "樵夫周刊 (0.2%)",
+        "战斗 10 级后： 铱矿石 (1%)",
+        "铱矿石 (1%)",
+        "五彩碎片 (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Iridium_Golem"
+      ]
+    },
+    {
+      "id": "monster_lava_crab",
+      "name": "熔岩蟹",
+      "nameEn": "Lava Crab",
+      "aliases": [
+        "lava crab",
+        "Lava Crab",
+        "熔岩蟹",
+        "熔岩蟹掉什么",
+        "熔岩蟹掉落",
+        "熔岩蟹在哪刷",
+        "熔岩蟹哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "81-119",
+      "xp": "12",
+      "drops": [
+        "炸弹 (40%)",
+        "螃蟹 (25%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lava_Crab"
+      ]
+    },
+    {
+      "id": "monster_lava_crab_dangerous",
+      "name": "熔岩蟹（危险）",
+      "nameEn": "Lava Crab (dangerous)",
+      "aliases": [
+        "lava crab (dangerous)",
+        "Lava Crab (dangerous)",
+        "熔岩蟹（危险）",
+        "熔岩蟹",
+        "熔岩蟹（危险）掉什么",
+        "熔岩蟹（危险）掉落",
+        "熔岩蟹（危险）在哪刷",
+        "熔岩蟹（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "81-119",
+      "xp": "12",
+      "drops": [
+        "炸弹 (40%)",
+        "螃蟹 (25%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lava_Crab_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_lava_lurk",
+      "name": "熔岩潜伏怪",
+      "nameEn": "Lava Lurk",
+      "aliases": [
+        "lava lurk",
+        "Lava Lurk",
+        "熔岩潜伏怪",
+        "岩浆潜伏怪",
+        "龙牙怪",
+        "熔岩潜伏怪掉什么",
+        "熔岩潜伏怪掉落",
+        "熔岩潜伏怪在哪刷",
+        "熔岩潜伏怪哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "12",
+      "drops": [
+        "骨头碎片 (50%)",
+        "骨头碎片 (40%)",
+        "骨头碎片 (20%)",
+        "龙牙 (15%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "刷龙牙时优先在火山地牢找熔岩潜伏怪；站位别太贴熔岩边，先清威胁再捡掉落。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Lava_Lurk"
+      ]
+    },
+    {
+      "id": "monster_magma_duggy",
+      "name": "熔岩掘地虫",
+      "nameEn": "Magma Duggy",
+      "aliases": [
+        "magma duggy",
+        "Magma Duggy",
+        "熔岩掘地虫",
+        "熔岩掘地虫掉什么",
+        "熔岩掘地虫掉落",
+        "熔岩掘地虫在哪刷",
+        "熔岩掘地虫哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "",
+      "xp": "18",
+      "drops": [
+        "火山晶石 (40%)",
+        "火山晶石 (15%)",
+        "超级炸弹 (40%)",
+        "芋头块茎 (50%)",
+        "芋头块茎 (50%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Magma_Duggy"
+      ]
+    },
+    {
+      "id": "monster_magma_sparker",
+      "name": "熔岩火球",
+      "nameEn": "Magma Sparker",
+      "aliases": [
+        "magma sparker",
+        "Magma Sparker",
+        "熔岩火球",
+        "岩浆火球",
+        "熔岩火球掉什么",
+        "熔岩火球掉落",
+        "熔岩火球在哪刷",
+        "熔岩火球哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "6-9",
+      "xp": "17",
+      "drops": [
+        "火山晶石 (50%)",
+        "火山晶石 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Magma_Sparker"
+      ]
+    },
+    {
+      "id": "monster_magma_sprite",
+      "name": "熔岩精灵",
+      "nameEn": "Magma Sprite",
+      "aliases": [
+        "magma sprite",
+        "Magma Sprite",
+        "熔岩精灵",
+        "岩浆精灵",
+        "熔岩精灵掉什么",
+        "熔岩精灵掉落",
+        "熔岩精灵在哪刷",
+        "熔岩精灵哪里刷"
+      ],
+      "locations": [
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "15",
+      "drops": [
+        "火山晶石 (50%)",
+        "火山晶石 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Magma_Sprite"
+      ]
+    },
+    {
+      "id": "monster_metal_head",
+      "name": "金属大头",
+      "nameEn": "Metal Head",
+      "aliases": [
+        "metal head",
+        "Metal Head",
+        "金属大头",
+        "金属大头掉什么",
+        "金属大头掉落",
+        "金属大头在哪刷",
+        "金属大头哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "80-119",
+      "xp": "6",
+      "drops": [
+        "煤炭 (10%)",
+        "铜矿石 (10%)",
+        "铜矿石 (10%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "铁矿石 (10%)",
+        "铁矿石 (10%)",
+        "太阳精华 (65%)",
+        "侍从头盔",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Metal_Head"
+      ]
+    },
+    {
+      "id": "monster_metal_head_dangerous",
+      "name": "金属大头（危险）",
+      "nameEn": "Metal Head (dangerous)",
+      "aliases": [
+        "metal head (dangerous)",
+        "Metal Head (dangerous)",
+        "金属大头（危险）",
+        "金属大头",
+        "金属大头（危险）掉什么",
+        "金属大头（危险）掉落",
+        "金属大头（危险）在哪刷",
+        "金属大头（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "81-119",
+      "xp": "6",
+      "drops": [
+        "煤炭 (10%)",
+        "铜矿石 (10%)",
+        "铜矿石 (10%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "铁矿石 (10%)",
+        "铁矿石 (10%)",
+        "太阳精华 (65%)",
+        "侍从头盔",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Metal_Head_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_mummy",
+      "name": "木乃伊",
+      "nameEn": "Mummy",
+      "aliases": [
+        "mummy",
+        "Mummy",
+        "木乃伊",
+        "木乃伊掉什么",
+        "木乃伊掉落",
+        "木乃伊在哪刷",
+        "木乃伊哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "木乃伊层",
+      "xp": "20",
+      "drops": [
+        "布料 (20%)",
+        "布料 (5%)",
+        "好奇诱饵 (1%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿工特供 (4%)",
+        "五彩碎片 (0.1%)",
+        "红叶卷心菜种子 (0.2%)",
+        "太阳精华 (99%)",
+        "太阳精华 (15%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mummy"
+      ]
+    },
+    {
+      "id": "monster_mummy_dangerous",
+      "name": "木乃伊（危险）",
+      "nameEn": "Mummy (dangerous)",
+      "aliases": [
+        "mummy (dangerous)",
+        "Mummy (dangerous)",
+        "木乃伊（危险）",
+        "木乃伊",
+        "木乃伊（危险）掉什么",
+        "木乃伊（危险）掉落",
+        "木乃伊（危险）在哪刷",
+        "木乃伊（危险）哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "全部",
+      "xp": "20",
+      "drops": [
+        "布料 (20%)",
+        "布料 (5%)",
+        "好奇诱饵 (1%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿工特供 (4%)",
+        "五彩碎片 (0.1%)",
+        "红叶卷心菜种子 (0.2%)",
+        "太阳精华 (99%)",
+        "太阳精华 (15%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mummy_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_mutant_fly",
+      "name": "变异苍蝇",
+      "nameEn": "Mutant Fly",
+      "aliases": [
+        "mutant fly",
+        "Mutant Fly",
+        "变异苍蝇",
+        "变异苍蝇掉什么",
+        "变异苍蝇掉落",
+        "变异苍蝇在哪刷",
+        "变异苍蝇哪里刷"
+      ],
+      "locations": [
+        "变异虫穴",
+        "骷髅洞穴"
+      ],
+      "floors": "不适用",
+      "xp": "10",
+      "drops": [
+        "上古种子 (0.5%)",
+        "虫肉 (90%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mutant_Fly"
+      ]
+    },
+    {
+      "id": "monster_mutant_grub",
+      "name": "变异蛆",
+      "nameEn": "Mutant Grub",
+      "aliases": [
+        "mutant grub",
+        "Mutant Grub",
+        "变异蛆",
+        "变异蛆掉什么",
+        "变异蛆掉落",
+        "变异蛆在哪刷",
+        "变异蛆哪里刷"
+      ],
+      "locations": [
+        "变异虫穴"
+      ],
+      "floors": "不适用",
+      "xp": "6",
+      "drops": [
+        "海藻汤 (10%)",
+        "上古种子 (0.5%)",
+        "虫肉 (60%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "稻苗 (10% (5%+5%))",
+        "白藻 (2%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mutant_Grub"
+      ]
+    },
+    {
+      "id": "monster_pepper_rex",
+      "name": "霸王喷火龙",
+      "nameEn": "Pepper Rex",
+      "aliases": [
+        "pepper rex",
+        "Pepper Rex",
+        "霸王喷火龙",
+        "霸王龙",
+        "恐龙怪",
+        "喷火龙",
+        "霸王喷火龙掉什么",
+        "霸王喷火龙掉落",
+        "霸王喷火龙在哪刷",
+        "霸王喷火龙哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "史前层为主",
+      "xp": "7",
+      "drops": [
+        "恐龙蛋 (10%)",
+        "史前肋骨 (30%)",
+        "史前胫骨 (30%)",
+        "史前脊骨 (30%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "刷恐龙蛋和史前骨骼时找骷髅洞穴史前层；楼梯和炸弹能提高遇到史前层的效率。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Pepper_Rex"
+      ]
+    },
+    {
+      "id": "monster_putrid_ghost",
+      "name": "腐臭幽灵",
+      "nameEn": "Putrid Ghost",
+      "aliases": [
+        "putrid ghost",
+        "Putrid Ghost",
+        "腐臭幽灵",
+        "腐臭幽灵掉什么",
+        "腐臭幽灵掉落",
+        "腐臭幽灵在哪刷",
+        "腐臭幽灵哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "51-69",
+      "xp": "25",
+      "drops": [
+        "万象晶球 (99%)",
+        "接取“奇特物质”任务时： 灵外质 (9.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "灵外质任务期间优先刷幽灵类；平时刷太阳精华/万象晶球可顺路处理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Putrid_Ghost"
+      ]
+    },
+    {
+      "id": "monster_rock_crab",
+      "name": "岩石蟹",
+      "nameEn": "Rock Crab",
+      "aliases": [
+        "rock crab",
+        "Rock Crab",
+        "岩石蟹",
+        "矿井螃蟹",
+        "岩石蟹掉什么",
+        "岩石蟹掉落",
+        "岩石蟹在哪刷",
+        "岩石蟹哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "1-29",
+      "xp": "4",
+      "drops": [
+        "樱桃炸弹 (40%)",
+        "螃蟹 (15%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Rock_Crab"
+      ]
+    },
+    {
+      "id": "monster_rock_crab_dangerous",
+      "name": "岩石蟹（危险）",
+      "nameEn": "Rock Crab (dangerous)",
+      "aliases": [
+        "rock crab (dangerous)",
+        "Rock Crab (dangerous)",
+        "岩石蟹（危险）",
+        "岩石蟹",
+        "岩石蟹（危险）掉什么",
+        "岩石蟹（危险）掉落",
+        "岩石蟹（危险）在哪刷",
+        "岩石蟹（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "1-29",
+      "xp": "4",
+      "drops": [
+        "樱桃炸弹 (40%)",
+        "螃蟹 (15%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Rock_Crab_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_royal_serpent",
+      "name": "皇家飞蛇",
+      "nameEn": "Royal Serpent",
+      "aliases": [
+        "royal serpent",
+        "Royal Serpent",
+        "皇家飞蛇",
+        "皇家蛇",
+        "危险飞蛇",
+        "皇家飞蛇掉什么",
+        "皇家飞蛇掉落",
+        "皇家飞蛇在哪刷",
+        "皇家飞蛇哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "全部",
+      "xp": "20",
+      "drops": [
+        "炸弹 (15%)",
+        "五彩碎片 (0.1%)",
+        "兔子的脚 (0.8%)",
+        "红叶卷心菜种子 (0.2%)",
+        "香辣鳗鱼 (6%)",
+        "虚空精华 (99%)",
+        "虚空精华 (15%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "骷髅洞穴刷飞蛇可顺手补虚空精华、香辣鳗鱼和兔子的脚；战斗弱时先带楼梯和高回复食物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Royal_Serpent"
+      ]
+    },
+    {
+      "id": "monster_serpent",
+      "name": "飞蛇",
+      "nameEn": "Serpent",
+      "aliases": [
+        "serpent",
+        "Serpent",
+        "飞蛇",
+        "蛇",
+        "骷髅洞穴飞蛇",
+        "飞蛇掉什么",
+        "飞蛇掉落",
+        "飞蛇在哪刷",
+        "飞蛇哪里刷"
+      ],
+      "locations": [
+        "骷髅洞穴"
+      ],
+      "floors": "全部",
+      "xp": "20",
+      "drops": [
+        "炸弹 (15%)",
+        "五彩碎片 (0.1%)",
+        "兔子的脚 (0.8%)",
+        "红叶卷心菜种子 (0.2%)",
+        "香辣鳗鱼 (6%)",
+        "虚空精华 (99%)",
+        "虚空精华 (15%)",
+        "钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "骷髅洞穴刷飞蛇可顺手补虚空精华、香辣鳗鱼和兔子的脚；战斗弱时先带楼梯和高回复食物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Serpent"
+      ]
+    },
+    {
+      "id": "monster_shadow_brute",
+      "name": "暗影狂徒",
+      "nameEn": "Shadow Brute",
+      "aliases": [
+        "shadow brute",
+        "Shadow Brute",
+        "暗影狂徒",
+        "暗影怪",
+        "黑影怪",
+        "暗影狂徒掉什么",
+        "暗影狂徒掉落",
+        "暗影狂徒在哪刷",
+        "暗影狂徒哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "81-119",
+      "xp": "15",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铱锭 (0.2%)",
+        "铁锭 (2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "奇怪的小面包 (4%)",
+        "虚空精华 (75%)",
+        "虚空精华 (10%)",
+        "怪物图鉴",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shadow_Brute"
+      ]
+    },
+    {
+      "id": "monster_shadow_brute_dangerous",
+      "name": "暗影狂徒（危险）",
+      "nameEn": "Shadow Brute (dangerous)",
+      "aliases": [
+        "shadow brute (dangerous)",
+        "Shadow Brute (dangerous)",
+        "暗影狂徒（危险）",
+        "暗影狂徒",
+        "暗影狂徒（危险）掉什么",
+        "暗影狂徒（危险）掉落",
+        "暗影狂徒（危险）在哪刷",
+        "暗影狂徒（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "81-119",
+      "xp": "15",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铱锭 (0.2%)",
+        "铁锭 (2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "奇怪的小面包 (4%)",
+        "虚空精华 (75%)",
+        "虚空精华 (10%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shadow_Brute_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_shadow_shaman",
+      "name": "暗影萨满",
+      "nameEn": "Shadow Shaman",
+      "aliases": [
+        "shadow shaman",
+        "Shadow Shaman",
+        "暗影萨满",
+        "暗影怪",
+        "黑影怪",
+        "暗影萨满掉什么",
+        "暗影萨满掉落",
+        "暗影萨满在哪刷",
+        "暗影萨满哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "81-119",
+      "xp": "15",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铱锭 (0.2%)",
+        "铁锭 (2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "虚空精华 (75%)",
+        "虚空精华 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shadow_Shaman"
+      ]
+    },
+    {
+      "id": "monster_shadow_shaman_dangerous",
+      "name": "暗影萨满（危险）",
+      "nameEn": "Shadow Shaman (dangerous)",
+      "aliases": [
+        "shadow shaman (dangerous)",
+        "Shadow Shaman (dangerous)",
+        "暗影萨满（危险）",
+        "暗影萨满",
+        "暗影萨满（危险）掉什么",
+        "暗影萨满（危险）掉落",
+        "暗影萨满（危险）在哪刷",
+        "暗影萨满（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "81-119",
+      "xp": "15",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铱锭 (0.2%)",
+        "铁锭 (2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "虚空精华 (75%)",
+        "虚空精华 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shadow_Shaman_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_shadow_sniper",
+      "name": "暗影狙击手",
+      "nameEn": "Shadow Sniper",
+      "aliases": [
+        "shadow sniper",
+        "Shadow Sniper",
+        "暗影狙击手",
+        "暗影怪",
+        "黑影怪",
+        "暗影狙击手掉什么",
+        "暗影狙击手掉落",
+        "暗影狙击手在哪刷",
+        "暗影狙击手哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "81-119",
+      "xp": "20",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铱锭 (0.2%)",
+        "铁锭 (2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "奇怪的小面包 (4%)",
+        "虚空精华 (75%)",
+        "虚空精华 (10%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Shadow_Sniper"
+      ]
+    },
+    {
+      "id": "monster_skeleton",
+      "name": "骷髅",
+      "nameEn": "Skeleton",
+      "aliases": [
+        "skeleton",
+        "Skeleton",
+        "骷髅",
+        "骷髅掉什么",
+        "骷髅掉落",
+        "骷髅在哪刷",
+        "骷髅哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "71-79",
+      "xp": "8",
+      "drops": [
+        "骨头碎片 (50%)",
+        "骨头碎片 (40%)",
+        "骨头碎片 (20%)",
+        "骨剑 (4%)",
+        "史前肩胛骨 (0.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "未解锁姜岛前可刷矿井 71-79 层补骨头碎片；姜岛后骨头矿点更稳定。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Skeleton"
+      ]
+    },
+    {
+      "id": "monster_skeleton_dangerous",
+      "name": "骷髅（危险）",
+      "nameEn": "Skeleton (dangerous)",
+      "aliases": [
+        "skeleton (dangerous)",
+        "Skeleton (dangerous)",
+        "骷髅（危险）",
+        "骷髅",
+        "骷髅（危险）掉什么",
+        "骷髅（危险）掉落",
+        "骷髅（危险）在哪刷",
+        "骷髅（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井",
+        "采石场矿井"
+      ],
+      "floors": "71-79",
+      "xp": "8",
+      "drops": [
+        "骨头碎片 (50%)",
+        "骨头碎片 (40%)",
+        "骨头碎片 (20%)",
+        "骨剑 (4%)",
+        "史前肩胛骨 (0.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "未解锁姜岛前可刷矿井 71-79 层补骨头碎片；姜岛后骨头矿点更稳定。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Skeleton_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_skeleton_mage",
+      "name": "骷髅法师",
+      "nameEn": "Skeleton Mage",
+      "aliases": [
+        "skeleton mage",
+        "Skeleton Mage",
+        "骷髅法师",
+        "骷髅法师掉什么",
+        "骷髅法师掉落",
+        "骷髅法师在哪刷",
+        "骷髅法师哪里刷"
+      ],
+      "locations": [
+        "危险矿井",
+        "采石场矿井"
+      ],
+      "floors": "71-79",
+      "xp": "8",
+      "drops": [
+        "骨头碎片 (50%)",
+        "骨头碎片 (40%)",
+        "骨头碎片 (20%)",
+        "骨剑 (4%)",
+        "史前肩胛骨 (0.5%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "未解锁姜岛前可刷矿井 71-79 层补骨头碎片；姜岛后骨头矿点更稳定。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Skeleton_Mage"
+      ]
+    },
+    {
+      "id": "monster_slimes",
+      "name": "史莱姆（各变种）",
+      "nameEn": "Slimes",
+      "aliases": [
+        "slimes",
+        "Slimes",
+        "史莱姆（各变种）",
+        "史莱姆",
+        "绿色史莱姆",
+        "蓝色史莱姆",
+        "红色史莱姆",
+        "紫色史莱姆",
+        "虎纹史莱姆",
+        "大史莱姆",
+        "史莱姆（各变种）掉什么",
+        "史莱姆（各变种）掉落",
+        "史莱姆（各变种）在哪刷",
+        "史莱姆（各变种）哪里刷"
+      ],
+      "locations": [
+        "矿井",
+        "骷髅洞穴",
+        "采石场矿井",
+        "秘密森林",
+        "虎纹史莱姆林",
+        "火山地牢"
+      ],
+      "floors": "全部",
+      "xp": "随变种变化",
+      "drops": [
+        "绝大多数史莱姆会掉史莱姆泥；除大史莱姆外也可能掉树液。",
+        "绿色/蓝色/红色/紫色/虎纹等变种会随地点追加矿物、矿石、特殊种子或姜岛材料等掉落。",
+        "矿井到底后：多数矿井怪物额外有极低概率掉落钻石或五彩碎片。"
+      ],
+      "recommendation": "史莱姆泥主要刷史莱姆或养史莱姆屋；不同颜色史莱姆掉落会随地点和变种变化。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Slimes"
+      ]
+    },
+    {
+      "id": "monster_spider",
+      "name": "蜘蛛",
+      "nameEn": "Spider",
+      "aliases": [
+        "spider",
+        "Spider",
+        "蜘蛛",
+        "蜘蛛掉什么",
+        "蜘蛛掉落",
+        "蜘蛛在哪刷",
+        "蜘蛛哪里刷"
+      ],
+      "locations": [
+        "矿井 (挑战神龛开启)"
+      ],
+      "floors": "51-69",
+      "xp": "15",
+      "drops": [
+        "煤炭 (1-3, 10%)",
+        "铜锭 (4%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (1%)",
+        "铁锭 (2%)",
+        "铱锭 (0.2%)",
+        "五彩碎片 (0.05%)",
+        "稀有圆盘 (0.3%)",
+        "奇怪的小面包 (4%)",
+        "虚空精华 (75%)",
+        "虚空精华 (10%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "暗影怪/蜘蛛线适合补虚空精华和稀有圆盘；矿井 80 层后或危险矿井阶段顺路刷。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Spider"
+      ]
+    },
+    {
+      "id": "monster_squid_kid",
+      "name": "鱿鱼娃",
+      "nameEn": "Squid Kid",
+      "aliases": [
+        "squid kid",
+        "Squid Kid",
+        "鱿鱼娃",
+        "鱿鱼小子",
+        "鱿鱼娃掉什么",
+        "鱿鱼娃掉落",
+        "鱿鱼娃在哪刷",
+        "鱿鱼娃哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "91-119",
+      "xp": "15",
+      "drops": [
+        "炸弹 (10%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (5%)",
+        "超级炸弹 (5%)",
+        "太阳精华 (75%)",
+        "鱿鱼墨汁 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "想补鱿鱼墨汁和太阳精华时可刷鱿鱼娃/蓝鱿鱼；远程攻击注意走位。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Squid_Kid"
+      ]
+    },
+    {
+      "id": "monster_squid_kid_dangerous",
+      "name": "鱿鱼娃（危险）",
+      "nameEn": "Squid Kid (dangerous)",
+      "aliases": [
+        "squid kid (dangerous)",
+        "Squid Kid (dangerous)",
+        "鱿鱼娃（危险）",
+        "鱿鱼娃",
+        "鱿鱼娃（危险）掉什么",
+        "鱿鱼娃（危险）掉落",
+        "鱿鱼娃（危险）在哪刷",
+        "鱿鱼娃（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井",
+        "骷髅洞穴"
+      ],
+      "floors": "91-119",
+      "xp": "15",
+      "drops": [
+        "炸弹 (10%)",
+        "矮人卷轴 III (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "金锭 (5%)",
+        "超级炸弹 (5%)",
+        "太阳精华 (75%)",
+        "鱿鱼墨汁 (20%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "想补鱿鱼墨汁和太阳精华时可刷鱿鱼娃/蓝鱿鱼；远程攻击注意走位。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Squid_Kid_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_stick_bug",
+      "name": "竹虫",
+      "nameEn": "Stick Bug",
+      "aliases": [
+        "stick bug",
+        "Stick Bug",
+        "竹虫",
+        "竹虫掉什么",
+        "竹虫掉落",
+        "竹虫在哪刷",
+        "竹虫哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "41-69",
+      "xp": "4",
+      "drops": [
+        "姜 (100%)",
+        "齐钻 (100%)",
+        "齐钻 (50%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stick_Bug"
+      ]
+    },
+    {
+      "id": "monster_stone_golem",
+      "name": "石魔",
+      "nameEn": "Stone Golem",
+      "aliases": [
+        "stone golem",
+        "Stone Golem",
+        "石魔",
+        "石魔掉什么",
+        "石魔掉落",
+        "石魔在哪刷",
+        "石魔哪里刷"
+      ],
+      "locations": [
+        "矿井"
+      ],
+      "floors": "31-39",
+      "xp": "5",
+      "drops": [
+        "煤炭 (10%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "铁矿石 (10%)",
+        "石英 (10%)",
+        "石头 (90%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stone_Golem"
+      ]
+    },
+    {
+      "id": "monster_stone_golem_dangerous",
+      "name": "石魔（危险）",
+      "nameEn": "Stone Golem (dangerous)",
+      "aliases": [
+        "stone golem (dangerous)",
+        "Stone Golem (dangerous)",
+        "石魔（危险）",
+        "石魔",
+        "石魔（危险）掉什么",
+        "石魔（危险）掉落",
+        "石魔（危险）在哪刷",
+        "石魔（危险）哪里刷"
+      ],
+      "locations": [
+        "危险矿井"
+      ],
+      "floors": "31-39",
+      "xp": "5",
+      "drops": [
+        "煤炭 (10%)",
+        "矮人卷轴 I (0.5%)",
+        "矮人卷轴 IV (0.1%)",
+        "铁矿石 (10%)",
+        "石英 (10%)",
+        "石头 (90%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stone_Golem_(dangerous)"
+      ]
+    },
+    {
+      "id": "monster_truffle_crab",
+      "name": "松露蟹",
+      "nameEn": "Truffle Crab",
+      "aliases": [
+        "truffle crab",
+        "Truffle Crab",
+        "松露蟹",
+        "松露蟹掉什么",
+        "松露蟹掉落",
+        "松露蟹在哪刷",
+        "松露蟹哪里刷"
+      ],
+      "locations": [
+        "农场"
+      ],
+      "floors": "",
+      "xp": "4",
+      "drops": [
+        "螃蟹 (25%)",
+        "松露 (99.9%)",
+        "松露 (50%)",
+        "松露 (10%)",
+        "松露油 (10%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Truffle_Crab"
+      ]
+    },
+    {
+      "id": "monster_wilderness_golem",
+      "name": "荒野石魔",
+      "nameEn": "Wilderness Golem",
+      "aliases": [
+        "wilderness golem",
+        "Wilderness Golem",
+        "荒野石魔",
+        "荒野石魔掉什么",
+        "荒野石魔掉落",
+        "荒野石魔在哪刷",
+        "荒野石魔哪里刷"
+      ],
+      "locations": [
+        "农场"
+      ],
+      "floors": "",
+      "xp": "5",
+      "drops": [
+        "煤炭 (10%)",
+        "钻石 (0.1%)",
+        "地晶 (0.5%)",
+        "纤维 (90%)",
+        "纤维 (50%)",
+        "生命帽 (0.01%)",
+        "混合种子 (50%)",
+        "稻苗 (6.25% 春季)",
+        "战斗 5 级后： 混合种子 (20%)",
+        "万象晶球 (5%)",
+        "战斗 10 级后： 铱矿石 (1%)",
+        "铱矿石 (1%)",
+        "五彩碎片 (0.1%)",
+        "矿井到底后： 钻石 (0.05%)",
+        "五彩碎片 (0.05%)"
+      ],
+      "recommendation": "问具体掉落时看概率和前置条件；刷资源建议配合怪物香水、窃贼戒指，战斗弱时先带食物和保命道具。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Wilderness_Golem"
+      ]
+    }
   ]
 }

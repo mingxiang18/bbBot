@@ -44,7 +44,7 @@ public class StardewQueryPlannerService {
                           ]
                         }
                         type 只能从这些枚举中选择：
-                        FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE,
+                        FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, MACHINE, SHOP,
                         COOKING, SKILL, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
@@ -56,6 +56,8 @@ public class StardewQueryPlannerService {
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
                         - 具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏，例如“古代玩偶怎么获得”“矮人卷轴 II 哪里刷”“诡异玩偶黄怎么拿”，归为 RESOURCE。
+                        - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
+                        - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 博物馆整体补全、缺古物/缺矿物路线、全套捐赠奖励，归为 MUSEUM。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
@@ -115,6 +117,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeSpecificMineralResourceQuery(q)) {
             return StardewGuideIntent.RESOURCE;
+        }
+        if (looksLikeMonsterDropQuery(q)) {
+            return StardewGuideIntent.MONSTER_DROP;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -208,6 +213,32 @@ public class StardewQueryPlannerService {
                 "黄金马刺", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶",
                 "Basilisk Paw", "Fairy Box", "Frog Egg", "Ice Rod", "Golden Spur",
                 "Magic Quiver", "Parrot Egg", "Magic Hair Gel", "trinket");
+    }
+
+    private boolean looksLikeMonsterDropQuery(String query) {
+        if (containsAny(query, "怪物图鉴") && !containsAny(query, "掉什么", "掉落表", "掉落")) {
+            return false;
+        }
+        boolean asksMonsterLoot = containsAny(query, "掉什么", "掉落表", "战利品", "怪物掉落", "怪物掉落表")
+                || (containsAny(query, "在哪刷", "哪里刷", "楼层", "几层", "多少经验", "战斗经验")
+                && containsAny(query, "怪", "史莱姆", "蝙蝠", "幽灵", "飞蛇", "骷髅"));
+        if (!asksMonsterLoot) {
+            return false;
+        }
+        return containsAny(query,
+                "史莱姆", "绿史莱姆", "蓝史莱姆", "红史莱姆", "紫史莱姆", "虎纹史莱姆", "大史莱姆",
+                "蝙蝠", "冰霜蝙蝠", "熔岩蝙蝠", "铱蝠",
+                "虫", "臭虫", "洞穴蝇", "蛆", "装甲虫", "变异苍蝇", "变异蛆", "装甲虫",
+                "掘地虫", "煤尘精灵", "灰尘精灵", "幽灵", "碳幽灵", "腐臭幽灵", "闹鬼骷髅",
+                "石魔", "岩石蟹", "熔岩蟹", "铱蟹", "木乃伊", "飞蛇", "皇家飞蛇",
+                "暗影狂徒", "暗影萨满", "暗影狙击手", "骷髅", "骷髅法师", "鱿鱼娃", "蓝鱿鱼",
+                "金属大头", "恐龙", "霸王喷火龙", "熔岩潜伏怪", "熔岩精灵", "熔岩火球",
+                "熔岩掘地虫", "假岩浆菇", "火焰头", "矮人哨兵", "蜘蛛", "竹虫", "松露蟹",
+                "荒野石魔", "铱石魔",
+                "slime", "bat", "bug", "cave fly", "grub", "duggy", "dust sprite",
+                "ghost", "rock crab", "lava crab", "mummy", "serpent", "shadow brute",
+                "shadow shaman", "squid kid", "pepper rex", "lava lurk", "magma sprite",
+                "magma sparker", "magma duggy", "hot head", "blue squid", "spider");
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {
