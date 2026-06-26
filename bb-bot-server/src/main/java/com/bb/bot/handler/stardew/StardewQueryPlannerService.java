@@ -68,6 +68,7 @@ public class StardewQueryPlannerService {
                         - 节日里的具体商品在哪里买/多少钱，如果用户只问商品购买点，例如“草莓种子在哪里买”“万灵节稀有稻草人多少钱”，可归为 SHOP。
                         - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
                         - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
+                        - 鸡舍/畜棚动物本身的购买、成熟时间、产物、赚钱建议、兔脚/鸭毛/松露/大壶牛奶/羊毛/鸵鸟蛋等动物产物机制，例如“猪值得养吗”“兔子的脚怎么出”“奶牛为什么不出大壶奶”“动物有哪些”，归为 ANIMAL_CARE。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
                         - 问加工机器/制作物怎么用、材料、配方，例如“小桶怎么做”“鱼熏机材料”“洒水器怎么做”，也归为 CRAFTING；MACHINE 仅作为兼容类型。
@@ -138,6 +139,7 @@ public class StardewQueryPlannerService {
                 || localType == StardewGuideIntent.CRAFTING
                 || localType == StardewGuideIntent.FESTIVAL
                 || localType == StardewGuideIntent.FARM_MAP
+                || localType == StardewGuideIntent.ANIMAL_CARE
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
     }
@@ -242,7 +244,8 @@ public class StardewQueryPlannerService {
         if (containsAny(q, "果树", "树苗", "温室怎么种")) {
             return StardewGuideIntent.FRUIT_TREE;
         }
-        if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "恐龙", "猪", "心情", "大壶奶")) {
+        if (containsAny(q, "动物", "奶牛", "山羊", "鸡", "鸭", "兔子", "兔脚", "兔子的脚", "恐龙", "猪", "鸵鸟",
+                "心情", "大壶奶", "大壶牛奶", "鸭毛", "羊毛", "松露", "鸵鸟蛋")) {
             return StardewGuideIntent.ANIMAL_CARE;
         }
         if (containsAny(q, "buff", "增益", "料理", "食物", "饮料")

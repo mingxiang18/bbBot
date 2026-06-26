@@ -41282,5 +41282,589 @@
         "https://stardewvalleywiki.com/Farm_Maps"
       ]
     }
+  ],
+  "farmAnimals": [
+    {
+      "id": "chicken",
+      "name": "鸡（白/棕/蓝）",
+      "nameEn": "Chicken",
+      "aliases": [
+        "鸡",
+        "白鸡",
+        "棕鸡",
+        "蓝鸡",
+        "小鸡",
+        "普通鸡",
+        "鸡蛋",
+        "大鸡蛋",
+        "蛋黄酱",
+        "Chicken",
+        "White Chicken",
+        "Brown Chicken",
+        "Blue Chicken"
+      ],
+      "category": "coop",
+      "building": "鸡舍",
+      "acquisition": "建好鸡舍后可在玛妮牧场花 800g 购买；也可把鸡蛋放进孵化器孵化。草原农场开局自带两只鸡。",
+      "purchasePrice": 800,
+      "maturityDays": 3,
+      "produceFrequency": "每天产蛋；好感和心情足够时有机会产大鸡蛋。",
+      "toolRequired": "无；鸡蛋在鸡舍地上拾取，蛋黄酱机可加工。",
+      "products": [
+        {
+          "name": "鸡蛋/棕色鸡蛋",
+          "sellPrice": 50,
+          "processedInto": "蛋黄酱",
+          "processedSellPrice": 190,
+          "note": "普通鸡蛋每天产出，可孵化普通鸡。"
+        },
+        {
+          "name": "大鸡蛋/棕色大鸡蛋",
+          "sellPrice": 95,
+          "processedInto": "蛋黄酱（金星）",
+          "processedSellPrice": 285,
+          "note": "高好感和高心情时出现，是动物收集包常用物。"
+        }
+      ],
+      "mechanics": [
+        "白鸡产白蛋，棕鸡产棕蛋；蓝鸡解锁后购买鸡时可能出现，但孵蛋不会孵出蓝鸡。",
+        "孵化普通鸡蛋耗时约 5天16小时40分；鸡舍大师职业约减半。"
+      ],
+      "bestFor": [
+        "前期现金流",
+        "动物收集包",
+        "蛋黄酱",
+        "草原农场开局"
+      ],
+      "recommendations": [
+        "第一座动物建筑常选鸡舍，鸡便宜、成熟快，蛋黄酱机出来后现金流稳定。",
+        "想补动物收集包，普通鸡先养好感出大鸡蛋；颜色要按收集包需求留白蛋/棕蛋。"
+      ],
+      "note": "鸡是最早期、最稳的动物路线入口。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Chicken"
+      ]
+    },
+    {
+      "id": "void_chicken",
+      "name": "虚空鸡",
+      "nameEn": "Void Chicken",
+      "aliases": [
+        "虚空鸡",
+        "黑鸡",
+        "虚空蛋",
+        "虚空蛋黄酱",
+        "Void Chicken",
+        "Void Egg",
+        "Void Mayonnaise"
+      ],
+      "category": "coop",
+      "building": "大鸡舍或豪华鸡舍",
+      "acquisition": "把虚空蛋放进孵化器孵化；虚空蛋可来自女巫随机事件、科罗布斯购买或婚后谢恩赠送。",
+      "purchasePrice": null,
+      "maturityDays": 3,
+      "produceFrequency": "每天产虚空蛋。",
+      "toolRequired": "无；虚空蛋在鸡舍地上拾取，蛋黄酱机可加工。",
+      "products": [
+        {
+          "name": "虚空蛋",
+          "sellPrice": 65,
+          "processedInto": "虚空蛋黄酱",
+          "processedSellPrice": 275,
+          "note": "也可作为蛋类料理材料。"
+        }
+      ],
+      "mechanics": [
+        "必须先有虚空蛋和孵化器；没有直接购买虚空鸡的方式。",
+        "孵化耗时和普通鸡相同，鸡舍大师职业约减半。"
+      ],
+      "bestFor": [
+        "虚空蛋黄酱",
+        "特殊礼物",
+        "收藏",
+        "中期动物线"
+      ],
+      "recommendations": [
+        "第一颗虚空蛋优先孵化，建立稳定虚空蛋来源后再加工。",
+        "如果急需虚空蛋，可解锁下水道后找科罗布斯买。"
+      ],
+      "note": "虚空鸡更偏收藏和特定用途，不是前期最高收益动物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Void_Chicken"
+      ]
+    },
+    {
+      "id": "golden_chicken",
+      "name": "金鸡",
+      "nameEn": "Golden Chicken",
+      "aliases": [
+        "金鸡",
+        "黄金鸡",
+        "金蛋",
+        "黄金蛋",
+        "Golden Chicken",
+        "Golden Egg"
+      ],
+      "category": "coop",
+      "building": "大鸡舍或豪华鸡舍",
+      "acquisition": "达成完美度后取得金蛋，再放进孵化器孵化；金蛋可在玛妮牧场花 100,000g 或齐先生核桃房用 100 齐钻购买，也可能来自女巫事件或钓鱼宝箱。",
+      "purchasePrice": null,
+      "maturityDays": 3,
+      "produceFrequency": "每天产金蛋。",
+      "toolRequired": "无；金蛋在鸡舍地上拾取，蛋黄酱机可加工。",
+      "products": [
+        {
+          "name": "金蛋",
+          "sellPrice": 500,
+          "processedInto": "金星蛋黄酱 x3",
+          "processedSellPrice": 855,
+          "note": "一个金蛋可加工成 3 个金星蛋黄酱。"
+        }
+      ],
+      "mechanics": [
+        "金鸡属于完美度后动物，孵化耗时和普通鸡相同。",
+        "不能作为前中期规划核心。"
+      ],
+      "bestFor": [
+        "完美度后收益",
+        "收藏",
+        "高价值蛋黄酱"
+      ],
+      "recommendations": [
+        "达成完美后再考虑；有金蛋先孵化，比直接加工更能建立长期收益。"
+      ],
+      "note": "金鸡是后期奖励型动物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Golden_Chicken"
+      ]
+    },
+    {
+      "id": "duck",
+      "name": "鸭",
+      "nameEn": "Duck",
+      "aliases": [
+        "鸭",
+        "鸭子",
+        "鸭蛋",
+        "鸭毛",
+        "鸭蛋黄酱",
+        "Duck",
+        "Duck Egg",
+        "Duck Feather",
+        "Duck Mayonnaise"
+      ],
+      "category": "coop",
+      "building": "大鸡舍或豪华鸡舍",
+      "acquisition": "升级到大鸡舍后，可在玛妮牧场花 1,200g 购买；也可孵化鸭蛋。",
+      "purchasePrice": 1200,
+      "maturityDays": 5,
+      "produceFrequency": "每 2 天产鸭蛋；高好感和高心情时可能改产鸭毛。",
+      "toolRequired": "无；鸭蛋/鸭毛在鸡舍地上拾取，鸭蛋可加工。",
+      "products": [
+        {
+          "name": "鸭蛋",
+          "sellPrice": 95,
+          "processedInto": "鸭蛋黄酱",
+          "processedSellPrice": 375,
+          "note": "可孵化鸭，也可加工成高价值鸭蛋黄酱。"
+        },
+        {
+          "name": "鸭毛",
+          "sellPrice": 250,
+          "processedInto": "",
+          "processedSellPrice": null,
+          "note": "稀有产物，受好感、心情和每日运气影响。"
+        }
+      ],
+      "mechanics": [
+        "鸭毛属于高阶产物，最大好感/心情/运气下概率约 42%。",
+        "鸭会隔天产出，不是每天。"
+      ],
+      "bestFor": [
+        "鸭蛋黄酱",
+        "鸭毛",
+        "动物收集包",
+        "送礼"
+      ],
+      "recommendations": [
+        "大鸡舍后可以买 1-2 只补鸭蛋和鸭毛；赚钱稳定性不如鸡，但鸭蛋黄酱单价高。",
+        "鸭毛迟迟不出时，优先保证每天抚摸、喂食、让高心情，并等好运日。"
+      ],
+      "note": "鸭子在水边会游泳，但产物仍按动物机制计算。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Duck"
+      ]
+    },
+    {
+      "id": "rabbit",
+      "name": "兔子",
+      "nameEn": "Rabbit",
+      "aliases": [
+        "兔子",
+        "兔",
+        "兔脚",
+        "兔子的脚",
+        "兔毛",
+        "动物毛",
+        "羊毛",
+        "Rabbit",
+        "Rabbit's Foot",
+        "Wool"
+      ],
+      "category": "coop",
+      "building": "豪华鸡舍",
+      "acquisition": "升级到豪华鸡舍后，可在玛妮牧场花 8,000g 购买。兔子不能繁殖。",
+      "purchasePrice": 8000,
+      "maturityDays": 6,
+      "produceFrequency": "每 4 天产羊毛；高好感和高心情时可能改产兔子的脚。",
+      "toolRequired": "无；兔子会自己掉落羊毛或兔子的脚。",
+      "products": [
+        {
+          "name": "羊毛",
+          "sellPrice": 340,
+          "processedInto": "布料",
+          "processedSellPrice": 470,
+          "note": "兔子不需要剪刀，会自动掉落羊毛。"
+        },
+        {
+          "name": "兔子的脚",
+          "sellPrice": 565,
+          "processedInto": "",
+          "processedSellPrice": null,
+          "note": "稀有产物，受好感、心情和每日运气影响。"
+        }
+      ],
+      "mechanics": [
+        "兔子的脚属于高阶产物，最大好感/心情/运气下概率约 40%。",
+        "兔子是唯一不能繁殖的常规牲畜。"
+      ],
+      "bestFor": [
+        "兔子的脚",
+        "布料",
+        "送礼",
+        "收集包"
+      ],
+      "recommendations": [
+        "想稳定拿兔脚，豪华鸡舍后尽早养兔并每天抚摸喂食；好运日更适合等稀有产物。",
+        "只为布料时，羊也可行；兔子的优势是不需要剪刀和工具操作。"
+      ],
+      "note": "兔脚用途很多，建议至少养一只长期攒好感。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Rabbit"
+      ]
+    },
+    {
+      "id": "dinosaur",
+      "name": "恐龙",
+      "nameEn": "Dinosaur",
+      "aliases": [
+        "恐龙",
+        "小恐龙",
+        "恐龙蛋",
+        "恐龙蛋黄酱",
+        "Dinosaur",
+        "Dinosaur Egg",
+        "Dinosaur Mayonnaise"
+      ],
+      "category": "coop",
+      "building": "大鸡舍或豪华鸡舍",
+      "acquisition": "找到恐龙蛋后放进孵化器孵化；恐龙蛋可通过古物点、钓鱼宝箱、霸王喷火龙等途径获得。",
+      "purchasePrice": null,
+      "maturityDays": 0,
+      "produceFrequency": "出生即成熟，每 7 天产一个恐龙蛋。",
+      "toolRequired": "无；恐龙蛋在鸡舍地上拾取，蛋黄酱机可加工。",
+      "products": [
+        {
+          "name": "恐龙蛋",
+          "sellPrice": 350,
+          "processedInto": "恐龙蛋黄酱",
+          "processedSellPrice": 800,
+          "note": "可孵化更多恐龙，也是电影院失踪的收集包常用物。"
+        }
+      ],
+      "mechanics": [
+        "孵化恐龙蛋约 11天6小时40分；鸡舍大师职业约减半。",
+        "恐龙出生即成熟，但产蛋周期长。"
+      ],
+      "bestFor": [
+        "恐龙蛋黄酱",
+        "电影院",
+        "收藏",
+        "稀有动物"
+      ],
+      "recommendations": [
+        "第一颗恐龙蛋优先孵化，不要急着加工；建立稳定产蛋后再做恐龙蛋黄酱。",
+        "恐龙收益周期长，主要价值是稀有物和失踪的收集包。"
+      ],
+      "note": "恐龙没有普通购买路线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Dinosaur"
+      ]
+    },
+    {
+      "id": "cow",
+      "name": "奶牛",
+      "nameEn": "Cow",
+      "aliases": [
+        "牛",
+        "奶牛",
+        "白牛",
+        "棕牛",
+        "牛奶",
+        "大壶牛奶",
+        "奶酪",
+        "Cow",
+        "Milk",
+        "Large Milk",
+        "Cheese"
+      ],
+      "category": "barn",
+      "building": "畜棚",
+      "acquisition": "建好畜棚后，可在玛妮牧场花 1,500g 购买。",
+      "purchasePrice": 1500,
+      "maturityDays": 5,
+      "produceFrequency": "每天产牛奶；高好感和高心情时产大壶牛奶。",
+      "toolRequired": "挤奶桶；自动采集器也可自动挤奶。",
+      "products": [
+        {
+          "name": "牛奶",
+          "sellPrice": 125,
+          "processedInto": "奶酪",
+          "processedSellPrice": 230,
+          "note": "用挤奶桶获得，手动挤奶增加 5 点好感。"
+        },
+        {
+          "name": "大壶牛奶",
+          "sellPrice": 190,
+          "processedInto": "金星奶酪",
+          "processedSellPrice": 345,
+          "note": "动物收集包常用；好感和心情高时出现。"
+        }
+      ],
+      "mechanics": [
+        "牛可在畜棚中低概率怀孕繁殖；同棚动物越多，生育机会越高。",
+        "白牛/棕牛颜色随机，不影响牛奶。"
+      ],
+      "bestFor": [
+        "前期畜棚路线",
+        "奶酪",
+        "动物收集包",
+        "料理材料"
+      ],
+      "recommendations": [
+        "第一座畜棚通常先买奶牛，牛奶和奶酪用途广，回本稳定。",
+        "大壶牛奶不出时，检查每天喂食、抚摸、心情和好感，不是建筑问题。"
+      ],
+      "note": "奶牛是畜棚路线最基础、最稳定的动物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Cow"
+      ]
+    },
+    {
+      "id": "goat",
+      "name": "山羊",
+      "nameEn": "Goat",
+      "aliases": [
+        "山羊",
+        "羊奶",
+        "大瓶羊奶",
+        "山羊奶酪",
+        "Goat",
+        "Goat Milk",
+        "Large Goat Milk",
+        "Goat Cheese"
+      ],
+      "category": "barn",
+      "building": "大畜棚或豪华畜棚",
+      "acquisition": "升级到大畜棚后，可在玛妮牧场花 4,000g 购买。",
+      "purchasePrice": 4000,
+      "maturityDays": 5,
+      "produceFrequency": "每 2 天产羊奶；高好感和高心情时产大瓶羊奶。",
+      "toolRequired": "挤奶桶；自动采集器也可自动挤奶。",
+      "products": [
+        {
+          "name": "羊奶",
+          "sellPrice": 225,
+          "processedInto": "山羊奶酪",
+          "processedSellPrice": 400,
+          "note": "用挤奶桶获得。"
+        },
+        {
+          "name": "大瓶羊奶",
+          "sellPrice": 345,
+          "processedInto": "金星山羊奶酪",
+          "processedSellPrice": 600,
+          "note": "动物收集包常用；高好感和高心情时出现。"
+        }
+      ],
+      "mechanics": [
+        "山羊可在畜棚中低概率怀孕繁殖。",
+        "山羊隔天产出，单次价值高于奶牛。"
+      ],
+      "bestFor": [
+        "山羊奶酪",
+        "动物收集包",
+        "中期收益"
+      ],
+      "recommendations": [
+        "大畜棚后补 1-2 只山羊即可覆盖收集包和高价奶酪；别在现金紧张时过早满栏。"
+      ],
+      "note": "山羊是中期畜棚升级后的高单价奶类动物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Goat"
+      ]
+    },
+    {
+      "id": "sheep",
+      "name": "绵羊",
+      "nameEn": "Sheep",
+      "aliases": [
+        "绵羊",
+        "羊",
+        "羊毛",
+        "动物毛",
+        "布料",
+        "Sheep",
+        "Wool",
+        "Cloth"
+      ],
+      "category": "barn",
+      "building": "豪华畜棚",
+      "acquisition": "升级到豪华畜棚后，可在玛妮牧场花 8,000g 购买。",
+      "purchasePrice": 8000,
+      "maturityDays": 4,
+      "produceFrequency": "默认每 3 天长出羊毛；4.5 心以上减少 1 天，牧羊人职业再减少 1 天，两者叠加可每天产羊毛。",
+      "toolRequired": "剪刀；自动采集器也可自动剪羊毛。",
+      "products": [
+        {
+          "name": "羊毛",
+          "sellPrice": 340,
+          "processedInto": "布料",
+          "processedSellPrice": 470,
+          "note": "高品质羊毛有机会织出 2 个布料。"
+        }
+      ],
+      "mechanics": [
+        "绵羊可在畜棚中低概率怀孕繁殖。",
+        "羊毛产出频率受好感和牧羊人职业影响很大。"
+      ],
+      "bestFor": [
+        "布料",
+        "牧羊人职业",
+        "动物毛收集包"
+      ],
+      "recommendations": [
+        "只为了布料，兔子更省工具；如果走牧羊人职业或想规模化布料，再考虑绵羊。"
+      ],
+      "note": "绵羊需要剪刀或自动采集器，操作量比兔子高。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Sheep"
+      ]
+    },
+    {
+      "id": "pig",
+      "name": "猪",
+      "nameEn": "Pig",
+      "aliases": [
+        "猪",
+        "松露",
+        "松露油",
+        "Truffle",
+        "Truffle Oil",
+        "Pig"
+      ],
+      "category": "barn",
+      "building": "豪华畜棚",
+      "acquisition": "升级到豪华畜棚后，可在玛妮牧场花 16,000g 购买。",
+      "purchasePrice": 16000,
+      "maturityDays": 10,
+      "produceFrequency": "成年且吃饱后，在满足条件的白天外出拱松露；高心情时平均每天可超过 1 个，满心情约 3 个。",
+      "toolRequired": "无；松露在户外地面拾取，产油机可加工。",
+      "products": [
+        {
+          "name": "松露",
+          "sellPrice": 625,
+          "processedInto": "松露油",
+          "processedSellPrice": 1065,
+          "note": "受采集者/植物学家等觅食职业影响；不受牧场主职业影响。"
+        }
+      ],
+      "mechanics": [
+        "猪必须外出且可行走地面无遮挡才会拱松露；冬季、雨天、节日离场等不能正常依赖外出。",
+        "围栏可限制活动范围，把松露集中在容易捡的位置。",
+        "猪可在畜棚中低概率怀孕繁殖。"
+      ],
+      "bestFor": [
+        "后期赚钱",
+        "松露油",
+        "豪华畜棚收益",
+        "觅食职业联动"
+      ],
+      "recommendations": [
+        "后期赚钱动物优先猪；豪华畜棚、草地和开阔地准备好后再大量购买。",
+        "不要把猪活动区铺满障碍物；留空地并围好范围，捡松露会舒服很多。"
+      ],
+      "note": "猪不能使用金色动物饼干；松露按觅食物处理。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Pig"
+      ]
+    },
+    {
+      "id": "ostrich",
+      "name": "鸵鸟",
+      "nameEn": "Ostrich",
+      "aliases": [
+        "鸵鸟",
+        "鸵鸟蛋",
+        "鸵鸟孵化器",
+        "Ostrich",
+        "Ostrich Egg",
+        "Ostrich Incubator"
+      ],
+      "category": "barn",
+      "building": "畜棚/大畜棚/豪华畜棚",
+      "acquisition": "获得鸵鸟蛋后，用鸵鸟孵化器孵化；第一颗常见来源是姜岛日记残页 #10，火山地牢宝箱也可能掉落。",
+      "purchasePrice": null,
+      "maturityDays": 7,
+      "produceFrequency": "每 7 天产一个鸵鸟蛋。",
+      "toolRequired": "无；鸵鸟蛋在畜棚地上拾取，蛋黄酱机可加工。",
+      "products": [
+        {
+          "name": "鸵鸟蛋",
+          "sellPrice": 600,
+          "processedInto": "同品质蛋黄酱 x10",
+          "processedSellPrice": 1900,
+          "note": "一个鸵鸟蛋可加工成 10 个同品质蛋黄酱。"
+        }
+      ],
+      "mechanics": [
+        "鸵鸟住畜棚，但像鸡舍动物一样在地上产蛋。",
+        "孵化鸵鸟蛋约 9天10小时；鸡舍大师职业约减半。"
+      ],
+      "bestFor": [
+        "姜岛后期",
+        "蛋黄酱批量加工",
+        "收藏"
+      ],
+      "recommendations": [
+        "第一颗鸵鸟蛋建议优先孵化，后续每 7 天一个蛋可以批量做蛋黄酱。",
+        "鸵鸟是后期动物，不适合作为前中期资金规划核心。"
+      ],
+      "note": "需要先解锁鸵鸟孵化器，通常属于姜岛后期内容。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Animals",
+        "https://stardewvalleywiki.com/Ostrich"
+      ]
+    }
   ]
 }

@@ -264,6 +264,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedAnimalCareIntentRetrievesAnimalEvidenceWithoutBuildingCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.ANIMAL_CARE, "兔子的脚怎么出"),
+                intent(StardewGuideIntent.ANIMAL_CARE, "后期养什么动物赚钱"),
+                intent(StardewGuideIntent.BUILDING, "鸡舍升级材料")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("兔脚怎么出，后期养什么动物赚钱，鸡舍升级材料", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.ANIMAL_CARE, StardewGuideIntent.BUILDING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("farm_animal_detail", "farm_animal_available", "building_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("兔子", "兔子的脚", "每日运气")
+                .contains("猪", "松露油")
+                .contains("鸡舍", "木材", "石头")
+                .doesNotContain("没找到对应攻略条目");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

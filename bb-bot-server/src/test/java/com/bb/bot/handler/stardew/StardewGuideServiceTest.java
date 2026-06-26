@@ -517,6 +517,48 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFarmAnimalDetailsThroughTypedIntent() {
+        StardewGuideResult rabbit = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 兔子的脚怎么出");
+        StardewGuideResult pig = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 猪松露怎么赚钱");
+        StardewGuideResult ostrich = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 鸵鸟蛋拿到后怎么办");
+        StardewGuideResult cow = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 奶牛为什么不出大壶牛奶");
+
+        assertThat(rabbit.getIntent()).isEqualTo("farm_animal_detail");
+        assertThat(rabbit.getAnswer()).contains("兔子", "豪华鸡舍", "8,000g", "兔子的脚", "每日运气");
+        assertThat(rabbit.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals", "https://stardewvalleywiki.com/Rabbit");
+
+        assertThat(pig.getIntent()).isEqualTo("farm_animal_detail");
+        assertThat(pig.getAnswer()).contains("猪", "豪华畜棚", "16,000g", "松露", "松露油", "留空地");
+
+        assertThat(ostrich.getAnswer()).contains("鸵鸟", "鸵鸟孵化器", "姜岛", "每 7 天", "蛋黄酱 x10");
+        assertThat(cow.getAnswer()).contains("奶牛", "大壶牛奶", "好感", "心情", "挤奶桶");
+    }
+
+    @Test
+    void answersFarmAnimalRecommendationsThroughTypedIntentWithoutBuildingCrossRouting() {
+        StardewGuideResult all = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 动物有哪些");
+        StardewGuideResult early = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 前期养什么动物好");
+        StardewGuideResult money = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 后期养什么动物赚钱");
+        StardewGuideResult wool = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 羊毛怎么获得");
+        StardewGuideResult care = service.answerEvidence(StardewGuideIntent.ANIMAL_CARE, "星露谷 动物怎么养，怎么提高心情");
+        StardewGuideResult coop = service.answerEvidence(StardewGuideIntent.BUILDING, "星露谷 鸡舍升级材料");
+
+        assertThat(all.getIntent()).isEqualTo("farm_animal_available");
+        assertThat(all.getAnswer()).contains("鸡（白/棕/蓝）", "鸭", "兔子", "恐龙", "奶牛", "山羊", "绵羊", "猪", "鸵鸟");
+
+        assertThat(early.getAnswer()).contains("鸡（白/棕/蓝）", "奶牛");
+        assertThat(money.getAnswer()).contains("猪", "松露油");
+        assertThat(wool.getIntent()).isEqualTo("farm_animal_available");
+        assertThat(wool.getAnswer()).contains("兔子", "绵羊", "羊毛->布料");
+
+        assertThat(care.getIntent()).isEqualTo("guide");
+        assertThat(care.getAnswer()).contains("每天摸动物", "干草");
+
+        assertThat(coop.getIntent()).isEqualTo("building_detail");
+        assertThat(coop.getAnswer()).contains("鸡舍", "木材", "石头").doesNotContain("农场动物对照", "兔子的脚");
+    }
+
+    @Test
     void answersFruitTreeAndFruitQuestions() {
         StardewGuideResult fruitTrees = service.answer("星露谷 果树怎么种，温室能种吗");
         StardewGuideResult apple = service.answer("星露谷 苹果怎么获得，收集包要几个");

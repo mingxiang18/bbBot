@@ -205,6 +205,48 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFarmAnimalQueriesSeparatelyFromBuildingsAndFarmMaps() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan rabbitFoot = planner.plan("兔子的脚怎么出");
+        StardewQueryPlan pigMoney = planner.plan("后期养什么动物赚钱");
+        StardewQueryPlan ostrich = planner.plan("鸵鸟蛋拿到后怎么办");
+        StardewQueryPlan meadowlands = planner.plan("草原农场适合养动物吗");
+        StardewQueryPlan coopUpgrade = planner.plan("鸡舍升级材料");
+
+        assertThat(rabbitFoot.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(pigMoney.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(ostrich.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(meadowlands.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(coopUpgrade.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+    }
+
+    @Test
+    void localGuardrailPullsBroadGuideBackToFarmAnimalIntent() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"GUIDE","keywords":["兔子的脚怎么出"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["猪松露怎么赚钱"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("兔脚和猪松露");
+
+        assertThat(plan.getIntents()).hasSize(2);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.ANIMAL_CARE);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

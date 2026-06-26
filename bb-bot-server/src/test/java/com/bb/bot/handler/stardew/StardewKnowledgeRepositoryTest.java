@@ -40,7 +40,59 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.skillGuides()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.farmMaps()).hasSize(8);
+        assertThat(repository.farmAnimals()).hasSize(11);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
+    }
+
+    @Test
+    void fullFarmAnimalTableIsCovered() {
+        Set<String> animalIds = repository.farmAnimals().stream()
+                .map(StardewData.FarmAnimalGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.farmAnimals()).hasSize(11);
+        assertThat(animalIds).containsExactlyInAnyOrder(
+                "chicken",
+                "void_chicken",
+                "golden_chicken",
+                "duck",
+                "rabbit",
+                "dinosaur",
+                "cow",
+                "goat",
+                "sheep",
+                "pig",
+                "ostrich"
+        );
+
+        assertThat(repository.findFarmAnimal("兔子的脚怎么出").orElseThrow().getId()).isEqualTo("rabbit");
+        assertThat(repository.findFarmAnimal("鸭毛概率").orElseThrow().getId()).isEqualTo("duck");
+        assertThat(repository.findFarmAnimal("大壶牛奶为什么不出").orElseThrow().getId()).isEqualTo("cow");
+        assertThat(repository.findFarmAnimal("猪松露赚钱").orElseThrow().getId()).isEqualTo("pig");
+        assertThat(repository.findFarmAnimal("鸵鸟蛋怎么孵").orElseThrow().getId()).isEqualTo("ostrich");
+        assertThat(repository.findFarmAnimal("金鸡怎么获得").orElseThrow().getId()).isEqualTo("golden_chicken");
+    }
+
+    @Test
+    void allFarmAnimalsHaveCoreFieldsAndSources() {
+        assertThat(repository.farmAnimals())
+                .hasSize(11)
+                .allSatisfy(animal -> {
+                    assertThat(animal.getId()).isNotBlank();
+                    assertThat(animal.getName()).isNotBlank();
+                    assertThat(animal.getNameEn()).isNotBlank();
+                    assertThat(animal.getAliases()).isNotEmpty();
+                    assertThat(animal.getCategory()).isIn("coop", "barn");
+                    assertThat(animal.getBuilding()).isNotBlank();
+                    assertThat(animal.getAcquisition()).isNotBlank();
+                    assertThat(animal.getMaturityDays()).isNotNull();
+                    assertThat(animal.getProduceFrequency()).isNotBlank();
+                    assertThat(animal.getToolRequired()).isNotBlank();
+                    assertThat(animal.getProducts()).isNotEmpty();
+                    assertThat(animal.getBestFor()).isNotEmpty();
+                    assertThat(animal.getRecommendations()).isNotEmpty();
+                    assertThat(animal.getSourceUrls()).contains("https://stardewvalleywiki.com/Animals");
+                });
     }
 
     @Test

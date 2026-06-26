@@ -26,26 +26,28 @@
 
 农场地图类目已从 `GUIDE` / `BUILDING` 拆出 `FARM_MAP` typed intent 和 `farmMaps` 专用数据。8 张开局农场地图已完整结构化，覆盖标准、河流、森林、山顶、荒野、四角、海滩和草原农场；农场选择、布局特点、适合人群、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域等走 `FARM_MAP`，鸡舍、畜棚、筒仓、鱼塘、房屋升级等建筑材料和价格仍走 `BUILDING`。
 
+农场动物类目沿用 `ANIMAL_CARE` intent，但不再只是通用养殖攻略。鸡舍/畜棚动物已结构化为 `farmAnimals` 专用数据，覆盖购买/获得方式、成熟时间、产物频率、采集工具、加工产物、好感/心情/运气/天气等机制和赚钱建议。单个动物或动物产物问题走 `farm_animal_detail`，例如“兔子的脚怎么出”“猪松露怎么赚钱”“奶牛为什么不出大壶牛奶”；“动物有哪些”“后期养什么动物赚钱”走 `farm_animal_available`；“动物怎么养、怎么提高心情”仍回到通用 `guide`。
+
 ## 已覆盖范围
 
-已结构化覆盖鱼类、收集包、居民、作物、建筑/工具、完整制作配方、机器兼容、商店/兑换、资源、怪物、鱼塘、料理/书籍、特别订单/齐先生任务、技能、节日/活动、农场地图、通用攻略等高频类目。
+已结构化覆盖鱼类、收集包、居民、作物、建筑/工具、完整制作配方、机器兼容、商店/兑换、资源、怪物、鱼塘、料理/书籍、特别订单/齐先生任务、技能、节日/活动、农场地图、农场动物、通用攻略等高频类目。
 
-当前数据量级：鱼类 74 条，收集包 58 个，居民 34 位，作物 30 个，建筑 27 个，工具 6 类，完整制作配方 150 个，机器兼容数据 80 个，商店/兑换 29 个，资源 181 项，怪物 58 个，鱼塘 73 条，料理/饮品 83 道，书籍 26 本，特别订单 28 个，技能攻略 9 个，节日/活动 12 个，农场地图 8 个，通用攻略 39 项。
+当前数据量级：鱼类 74 条，收集包 58 个，居民 34 位，作物 30 个，建筑 27 个，工具 6 类，完整制作配方 150 个，机器兼容数据 80 个，商店/兑换 29 个，资源 181 项，怪物 58 个，鱼塘 73 条，料理/饮品 83 道，书籍 26 本，特别订单 28 个，技能攻略 9 个，节日/活动 12 个，农场地图 8 个，农场动物 11 个，通用攻略 39 项。
 
 居民已完成可送礼居民的首轮可发布覆盖：生日、礼物偏好、普通日程和高频雨天/星期/诊所/上课规则。更复杂的姜岛度假、婚后、好感剧情、绿雨、沙漠节期间特殊行为等放入后续增强。
 
 ## 验证结论
 
-最近一次星露谷聚焦单元测试通过：`232 tests, 0 failures`。
+最近一次星露谷聚焦单元测试通过：`239 tests, 0 failures`。
 
 最近一次 `bb-bot-server` reactor compile 通过：`BUILD SUCCESS`。
 
-JSON 轻量校验通过：`craftingRecipes=150`，`festivalEvents=12`，`farmMaps=8`，`machines=80`，`resources=181`，`guides=39`，`specialOrders=28`，`skillGuides=9`；重复 id 为空。`git diff --check` 对本轮相关文件通过。
+JSON 轻量校验通过：`craftingRecipes=150`，`festivalEvents=12`，`farmMaps=8`，`farmAnimals=11`，`machines=80`，`resources=181`，`guides=39`，`specialOrders=28`，`skillGuides=9`；重复 id 为空。`git diff --check` 对本轮相关文件通过。
 
 实际服务启动测试当前按目标暂停；历史本地服务测试中，非星露谷链路仍有既有 Splatoon3 A13 专用工具路由失败，不影响本功能发布判断。
 
 ## 后续原则
 
-后续优先补齐农场布局摆放细节、姜岛/火山深层攻略和居民复杂规则的偏门数据。每轮补数都要同步补 typed intent、防串路单元测试、JSON 校验、聚焦单元测试、reactor compile 和 `git diff --check`。
+后续优先补齐农场布局摆放细节、姜岛/火山深层攻略、居民复杂规则和宠物/马/史莱姆等偏门动物数据。每轮补数都要同步补 typed intent、防串路单元测试、JSON 校验、聚焦单元测试、reactor compile 和 `git diff --check`。
 
 测试重心也应逐步迁移：新增类目优先覆盖 `StardewQueryPlannerServiceTest`、`StardewGuideRetrieverTest`、typed `StardewGuideService.answerEvidence` 和 `StardewGuideAssistantServiceTest`；旧 `answer(String)` 测试只保留存量兼容和少量关键回归，避免为了旧路由继续堆命中规则。

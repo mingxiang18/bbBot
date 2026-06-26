@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -120,6 +120,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.FarmMapGuide> farmMaps() {
         return safe(data.getFarmMaps());
+    }
+
+    public List<StardewData.FarmAnimalGuide> farmAnimals() {
+        return safe(data.getFarmAnimals());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -308,6 +312,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(FarmMapMatch::map)
+                .findFirst();
+    }
+
+    public Optional<StardewData.FarmAnimalGuide> findFarmAnimal(String query) {
+        String q = normalize(query);
+        return farmAnimals().stream()
+                .map(animal -> new FarmAnimalMatch(animal, scoreFarmAnimal(q, animal)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(FarmAnimalMatch::animal)
                 .findFirst();
     }
 
@@ -561,6 +575,30 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreFarmAnimal(String q, StardewData.FarmAnimalGuide animal) {
+        int score = scoreSearchable(q, animal.getName(), animal.getNameEn(), animal.getAliases());
+        if (score == 0 && animal.getProducts() != null) {
+            for (StardewData.AnimalProduct product : animal.getProducts()) {
+                score = Math.max(score, scoreSearchable(q, product.getName(), product.getProcessedInto(), List.of()));
+            }
+        }
+        if (score == 0) {
+            return 0;
+        }
+        if (animal.getBestFor() != null) {
+            for (String value : animal.getBestFor()) {
+                String normalized = normalize(value);
+                if (!normalized.isEmpty() && q.contains(normalized)) {
+                    score += 10;
+                }
+            }
+        }
+        if (animal.getBuilding() != null && q.contains(normalize(animal.getBuilding()))) {
+            score += 10;
+        }
+        return score;
+    }
+
     private int scoreBundle(String q, StardewData.Bundle bundle) {
         int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
         boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
@@ -596,6 +634,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record FarmMapMatch(StardewData.FarmMapGuide map, int score) {
+    }
+
+    private record FarmAnimalMatch(StardewData.FarmAnimalGuide animal, int score) {
     }
 
     private record BundleMatch(StardewData.Bundle bundle, int score) {

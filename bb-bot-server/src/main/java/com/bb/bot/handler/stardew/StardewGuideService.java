@@ -223,7 +223,8 @@ public class StardewGuideService {
             case RESOURCE -> typedResourceAnswer(query);
             case MONSTER_DROP -> typedMonsterDropAnswer(query);
             case FISH_POND -> typedFishPondAnswer(query);
-            case ANIMAL_CARE, FRUIT_TREE, MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case ANIMAL_CARE -> typedAnimalCareAnswer(query);
+            case FRUIT_TREE, MUSEUM, GUIDE -> typedGuideAnswer(query);
             case SKILL -> typedSkillAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
@@ -395,6 +396,24 @@ public class StardewGuideService {
             return farmMapDetailAnswer(farmMap.get());
         }
         return farmMapListAnswer(query, farmMap);
+    }
+
+    private StardewGuideResult typedAnimalCareAnswer(String query) {
+        Optional<StardewData.FarmAnimalGuide> animal = repository.findFarmAnimal(query);
+        if (looksLikeSharedFarmAnimalProductQuery(query)) {
+            return farmAnimalListAnswer(query, animal);
+        }
+        if (animal.isPresent() && !isBroadFarmAnimalQuery(query)) {
+            return farmAnimalDetailAnswer(animal.get());
+        }
+        if (looksLikeFarmAnimalListQuery(query)) {
+            return farmAnimalListAnswer(query, animal);
+        }
+        if (looksLikeAnimalCareGuideQuery(query)) {
+            return typedGuideAnswer(query);
+        }
+        return animal.map(this::farmAnimalDetailAnswer)
+                .orElseGet(() -> farmAnimalListAnswer(query, Optional.empty()));
     }
 
     private boolean looksLikeSpecificCookingRecipeQuery(String query) {
@@ -631,6 +650,93 @@ public class StardewGuideService {
         }
         sb.append("建议：新手和自动化优先标准/草原；想钓鱼、采矿、硬木、战斗或多人分区，再选对应主题农场。问具体农场名可以看限制和细节。");
         return result("farm_map_available", sb.toString().trim(), collectFarmMapSources(matched));
+    }
+
+    private StardewGuideResult farmAnimalDetailAnswer(StardewData.FarmAnimalGuide animal) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(animal.getName()).append("：\n")
+                .append("建筑：").append(StringUtils.defaultIfBlank(animal.getBuilding(), "未记录")).append("\n")
+                .append("获取：").append(StringUtils.defaultIfBlank(animal.getAcquisition(), "未记录")).append("\n");
+        if (animal.getPurchasePrice() != null) {
+            sb.append("购买价格：").append(formatGold(animal.getPurchasePrice())).append("\n");
+        }
+        if (animal.getMaturityDays() != null) {
+            sb.append("成熟：").append(animal.getMaturityDays() == 0 ? "出生即成熟" : animal.getMaturityDays() + " 天").append("\n");
+        }
+        if (StringUtils.isNotBlank(animal.getProduceFrequency())) {
+            sb.append("产出频率：").append(animal.getProduceFrequency()).append("\n");
+        }
+        if (StringUtils.isNotBlank(animal.getToolRequired())) {
+            sb.append("工具/采集：").append(animal.getToolRequired()).append("\n");
+        }
+        appendAnimalProducts(sb, animal.getProducts());
+        appendLines(sb, "机制", animal.getMechanics());
+        appendLines(sb, "适合", animal.getBestFor());
+        appendLines(sb, "建议", animal.getRecommendations());
+        if (StringUtils.isNotBlank(animal.getNote())) {
+            sb.append("提示：").append(animal.getNote()).append("\n");
+        }
+        return result("farm_animal_detail", sb.toString().trim(), animal.getSourceUrls());
+    }
+
+    private StardewGuideResult farmAnimalListAnswer(String query, Optional<StardewData.FarmAnimalGuide> preferred) {
+        List<StardewData.FarmAnimalGuide> matched = repository.farmAnimals().stream()
+                .filter(animal -> matchesFarmAnimalQuery(query, animal))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::farmAnimals);
+        }
+        if (matched.isEmpty()) {
+            return result("farm_animal_available", "没找到农场动物资料。可以试试：鸡、奶牛、鸭、兔子、猪、鸵鸟。", List.of());
+        }
+        StringBuilder sb = new StringBuilder("农场动物对照：\n");
+        for (StardewData.FarmAnimalGuide animal : matched) {
+            sb.append("- ").append(animal.getName()).append("：")
+                    .append(StringUtils.defaultIfBlank(animal.getBuilding(), "建筑未记录"));
+            if (animal.getPurchasePrice() != null) {
+                sb.append("，").append(formatGold(animal.getPurchasePrice()));
+            }
+            if (animal.getProducts() != null && !animal.getProducts().isEmpty()) {
+                sb.append("；产物：")
+                        .append(animal.getProducts().stream().map(this::animalProductSummary).limit(3).reduce((a, b) -> a + "、" + b).orElse("未记录"));
+            }
+            if (animal.getRecommendations() != null && !animal.getRecommendations().isEmpty()) {
+                sb.append("；建议：").append(animal.getRecommendations().get(0));
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：前期鸡和奶牛最稳；中期按收集包补鸭、兔、山羊；后期赚钱重点看猪，姜岛后再考虑鸵鸟。问具体动物名可看产物、成熟时间和机制。");
+        return result("farm_animal_available", sb.toString().trim(), collectFarmAnimalSources(matched));
+    }
+
+    private String animalProductSummary(StardewData.AnimalProduct product) {
+        if (StringUtils.isBlank(product.getProcessedInto())) {
+            return product.getName();
+        }
+        return product.getName() + "->" + product.getProcessedInto();
+    }
+
+    private void appendAnimalProducts(StringBuilder sb, List<StardewData.AnimalProduct> products) {
+        if (products == null || products.isEmpty()) {
+            return;
+        }
+        sb.append("产物：\n");
+        for (StardewData.AnimalProduct product : products) {
+            sb.append("- ").append(product.getName());
+            if (product.getSellPrice() != null) {
+                sb.append("：").append(formatGold(product.getSellPrice()));
+            }
+            if (StringUtils.isNotBlank(product.getProcessedInto())) {
+                sb.append("；加工：").append(product.getProcessedInto());
+                if (product.getProcessedSellPrice() != null) {
+                    sb.append("（").append(formatGold(product.getProcessedSellPrice())).append("）");
+                }
+            }
+            if (StringUtils.isNotBlank(product.getNote())) {
+                sb.append("；").append(product.getNote());
+            }
+            sb.append("\n");
+        }
     }
 
     private void appendLines(StringBuilder sb, String title, List<String> lines) {
@@ -1920,6 +2026,38 @@ public class StardewGuideService {
         return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "怎么选", "选什么", "推荐", "适合", "新手");
     }
 
+    private boolean isBroadFarmAnimalQuery(String query) {
+        return looksLikeFarmAnimalListQuery(query);
+    }
+
+    private boolean looksLikeFarmAnimalListQuery(String query) {
+        return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "养什么")
+                || (containsAny(query, "推荐", "适合", "哪个好", "赚钱", "前期", "后期")
+                && containsAny(query, "动物", "农场动物", "养什么", "养哪个", "哪个好"))
+                || (containsAny(query, "鸡舍", "畜棚", "动物") && containsAny(query, "产物", "对照", "比较"));
+    }
+
+    private boolean looksLikeAnimalCareGuideQuery(String query) {
+        return containsAny(query, "怎么养", "心情", "好感", "喂", "摸", "干草", "草地", "不产", "不出", "为什么")
+                && !repository.findFarmAnimal(query).isPresent();
+    }
+
+    private boolean looksLikeSharedFarmAnimalProductQuery(String query) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        List<StardewData.FarmAnimalGuide> productMatches = repository.farmAnimals().stream()
+                .filter(animal -> containsAnimalProduct(q, animal.getProducts()))
+                .toList();
+        if (productMatches.size() < 2) {
+            return false;
+        }
+        return productMatches.stream().noneMatch(animal -> containsSpecificFarmAnimalName(q, animal));
+    }
+
+    private boolean containsSpecificFarmAnimalName(String query, StardewData.FarmAnimalGuide animal) {
+        return containsNormalized(query, animal.getName())
+                || containsNormalized(query, animal.getNameEn());
+    }
+
     private boolean matchesFarmMapQuery(String query, StardewData.FarmMapGuide map) {
         String q = StardewKnowledgeRepository.normalize(query);
         int directScore = repository.findFarmMap(query)
@@ -1942,6 +2080,47 @@ public class StardewGuideService {
                 || containsNormalized(q, map.getLayoutSummary())
                 || containsNormalized(q, map.getNote())
                 || containsAny(q, StardewKnowledgeRepository.normalize(map.getName()), StardewKnowledgeRepository.normalize(map.getNameEn()));
+    }
+
+    private boolean matchesFarmAnimalQuery(String query, StardewData.FarmAnimalGuide animal) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.FarmAnimalGuide> direct = repository.findFarmAnimal(query);
+        if (direct.isPresent() && direct.get().getId().equals(animal.getId()) && !looksLikeFarmAnimalListQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "有哪些", "列表", "总览", "所有", "全部", "农场动物", "动物产物", "鸡舍动物", "畜棚动物")) {
+            return true;
+        }
+        if (containsAny(q, "鸡舍") && "coop".equals(animal.getCategory())) {
+            return true;
+        }
+        if (containsAny(q, "畜棚", "谷仓") && "barn".equals(animal.getCategory())) {
+            return true;
+        }
+        return containsAnyNormalized(q, animal.getAliases())
+                || containsAnyNormalized(q, animal.getBestFor())
+                || containsAnyNormalized(q, animal.getMechanics())
+                || containsAnyNormalized(q, animal.getRecommendations())
+                || containsAnimalProduct(q, animal.getProducts())
+                || containsNormalized(q, animal.getName())
+                || containsNormalized(q, animal.getNameEn())
+                || containsNormalized(q, animal.getAcquisition())
+                || containsNormalized(q, animal.getProduceFrequency())
+                || containsNormalized(q, animal.getNote());
+    }
+
+    private boolean containsAnimalProduct(String query, List<StardewData.AnimalProduct> products) {
+        if (products == null || products.isEmpty()) {
+            return false;
+        }
+        for (StardewData.AnimalProduct product : products) {
+            if (containsNormalized(query, product.getName())
+                    || containsNormalized(query, product.getProcessedInto())
+                    || containsNormalized(query, product.getNote())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isFishingQuestion(String query) {
@@ -2539,7 +2718,11 @@ public class StardewGuideService {
                     || (query.contains("硬木") && normalized.contains("硬木"))
                     || (query.contains("多人") && normalized.contains("多人"))
                     || (query.contains("战斗") && normalized.contains("战斗"))
-                    || (query.contains("洒水器") && normalized.contains("洒水器")))) {
+                    || (query.contains("洒水器") && normalized.contains("洒水器"))
+                    || (query.contains("赚钱") && normalized.contains("赚钱"))
+                    || (query.contains("前期") && normalized.contains("前期"))
+                    || (query.contains("后期") && normalized.contains("后期"))
+                    || (query.contains("收集包") && normalized.contains("收集包")))) {
                 return true;
             }
         }
@@ -2682,6 +2865,16 @@ public class StardewGuideService {
         for (StardewData.FarmMapGuide map : maps) {
             if (map.getSourceUrls() != null) {
                 urls.addAll(map.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFarmAnimalSources(List<StardewData.FarmAnimalGuide> animals) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.FarmAnimalGuide animal : animals) {
+            if (animal.getSourceUrls() != null) {
+                urls.addAll(animal.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);
