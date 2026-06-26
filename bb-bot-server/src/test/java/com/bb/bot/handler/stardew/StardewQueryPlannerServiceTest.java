@@ -416,6 +416,29 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesSpecialCurrencyQueries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("特殊货币有哪些").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("齐钻怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("金核桃怎么用").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("三花蛋换什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("金色标签怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("星星币怎么刷").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("火山晶石怎么用").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+    }
+
+    @Test
     void localFallbackClassifiesForgeEnchantingQueriesAsGuide() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

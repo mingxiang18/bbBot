@@ -349,6 +349,35 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersSpecialCurrencyResourcesAndGuideWithoutCrossRouting() {
+        StardewGuideResult qiGem = service.answerEvidence(StardewGuideIntent.RESOURCE, "齐钻怎么获得");
+        StardewGuideResult walnut = service.answerEvidence(StardewGuideIntent.RESOURCE, "金核桃怎么用");
+        StardewGuideResult qiCoin = service.answerEvidence(StardewGuideIntent.RESOURCE, "齐币在哪里买");
+        StardewGuideResult starToken = service.answer("星露谷 星星币怎么刷");
+        StardewGuideResult calicoEgg = service.answerEvidence(StardewGuideIntent.RESOURCE, "三花蛋换什么");
+        StardewGuideResult cinderShard = service.answer("星露谷 火山晶石怎么用");
+        StardewGuideResult goldenTag = service.answerEvidence(StardewGuideIntent.RESOURCE, "金色标签怎么获得");
+        StardewGuideResult guide = service.answerEvidence(StardewGuideIntent.GUIDE, "特殊货币有哪些");
+
+        assertThat(qiGem.getIntent()).isEqualTo("resource");
+        assertThat(qiGem.getAnswer()).contains("齐钻获取方式", "齐先生挑战", "危险矿井", "马笛");
+        assertThat(walnut.getAnswer()).contains("金核桃获取方式", "130", "姜岛", "齐先生核桃房");
+        assertThat(qiCoin.getAnswer()).contains("齐币获取方式", "1,000g", "100 齐币", "不能兑换回金币");
+        assertThat(starToken.getIntent()).isEqualTo("resource");
+        assertThat(starToken.getAnswer()).contains("星星币获取方式", "农庄展览", "2,000", "不保留到下一年")
+                .doesNotContain("陶瓷碎片", "星之碎片");
+        assertThat(calicoEgg.getAnswer()).contains("三花蛋获取方式", "沙漠节", "150g", "节日结束");
+        assertThat(cinderShard.getIntent()).isEqualTo("resource");
+        assertThat(cinderShard.getAnswer()).contains("火山晶石获取方式", "火山地牢", "黄貂鱼鱼塘", "无限武器")
+                .doesNotContain("火山锻造与附魔");
+        assertThat(goldenTag.getAnswer()).contains("金色标签获取方式", "鳟鱼大赛", "33%", "跨天保留");
+        assertThat(guide.getIntent()).isEqualTo("guide");
+        assertThat(guide.getAnswer())
+                .contains("特殊货币与兑换物", "齐钻", "金核桃", "齐币", "星星币", "奖券", "三花蛋", "火山晶石", "金色标签")
+                .doesNotContain("工具升级总览", "夏季鱼类");
+    }
+
+    @Test
     void answersMuseumArtifactMineralAndGeodeQuestions() {
         StardewGuideResult museum = service.answer("星露谷 博物馆缺古物和矿物怎么补");
         StardewGuideResult omniGeode = service.answer("星露谷 万象晶球怎么刷，开还是换古物宝藏");
@@ -858,17 +887,17 @@ class StardewGuideServiceTest {
     void fallsBackToWikiForUnmodeledGuideQuestions() {
         StardewGuideService wikiBacked = new StardewGuideService(repositoryWithData(), (query, maxResults) -> List.of(
                 StardewWikiPage.builder()
-                        .title("姜岛")
-                        .url("https://zh.stardewvalleywiki.com/姜岛")
-                        .excerpt("姜岛是位于蕨岛群岛的岛屿。玩家修复威利鱼店后屋的船后可以前往，并在那里解锁火山、农场和金核桃内容。")
+                        .title("秘密纸条")
+                        .url("https://zh.stardewvalleywiki.com/秘密纸条")
+                        .excerpt("秘密纸条 #19 会给出一段方向路线，按路线从指定地点行走可获得隐藏奖励。")
                         .build()));
 
-        StardewGuideResult result = wikiBacked.answer("星露谷 姜岛金核桃怎么收集");
+        StardewGuideResult result = wikiBacked.answer("星露谷 秘密纸条19路线怎么走");
 
         assertThat(result.getIntent()).isEqualTo("wiki_fallback");
-        assertThat(result.getAnswer()).contains("我找到这些可能相关的内容", "姜岛", "金核桃");
+        assertThat(result.getAnswer()).contains("我找到这些可能相关的内容", "秘密纸条", "方向路线");
         assertThat(result.getAnswer()).doesNotContain("官方 Wiki", "本地结构化库", "来源");
-        assertThat(result.getSourceUrls()).contains("https://zh.stardewvalleywiki.com/姜岛");
+        assertThat(result.getSourceUrls()).contains("https://zh.stardewvalleywiki.com/秘密纸条");
     }
 
     @Test

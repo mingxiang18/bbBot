@@ -66,6 +66,9 @@ public class StardewGuideService {
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
 
+        if (resource.isPresent() && looksLikeSpecificSpecialCurrencyResourceQuery(query)) {
+            return resourceAnswer(query, resource.get());
+        }
         boolean bundleIntent = query.contains("收集包") || query.contains("献祭")
                 || (bundle.isPresent() && (query.contains("要") || query.contains("需要") || query.contains("交") || query.contains("包")));
         if (bundleIntent && !(resource.isPresent() && looksLikeResourceQuery(query))
@@ -1711,6 +1714,19 @@ public class StardewGuideService {
         return guide != null && "forge_enchanting".equals(guide.getId())
                 && containsAny(query, "锻造", "附魔", "火山晶石", "银河之魂", "无限武器",
                 "无限之刃", "无限之锤", "无限匕首", "戒指合成", "戒指组合", "forge", "enchant");
+    }
+
+    private boolean looksLikeSpecificSpecialCurrencyResourceQuery(String query) {
+        if (!containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "怎么刷", "在哪", "来源", "怎么拿",
+                "怎么用", "有什么用", "换什么", "兑换", "花", "买什么", "优先")) {
+            return false;
+        }
+        return containsAny(query,
+                "齐钻", "齐先生宝石", "金核桃", "黄金核桃", "齐币", "赌场币", "星星币", "星之币",
+                "奖券", "兑奖券", "三花蛋", "卡利科蛋", "火山晶石", "金色标签", "黄金标签",
+                "Qi Gem", "Qi Gems", "Golden Walnut", "Golden Walnuts", "Qi Coin", "Qi Coins",
+                "Star Token", "Star Tokens", "Prize Ticket", "Prize Tickets", "Calico Egg", "Calico Eggs",
+                "Cinder Shard", "Cinder Shards", "Golden Tag", "Golden Tags");
     }
 
     private boolean looksLikeBookDetailQuery(String query) {

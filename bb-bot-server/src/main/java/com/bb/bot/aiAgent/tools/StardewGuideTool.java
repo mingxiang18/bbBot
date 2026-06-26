@@ -19,7 +19,7 @@ public class StardewGuideTool {
 
     @AiTool(
             name = "stardew_guide",
-            description = "查询星露谷物语相关攻略时调用；保留用户原问题，工具内部会做分类、检索和自然语言整合。"
+            description = "查询星露谷物语攻略问题时调用，保留用户原问题。"
     )
     public Map<String, Object> guide(
             @AiToolParam(name = "query", description = "用户的星露谷攻略问题，保留季节、日期、时间、天气等条件")

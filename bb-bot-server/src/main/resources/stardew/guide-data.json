@@ -20209,6 +20209,373 @@
         "https://zh.stardewvalleywiki.com/果树",
         "https://stardewvalleywiki.com/Fruit_Trees"
       ]
+    },
+    {
+      "id": "qi_gem",
+      "name": "齐钻",
+      "nameEn": "Qi Gem",
+      "aliases": [
+        "齐钻",
+        "齐先生宝石",
+        "Qi Gem",
+        "Qi Gems",
+        "qi gem",
+        "qi gems",
+        "齐先生核桃房货币",
+        "齐先生货币",
+        "齐钻怎么获得",
+        "齐钻换什么"
+      ],
+      "acquisitions": [
+        {
+          "type": "齐先生任务",
+          "detail": "解锁姜岛西部并进入齐先生核桃房后，完成齐先生挑战会获得齐钻。"
+        },
+        {
+          "type": "危险矿井/危险骷髅洞穴",
+          "detail": "危险版本矿井和骷髅洞穴的怪物有机会掉落；危险矿井的竹虫固定掉落 1 个，并有概率额外掉落。"
+        },
+        {
+          "type": "金核桃兑换",
+          "detail": "后期多余金核桃可换成齐钻，用来继续购买齐先生核桃房奖励。"
+        }
+      ],
+      "recommendation": "优先考虑马笛、银河之魂、城镇钥匙、压力喷嘴/施肥器等永久便利或战力提升；魔法鱼饵、齐氏调味料属于消耗型选择。",
+      "usedIn": [
+        "齐先生核桃房奖励商店",
+        "马笛",
+        "银河之魂",
+        "城镇钥匙",
+        "压力喷嘴",
+        "施肥器",
+        "分解机",
+        "魔法鱼饵",
+        "齐氏调味料"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Qi_Gem",
+        "https://stardewvalleywiki.com/Qi%27s_Walnut_Room"
+      ]
+    },
+    {
+      "id": "golden_walnut",
+      "name": "金核桃",
+      "nameEn": "Golden Walnut",
+      "aliases": [
+        "金核桃",
+        "黄金核桃",
+        "Golden Walnut",
+        "Golden Walnuts",
+        "golden walnut",
+        "golden walnuts",
+        "姜岛核桃",
+        "鹦鹉货币",
+        "金核桃怎么找",
+        "金核桃怎么用"
+      ],
+      "acquisitions": [
+        {
+          "type": "姜岛探索",
+          "detail": "姜岛全岛总计 130 个；来源包括解谜、挖掘隐藏点、采集、战斗、钓鱼、采矿、开金色椰子等。"
+        },
+        {
+          "type": "钓鱼/采矿/耕种上限",
+          "detail": "姜岛任意地点钓鱼最多可拿 5 个；姜岛农场收获非再生作物最多 5 个；西部贻贝矿点最多 5 个。"
+        },
+        {
+          "type": "鹦鹉提示",
+          "detail": "在 Leo 小屋的鹦鹉可提示还没找到的金核桃方向。"
+        }
+      ],
+      "recommendation": "先开姜岛西部、农舍/传送、挖掘场和岛屿商人；攒到 100 个可进齐先生核桃房。",
+      "usedIn": [
+        "姜岛鹦鹉解锁",
+        "姜岛西部",
+        "姜岛农舍",
+        "农场方尖塔",
+        "挖掘场",
+        "岛屿商人",
+        "火山桥/捷径",
+        "度假村",
+        "鹦鹉快线",
+        "齐先生核桃房"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut",
+        "https://stardewvalleywiki.com/Ginger_Island"
+      ]
+    },
+    {
+      "id": "qi_coin",
+      "name": "齐币",
+      "nameEn": "Qi Coin",
+      "aliases": [
+        "齐币",
+        "赌场币",
+        "赌场硬币",
+        "Qi Coin",
+        "Qi Coins",
+        "qi coin",
+        "qi coins",
+        "casino coin",
+        "casino coins",
+        "赌场货币",
+        "齐币在哪里买",
+        "齐币怎么获得"
+      ],
+      "acquisitions": [
+        {
+          "type": "赌场兑换",
+          "detail": "完成“神秘的齐”任务后进入沙漠赌场，可用金币换齐币，汇率为 1,000g 换 100 齐币（等于 10g/齐币）。"
+        },
+        {
+          "type": "赌场游戏",
+          "detail": "齐币可用于老虎机和 CalicoJack；赢了会增加齐币，但不能兑换回金币。"
+        }
+      ],
+      "recommendation": "只为收藏/稀有稻草人/装饰/传送图腾时再换；齐币不能换回金币，不建议前期大量投入赌博。",
+      "usedIn": [
+        "赌场商店",
+        "老虎机",
+        "CalicoJack",
+        "稀有稻草人 #3",
+        "高礼帽",
+        "硬木栅栏",
+        "磁铁",
+        "农场传送图腾",
+        "赌场装饰"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Casino",
+        "https://stardewvalleywiki.com/The_Mysterious_Qi"
+      ]
+    },
+    {
+      "id": "star_token",
+      "name": "星星币",
+      "nameEn": "Star Token",
+      "aliases": [
+        "星星币",
+        "星之币",
+        "星星代币",
+        "星露谷展览会币",
+        "Star Token",
+        "Star Tokens",
+        "star token",
+        "star tokens",
+        "展览会货币",
+        "星星币怎么刷",
+        "星星币换什么"
+      ],
+      "acquisitions": [
+        {
+          "type": "星露谷展览会小游戏",
+          "detail": "秋季 16 日星露谷展览会通过钓鱼小游戏、弹弓小游戏、砸石头、转盘等获得；转盘绿色概率更高。"
+        },
+        {
+          "type": "农庄展览",
+          "detail": "农庄展览第一名给 1,000 星星币；第二/三/四名分别给 500/250/50。"
+        },
+        {
+          "type": "购买",
+          "detail": "星星币卖家可用 50g 买 1 个星星币，最快但性价比很低。"
+        }
+      ],
+      "recommendation": "第一年通常优先攒 2,000 换星之果实；剩余再买稀有稻草人、奖券、装饰或帽子。星星币不保留到下一年。",
+      "usedIn": [
+        "星露谷展览会商店",
+        "星之果实",
+        "稀有稻草人",
+        "奖券",
+        "联邦星舰地毯",
+        "干向日葵",
+        "软呢帽"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Stardew_Valley_Fair"
+      ]
+    },
+    {
+      "id": "prize_ticket",
+      "name": "奖券",
+      "nameEn": "Prize Ticket",
+      "aliases": [
+        "奖券",
+        "兑奖券",
+        "Prize Ticket",
+        "Prize Tickets",
+        "prize ticket",
+        "prize tickets",
+        "刘易斯奖券",
+        "奖品机票券",
+        "奖券怎么获得",
+        "奖券换什么"
+      ],
+      "acquisitions": [
+        {
+          "type": "任务和特别订单",
+          "detail": "完成普通任务和特别订单可获得奖券。"
+        },
+        {
+          "type": "节日奖励",
+          "detail": "万灵节迷宫宝箱、重复赢得复活节彩蛋节和冰雪节等可获得奖券。"
+        },
+        {
+          "type": "星露谷展览会",
+          "detail": "每年可在星露谷展览会用 1,000 星星币购买 1 张奖券。"
+        },
+        {
+          "type": "隐藏获取",
+          "detail": "书商上方树桩后面的箱子可找到 1 张。"
+        }
+      ],
+      "recommendation": "拿到就去刘易斯家奖品机使用；奖品机按序列给种子、树苗、星之果茶、宝箱、铱制洒水器等，不需要囤很久。",
+      "usedIn": [
+        "刘易斯家奖品机",
+        "星之果茶",
+        "宝箱",
+        "铱制洒水器",
+        "季节种子",
+        "树苗",
+        "家具装饰"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Prize_Ticket",
+        "https://stardewvalleywiki.com/Prize_Machine"
+      ]
+    },
+    {
+      "id": "calico_egg",
+      "name": "三花蛋",
+      "nameEn": "Calico Egg",
+      "aliases": [
+        "三花蛋",
+        "卡利科蛋",
+        "沙漠节蛋",
+        "Calico Egg",
+        "Calico Eggs",
+        "calico egg",
+        "calico eggs",
+        "沙漠节货币",
+        "三花蛋怎么获得",
+        "三花蛋换什么"
+      ],
+      "acquisitions": [
+        {
+          "type": "沙漠节活动",
+          "detail": "春季 15-17 日沙漠节通过赛跑竞猜、骷髅洞穴任务、Willy 钓鱼任务、学者问答、雕像效果等活动获得。"
+        },
+        {
+          "type": "购买",
+          "detail": "Pierre 的沙漠节商店最多出售 200 个三花蛋，价格 150g/个。"
+        },
+        {
+          "type": "节日期限",
+          "detail": "三花蛋会在沙漠节三天之间保留，但节日结束后会从背包/箱子中消失，不能留到下一年。"
+        }
+      ],
+      "recommendation": "优先换限时高价值物，如魔法糖冰棍、草莓种子、五彩碎片/兔脚/古物宝藏等当天商店好货；节日结束前花完。",
+      "usedIn": [
+        "沙漠节三花蛋商人",
+        "村民沙漠节商店",
+        "魔法糖冰棍",
+        "草莓种子",
+        "五彩碎片",
+        "古物宝藏",
+        "超级炸弹",
+        "料理和装饰"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Calico_Egg",
+        "https://stardewvalleywiki.com/Desert_Festival"
+      ]
+    },
+    {
+      "id": "cinder_shard",
+      "name": "火山晶石",
+      "nameEn": "Cinder Shard",
+      "aliases": [
+        "火山晶石",
+        "煤渣碎片",
+        "Cinder Shard",
+        "Cinder Shards",
+        "cinder shard",
+        "cinder shards",
+        "火山货币",
+        "火山商店货币",
+        "火山晶石怎么刷",
+        "火山晶石怎么用"
+      ],
+      "acquisitions": [
+        {
+          "type": "火山地牢",
+          "detail": "开采火山晶石矿点，或从普通/稀有宝箱、熔岩精灵、熔岩火球、熔岩掘地虫、假岩浆菇等获得。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "黄貂鱼鱼塘人口至少 7 时可产 2-5 个火山晶石。"
+        },
+        {
+          "type": "骷髅洞穴宝箱",
+          "detail": "解锁火山捷径后，骷髅洞穴宝箱房也可能出现火山晶石。"
+        }
+      ],
+      "recommendation": "优先留给火山锻造/附魔、银河之魂无限武器、火山矮人/岛屿商人关键物品；别把早期火山晶石随便卖掉。",
+      "usedIn": [
+        "火山锻造台",
+        "武器锻造",
+        "工具/武器附魔",
+        "戒指合成",
+        "银河之魂无限武器",
+        "火山矮人商店",
+        "岛屿商人",
+        "鸵鸟孵化器"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Cinder_Shard",
+        "https://stardewvalleywiki.com/Forge"
+      ]
+    },
+    {
+      "id": "golden_tag",
+      "name": "金色标签",
+      "nameEn": "Golden Tag",
+      "aliases": [
+        "金色标签",
+        "黄金标签",
+        "Golden Tag",
+        "Golden Tags",
+        "golden tag",
+        "golden tags",
+        "鳟鱼大赛标签",
+        "Trout Derby tag",
+        "金色标签怎么获得",
+        "金色标签换什么"
+      ],
+      "acquisitions": [
+        {
+          "type": "鳟鱼大赛",
+          "detail": "夏季 20-21 日鳟鱼大赛期间钓虹鳟鱼有 33% 概率获得金色标签；一次钓到 2/3 条虹鳟鱼时概率提高到 66%/99%。"
+        },
+        {
+          "type": "限制",
+          "detail": "鱼塘产出的虹鳟鱼不算；一次钓获最多只给 1 个金色标签。"
+        },
+        {
+          "type": "保存",
+          "detail": "金色标签会跨天保留，也可留到之后年份的鳟鱼大赛继续使用。"
+        }
+      ],
+      "recommendation": "活动期间专心钓虹鳟鱼，拿到就到鳟鱼大赛摊位换奖励；背包满时先清空间。",
+      "usedIn": [
+        "鳟鱼大赛摊位",
+        "鳟鱼大赛奖励",
+        "钓鱼节活动"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Tag",
+        "https://stardewvalleywiki.com/Trout_Derby"
+      ]
     }
   ],
   "books": [
@@ -23056,6 +23423,89 @@
       "sourceUrls": [
         "https://zh.stardewvalleywiki.com/果树",
         "https://stardewvalleywiki.com/Fruit_Trees"
+      ]
+    },
+    {
+      "id": "special_currencies",
+      "name": "特殊货币与兑换物",
+      "category": "economy",
+      "aliases": [
+        "特殊货币",
+        "特殊币",
+        "兑换货币",
+        "节日货币",
+        "活动货币",
+        "齐钻",
+        "金核桃",
+        "齐币",
+        "星星币",
+        "奖券",
+        "三花蛋",
+        "火山晶石",
+        "金色标签",
+        "货币有哪些",
+        "换什么好"
+      ],
+      "keywords": [
+        "齐钻",
+        "金核桃",
+        "齐币",
+        "星星币",
+        "奖券",
+        "三花蛋",
+        "火山晶石",
+        "金色标签",
+        "兑换",
+        "商店",
+        "节日",
+        "赌场",
+        "姜岛",
+        "齐先生",
+        "火山",
+        "鳟鱼大赛"
+      ],
+      "sections": [
+        {
+          "title": "永久进度类",
+          "lines": [
+            "金核桃：姜岛鹦鹉解锁货币，总计 130 个；优先开姜岛西部、农舍/传送、挖掘场、岛屿商人，攒 100 个进齐先生核桃房。",
+            "齐钻：齐先生核桃房奖励货币，主要来自齐先生挑战和危险矿井/危险骷髅洞穴；优先马笛、银河之魂、城镇钥匙、压力喷嘴/施肥器等。",
+            "火山晶石：既是材料也是火山/锻造货币，来自火山地牢、火山怪物、黄貂鱼鱼塘；优先留给锻造、附魔、戒指合成和无限武器。"
+          ]
+        },
+        {
+          "title": "赌场和节日类",
+          "lines": [
+            "齐币：完成“神秘的齐”后进赌场，用 1,000g 换 100 齐币；只能在赌场赌博或购物，不能换回金币。",
+            "星星币：秋季 16 日星露谷展览会货币，小游戏、农庄展览和购买获得；不带到下一年，第一年通常优先 2,000 换星之果实。",
+            "三花蛋：春季 15-17 日沙漠节货币，活动、挑战和 Pierre 购买获得；只在本年沙漠节三天内保留，结束前花完。"
+          ]
+        },
+        {
+          "title": "票券类",
+          "lines": [
+            "奖券：任务、特别订单和部分节日重复胜利获得，在刘易斯家奖品机兑换。",
+            "金色标签：夏季 20-21 日鳟鱼大赛钓虹鳟鱼概率获得，可跨年保留，到活动摊位换奖励。"
+          ]
+        },
+        {
+          "title": "查询建议",
+          "lines": [
+            "问具体货币时用“齐钻怎么获得/金核桃怎么用/三花蛋换什么/金色标签怎么获得”，会返回获取方式和用途。",
+            "问“特殊货币有哪些/各种币怎么花”时，优先按永久进度、赌场节日、票券三类理解。"
+          ]
+        }
+      ],
+      "recommendation": "先把永久进度货币用于解锁和强力便利；节日货币通常有时限，活动结束前优先换星之果实、魔法糖冰棍、稀有稻草人或关键收藏。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Qi_Gem",
+        "https://stardewvalleywiki.com/Golden_Walnut",
+        "https://stardewvalleywiki.com/Casino",
+        "https://stardewvalleywiki.com/Stardew_Valley_Fair",
+        "https://stardewvalleywiki.com/Prize_Ticket",
+        "https://stardewvalleywiki.com/Calico_Egg",
+        "https://stardewvalleywiki.com/Cinder_Shard",
+        "https://stardewvalleywiki.com/Golden_Tag"
       ]
     }
   ],

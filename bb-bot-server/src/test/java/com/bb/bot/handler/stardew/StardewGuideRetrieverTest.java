@@ -631,6 +631,28 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedCurrencyResourceAndGuideEvidenceDoesNotCrossRouteToShopOrArtifact() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.RESOURCE, "星星币怎么刷"),
+                intent(StardewGuideIntent.RESOURCE, "齐币在哪里买"),
+                intent(StardewGuideIntent.RESOURCE, "金色标签怎么获得"),
+                intent(StardewGuideIntent.RESOURCE, "火山晶石怎么用"),
+                intent(StardewGuideIntent.GUIDE, "特殊货币有哪些")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("特殊货币和星星币、齐币、金色标签怎么处理", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.RESOURCE, StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("resource", "guide");
+        assertThat(joinAnswers(evidence))
+                .contains("星星币获取方式", "农庄展览", "1,000g 换 100 齐币", "鳟鱼大赛", "特殊货币与兑换物")
+                .contains("火山晶石获取方式", "火山地牢")
+                .doesNotContain("陶瓷碎片", "星之碎片", "工具升级总览", "星露谷展览会商店：", "火山锻造与附魔");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

@@ -30,12 +30,12 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(161);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(169);
         assertThat(repository.monsterDrops()).hasSizeGreaterThanOrEqualTo(58);
         assertThat(repository.fishPonds()).hasSize(73);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
-        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(37);
+        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(38);
     }
 
     @Test
@@ -83,6 +83,58 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(fishPond.getProducts()).isNotEmpty();
                     assertThat(fishPond.getRecommendation()).isNotBlank();
                     assertThat(fishPond.getSourceUrls()).contains("https://stardewvalleywiki.com/Fish_Pond");
+                });
+    }
+
+    @Test
+    void specialCurrenciesAreCoveredAsResourcesAndGuide() {
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).contains(
+                "qi_gem",
+                "golden_walnut",
+                "qi_coin",
+                "star_token",
+                "prize_ticket",
+                "calico_egg",
+                "cinder_shard",
+                "golden_tag"
+        );
+        assertThat(repository.findResource("星星币怎么刷").orElseThrow().getId()).isEqualTo("star_token");
+        assertThat(repository.findResource("金色标签怎么获得").orElseThrow().getId()).isEqualTo("golden_tag");
+        assertThat(repository.findResource("火山晶石怎么用").orElseThrow().getId()).isEqualTo("cinder_shard");
+
+        StardewData.GuideTopic guide = repository.findGuide("特殊货币有哪些").orElseThrow();
+        assertThat(guide.getId()).isEqualTo("special_currencies");
+        assertThat(guide.getSections()).extracting(StardewData.GuideSection::getTitle)
+                .contains("永久进度类", "赌场和节日类", "票券类");
+    }
+
+    @Test
+    void allSpecialCurrencyResourcesHaveCoreFieldsAndSources() {
+        List<String> ids = List.of(
+                "qi_gem",
+                "golden_walnut",
+                "qi_coin",
+                "star_token",
+                "prize_ticket",
+                "calico_egg",
+                "cinder_shard",
+                "golden_tag"
+        );
+
+        assertThat(repository.resources())
+                .filteredOn(resource -> ids.contains(resource.getId()))
+                .hasSize(ids.size())
+                .allSatisfy(resource -> {
+                    assertThat(resource.getName()).isNotBlank();
+                    assertThat(resource.getAliases()).isNotEmpty();
+                    assertThat(resource.getAcquisitions()).isNotEmpty();
+                    assertThat(resource.getRecommendation()).isNotBlank();
+                    assertThat(resource.getUsedIn()).isNotEmpty();
+                    assertThat(resource.getSourceUrls()).isNotEmpty();
                 });
     }
 

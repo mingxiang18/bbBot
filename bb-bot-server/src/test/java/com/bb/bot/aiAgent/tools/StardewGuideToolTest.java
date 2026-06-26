@@ -20,10 +20,10 @@ class StardewGuideToolTest {
         AiTool aiTool = guide.getAnnotation(AiTool.class);
 
         assertThat(aiTool.name()).isEqualTo("stardew_guide");
-        assertThat(aiTool.description()).contains("星露谷物语相关攻略", "保留用户原问题", "工具内部会做分类");
-        assertThat(aiTool.description().length()).isLessThan(160);
+        assertThat(aiTool.description()).contains("星露谷物语攻略问题", "保留用户原问题");
+        assertThat(aiTool.description().length()).isLessThan(80);
         assertThat(aiTool.description())
-                .doesNotContain("夏天能钓什么鱼", "全 42 古物", "全 53 矿物", "煤尘精灵", "铁砧重铸");
+                .doesNotContain("分类", "检索", "自然语言整合", "夏天能钓什么鱼", "全 42 古物", "全 53 矿物", "煤尘精灵", "铁砧重铸");
     }
 
     @Test

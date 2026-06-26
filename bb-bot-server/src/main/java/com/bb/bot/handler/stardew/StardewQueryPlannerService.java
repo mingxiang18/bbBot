@@ -54,6 +54,8 @@ public class StardewQueryPlannerService {
                         - 精通系统、精通点、精通先选哪个、五系精通奖励、铱金镰刀、高级铱金鱼竿、挑战鱼饵、宝藏图腾、祝福雕像归为 GUIDE。
                         - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
+                        - 泛问特殊货币、兑换货币、节日货币有哪些/怎么规划，例如“特殊货币有哪些”“各种币怎么花”，归为 GUIDE。
+                        - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“金核桃怎么用”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE。
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
                         - 具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏，例如“古代玩偶怎么获得”“矮人卷轴 II 哪里刷”“诡异玩偶黄怎么拿”，归为 RESOURCE。
                         - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
@@ -109,6 +111,12 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.GUIDE;
         }
         if (looksLikeMasteryQuery(q)) {
+            return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeSpecificCurrencyResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
+        }
+        if (looksLikeSpecialCurrencyGuideQuery(q)) {
             return StardewGuideIntent.GUIDE;
         }
         if (looksLikeForgeEnchantingQuery(q)) {
@@ -218,6 +226,25 @@ public class StardewQueryPlannerService {
                 "黄金马刺", "魔法箭筒", "鹦鹉蛋", "蜥怪的爪子", "魔法发胶",
                 "Basilisk Paw", "Fairy Box", "Frog Egg", "Ice Rod", "Golden Spur",
                 "Magic Quiver", "Parrot Egg", "Magic Hair Gel", "trinket");
+    }
+
+    private boolean looksLikeSpecificCurrencyResourceQuery(String query) {
+        if (!containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "怎么刷", "在哪", "来源", "怎么拿",
+                "怎么用", "有什么用", "换什么", "兑换", "花", "买什么", "优先")) {
+            return false;
+        }
+        return containsAny(query,
+                "齐钻", "齐先生宝石", "金核桃", "黄金核桃", "齐币", "赌场币", "星星币", "星之币",
+                "奖券", "兑奖券", "三花蛋", "卡利科蛋", "火山晶石", "金色标签", "黄金标签",
+                "Qi Gem", "Qi Gems", "Golden Walnut", "Golden Walnuts", "Qi Coin", "Qi Coins",
+                "Star Token", "Star Tokens", "Prize Ticket", "Prize Tickets", "Calico Egg", "Calico Eggs",
+                "Cinder Shard", "Cinder Shards", "Golden Tag", "Golden Tags");
+    }
+
+    private boolean looksLikeSpecialCurrencyGuideQuery(String query) {
+        return containsAny(query, "特殊货币", "特殊币", "兑换货币", "节日货币", "活动货币", "各种币", "货币有哪些")
+                || (containsAny(query, "齐钻", "金核桃", "齐币", "星星币", "奖券", "三花蛋", "火山晶石", "金色标签")
+                && containsAny(query, "有哪些", "总览", "攻略", "规划"));
     }
 
     private boolean looksLikeMonsterDropQuery(String query) {
