@@ -266,6 +266,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedIslandFieldOfficeIntentsRetrieveResourcesAndGuideWithoutMuseumCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.RESOURCE, "蛇头骨怎么获得"),
+                intent(StardewGuideIntent.RESOURCE, "木乃伊蝙蝠哪里刷"),
+                intent(StardewGuideIntent.RESOURCE, "金色椰子怎么开"),
+                intent(StardewGuideIntent.GUIDE, "岛屿办事处化石奖励和紫花答案")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("蛇头骨、木乃伊蝙蝠、金色椰子和岛屿办事处怎么做", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.RESOURCE, StardewGuideIntent.GUIDE);
+        assertThat(joinAnswers(evidence))
+                .contains("蛇头骨获取方式", "姜岛西部", "木乃伊蝙蝠获取方式", "火山地牢")
+                .contains("金色椰子获取方式", "克林特", "岛屿办事处化石", "蜗牛教授", "22", "18")
+                .doesNotContain("博物馆捐赠：", "95 件", "42 件古物", "53 件矿物")
+                .doesNotContain("星星币获取方式", "工具升级总览");
+    }
+
+    @Test
     void typedBuildingIntentRetrievesLateGameAndCommunityBuildingEvidence() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.BUILDING, "沙漠方尖塔需要什么"),

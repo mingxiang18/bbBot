@@ -56,6 +56,8 @@ public class StardewQueryPlannerService {
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 泛问特殊货币、兑换货币、节日货币有哪些/怎么规划，例如“特殊货币有哪些”“各种币怎么花”，归为 GUIDE。
                         - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“金核桃怎么用”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE。
+                        - 岛屿办事处、姜岛化石、蜗牛教授、紫花、紫海星、化石捐赠顺序/奖励，归为 GUIDE。
+                        - 具体姜岛办事处化石或火山/姜岛资源怎么获得，例如“蛇头骨怎么获得”“蛇椎骨哪里刷”“木乃伊蝙蝠哪里刷”“金色椰子怎么开”“生姜怎么获得”“岩浆菇哪里找”，归为 RESOURCE。
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
                         - 具体古物/文物怎么获得、哪里刷、谁掉落、开不开古物宝藏，例如“古代玩偶怎么获得”“矮人卷轴 II 哪里刷”“诡异玩偶黄怎么拿”，归为 RESOURCE。
                         - 问某个怪物掉什么、在哪刷、楼层、战斗经验、怪物掉落表，例如“煤尘精灵掉什么”“飞蛇在哪刷”“熔岩潜伏怪掉落”，归为 MONSTER_DROP。
@@ -117,6 +119,12 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.RESOURCE;
         }
         if (looksLikeSpecialCurrencyGuideQuery(q)) {
+            return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeIslandFieldOfficeResourceQuery(q)) {
+            return StardewGuideIntent.RESOURCE;
+        }
+        if (looksLikeIslandFieldOfficeGuideQuery(q)) {
             return StardewGuideIntent.GUIDE;
         }
         if (looksLikeForgeEnchantingQuery(q)) {
@@ -245,6 +253,32 @@ public class StardewQueryPlannerService {
         return containsAny(query, "特殊货币", "特殊币", "兑换货币", "节日货币", "活动货币", "各种币", "货币有哪些")
                 || (containsAny(query, "齐钻", "金核桃", "齐币", "星星币", "奖券", "三花蛋", "火山晶石", "金色标签")
                 && containsAny(query, "有哪些", "总览", "攻略", "规划"));
+    }
+
+    private boolean looksLikeIslandFieldOfficeResourceQuery(String query) {
+        if (!containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "怎么刷", "在哪", "来源", "怎么拿",
+                "怎么开", "开什么", "哪里找", "掉落", "谁掉")) {
+            return false;
+        }
+        return containsAny(query,
+                "金色椰子", "黄金椰子", "金椰子",
+                "生姜", "姜岛生姜",
+                "岩浆菇", "岩浆帽", "火山蘑菇",
+                "化石头骨", "化石脊柱", "化石尾巴", "化石腿骨", "化石肋骨",
+                "蛇头骨", "蛇椎骨", "蛇脊椎",
+                "木乃伊蝙蝠", "蝙蝠木乃伊", "木乃伊青蛙", "青蛙木乃伊",
+                "Fossilized Skull", "Fossilized Spine", "Fossilized Tail", "Fossilized Leg", "Fossilized Ribs",
+                "Snake Skull", "Snake Vertebrae", "Mummified Bat", "Mummified Frog",
+                "Golden Coconut", "Ginger", "Magma Cap");
+    }
+
+    private boolean looksLikeIslandFieldOfficeGuideQuery(String query) {
+        return containsAny(query,
+                "岛屿办事处", "姜岛办事处", "蜗牛教授", "姜岛化石", "岛屿化石",
+                "化石怎么捐", "化石捐赠", "化石奖励", "大型动物化石", "蛇化石",
+                "紫花", "紫色花", "紫海星", "紫色海星",
+                "Island Field Office", "Professor Snail")
+                && containsAny(query, "化石", "捐", "奖励", "答案", "多少", "几个", "攻略", "办事处", "教授", "花", "海星");
     }
 
     private boolean looksLikeMonsterDropQuery(String query) {

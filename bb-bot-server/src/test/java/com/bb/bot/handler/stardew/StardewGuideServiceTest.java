@@ -437,6 +437,32 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersIslandFieldOfficeResourcesAndGuideWithoutMuseumCrossRouting() {
+        StardewGuideResult snakeSkull = service.answerEvidence(StardewGuideIntent.RESOURCE, "蛇头骨怎么获得");
+        StardewGuideResult snakeVertebrae = service.answerEvidence(StardewGuideIntent.RESOURCE, "蛇椎骨哪里刷");
+        StardewGuideResult mummifiedBat = service.answerEvidence(StardewGuideIntent.RESOURCE, "木乃伊蝙蝠哪里刷");
+        StardewGuideResult mummifiedFrog = service.answerEvidence(StardewGuideIntent.RESOURCE, "木乃伊青蛙怎么拿");
+        StardewGuideResult goldenCoconut = service.answerEvidence(StardewGuideIntent.RESOURCE, "金色椰子怎么开");
+        StardewGuideResult ginger = service.answerEvidence(StardewGuideIntent.RESOURCE, "生姜怎么获得");
+        StardewGuideResult magmaCap = service.answerEvidence(StardewGuideIntent.RESOURCE, "岩浆菇哪里找");
+        StardewGuideResult guide = service.answerEvidence(StardewGuideIntent.GUIDE, "岛屿办事处化石怎么捐");
+
+        assertThat(snakeSkull.getIntent()).isEqualTo("resource");
+        assertThat(snakeSkull.getAnswer()).contains("蛇头骨获取方式", "姜岛西部", "钓鱼", "岛屿办事处蛇化石");
+        assertThat(snakeVertebrae.getAnswer()).contains("蛇椎骨获取方式", "22.5%", "贻贝矿点", "需要 2 个");
+        assertThat(mummifiedBat.getAnswer()).contains("木乃伊蝙蝠获取方式", "火山地牢", "1/200", "金核桃奖励");
+        assertThat(mummifiedFrog.getAnswer()).contains("木乃伊青蛙获取方式", "姜岛丛林", "杂草", "危险矿井");
+        assertThat(goldenCoconut.getAnswer()).contains("金色椰子获取方式", "克林特", "25g", "第一颗必定给 1 个金核桃")
+                .doesNotContain("普通晶球获取方式");
+        assertThat(ginger.getAnswer()).contains("生姜获取方式", "锄头", "虎纹史莱姆", "姜汁汽水", "解除恶心");
+        assertThat(magmaCap.getAnswer()).contains("岩浆菇获取方式", "火山地牢", "假岩浆菇", "菠萝种子");
+
+        assertThat(guide.getIntent()).isEqualTo("guide");
+        assertThat(guide.getAnswer()).contains("岛屿办事处化石", "蜗牛教授", "大型动物化石", "蛇化石", "22", "18")
+                .doesNotContain("博物馆捐赠：", "95 件", "42 件古物", "53 件矿物");
+    }
+
+    @Test
     void answersAnimalCareAndAnimalProductQuestions() {
         StardewGuideResult care = service.answer("星露谷 动物怎么养，怎么提高心情和好感");
         StardewGuideResult milk = service.answer("星露谷 大壶牛奶怎么获得");

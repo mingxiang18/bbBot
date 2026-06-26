@@ -30,12 +30,12 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
         assertThat(repository.villagers()).hasSizeGreaterThanOrEqualTo(34);
-        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(169);
+        assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(181);
         assertThat(repository.monsterDrops()).hasSizeGreaterThanOrEqualTo(58);
         assertThat(repository.fishPonds()).hasSize(73);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
-        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(38);
+        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
 
     @Test
@@ -136,6 +136,54 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(resource.getUsedIn()).isNotEmpty();
                     assertThat(resource.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    @Test
+    void islandFieldOfficeAndIslandVolcanoResourcesAreCoveredAsFullSet() {
+        List<String> ids = List.of(
+                "golden_coconut",
+                "fossilized_skull",
+                "fossilized_spine",
+                "fossilized_tail",
+                "fossilized_leg",
+                "fossilized_ribs",
+                "snake_skull",
+                "snake_vertebrae",
+                "mummified_bat",
+                "mummified_frog",
+                "ginger",
+                "magma_cap"
+        );
+
+        Set<String> resourceIds = repository.resources().stream()
+                .map(StardewData.ResourceGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(resourceIds).containsAll(ids);
+        assertThat(repository.findResource("金色椰子怎么开").orElseThrow().getId()).isEqualTo("golden_coconut");
+        assertThat(repository.findResource("化石脊柱哪里钓").orElseThrow().getId()).isEqualTo("fossilized_spine");
+        assertThat(repository.findResource("蛇头骨怎么获得").orElseThrow().getId()).isEqualTo("snake_skull");
+        assertThat(repository.findResource("蛇椎骨哪里刷").orElseThrow().getId()).isEqualTo("snake_vertebrae");
+        assertThat(repository.findResource("木乃伊蝙蝠哪里刷").orElseThrow().getId()).isEqualTo("mummified_bat");
+        assertThat(repository.findResource("木乃伊青蛙怎么拿").orElseThrow().getId()).isEqualTo("mummified_frog");
+        assertThat(repository.findResource("生姜怎么获得").orElseThrow().getId()).isEqualTo("ginger");
+        assertThat(repository.findResource("岩浆菇哪里找").orElseThrow().getId()).isEqualTo("magma_cap");
+
+        assertThat(repository.resources())
+                .filteredOn(resource -> ids.contains(resource.getId()))
+                .hasSize(ids.size())
+                .allSatisfy(resource -> {
+                    assertThat(resource.getAliases()).isNotEmpty();
+                    assertThat(resource.getAcquisitions()).isNotEmpty();
+                    assertThat(resource.getRecommendation()).isNotBlank();
+                    assertThat(resource.getUsedIn()).isNotEmpty();
+                    assertThat(resource.getSourceUrls()).isNotEmpty();
+                });
+
+        StardewData.GuideTopic guide = repository.findGuide("岛屿办事处化石怎么捐").orElseThrow();
+        assertThat(guide.getId()).isEqualTo("island_field_office");
+        assertThat(guide.getSections()).extracting(StardewData.GuideSection::getTitle)
+                .contains("大型动物化石", "蛇化石", "蝙蝠和青蛙", "调查答案");
     }
 
     @Test

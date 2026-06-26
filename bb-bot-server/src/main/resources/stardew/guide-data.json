@@ -18263,6 +18263,416 @@
       ]
     },
     {
+      "id": "golden_coconut",
+      "name": "金色椰子",
+      "nameEn": "Golden Coconut",
+      "aliases": [
+        "黄金椰子",
+        "金椰子",
+        "Golden Coconut",
+        "golden coconut",
+        "金色椰子怎么开",
+        "金色椰子怎么获得"
+      ],
+      "acquisitions": [
+        {
+          "type": "姜岛",
+          "detail": "在姜岛挖古物点、摇有椰子的棕榈树，或探索时获得；摇树在树上可见椰子时有概率掉落。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "蓝铁饼鱼鱼塘人口达到 9 后，有概率产出金色椰子。"
+        },
+        {
+          "type": "兑换",
+          "detail": "找到并敲开过至少 1 个金色椰子后，岛屿商人可用椰子 x10 兑换金色椰子 x1。"
+        },
+        {
+          "type": "开启",
+          "detail": "找克林特花 25g 敲开；晶球破开器不能打开金色椰子。第一颗必定给 1 个金核桃，之后可能开出树苗、种子、化石头骨、铱矿石或金色头盔等。"
+        }
+      ],
+      "recommendation": "第一颗一定先给克林特开拿金核桃；后续如果缺化石头骨、香蕉/芒果树苗或姜岛种子，再集中开。不要把它当普通晶球处理。",
+      "usedIn": [
+        "金核桃",
+        "岛屿商人兑换",
+        "化石头骨",
+        "香蕉树苗",
+        "芒果树苗",
+        "菠萝种子",
+        "芋头块茎"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Coconut"
+      ]
+    },
+    {
+      "id": "fossilized_skull",
+      "name": "化石头骨",
+      "nameEn": "Fossilized Skull",
+      "aliases": [
+        "大型动物头骨",
+        "岛屿办事处头骨",
+        "Fossilized Skull",
+        "fossilized skull"
+      ],
+      "acquisitions": [
+        {
+          "type": "金色椰子",
+          "detail": "敲开至少第一颗金色椰子之后，后续金色椰子有概率开出化石头骨。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处大型动物化石需要 1 个化石头骨。"
+        }
+      ],
+      "recommendation": "缺大型动物化石时优先攒金色椰子去找克林特开；第一颗固定给金核桃，不会给头骨。",
+      "usedIn": [
+        "岛屿办事处大型动物化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fossilized_Skull",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "fossilized_spine",
+      "name": "化石脊柱",
+      "nameEn": "Fossilized Spine",
+      "aliases": [
+        "大型动物脊柱",
+        "岛屿办事处脊柱",
+        "Fossilized Spine",
+        "fossilized spine"
+      ],
+      "acquisitions": [
+        {
+          "type": "钓鱼",
+          "detail": "在姜岛挖掘场河流钓鱼可获得，岛屿办事处表格标注概率为 10%。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处大型动物化石需要 1 个化石脊柱。"
+        }
+      ],
+      "recommendation": "解救蜗牛教授后，如果大型动物只缺脊柱，就在挖掘场河边专门钓，不要去普通博物馆路线找。",
+      "usedIn": [
+        "岛屿办事处大型动物化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fossilized_Spine",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "fossilized_tail",
+      "name": "化石尾巴",
+      "nameEn": "Fossilized Tail",
+      "aliases": [
+        "大型动物尾巴",
+        "岛屿办事处尾巴",
+        "Fossilized Tail",
+        "fossilized tail"
+      ],
+      "acquisitions": [
+        {
+          "type": "淘盘",
+          "detail": "在姜岛挖掘场河流淘盘可获得，岛屿办事处表格标注概率为 20%。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处大型动物化石需要 1 个化石尾巴。"
+        }
+      ],
+      "recommendation": "看到挖掘场河流的闪光点就用淘盘；这是大型动物尾巴的核心来源。",
+      "usedIn": [
+        "岛屿办事处大型动物化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fossilized_Tail",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "fossilized_leg",
+      "name": "化石腿骨",
+      "nameEn": "Fossilized Leg",
+      "aliases": [
+        "大型动物腿骨",
+        "岛屿办事处腿骨",
+        "Fossilized Leg",
+        "fossilized leg"
+      ],
+      "acquisitions": [
+        {
+          "type": "骨头矿点",
+          "detail": "敲姜岛挖掘场的骨头矿点可获得，岛屿办事处表格标注概率为 10%。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处大型动物化石需要 2 个化石腿骨。"
+        }
+      ],
+      "recommendation": "腿骨要交 2 个，路过挖掘场时优先清骨头矿点；多余骨头碎片也能留给制作或任务。",
+      "usedIn": [
+        "岛屿办事处大型动物化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fossilized_Leg",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "fossilized_ribs",
+      "name": "化石肋骨",
+      "nameEn": "Fossilized Ribs",
+      "aliases": [
+        "大型动物肋骨",
+        "岛屿办事处肋骨",
+        "Fossilized Ribs",
+        "fossilized ribs"
+      ],
+      "acquisitions": [
+        {
+          "type": "古物点",
+          "detail": "姜岛南部古物点可获得，岛屿办事处表格标注概率为 25%。"
+        },
+        {
+          "type": "骨头矿点",
+          "detail": "姜岛挖掘场骨头矿点也可获得，概率低于腿骨。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处大型动物化石需要 1 个化石肋骨。"
+        }
+      ],
+      "recommendation": "肋骨优先挖姜岛南部古物点；骨头矿点可以顺路敲，但不是最高效来源。",
+      "usedIn": [
+        "岛屿办事处大型动物化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Fossilized_Ribs",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "snake_skull",
+      "name": "蛇头骨",
+      "nameEn": "Snake Skull",
+      "aliases": [
+        "蛇头",
+        "姜岛蛇头骨",
+        "Snake Skull",
+        "snake skull"
+      ],
+      "acquisitions": [
+        {
+          "type": "古物点",
+          "detail": "姜岛西部古物点或挖掘场古物点可获得，岛屿办事处表格标注概率为 10%。"
+        },
+        {
+          "type": "钓鱼",
+          "detail": "姜岛西部钓鱼也可获得，岛屿办事处表格标注概率为 10%。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处蛇化石需要 1 个蛇头骨。"
+        }
+      ],
+      "recommendation": "蛇头骨优先在姜岛西部行动：看见古物点就挖，顺手钓鱼也能补；不要和普通博物馆古物混为一条路线。",
+      "usedIn": [
+        "岛屿办事处蛇化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Snake_Skull",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "snake_vertebrae",
+      "name": "蛇椎骨",
+      "nameEn": "Snake Vertebrae",
+      "aliases": [
+        "蛇脊椎",
+        "姜岛蛇椎骨",
+        "Snake Vertebrae",
+        "snake vertebrae"
+      ],
+      "acquisitions": [
+        {
+          "type": "古物点",
+          "detail": "姜岛西部古物点可获得，岛屿办事处表格标注概率为 22.5%。"
+        },
+        {
+          "type": "节点/石头",
+          "detail": "姜岛西部贻贝矿点有小概率产出；姜岛西部其他石头也有极低概率。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处蛇化石需要 2 个蛇椎骨。"
+        }
+      ],
+      "recommendation": "蛇椎骨要 2 个，最高效是天天巡姜岛西部古物点；路过贻贝矿点和石头时顺手清。",
+      "usedIn": [
+        "岛屿办事处蛇化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Snake_Vertebrae",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "mummified_bat",
+      "name": "木乃伊蝙蝠",
+      "nameEn": "Mummified Bat",
+      "aliases": [
+        "蝙蝠木乃伊",
+        "Mummified Bat",
+        "mummified bat"
+      ],
+      "acquisitions": [
+        {
+          "type": "火山地牢",
+          "detail": "在火山地牢破坏岩石可获得；岛屿办事处表格标注概率为 1/200。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处蝙蝠化石需要 1 个木乃伊蝙蝠。"
+        }
+      ],
+      "recommendation": "这是偏看脸的火山岩石掉落；带炸弹清石头效率比逐个敲更舒服，刷火山晶石时顺带找。",
+      "usedIn": [
+        "岛屿办事处蝙蝠化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mummified_Bat",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "mummified_frog",
+      "name": "木乃伊青蛙",
+      "nameEn": "Mummified Frog",
+      "aliases": [
+        "青蛙木乃伊",
+        "Mummified Frog",
+        "mummified frog"
+      ],
+      "acquisitions": [
+        {
+          "type": "姜岛丛林",
+          "detail": "砍姜岛丛林杂草可获得；解锁岛屿办事处后的第一件概率较高，之后概率较低。"
+        },
+        {
+          "type": "矿井",
+          "detail": "危险矿井 41-69 层的杂草也可能掉落木乃伊青蛙。"
+        },
+        {
+          "type": "捐赠",
+          "detail": "岛屿办事处青蛙化石需要 1 个木乃伊青蛙。"
+        }
+      ],
+      "recommendation": "先去姜岛丛林清杂草，拿到第一个通常不难；后续多余需求再考虑危险矿井杂草。",
+      "usedIn": [
+        "岛屿办事处青蛙化石",
+        "蜗牛教授捐赠",
+        "金核桃奖励"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Mummified_Frog",
+        "https://stardewvalleywiki.com/Island_Field_Office"
+      ]
+    },
+    {
+      "id": "ginger",
+      "name": "生姜",
+      "nameEn": "Ginger",
+      "aliases": [
+        "Ginger",
+        "ginger",
+        "姜岛生姜",
+        "生姜怎么获得",
+        "生姜哪里挖"
+      ],
+      "acquisitions": [
+        {
+          "type": "姜岛采集",
+          "detail": "姜岛地面可见的生姜需要用锄头挖起，采集后给觅食经验。"
+        },
+        {
+          "type": "怪物",
+          "detail": "虎纹史莱姆、竹虫等姜岛怪物可掉落生姜。"
+        },
+        {
+          "type": "效果",
+          "detail": "吃生姜或喝姜汁汽水可以解除恶心状态。"
+        }
+      ],
+      "recommendation": "需要大量生姜时在姜岛每日顺路用锄头挖，搭配刷虎纹史莱姆；卡洛琳“岛屿食材”可能要 100 个，别全卖。",
+      "usedIn": [
+        "姜汁汽水",
+        "岛屿传送图腾",
+        "鱼塘扩容任务",
+        "卡洛琳特别订单",
+        "解除恶心"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Ginger"
+      ]
+    },
+    {
+      "id": "magma_cap",
+      "name": "岩浆菇",
+      "nameEn": "Magma Cap",
+      "aliases": [
+        "岩浆帽",
+        "火山蘑菇",
+        "Magma Cap",
+        "magma cap",
+        "岩浆菇哪里找"
+      ],
+      "acquisitions": [
+        {
+          "type": "火山地牢",
+          "detail": "火山地牢内可采集岩浆菇。"
+        },
+        {
+          "type": "怪物",
+          "detail": "假岩浆菇被击杀后几乎总会掉落岩浆菇。"
+        },
+        {
+          "type": "鱼塘",
+          "detail": "黄貂鱼鱼塘人口达到 4 后有概率产出岩浆菇。"
+        }
+      ],
+      "recommendation": "要稳定攒岩浆菇就刷火山地牢并击杀假岩浆菇；岛屿商人可用岩浆菇换菠萝种子，前期别乱卖光。",
+      "usedIn": [
+        "岛屿商人菠萝种子兑换",
+        "黄貂鱼鱼塘产物",
+        "回复食物",
+        "染色和缝纫"
+      ],
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Magma_Cap"
+      ]
+    },
+    {
       "id": "omni_geode",
       "name": "万象晶球",
       "nameEn": "Omni Geode",
@@ -21581,6 +21991,87 @@
       "sourceUrls": [
         "https://stardewvalleywiki.com/Tools",
         "https://zh.stardewvalleywiki.com/鱼竿"
+      ]
+    },
+    {
+      "id": "island_field_office",
+      "name": "岛屿办事处化石",
+      "category": "collection",
+      "aliases": [
+        "岛屿办事处",
+        "姜岛办事处",
+        "岛屿办事处化石",
+        "姜岛化石",
+        "蜗牛教授",
+        "蜗牛教授化石",
+        "紫花",
+        "紫海星",
+        "Island Field Office",
+        "Professor Snail"
+      ],
+      "keywords": [
+        "捐赠",
+        "化石",
+        "金核桃",
+        "挖掘场",
+        "大型动物",
+        "蛇头骨",
+        "蛇椎骨",
+        "木乃伊蝙蝠",
+        "木乃伊青蛙",
+        "紫色花朵",
+        "紫色海星"
+      ],
+      "sections": [
+        {
+          "title": "解锁",
+          "lines": [
+            "岛屿办事处在姜岛北部，火山南侧、挖掘场东侧。",
+            "先解锁挖掘场并救出被困在洞里的蜗牛教授，之后才能在办事处捐化石和回答调查。",
+            "它和鹈鹕镇博物馆不是同一套捐赠；岛屿办事处交的是姜岛化石和调查答案。"
+          ]
+        },
+        {
+          "title": "大型动物化石",
+          "lines": [
+            "需要化石头骨 x1、化石脊柱 x1、化石尾巴 x1、化石腿骨 x2、化石肋骨 x1。",
+            "头骨来自金色椰子；脊柱在挖掘场河流钓鱼；尾巴在挖掘场河流淘盘。",
+            "腿骨主要敲挖掘场骨头矿点；肋骨优先挖姜岛南部古物点，也可低概率来自骨头矿点。",
+            "完成大型动物化石会给 6 个金核桃和 1 个香蕉树苗。"
+          ]
+        },
+        {
+          "title": "蛇化石",
+          "lines": [
+            "需要蛇头骨 x1、蛇椎骨 x2。",
+            "蛇头骨来自姜岛西部/挖掘场古物点，或姜岛西部钓鱼。",
+            "蛇椎骨最高效来源是姜岛西部古物点；贻贝矿点和姜岛西部石头也可顺手清。",
+            "完成蛇化石会给 3 个金核桃和 1 个芒果树苗。"
+          ]
+        },
+        {
+          "title": "蝙蝠和青蛙",
+          "lines": [
+            "木乃伊蝙蝠 x1：火山地牢敲岩石获得，概率低，适合带炸弹刷火山时顺带找。",
+            "木乃伊青蛙 x1：姜岛丛林砍杂草获得；危险矿井 41-69 层杂草也可能掉落。",
+            "蝙蝠化石和青蛙化石各奖励 1 个金核桃。"
+          ]
+        },
+        {
+          "title": "调查答案",
+          "lines": [
+            "岛上紫色花朵数量答案是 22。",
+            "岛上紫色海星数量答案是 18。",
+            "两个调查各奖励 1 个金核桃；答错当天不能重答，第二天再来。"
+          ]
+        }
+      ],
+      "recommendation": "把岛屿办事处当成姜岛独立收集线处理：先救蜗牛教授，再按大型动物、蛇、蝙蝠、青蛙四组补；问单个物品来源时走资源查询，问整体顺序和奖励时走本攻略。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Island_Field_Office",
+        "https://stardewvalleywiki.com/Golden_Coconut",
+        "https://stardewvalleywiki.com/Mummified_Bat",
+        "https://stardewvalleywiki.com/Mummified_Frog"
       ]
     },
     {

@@ -348,6 +348,35 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesIslandFieldOfficeQueriesBeforeMuseumRoute() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("岛屿办事处化石怎么捐").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("蜗牛教授化石奖励是什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("紫花和紫海星答案是多少").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("蛇头骨怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("蛇椎骨哪里刷").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("木乃伊蝙蝠哪里刷").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("金色椰子怎么开").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("生姜怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("岩浆菇哪里找").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("博物馆缺古物怎么补").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.MUSEUM);
+    }
+
+    @Test
     void localFallbackStillClassifiesSkullCavernFoodQuestionsAsCooking() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
