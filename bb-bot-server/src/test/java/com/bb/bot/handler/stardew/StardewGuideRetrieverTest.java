@@ -207,6 +207,43 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedFestivalIntentRetrievesFestivalDetailsWithoutShopOrScheduleCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.FESTIVAL, "沙漠节怎么玩"),
+                intent(StardewGuideIntent.FESTIVAL, "花舞节几点开始"),
+                intent(StardewGuideIntent.FESTIVAL, "冬星盛宴送什么")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("沙漠节、花舞节和冬星盛宴怎么玩", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.FESTIVAL);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("festival_detail");
+        assertThat(joinAnswers(evidence))
+                .contains("沙漠节", "卡利科三花蛋", "时间流逝：会继续流逝")
+                .contains("花舞节", "至少 4 心", "09:00-14:00")
+                .contains("冬星盛宴", "秘密送礼", "冬季 18 日")
+                .doesNotContain("商店：", "大概率在：", "工具升级");
+    }
+
+    @Test
+    void typedFestivalIntentRetrievesSeasonalFestivalLists() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.FESTIVAL, "夏季节日有哪些"),
+                intent(StardewGuideIntent.FESTIVAL, "冬季活动列表")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("夏季和冬季有哪些节日活动", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("festival_available");
+        assertThat(joinAnswers(evidence))
+                .contains("夏季节日/活动", "夏威夷宴会", "鳟鱼大赛", "月光水母起舞")
+                .contains("冬季节日/活动", "冰雪节", "鱿鱼节", "夜市", "冬星盛宴");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

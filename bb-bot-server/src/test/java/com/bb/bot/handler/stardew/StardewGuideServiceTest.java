@@ -901,6 +901,31 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFestivalDetailsThroughTypedIntent() {
+        StardewGuideResult desert = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 沙漠节怎么玩，换什么");
+        StardewGuideResult flowerDance = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 花舞节几点开始");
+        StardewGuideResult fair = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 展览会怎么拿星之果实");
+        StardewGuideResult winterStar = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 冬星盛宴送什么");
+
+        assertThat(desert.getIntent()).isEqualTo("festival_detail");
+        assertThat(desert.getAnswer()).contains("沙漠节", "春季15日-17日", "10:00-02:00", "卡利科三花蛋", "魔法糖冰棍", "动物也要照常喂");
+        assertThat(flowerDance.getAnswer()).contains("花舞节", "春季24日", "09:00-14:00", "至少 4 心", "1 心好感");
+        assertThat(fair.getAnswer()).contains("星露谷展览会", "秋季16日", "星之果实", "2,000 星星币", "9 个农产品");
+        assertThat(winterStar.getAnswer()).contains("冬星盛宴", "冬季25日", "冬季 18 日", "秘密送礼");
+    }
+
+    @Test
+    void answersFestivalSeasonListsThroughTypedIntent() {
+        StardewGuideResult spring = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 春季节日有哪些");
+        StardewGuideResult winter = service.answerEvidence(StardewGuideIntent.FESTIVAL, "星露谷 冬季活动列表");
+
+        assertThat(spring.getIntent()).isEqualTo("festival_available");
+        assertThat(spring.getAnswer()).contains("春季节日/活动", "复活节", "沙漠节", "花舞节");
+        assertThat(winter.getIntent()).isEqualTo("festival_available");
+        assertThat(winter.getAnswer()).contains("冬季节日/活动", "冰雪节", "鱿鱼节", "夜市", "冬星盛宴");
+    }
+
+    @Test
     void keepsCrabPotCatchQueriesOnFishRouteAfterCrabPotCraftableIsAdded() {
         StardewGuideResult catchList = service.answer("星露谷 蟹笼能抓什么");
 

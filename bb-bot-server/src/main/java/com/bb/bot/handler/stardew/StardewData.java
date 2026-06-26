@@ -27,6 +27,7 @@ public class StardewData {
     private List<BookGuide> books = new ArrayList<>();
     private List<SpecialOrderGuide> specialOrders = new ArrayList<>();
     private List<SkillGuide> skillGuides = new ArrayList<>();
+    private List<FestivalEvent> festivalEvents = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
     @Data
@@ -348,6 +349,30 @@ public class StardewData {
         private List<String> keywords = new ArrayList<>();
         private List<GuideSection> sections = new ArrayList<>();
         private String recommendation;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class FestivalEvent {
+        private String id;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private String season;
+        private Integer startDay;
+        private Integer endDay;
+        private String location;
+        private String entryTime;
+        private String endTime;
+        private String returnTime;
+        private Boolean timePasses;
+        private Boolean shopsClosed;
+        private Boolean animalsNeedFeeding;
+        private List<String> activities = new ArrayList<>();
+        private List<String> rewards = new ArrayList<>();
+        private List<String> shopHighlights = new ArrayList<>();
+        private String recommendation;
+        private String note;
         private List<String> sourceUrls = new ArrayList<>();
     }
 

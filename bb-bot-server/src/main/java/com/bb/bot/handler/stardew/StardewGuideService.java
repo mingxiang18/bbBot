@@ -65,6 +65,7 @@ public class StardewGuideService {
         Optional<StardewData.CookingRecipe> cookingRecipe = repository.findCookingRecipe(query);
         Optional<StardewData.SpecialOrderGuide> specialOrder = repository.findSpecialOrder(query);
         Optional<StardewData.SkillGuide> skillGuide = repository.findSkillGuide(query);
+        Optional<StardewData.FestivalEvent> festivalEvent = repository.findFestivalEvent(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
 
@@ -128,6 +129,12 @@ public class StardewGuideService {
                 return skillGuideListAnswer(query);
             }
             return skillGuideAnswer(skillGuide.get());
+        }
+        if ((festivalEvent.isPresent() || looksLikeFestivalQuery(query)) && !isFishingQuestion(query)) {
+            if (festivalEvent.isPresent() && !isBroadFestivalQuery(query)) {
+                return festivalDetailAnswer(festivalEvent.get());
+            }
+            return festivalListAnswer(query);
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -226,6 +233,7 @@ public class StardewGuideService {
             case SHOP -> typedShopAnswer(query);
             case COOKING -> typedCookingAnswer(query);
             case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
+            case FESTIVAL -> typedFestivalAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
     }
@@ -372,6 +380,14 @@ public class StardewGuideService {
         return specialOrderListAnswer(query, specialOrder);
     }
 
+    private StardewGuideResult typedFestivalAnswer(String query) {
+        Optional<StardewData.FestivalEvent> event = repository.findFestivalEvent(query);
+        if (event.isPresent() && !isBroadFestivalQuery(query)) {
+            return festivalDetailAnswer(event.get());
+        }
+        return festivalListAnswer(query);
+    }
+
     private boolean looksLikeSpecificCookingRecipeQuery(String query) {
         return query.contains("怎么做") || query.contains("材料") || query.contains("配方")
                 || query.contains("效果") || query.contains("来源");
@@ -499,6 +515,64 @@ public class StardewGuideService {
                     .append(firstOrDefault(order.getRequirements(), "查看具体订单获取需求")).append("；奖励 ")
                     .append(firstOrDefault(order.getRewards(), "见订单详情")).append("\n");
         }
+    }
+
+    private StardewGuideResult festivalDetailAnswer(StardewData.FestivalEvent event) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(event.getName()).append("：\n")
+                .append("时间：").append(formatFestivalDate(event)).append("，")
+                .append(StringUtils.defaultIfBlank(event.getEntryTime(), "入场时间未记录")).append("\n")
+                .append("地点：").append(StringUtils.defaultIfBlank(event.getLocation(), "暂未记录")).append("\n");
+        if (StringUtils.isNotBlank(event.getEndTime())) {
+            sb.append("结束：").append(event.getEndTime());
+            if (StringUtils.isNotBlank(event.getReturnTime())) {
+                sb.append("，结束/离开后回到农场约 ").append(event.getReturnTime());
+            }
+            sb.append("\n");
+        }
+        sb.append("时间流逝：").append(Boolean.TRUE.equals(event.getTimePasses()) ? "会继续流逝" : "进入后时间基本暂停/结束后跳到固定时间").append("\n");
+        sb.append("店铺和房屋：").append(Boolean.TRUE.equals(event.getShopsClosed()) ? "大多关闭" : "通常照常开放").append("\n");
+        sb.append("动物喂食：").append(Boolean.TRUE.equals(event.getAnimalsNeedFeeding()) ? "仍要正常喂" : "通常会自动视为已喂").append("\n");
+        appendLines(sb, "主要玩法", event.getActivities());
+        appendLines(sb, "奖励/重点物品", event.getRewards());
+        appendLines(sb, "商店/兑换重点", event.getShopHighlights());
+        if (StringUtils.isNotBlank(event.getRecommendation())) {
+            sb.append("建议：").append(event.getRecommendation()).append("\n");
+        }
+        if (StringUtils.isNotBlank(event.getNote())) {
+            sb.append("提示：").append(event.getNote()).append("\n");
+        }
+        return result("festival_detail", sb.toString().trim(), event.getSourceUrls());
+    }
+
+    private StardewGuideResult festivalListAnswer(String query) {
+        QueryContext ctx = parseContext(query);
+        List<StardewData.FestivalEvent> matched = repository.festivalEvents().stream()
+                .filter(event -> ctx.season == null || ctx.season.equals(event.getSeason()))
+                .sorted(Comparator.comparing((StardewData.FestivalEvent event) -> seasonOrder(event.getSeason()))
+                        .thenComparing(event -> event.getStartDay() == null ? Integer.MAX_VALUE : event.getStartDay())
+                        .thenComparing(StardewData.FestivalEvent::getName))
+                .toList();
+        if (matched.isEmpty()) {
+            return result("festival_available", "按当前条件没匹配到节日。可以试试：春季节日、沙漠节怎么玩、夜市潜艇、冬星盛宴送什么。", List.of());
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(ctx.season == null ? "全年节日/活动" : ctx.season + "节日/活动").append("：\n");
+        for (StardewData.FestivalEvent event : matched) {
+            sb.append("- ").append(event.getName()).append("：")
+                    .append(formatFestivalDate(event)).append("，")
+                    .append(StringUtils.defaultIfBlank(event.getEntryTime(), "入场时间未记录")).append("，")
+                    .append(StringUtils.defaultIfBlank(event.getLocation(), "地点未记录"));
+            if (event.getActivities() != null && !event.getActivities().isEmpty()) {
+                sb.append("；").append(event.getActivities().get(0));
+            }
+            if (StringUtils.isNotBlank(event.getRecommendation())) {
+                sb.append("；建议：").append(event.getRecommendation());
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：问具体节日名可以看玩法、奖励、商店重点和是否需要喂动物，例如“沙漠节怎么玩”“星露谷展览会怎么拿星之果实”。");
+        return result("festival_available", sb.toString().trim(), collectFestivalSources(matched));
     }
 
     private void appendLines(StringBuilder sb, String title, List<String> lines) {
@@ -1761,9 +1835,27 @@ public class StardewGuideService {
                 && containsAny(query, "技能", "等级", "经验", "职业", "怎么练", "怎么升级", "快速升级", "等级低", "刷");
     }
 
+    private boolean looksLikeFestivalQuery(String query) {
+        return containsAny(query,
+                "节日", "活动", "庆典", "赛马会", "沙漠节", "复活节", "蛋蛋节", "彩蛋节",
+                "花舞节", "花舞会", "夏威夷宴会", "夏威夷", "鳟鱼大赛", "月光水母",
+                "水母起舞", "星露谷展览会", "展览会", "集市", "万灵节", "万圣节",
+                "冰雪节", "冰雪", "鱿鱼节", "夜市", "冬星盛宴", "冬日星盛宴",
+                "Egg Festival", "Desert Festival", "Flower Dance", "Luau", "Trout Derby",
+                "Dance of the Moonlight Jellies", "Stardew Valley Fair", "Spirit's Eve",
+                "Festival of Ice", "SquidFest", "Night Market", "Feast of the Winter Star");
+    }
+
     private boolean isBroadSkillGuideQuery(String query) {
         return containsAny(query, "技能有哪些", "所有技能", "技能总览", "技能攻略", "职业有哪些", "职业总览")
                 && !containsAny(query, "耕种", "农业", "采矿", "挖矿", "觅食", "采集", "钓鱼", "战斗");
+    }
+
+    private boolean isBroadFestivalQuery(String query) {
+        return containsAny(query, "有哪些", "列表", "总览", "全年", "所有", "日历", "什么时候有节日")
+                || (containsAny(query, "春季", "春天", "春", "夏季", "夏天", "夏", "秋季", "秋天", "秋", "冬季", "冬天", "冬")
+                && containsAny(query, "节日", "活动")
+                && repository.findFestivalEvent(query).isEmpty());
     }
 
     private boolean isFishingQuestion(String query) {
@@ -2361,6 +2453,26 @@ public class StardewGuideService {
         return values == null || values.isEmpty() ? fallback : String.join("、", values);
     }
 
+    private String formatFestivalDate(StardewData.FestivalEvent event) {
+        if (event.getStartDay() == null) {
+            return StringUtils.defaultIfBlank(event.getSeason(), "日期未记录");
+        }
+        StringBuilder date = new StringBuilder(StringUtils.defaultIfBlank(event.getSeason(), ""));
+        date.append(event.getStartDay()).append("日");
+        if (event.getEndDay() != null && !event.getEndDay().equals(event.getStartDay())) {
+            date.append("-").append(event.getEndDay()).append("日");
+        }
+        return date.toString();
+    }
+
+    private int seasonOrder(String season) {
+        if ("春季".equals(season)) return 1;
+        if ("夏季".equals(season)) return 2;
+        if ("秋季".equals(season)) return 3;
+        if ("冬季".equals(season)) return 4;
+        return 9;
+    }
+
     private String formatMinutes(int minutes) {
         int hour = minutes / 60;
         int minute = minutes % 60;
@@ -2442,6 +2554,16 @@ public class StardewGuideService {
         for (StardewData.BookGuide book : books) {
             if (book.getSourceUrls() != null) {
                 urls.addAll(book.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFestivalSources(List<StardewData.FestivalEvent> events) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.FestivalEvent event : events) {
+            if (event.getSourceUrls() != null) {
+                urls.addAll(event.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

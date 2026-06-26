@@ -317,16 +317,54 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
-    void localFallbackClassifiesFestivalShopQueriesAsShop() {
+    void localFallbackClassifiesFestivalEventQueriesAsFestival() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
 
         StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
-                .plan("沙漠节换什么，草莓种子在哪里买");
+                .plan("沙漠节换什么，花舞节几点开始");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FESTIVAL);
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("沙漠节换什么，花舞节几点开始");
+    }
+
+    @Test
+    void localFallbackKeepsSpecificFestivalShopItemsOnShopRoute() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("草莓种子在哪里买");
 
         assertThat(plan.getIntents()).hasSize(1);
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.SHOP);
-        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("沙漠节换什么，草莓种子在哪里买");
+        assertThat(plan.getIntents().get(0).getKeywords()).containsExactly("草莓种子在哪里买");
+    }
+
+    @Test
+    void localGuardrailPullsBroadGuideBackToConcreteFestivalIntent() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {
+                              "type": "GUIDE",
+                              "keywords": ["星露谷展览会怎么拿星之果实"],
+                              "constraints": {}
+                            }
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("星露谷展览会怎么拿星之果实");
+
+        assertThat(plan.getIntents()).hasSize(1);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FESTIVAL);
     }
 
     @Test

@@ -84,6 +84,7 @@ public class StardewGuideRetriever {
             case COOKING -> ensureContains(withConstraints, "料理");
             case SPECIAL_ORDER -> ensureContains(withConstraints, "特别订单");
             case SKILL -> ensureContains(withConstraints, "技能");
+            case FESTIVAL -> ensureContains(withConstraints, "节日");
             case MUSEUM -> ensureContains(withConstraints, "博物馆");
             case GUIDE -> ensureGuideHint(withConstraints);
             case UNKNOWN -> withConstraints;

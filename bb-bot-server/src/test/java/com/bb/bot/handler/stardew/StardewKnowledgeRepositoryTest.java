@@ -38,7 +38,60 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
         assertThat(repository.specialOrders()).hasSizeGreaterThanOrEqualTo(28);
         assertThat(repository.skillGuides()).hasSizeGreaterThanOrEqualTo(9);
+        assertThat(repository.festivalEvents()).hasSize(12);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
+    }
+
+    @Test
+    void fullFestivalCalendarIsCovered() {
+        Set<String> eventIds = repository.festivalEvents().stream()
+                .map(StardewData.FestivalEvent::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.festivalEvents()).hasSize(12);
+        assertThat(eventIds).containsExactlyInAnyOrder(
+                "egg_festival",
+                "desert_festival",
+                "flower_dance",
+                "luau",
+                "trout_derby",
+                "dance_of_the_moonlight_jellies",
+                "stardew_valley_fair",
+                "spirits_eve",
+                "festival_of_ice",
+                "squidfest",
+                "night_market",
+                "feast_of_the_winter_star"
+        );
+
+        assertThat(repository.findFestivalEvent("沙漠节怎么玩").orElseThrow().getId()).isEqualTo("desert_festival");
+        assertThat(repository.findFestivalEvent("花舞节几点开始").orElseThrow().getId()).isEqualTo("flower_dance");
+        assertThat(repository.findFestivalEvent("展览会怎么拿星之果实").orElseThrow().getId()).isEqualTo("stardew_valley_fair");
+        assertThat(repository.findFestivalEvent("冬星盛宴送什么").orElseThrow().getId()).isEqualTo("feast_of_the_winter_star");
+    }
+
+    @Test
+    void allFestivalEventsHaveCoreFieldsAndSources() {
+        assertThat(repository.festivalEvents())
+                .hasSize(12)
+                .allSatisfy(event -> {
+                    assertThat(event.getId()).isNotBlank();
+                    assertThat(event.getName()).isNotBlank();
+                    assertThat(event.getNameEn()).isNotBlank();
+                    assertThat(event.getAliases()).isNotEmpty();
+                    assertThat(event.getSeason()).isNotBlank();
+                    assertThat(event.getStartDay()).isNotNull();
+                    assertThat(event.getEndDay()).isNotNull();
+                    assertThat(event.getLocation()).isNotBlank();
+                    assertThat(event.getEntryTime()).isNotBlank();
+                    assertThat(event.getTimePasses()).isNotNull();
+                    assertThat(event.getShopsClosed()).isNotNull();
+                    assertThat(event.getAnimalsNeedFeeding()).isNotNull();
+                    assertThat(event.getActivities()).isNotEmpty();
+                    assertThat(event.getRewards()).isNotEmpty();
+                    assertThat(event.getRecommendation()).isNotBlank();
+                    assertThat(event.getSourceUrls()).contains("https://stardewvalleywiki.com/Festivals");
+                });
     }
 
     @Test

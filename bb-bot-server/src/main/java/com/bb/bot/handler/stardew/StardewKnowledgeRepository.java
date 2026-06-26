@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -112,6 +112,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.SkillGuide> skillGuides() {
         return safe(data.getSkillGuides());
+    }
+
+    public List<StardewData.FestivalEvent> festivalEvents() {
+        return safe(data.getFestivalEvents());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -281,6 +285,16 @@ public class StardewKnowledgeRepository {
 
     public Optional<StardewData.SpecialOrderGuide> findSpecialOrder(String query) {
         return findSpecialOrders(query).stream().findFirst();
+    }
+
+    public Optional<StardewData.FestivalEvent> findFestivalEvent(String query) {
+        String q = normalize(query);
+        return festivalEvents().stream()
+                .map(event -> new FestivalEventMatch(event, scoreFestivalEvent(q, event)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(FestivalEventMatch::event)
+                .findFirst();
     }
 
     public List<StardewData.SpecialOrderGuide> findSpecialOrders(String query) {
@@ -490,6 +504,25 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreFestivalEvent(String q, StardewData.FestivalEvent event) {
+        int score = scoreSearchable(q, event.getName(), event.getNameEn(), event.getAliases());
+        if (score == 0) {
+            return 0;
+        }
+        String season = normalize(event.getSeason());
+        if (!season.isEmpty() && q.contains(season)) {
+            score += 20;
+        }
+        if (event.getStartDay() != null && q.contains(event.getStartDay() + "日")) {
+            score += 20;
+        }
+        if (event.getStartDay() != null && event.getEndDay() != null
+                && event.getEndDay() > event.getStartDay() && q.contains(event.getEndDay() + "日")) {
+            score += 10;
+        }
+        return score;
+    }
+
     private int scoreBundle(String q, StardewData.Bundle bundle) {
         int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
         boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
@@ -519,6 +552,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record SkillGuideMatch(StardewData.SkillGuide guide, int score) {
+    }
+
+    private record FestivalEventMatch(StardewData.FestivalEvent event, int score) {
     }
 
     private record BundleMatch(StardewData.Bundle bundle, int score) {

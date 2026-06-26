@@ -31,7 +31,7 @@
 
 - JSON typed plan：AI 返回 JSON 时，服务应解析 `intents[].type`、`keywords`、`constraints`，再交给 retriever 检索。
 - Planner 不可用：LIGHT 模型返回空、异常或不可解析 JSON 时，应使用本地高置信 fallback plan，而不是调用旧自由文本 `StardewGuideService.answer`。
-- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING`。
+- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING` 或 `FESTIVAL`。
 - 证据整合 prompt：最终整合 prompt 必须包含用户问题和 typed evidence，且不携带 `sourceUrls`、`gameVersion`、`lastCheckedAt` 这类内部字段。
 - 自然回复返回：当 CHAT 模型返回非空答案时，命令层直接使用该自然语言答案。
 - CHAT 空返回：应退回第一条 typed evidence 的原文答案；如果没有可靠证据，则给出补充条件提示。
@@ -91,6 +91,7 @@
 - 制作配方：完整制作页 150 条，覆盖栅栏、种子、地板/路径、照明、家具、标牌、精炼设备、工匠设备、肥料、图腾、戒指、钓具和杂项。
 - 机器兼容：小桶、罐头瓶、蛋黄酱机、鱼熏机、脱水机、诱饵制造机等旧 `MACHINE` 路径仍能回答。
 - 商店：皮埃尔、铁匠、罗宾、玛妮、威利、科罗布斯、旅行货车、沙漠商人、书商。
+- 节日/活动：全年 12 个节日/活动，覆盖日期、入场时间、地点、玩法、奖励、商店/兑换重点、是否时间流逝、店铺是否关闭、动物是否要喂。
 - 料理和 buff：幸运、速度、钓鱼、采矿、战斗、骷髅洞穴推荐。
 - 技能与进度：五大技能升级、职业选择、沙漠、温室、骷髅洞穴、博物馆、精通系统。
 
@@ -112,8 +113,8 @@
 - 34 位可送礼居民都有至少一个日程规则。
 - 普通社区中心收集包、失踪的收集包、房间概览包 id 覆盖完整。
 - 每个收集包都有房间、奖励、物品和来源字段。
-- 高频资源、料理、工具、建筑、机器、商店条目能够成功加载。
-- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=6、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、specialOrders=28、skillGuides=9、guides=39。
+- 高频资源、料理、工具、建筑、机器、商店、节日/活动条目能够成功加载。
+- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=6、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、specialOrders=28、skillGuides=9、festivalEvents=12、guides=39。
 
 ### 2.6 `StardewWikiApiClientTest`
 
@@ -221,7 +222,28 @@
 - 制作菜单里的配方问题归 `CRAFTING`；旧 `MACHINE` 只作为兼容入口。
 - 机器加工产物和资源交叉问题应按动词判断，例如“树脂怎么获得”优先资源，“小桶怎么做”优先制作配方，“恐龙蛋黄酱怎么做”优先资源获取/加工方式。
 
-### 3.6 料理、技能、进度
+### 3.6 节日/活动
+
+- `春季节日有哪些`
+- `沙漠节怎么玩，三花蛋换什么`
+- `花舞节几点开始`
+- `夏威夷宴会放什么进汤`
+- `鳟鱼大赛金色标签怎么用`
+- `星露谷展览会怎么拿星之果实`
+- `万灵节迷宫奖励是什么`
+- `冰雪节钓鱼比赛怎么赢`
+- `鱿鱼节奖励怎么算`
+- `夜市潜艇几点关`
+- `冬星盛宴送什么`
+
+验收点：
+
+- 节日本身问题归 `FESTIVAL`，回答日期、入场时间、地点、玩法、奖励和注意事项。
+- `沙漠节`、`鳟鱼大赛`、`鱿鱼节`、`夜市` 要说明时间继续流逝、普通店铺开放、动物仍要喂。
+- 明确具体商品购买问题仍可归 `SHOP`，例如“草莓种子在哪里买”“万灵节稀有稻草人多少钱”。
+- 不把“花舞节几点开始”误路由成居民日程。
+
+### 3.7 料理、技能、进度
 
 - `骷髅洞穴吃什么料理`
 - `幸运午餐怎么做`
@@ -238,7 +260,7 @@
 - 技能要包含经验来源、升级路线、职业建议。
 - 进度类答案要可执行，避免只给泛泛解释。
 
-### 3.7 模糊与组合问题
+### 3.8 模糊与组合问题
 
 - `电影院还差几个东西，恐龙蛋黄酱怎么弄`
 - `小桶缺橡树树脂，树脂哪里来`
@@ -301,11 +323,11 @@ AI tool 验收：
 '/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn' \
   -Dmaven.repo.local=/Users/renyuming/Documents/develop/maven/repository \
   -pl bb-bot-server \
-  -Dtest=StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest \
+  -Dtest=StardewQueryPlannerServiceTest,StardewGuideRetrieverTest,StardewGuideAssistantServiceTest,StardewGuideServiceTest,StardewGuideToolTest,BbStardewHandlerTest,StardewWikiApiClientTest,StardewKnowledgeRepositoryTest \
   test
 ```
 
-当前结果：82 tests, 0 failures, 0 errors, 0 skipped。
+当前结果：225 tests, 0 failures, 0 errors, 0 skipped。
 
 模块编译：
 

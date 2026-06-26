@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, SPECIAL_ORDER, SKILL, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, SPECIAL_ORDER, SKILL, FESTIVAL, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -64,6 +64,8 @@ public class StardewQueryPlannerService {
                         - 问鱼塘养什么好、某种鱼鱼塘产什么、鱼塘扩容任务、鱼籽/鱼籽酱、鱼塘要什么任务物品，例如“鲟鱼鱼塘产什么”“岩浆鳗鱼鱼塘要什么”“鱼塘养什么好”，归为 FISH_POND。
                         - 问鱼塘建筑本身的建造材料、价格、占地、罗宾建造，例如“鱼塘建造材料多少钱”，归为 BUILDING。
                         - 问特别订单/特殊订单/订单板/齐先生核桃房任务的需求、奖励、期限、怎么做，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”“齐瓜怎么做”“五彩农场交什么”，归为 SPECIAL_ORDER。
+                        - 节日/活动本身的日期、时间、地点、怎么玩、奖励、小游戏、商店重点、兑换建议，例如“沙漠节怎么玩”“花舞节几点开始”“星露谷展览会怎么拿星之果实”“冬季有哪些节日”，归为 FESTIVAL。
+                        - 节日里的具体商品在哪里买/多少钱，如果用户只问商品购买点，例如“草莓种子在哪里买”“万灵节稀有稻草人多少钱”，可归为 SHOP。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
                         - 问加工机器/制作物怎么用、材料、配方，例如“小桶怎么做”“鱼熏机材料”“洒水器怎么做”，也归为 CRAFTING；MACHINE 仅作为兼容类型。
@@ -126,6 +128,7 @@ public class StardewQueryPlannerService {
                 && (localType == StardewGuideIntent.SKILL
                 || localType == StardewGuideIntent.SPECIAL_ORDER
                 || localType == StardewGuideIntent.CRAFTING
+                || localType == StardewGuideIntent.FESTIVAL
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
     }
@@ -188,6 +191,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeSpecialOrderQuery(q)) {
             return StardewGuideIntent.SPECIAL_ORDER;
+        }
+        if (looksLikeFestivalQuery(q) && !looksLikeSpecificFestivalShopItemQuery(q)) {
+            return StardewGuideIntent.FESTIVAL;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -379,6 +385,24 @@ public class StardewQueryPlannerService {
                 "骷髅洞穴入侵", "齐氏料理", "齐的善意", "四颗宝石", "饥饿挑战",
                 "Island Ingredients", "Cave Patrol", "Qi's Crop", "Qi's Cuisine", "Qi's Kindness",
                 "Danger In The Deep", "Skull Cavern Invasion", "Qi's Prismatic Grange");
+    }
+
+    private boolean looksLikeFestivalQuery(String query) {
+        return containsAny(query,
+                "节日", "活动", "庆典", "沙漠节", "复活节", "蛋蛋节", "彩蛋节",
+                "花舞节", "花舞会", "夏威夷宴会", "夏威夷", "鳟鱼大赛", "月光水母",
+                "水母起舞", "星露谷展览会", "展览会", "万灵节", "万圣节",
+                "冰雪节", "鱿鱼节", "夜市", "冬星盛宴", "冬日星盛宴",
+                "Egg Festival", "Desert Festival", "Flower Dance", "Luau", "Trout Derby",
+                "Dance of the Moonlight Jellies", "Stardew Valley Fair", "Spirit's Eve",
+                "Festival of Ice", "SquidFest", "Night Market", "Feast of the Winter Star");
+    }
+
+    private boolean looksLikeSpecificFestivalShopItemQuery(String query) {
+        return containsAny(query, "在哪里买", "哪里买", "谁卖", "多少钱", "价格")
+                && containsAny(query,
+                "草莓种子", "稀有稻草人", "星之果实", "海泡布丁", "南瓜灯", "杰克南瓜灯",
+                "月光水母", "壁纸", "地毯", "装饰", "帽子", "菜谱", "配方");
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {

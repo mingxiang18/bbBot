@@ -40434,5 +40434,479 @@
         "https://stardewvalleywiki.com/Crafting"
       ]
     }
+  ],
+  "festivalEvents": [
+    {
+      "id": "egg_festival",
+      "name": "复活节",
+      "nameEn": "Egg Festival",
+      "aliases": [
+        "彩蛋节",
+        "蛋蛋节",
+        "蛋节",
+        "春季13日节日",
+        "Egg Festival"
+      ],
+      "season": "春季",
+      "startDay": 13,
+      "endDay": 13,
+      "location": "鹈鹕镇广场",
+      "entryTime": "09:00-14:00 入场",
+      "endTime": "彩蛋狩猎结束或离开后结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "先和居民对话、逛皮埃尔摊位；和刘易斯对话开始彩蛋狩猎，开始后不能再买东西或对话。",
+        "单人彩蛋狩猎需要在 50 秒内拿到 9 个彩蛋才算赢；多人所需数量更低且可多人获胜。",
+        "奇偶年份的节日布局和彩蛋位置不同。"
+      ],
+      "rewards": [
+        "首次赢得彩蛋狩猎获得草帽；之后获胜改为兑奖券。"
+      ],
+      "shopHighlights": [
+        "草莓种子 100g，是第一年前期最重要的春季作物购买点。",
+        "草坪火烈鸟、毛绒兔子、季节性植物/装饰等节日装饰。"
+      ],
+      "recommendation": "第一年优先带钱买草莓种子；想赢彩蛋狩猎，进场前先想好路线，买完东西再找刘易斯开始。",
+      "note": "节日开始前无法进入鹈鹕镇；当天大多数房屋和店铺关闭。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Egg_Festival"
+      ]
+    },
+    {
+      "id": "desert_festival",
+      "name": "沙漠节",
+      "nameEn": "Desert Festival",
+      "aliases": [
+        "沙漠节日",
+        "三花蛋节",
+        "卡利科三花蛋节",
+        "春季15日节日",
+        "Desert Festival"
+      ],
+      "season": "春季",
+      "startDay": 15,
+      "endDay": 17,
+      "location": "沙漠",
+      "entryTime": "10:00-02:00",
+      "endTime": "02:00",
+      "returnTime": "",
+      "timePasses": true,
+      "shopsClosed": false,
+      "animalsNeedFeeding": true,
+      "activities": [
+        "下注沙漠赛跑，赢得下注可拿卡利科三花蛋。",
+        "完成骷髅洞穴挑战、威利钓鱼任务、学者问答等项目获取节日货币。",
+        "每日可找艾米丽获得节日服装服务；还有厨师、免费仙人掌、旅行货车、村民商店等轮换内容。"
+      ],
+      "rewards": [
+        "卡利科三花蛋是节日货币，会跨节日三天保留，但节日结束后消失。",
+        "骷髅洞穴蛋数评级会给卡利科三花蛋和食物/饮料等奖励。"
+      ],
+      "shopHighlights": [
+        "卡利科三花蛋商人出售魔法糖冰棍、神秘盒、木乃伊面具、蝴蝶结、炸弹、食物、技能书等。",
+        "村民商店轮换出售各居民主题物品；有限库存每天补货。"
+      ],
+      "recommendation": "先确认公交已修好；三天内优先刷三花蛋并在结束前花掉，后期可重点换魔法糖冰棍和稀有/限定物。",
+      "note": "这个节日时间继续流逝，普通店铺/房屋不因节日关闭，动物也要照常喂。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Desert_Festival"
+      ]
+    },
+    {
+      "id": "flower_dance",
+      "name": "花舞节",
+      "nameEn": "Flower Dance",
+      "aliases": [
+        "花舞会",
+        "花之舞",
+        "春季24日节日",
+        "Flower Dance"
+      ],
+      "season": "春季",
+      "startDay": 24,
+      "endDay": 24,
+      "location": "煤矿森林西侧，法师塔南边桥对岸",
+      "entryTime": "09:00-14:00 入场",
+      "endTime": "舞会结束后结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "可邀请可结婚对象跳舞；通常需要至少 4 心，对方才会同意。",
+        "和刘易斯对话开始舞会，开始后节日结束。",
+        "多人游戏中玩家之间也可以一起跳舞。"
+      ],
+      "rewards": [
+        "和 NPC 跳舞会增加该 NPC 1 心好感，约 250 点。"
+      ],
+      "shopHighlights": [
+        "皮埃尔摊位出售季节性装饰、季节性植物、花桶、花桶配方等。"
+      ],
+      "recommendation": "想第一年跳舞要提前集中送礼冲 4 心；没到 4 心就当作买装饰和补居民对话。",
+      "note": "花舞节区域平时不可进入；当天大多数房屋和店铺关闭。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Flower_Dance"
+      ]
+    },
+    {
+      "id": "luau",
+      "name": "夏威夷宴会",
+      "nameEn": "Luau",
+      "aliases": [
+        "夏威夷节",
+        "夏宴",
+        "州长汤",
+        "百乐汤",
+        "夏季11日节日",
+        "Luau"
+      ],
+      "season": "夏季",
+      "startDay": 11,
+      "endDay": 11,
+      "location": "海滩",
+      "entryTime": "09:00-14:00 入场",
+      "endTime": "州长品汤后自动结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "往公共汤锅里放一个食材，再找刘易斯开始让州长品尝。",
+        "汤的评价会影响大多数居民好感；沙迪、法师、科罗布斯、孩子和矮人不受影响。"
+      ],
+      "rewards": [
+        "高评价会提升多数居民好感；差评价会降低好感。",
+        "放特殊物品会触发秘密反应。"
+      ],
+      "shopHighlights": [
+        "皮埃尔摊位出售棕榈墙饰、丛林贴纸、天花板树叶、图腾柱、杨桃等热带/装饰物。"
+      ],
+      "recommendation": "优先放高品质、高售价、可食用的好东西；不确定就别乱放低价值或负面物品。",
+      "note": "绿洲不受普通节日关门规则影响。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Luau"
+      ]
+    },
+    {
+      "id": "trout_derby",
+      "name": "鳟鱼大赛",
+      "nameEn": "Trout Derby",
+      "aliases": [
+        "鳟鱼节",
+        "彩虹鳟鱼大赛",
+        "黄金标签活动",
+        "夏季20日活动",
+        "Trout Derby"
+      ],
+      "season": "夏季",
+      "startDay": 20,
+      "endDay": 21,
+      "location": "煤矿森林，玛妮牧场下方河边",
+      "entryTime": "06:10-02:00",
+      "endTime": "02:00",
+      "returnTime": "",
+      "timePasses": true,
+      "shopsClosed": false,
+      "animalsNeedFeeding": true,
+      "activities": [
+        "在煤矿森林河里钓彩虹鳟鱼；活动期间彩虹鳟鱼全天、任意天气可钓。",
+        "每次钓到彩虹鳟鱼有概率获得金色标签；一次钓到多条会提高概率但每次最多 1 个。",
+        "把金色标签交给大赛摊位换奖励。"
+      ],
+      "rewards": [
+        "第一次兑换固定获得帐篷套件；之后从桶帽、壁挂鳟鱼等 10 种奖品中抽取。",
+        "金色标签会跨天、跨年保留。"
+      ],
+      "shopHighlights": [
+        "大赛摊位用金色标签兑换奖品，没有普通金币商店。"
+      ],
+      "recommendation": "带高钓鱼等级、鱼饵和浮标刷彩虹鳟鱼；金色标签可以留到以后，不必当天花完。",
+      "note": "这个活动时间继续流逝，普通店铺/房屋开放，动物要正常喂。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Trout_Derby"
+      ]
+    },
+    {
+      "id": "dance_of_the_moonlight_jellies",
+      "name": "月光水母起舞",
+      "nameEn": "Dance of the Moonlight Jellies",
+      "aliases": [
+        "月光水母",
+        "水母节",
+        "水母起舞",
+        "夏季28日节日",
+        "Dance of the Moonlight Jellies"
+      ],
+      "season": "夏季",
+      "startDay": 28,
+      "endDay": 28,
+      "location": "海滩码头",
+      "entryTime": "22:00-00:00 入场",
+      "endTime": "观看水母过场后自动结束",
+      "returnTime": "00:00",
+      "timePasses": false,
+      "shopsClosed": false,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "和居民对话后，找刘易斯开始点灯吸引月光水母。",
+        "已婚或订婚时，伴侣会站在玩家旁边观看。"
+      ],
+      "rewards": [
+        "主要是剧情观赏节日，没有竞赛型奖励。"
+      ],
+      "shopHighlights": [
+        "皮埃尔摊位出售月光水母旗帜、云朵贴纸、星港贴纸、现代地毯、海泡布丁等。"
+      ],
+      "recommendation": "这是夏季最后一天夜间节日，白天仍可正常做事；想买海泡布丁或装饰再去。",
+      "note": "22:00 前无法进入海滩，使用海滩传送图腾会被消耗但不会传送。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Dance_of_the_Moonlight_Jellies"
+      ]
+    },
+    {
+      "id": "stardew_valley_fair",
+      "name": "星露谷展览会",
+      "nameEn": "Stardew Valley Fair",
+      "aliases": [
+        "秋季展览会",
+        "展览会",
+        "农产品展览会",
+        "星星币节",
+        "秋季16日节日",
+        "Stardew Valley Fair"
+      ],
+      "season": "秋季",
+      "startDay": 16,
+      "endDay": 16,
+      "location": "鹈鹕镇广场",
+      "entryTime": "09:00-15:00 入场",
+      "endTime": "离开节日后结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "用 9 个农产品参加展览评分，找刘易斯开始评审。",
+        "玩钓鱼、弹弓、轮盘等小游戏赚星星币；星星币不跨年保留。",
+        "展览物品评审后要自己拿回，忘拿可去失物招领找回。"
+      ],
+      "rewards": [
+        "展览评分和小游戏获得星星币；星之果实可用 2,000 星星币购买且只能买一次。"
+      ],
+      "shopHighlights": [
+        "展览会商店出售星之果实、稀有稻草人、星星币兑换装饰等固定/随机库存。"
+      ],
+      "recommendation": "优先准备 9 个不同类别、高品质、高售价物品参展；星之果实是首要兑换目标。",
+      "note": "星星币上限 9,999，固定库存每年刷新，但星之果实不会重复刷新。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Stardew_Valley_Fair"
+      ]
+    },
+    {
+      "id": "spirits_eve",
+      "name": "万灵节",
+      "nameEn": "Spirit's Eve",
+      "aliases": [
+        "万圣节",
+        "灵魂前夜",
+        "Spirit Eve",
+        "Spirit's Eve",
+        "秋季27日节日"
+      ],
+      "season": "秋季",
+      "startDay": 27,
+      "endDay": 27,
+      "location": "鹈鹕镇",
+      "entryTime": "22:00-23:50 入场",
+      "endTime": "离开节日后结束",
+      "returnTime": "00:00",
+      "timePasses": false,
+      "shopsClosed": false,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "探索法师设置的闹鬼迷宫；路线和奖品随奇偶年份变化。",
+        "奇数年迷宫可拿金南瓜；偶数年迷宫可拿兑奖券。"
+      ],
+      "rewards": [
+        "金南瓜或兑奖券；金南瓜可出售、送礼或收藏。"
+      ],
+      "shopHighlights": [
+        "皮埃尔摊位出售稀有稻草人 #2、杰克南瓜灯、杰克南瓜灯配方等节庆物品。"
+      ],
+      "recommendation": "第一次优先走迷宫拿金南瓜；想收集稀有稻草人记得带 5,000g。",
+      "note": "23:50 已经太晚，无法再进入节日。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Spirit%27s_Eve"
+      ]
+    },
+    {
+      "id": "festival_of_ice",
+      "name": "冰雪节",
+      "nameEn": "Festival of Ice",
+      "aliases": [
+        "冰节",
+        "冰钓节",
+        "冰钓比赛",
+        "冬季8日节日",
+        "Festival of Ice"
+      ],
+      "season": "冬季",
+      "startDay": 8,
+      "endDay": 8,
+      "location": "煤矿森林",
+      "entryTime": "09:00-14:00 入场",
+      "endTime": "钓鱼比赛判定后自动结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "参加冰钓比赛，与潘姆、威利和艾利欧特竞争。",
+        "需要至少钓到 5 条鱼才会获胜；站近冰洞、短抛更容易命中。",
+        "森林池塘钓到的鱼计入比赛，森林河流不计入。"
+      ],
+      "rewards": [
+        "首次获胜获得倒刺钩、精装旋式鱼饵、磁铁和水手帽；之后获胜改为兑奖券。"
+      ],
+      "shopHighlights": [
+        "旅行商人摊位出售稀有稻草人、冬日星树、壁纸、冰雪家具和地毯等。"
+      ],
+      "recommendation": "钓鱼等级不高也能赢，关键是站位近、稳定短抛，目标至少 5 条。",
+      "note": "当天大多数房屋和店铺关闭。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Festival_of_Ice"
+      ]
+    },
+    {
+      "id": "squidfest",
+      "name": "鱿鱼节",
+      "nameEn": "SquidFest",
+      "aliases": [
+        "鱿鱼大赛",
+        "鱿鱼活动",
+        "冬季12日活动",
+        "SquidFest"
+      ],
+      "season": "冬季",
+      "startDay": 12,
+      "endDay": 13,
+      "location": "海滩",
+      "entryTime": "06:10-02:00",
+      "endTime": "02:00",
+      "returnTime": "",
+      "timePasses": true,
+      "shopsClosed": false,
+      "animalsNeedFeeding": true,
+      "activities": [
+        "在海滩钓鱿鱼，活动期间鱿鱼全天可钓。",
+        "每天按捕获数量领取铜、铁、金、铱四档奖励；计数在第二天重置。",
+        "和摊位互动可领取奖励或查看规则。"
+      ],
+      "rewards": [
+        "第一天和第二天奖品不同，可能包含高级鱼饵、冬季种子、神秘盒、海之菜肴、装饰/帽子等。",
+        "达到更高档位可一次性领取多个档位奖励；背包满时未领取奖励会掉在附近地上。"
+      ],
+      "shopHighlights": [
+        "鱿鱼节没有传统金币商店，核心是按钓到鱿鱼数量领奖。"
+      ],
+      "recommendation": "提前准备鱼饵、浮标和增加钓鱼等级的食物；两天分别刷，因为计数每天重置。",
+      "note": "这个活动时间继续流逝，普通店铺/房屋开放，动物要正常喂。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/SquidFest"
+      ]
+    },
+    {
+      "id": "night_market",
+      "name": "夜市",
+      "nameEn": "Night Market",
+      "aliases": [
+        "冬季夜市",
+        "夜市潜艇",
+        "美人鱼船",
+        "冬季15日活动",
+        "Night Market"
+      ],
+      "season": "冬季",
+      "startDay": 15,
+      "endDay": 17,
+      "location": "海滩码头",
+      "entryTime": "17:00-02:00",
+      "endTime": "02:00；潜艇 23:00 关闭，美人鱼船 00:30 关闭",
+      "returnTime": "",
+      "timePasses": true,
+      "shopsClosed": false,
+      "animalsNeedFeeding": true,
+      "activities": [
+        "逛装饰船、名画家卢皮尼、魔法商船、旅行货车、沙漠商人等夜市摊位。",
+        "乘坐深海钓鱼潜艇，可钓到夜市独有鱼。",
+        "观看美人鱼船表演并输入正确音符可获得珍珠。"
+      ],
+      "rewards": [
+        "美人鱼船珍珠通常每个存档/玩家可拿一次。",
+        "潜艇可钓午夜鱿鱼、水滴鱼、幽灵鱼等夜市鱼。",
+        "沙漠商人每晚给免费咖啡。"
+      ],
+      "shopHighlights": [
+        "装饰船出售糖果拐杖等夜市装饰；魔法商船出售节日/种子/装饰类物品；卢皮尼三天卖不同画作。"
+      ],
+      "recommendation": "先做白天事务和喂动物，17:00 后去夜市；要钓潜艇鱼别拖过 23:00。",
+      "note": "夜市期间普通店铺和房屋不因节日关闭，时间继续流逝。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Night_Market"
+      ]
+    },
+    {
+      "id": "feast_of_the_winter_star",
+      "name": "冬星盛宴",
+      "nameEn": "Feast of the Winter Star",
+      "aliases": [
+        "冬日星盛宴",
+        "冬日星宴",
+        "秘密送礼",
+        "冬季25日节日",
+        "Feast of the Winter Star"
+      ],
+      "season": "冬季",
+      "startDay": 25,
+      "endDay": 25,
+      "location": "鹈鹕镇广场",
+      "entryTime": "09:00-14:00 入场",
+      "endTime": "离开节日后结束",
+      "returnTime": "22:00",
+      "timePasses": false,
+      "shopsClosed": true,
+      "animalsNeedFeeding": false,
+      "activities": [
+        "冬季 18 日刘易斯来信告知你要给哪位居民送礼。",
+        "进入节日后把礼物交给指定居民；之后秘密送礼人会给玩家礼物。"
+      ],
+      "rewards": [
+        "收到随机秘密送礼人的礼物；儿童、克林特等不同送礼人礼物池不同。"
+      ],
+      "shopHighlights": [
+        "皮埃尔摊位出售冬季旗帜、灯串、松树、窗户、节庆餐桌、地毯、墙板等冬季装饰。"
+      ],
+      "recommendation": "18 日收到名单后提前准备对方喜欢或最爱的礼物；当天大多数店铺关闭，别临时才找。",
+      "note": "矮人、科罗布斯、马龙、桑迪和法师不会成为秘密送礼人。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Festivals",
+        "https://stardewvalleywiki.com/Feast_of_the_Winter_Star"
+      ]
+    }
   ]
 }
