@@ -1328,6 +1328,14 @@ class StardewKnowledgeRepositoryTest {
                 "prehistoric_rib"
         );
         assertThat(guideAliases).contains("古物", "文物", "矿物", "缺古物", "缺矿物", "全套收集");
+        assertThat(repository.museumArtifacts()).hasSize(42);
+        assertThat(repository.museumMinerals()).hasSize(53);
+        assertThat(repository.museumArtifacts()).extracting(StardewData.ResourceGuide::getId)
+                .contains("dwarf_scroll_i", "ancient_doll", "golden_relic", "trilobite")
+                .doesNotContain("artifact_spot", "artifact_trove", "dwarf_scrolls");
+        assertThat(repository.museumMinerals()).extracting(StardewData.ResourceGuide::getId)
+                .contains("aquamarine", "prismatic_shard", "quartz", "star_shards")
+                .doesNotContain("geode", "frozen_geode", "magma_geode", "omni_geode", "dwarf_scrolls");
     }
 
     @Test

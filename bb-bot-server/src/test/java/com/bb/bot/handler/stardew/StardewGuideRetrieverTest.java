@@ -450,6 +450,27 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedMuseumIntentRetrievesCollectionEvidenceWithoutStealingSpecificResources() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.MUSEUM, "博物馆缺古物怎么补"),
+                intent(StardewGuideIntent.MUSEUM, "博物馆矿物列表"),
+                intent(StardewGuideIntent.RESOURCE, "古代玩偶怎么获得")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("博物馆缺古物和矿物，古代玩偶怎么拿", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.MUSEUM, StardewGuideIntent.RESOURCE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("museum_artifacts", "museum_minerals", "resource");
+        assertThat(joinAnswers(evidence))
+                .contains("博物馆古物清单", "42 件", "黄金遗物")
+                .contains("博物馆矿物清单", "53 件", "五彩碎片")
+                .contains("古代玩偶获取方式", "冬日星盛宴", "古物宝藏")
+                .doesNotContain("远古斑点、古物宝藏、矮人卷轴");
+    }
+
+    @Test
     void typedIslandFieldOfficeIntentsRetrieveResourcesAndGuideWithoutMuseumCrossRouting() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.RESOURCE, "蛇头骨怎么获得"),

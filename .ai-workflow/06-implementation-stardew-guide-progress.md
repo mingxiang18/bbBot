@@ -18,7 +18,7 @@
 
 本轮 planner 后处理边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；只有命中“普通任务 vs 特别订单/资源/居民”“特别订单 vs 传说鱼/鱼塘”“鱼塘产物 vs 鱼塘建筑”“农场地图 vs 农场建筑”“姜岛探索 vs 通用攻略/资源/商店/建筑/农场地图”“地下城 vs 通用攻略/资源/技能/农场地图”“通用攻略 vs 技能/制作/节日/农场地图/农场动物/普通任务/特别订单/鱼塘/怪物掉落/姜岛探索/地下城”等高风险边界，才使用本地高置信规则纠偏；AI 明确返回 `UNKNOWN` 时只允许被拉回到普通任务 `QUEST`，避免把“鸡舍升级材料”这类问题从未知硬拉到旧命中链导致问 A 答 B。Planner 不可用、空返回或 JSON 不可解析时，才使用完整本地 fallback plan。
 
-技能类目已从通用攻略拆出 `skillGuides` 专用 typed 数据。`SKILL` intent 现在优先返回 `skill_guide` / `skill_guide_list` evidence，通用 `GUIDE` 仍保留精通、锻造、博物馆等攻略兜底。
+技能类目已从通用攻略拆出 `skillGuides` 专用 typed 数据。`SKILL` intent 现在优先返回 `skill_guide` / `skill_guide_list` evidence，通用 `GUIDE` 仍保留精通、锻造等攻略兜底。
 
 制作类目已从 `MACHINE` 拆出 `CRAFTING` typed intent 和 `craftingRecipes` 专用数据。制作配方现按官方制作页补到 150 条，覆盖炸弹、栅栏、洒水器、工匠设备、肥料、种子、地板/路径、钓具、戒指、可食用制作物、消耗品、照明、精炼设备、家具、储物、标牌和杂项；`MACHINE` 仍保留为兼容入口，但新分类和新测试都优先走 `CRAFTING`。
 
@@ -38,21 +38,23 @@
 
 普通任务类目已从 `RESOURCE` / `VILLAGER_SCHEDULE` / `SPECIAL_ORDER` 边界中拆出 `QUEST` typed intent 和 `storyQuests` 专用数据。普通剧情任务、任务日志任务和多阶段任务链走 `QUEST`，例如“罗宾斧头在哪”“镇长短裤怎么拿”“神秘齐怎么做”“海盗妻子任务流程”；特别订单板和齐先生核桃房任务仍走 `SPECIAL_ORDER`。`The Mysterious Qi` 这类官方表格多行任务按任务链合并为一个条目，步骤放入结构化 walkthrough。
 
+博物馆类目已从通用攻略拆出 `MUSEUM` typed evidence。馆藏清单不再复制一份新数据，而是从 `resources` 中的博物馆捐赠项派生，稳定得到 42 件古物和 53 件矿物；远古斑点、古物宝藏、晶球、矮人卷轴汇总等“获取渠道/汇总资源”不会混进馆藏列表。`MUSEUM` 现在覆盖 `museum_overview`、`museum_artifacts`、`museum_minerals`、`museum_rewards`；“博物馆缺古物怎么补”“博物馆矿物列表”“博物馆奖励有哪些”走博物馆证据，具体物品来源如“古代玩偶怎么获得”“黄水晶哪里找”仍走 `RESOURCE`。
+
 ## 已覆盖范围
 
-已结构化覆盖鱼类、收集包、居民、作物、建筑、完整工具获取/升级、完整制作配方、机器兼容、商店/兑换、资源、怪物、鱼塘、料理/书籍、普通任务/任务日志、特别订单/齐先生任务、技能、节日/活动、农场地图、农场动物、果树、姜岛探索、地下城/冒险地点、通用攻略等高频类目。
+已结构化覆盖鱼类、收集包、居民、作物、建筑、完整工具获取/升级、完整制作配方、机器兼容、商店/兑换、资源、怪物、鱼塘、料理/书籍、普通任务/任务日志、特别订单/齐先生任务、技能、节日/活动、农场地图、农场动物、果树、姜岛探索、地下城/冒险地点、博物馆馆藏与奖励、通用攻略等高频类目。
 
-当前数据量级：鱼类 74 条，收集包 58 个，居民 34 位，作物 30 个，建筑 27 个，工具 11 类，完整制作配方 150 个，机器兼容数据 80 个，商店/兑换 29 个，资源 181 项，怪物 58 个，鱼塘 73 条，料理/饮品 83 道，书籍 26 本，普通任务 55 个，特别订单 28 个，技能攻略 9 个，节日/活动 12 个，农场地图 8 个，农场动物 11 个，果树 8 个，姜岛探索 13 个，地下城/冒险地点 6 个，通用攻略 39 项。
+当前数据量级：鱼类 74 条，收集包 58 个，居民 34 位，作物 30 个，建筑 27 个，工具 11 类，完整制作配方 150 个，机器兼容数据 80 个，商店/兑换 29 个，资源 181 项，怪物 58 个，鱼塘 73 条，料理/饮品 83 道，书籍 26 本，普通任务 55 个，特别订单 28 个，技能攻略 9 个，节日/活动 12 个，农场地图 8 个，农场动物 11 个，果树 8 个，姜岛探索 13 个，地下城/冒险地点 6 个，博物馆馆藏 95 件（资源派生：古物 42 件、矿物 53 件），通用攻略 39 项。
 
 居民已完成可送礼居民的首轮可发布覆盖：生日、礼物偏好、普通日程和高频雨天/星期/诊所/上课规则。更复杂的姜岛度假、婚后、好感剧情、绿雨、沙漠节期间特殊行为等放入后续增强。
 
 ## 验证结论
 
-最近一次星露谷聚焦单元测试通过：`265 tests, 0 failures`。
+最近一次星露谷聚焦单元测试通过：`267 tests, 0 failures`。
 
 最近一次 `bb-bot-server` reactor compile 通过：`BUILD SUCCESS`。
 
-JSON 轻量校验通过：`tools=11`，`islandGuides=13`，`dungeonGuides=6`，`craftingRecipes=150`，`storyQuests=55`，`specialOrders=28`，`festivalEvents=12`，`farmMaps=8`，`farmAnimals=11`，`fruitTrees=8`，`machines=80`，`resources=181`，`guides=39`，`skillGuides=9`；重复 id 为空。`git diff --check` 对本轮相关文件通过。
+JSON 轻量校验通过：`tools=11`，`islandGuides=13`，`dungeonGuides=6`，`craftingRecipes=150`，`storyQuests=55`，`specialOrders=28`，`festivalEvents=12`，`farmMaps=8`，`farmAnimals=11`，`fruitTrees=8`，`machines=80`，`resources=181`，`museumArtifacts=42`，`museumMinerals=53`，`guides=39`，`skillGuides=9`；重复 id 为空。`git diff --check` 对本轮相关文件通过。
 
 本轮机制修正同时覆盖两个容易产生非预期回答的点：资源 fallback 增加“怎么刷”，避免“铱矿石怎么刷”落到 `UNKNOWN`；鱼类查询从首个包含匹配改为评分匹配，并让居民日程 fallback 排除钓鱼问题，避免“虚空鲑鱼在哪钓”被居民位置或普通“鲑鱼”短名抢走。
 

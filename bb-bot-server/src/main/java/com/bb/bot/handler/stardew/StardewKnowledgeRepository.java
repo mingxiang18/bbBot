@@ -19,6 +19,16 @@ import java.util.Set;
 @Component
 public class StardewKnowledgeRepository {
 
+    private static final Set<String> MUSEUM_HELPER_RESOURCE_IDS = Set.of(
+            "artifact_spot",
+            "artifact_trove",
+            "dwarf_scrolls",
+            "geode",
+            "frozen_geode",
+            "magma_geode",
+            "omni_geode"
+    );
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private StardewData data = new StardewData();
 
@@ -88,6 +98,18 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.ResourceGuide> resources() {
         return safe(data.getResources());
+    }
+
+    public List<StardewData.ResourceGuide> museumArtifacts() {
+        return resources().stream()
+                .filter(this::isMuseumArtifact)
+                .toList();
+    }
+
+    public List<StardewData.ResourceGuide> museumMinerals() {
+        return resources().stream()
+                .filter(this::isMuseumMineral)
+                .toList();
     }
 
     public List<StardewData.MonsterDropGuide> monsterDrops() {
@@ -456,6 +478,36 @@ public class StardewKnowledgeRepository {
             }
         }
         return score;
+    }
+
+    private boolean isMuseumArtifact(StardewData.ResourceGuide resource) {
+        return isMuseumDonation(resource)
+                && hasSourcePath(resource, "古物")
+                && !isMuseumHelperResource(resource);
+    }
+
+    private boolean isMuseumMineral(StardewData.ResourceGuide resource) {
+        return isMuseumDonation(resource)
+                && !isMuseumArtifact(resource)
+                && !isMuseumHelperResource(resource);
+    }
+
+    private boolean isMuseumDonation(StardewData.ResourceGuide resource) {
+        return resource != null
+                && resource.getUsedIn() != null
+                && resource.getUsedIn().contains("博物馆捐赠");
+    }
+
+    private boolean isMuseumHelperResource(StardewData.ResourceGuide resource) {
+        return resource != null
+                && MUSEUM_HELPER_RESOURCE_IDS.contains(resource.getId());
+    }
+
+    private boolean hasSourcePath(StardewData.ResourceGuide resource, String text) {
+        if (resource == null || resource.getSourceUrls() == null) {
+            return false;
+        }
+        return resource.getSourceUrls().stream().anyMatch(url -> url != null && url.contains(text));
     }
 
     private int firstSearchableIndex(String q, String name, String en, List<String> aliases) {

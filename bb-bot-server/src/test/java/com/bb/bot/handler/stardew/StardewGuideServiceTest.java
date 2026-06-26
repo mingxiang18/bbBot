@@ -380,14 +380,28 @@ class StardewGuideServiceTest {
     @Test
     void answersMuseumArtifactMineralAndGeodeQuestions() {
         StardewGuideResult museum = service.answer("星露谷 博物馆缺古物和矿物怎么补");
+        StardewGuideResult typedMuseum = service.answerEvidence(StardewGuideIntent.MUSEUM, "博物馆缺古物和矿物怎么补");
+        StardewGuideResult artifactList = service.answerEvidence(StardewGuideIntent.MUSEUM, "博物馆缺古物有哪些");
+        StardewGuideResult mineralList = service.answerEvidence(StardewGuideIntent.MUSEUM, "博物馆矿物列表");
+        StardewGuideResult museumRewards = service.answerEvidence(StardewGuideIntent.MUSEUM, "博物馆奖励有哪些");
         StardewGuideResult omniGeode = service.answer("星露谷 万象晶球怎么刷，开还是换古物宝藏");
         StardewGuideResult artifactTrove = service.answer("星露谷 古物宝藏怎么获得");
         StardewGuideResult dwarfGadget = service.answer("星露谷 矮人小工具怎么获得");
         StardewGuideResult diamond = service.answer("星露谷 钻石怎么获得");
         StardewGuideResult goldenRelic = service.answer("星露谷 黄金遗物哪里刷");
 
-        assertThat(museum.getIntent()).isEqualTo("guide");
+        assertThat(museum.getIntent()).isEqualTo("museum_overview");
         assertThat(museum.getAnswer()).contains("95 件", "42 件古物", "53 件矿物", "星之果实");
+        assertThat(typedMuseum.getIntent()).isEqualTo("museum_overview");
+        assertThat(typedMuseum.getAnswer()).contains("矿物补缺", "古物补缺", "可继续问");
+        assertThat(artifactList.getIntent()).isEqualTo("museum_artifacts");
+        assertThat(artifactList.getAnswer()).contains("42 件", "矮人卷轴 I", "古代玩偶", "黄金遗物", "三叶虫")
+                .doesNotContain("远古斑点、", "古物宝藏、", "矮人卷轴、");
+        assertThat(mineralList.getIntent()).isEqualTo("museum_minerals");
+        assertThat(mineralList.getAnswer()).contains("53 件", "海蓝宝石", "五彩碎片", "石英", "陶瓷碎片")
+                .doesNotContain("晶球、", "冰封晶球", "岩浆晶球", "矮人卷轴");
+        assertThat(museumRewards.getIntent()).isEqualTo("museum_rewards");
+        assertThat(museumRewards.getAnswer()).contains("生锈的钥匙", "星之果实", "矮人语教程");
         assertThat(omniGeode.getIntent()).isEqualTo("resource");
         assertThat(omniGeode.getAnswer()).contains("骷髅洞穴", "古物宝藏", "前期优先打开");
         assertThat(artifactTrove.getIntent()).isEqualTo("resource");

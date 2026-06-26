@@ -94,6 +94,9 @@ public class StardewGuideService {
         if (looksLikeFruitTreeCultivationQuery(query)) {
             return typedFruitTreeAnswer(query);
         }
+        if (looksLikeMuseumOverviewQuery(query)) {
+            return typedMuseumAnswer(query);
+        }
         if (guide.isPresent() && shouldPreferGuideOverShop(query, guide.get())) {
             return guideAnswer(guide.get());
         }
@@ -228,7 +231,8 @@ public class StardewGuideService {
             case FISH_POND -> typedFishPondAnswer(query);
             case ANIMAL_CARE -> typedAnimalCareAnswer(query);
             case FRUIT_TREE -> typedFruitTreeAnswer(query);
-            case MUSEUM, GUIDE -> typedGuideAnswer(query);
+            case MUSEUM -> typedMuseumAnswer(query);
+            case GUIDE -> typedGuideAnswer(query);
             case SKILL -> typedSkillAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
@@ -299,6 +303,19 @@ public class StardewGuideService {
             return fruitTreeDetailAnswer(fruitTree.get());
         }
         return fruitTreeListAnswer(query, fruitTree);
+    }
+
+    private StardewGuideResult typedMuseumAnswer(String query) {
+        if (looksLikeMuseumRewardQuery(query)) {
+            return museumRewardsAnswer();
+        }
+        if (looksLikeMuseumArtifactQuery(query) && !looksLikeMuseumMineralQuery(query)) {
+            return museumCollectionAnswer("museum_artifacts", "博物馆古物清单", repository.museumArtifacts());
+        }
+        if (looksLikeMuseumMineralQuery(query) && !looksLikeMuseumArtifactQuery(query)) {
+            return museumCollectionAnswer("museum_minerals", "博物馆矿物清单", repository.museumMinerals());
+        }
+        return museumOverviewAnswer();
     }
 
     private StardewGuideResult typedGuideAnswer(String query) {
@@ -802,6 +819,50 @@ public class StardewGuideService {
         return result("fruit_tree_available", sb.toString().trim(), collectFruitTreeSources(matched));
     }
 
+    private StardewGuideResult museumOverviewAnswer() {
+        List<StardewData.ResourceGuide> artifacts = repository.museumArtifacts();
+        List<StardewData.ResourceGuide> minerals = repository.museumMinerals();
+        Optional<StardewData.GuideTopic> guide = repository.findGuide("博物馆捐赠");
+        StringBuilder sb = new StringBuilder("博物馆补全路线：\n");
+        sb.append("目标：共 95 件藏品，其中 ")
+                .append(artifacts.size()).append(" 件古物、")
+                .append(minerals.size()).append(" 件矿物；同一种藏品只需要捐 1 次。\n");
+        appendGuideSection(sb, guide, "目标");
+        appendGuideSection(sb, guide, "矿物补缺");
+        appendGuideSection(sb, guide, "古物补缺");
+        guide.map(StardewData.GuideTopic::getRecommendation)
+                .filter(StringUtils::isNotBlank)
+                .ifPresent(recommendation -> sb.append("建议：").append(recommendation).append("\n"));
+        sb.append("可继续问：博物馆缺古物有哪些、博物馆缺矿物有哪些、博物馆奖励有哪些，或直接问具体物品名怎么获得。");
+        return result("museum_overview", sb.toString().trim(), collectMuseumSources(guide, artifacts, minerals));
+    }
+
+    private StardewGuideResult museumCollectionAnswer(String intent, String title, List<StardewData.ResourceGuide> items) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(title).append("（").append(items.size()).append(" 件）：\n");
+        sb.append(String.join("、", items.stream().map(StardewData.ResourceGuide::getName).toList())).append("\n");
+        if ("museum_artifacts".equals(intent)) {
+            sb.append("补缺路线：先每天扫远古斑点，冬季优先；按缺口去对应地图挖，后期用古物宝藏补随机缺口。问具体古物名可查来源。");
+        } else {
+            sb.append("补缺路线：宝石和采集矿物看矿井/骷髅洞穴/矿点；晶球矿物按普通、冰封、岩浆、万象晶球分池补。问具体矿物名可查来源。");
+        }
+        return result(intent, sb.toString().trim(), collectResourceSources(items));
+    }
+
+    private StardewGuideResult museumRewardsAnswer() {
+        List<StardewData.ResourceGuide> artifacts = repository.museumArtifacts();
+        List<StardewData.ResourceGuide> minerals = repository.museumMinerals();
+        Optional<StardewData.GuideTopic> guide = repository.findGuide("博物馆捐赠");
+        StringBuilder sb = new StringBuilder("博物馆奖励重点：\n");
+        appendGuideSection(sb, guide, "目标");
+        appendGuideSection(sb, guide, "特殊奖励");
+        sb.append("数量目标：捐 60 件获得生锈的钥匙；捐满 ")
+                .append(artifacts.size() + minerals.size())
+                .append(" 件获得星之果实并完成全套收集。\n");
+        sb.append("建议：第一件可捐物通常先捐，重复品再卖、送礼或用于制作；四卷矮人卷轴要全捐才能解锁矮人语教程。");
+        return result("museum_rewards", sb.toString().trim(), collectMuseumSources(guide, artifacts, minerals));
+    }
+
     private StardewGuideResult dungeonDetailAnswer(StardewData.DungeonGuide dungeon) {
         StringBuilder sb = new StringBuilder();
         sb.append(dungeon.getName()).append("：\n");
@@ -988,6 +1049,13 @@ public class StardewGuideService {
         for (String line : lines) {
             sb.append("- ").append(line).append("\n");
         }
+    }
+
+    private void appendGuideSection(StringBuilder sb, Optional<StardewData.GuideTopic> guide, String title) {
+        guide.flatMap(topic -> topic.getSections().stream()
+                        .filter(section -> title.equals(section.getTitle()))
+                        .findFirst())
+                .ifPresent(section -> appendLines(sb, section.getTitle(), section.getLines()));
     }
 
     private String firstOrDefault(List<String> values, String fallback) {
@@ -2820,6 +2888,41 @@ public class StardewGuideService {
                 || query.contains("核桃房任务有哪些");
     }
 
+    private boolean looksLikeMuseumArtifactQuery(String query) {
+        return query.contains("古物") || query.contains("文物") || query.contains("artifact");
+    }
+
+    private boolean looksLikeMuseumMineralQuery(String query) {
+        return query.contains("矿物") || query.contains("宝石") || query.contains("mineral");
+    }
+
+    private boolean looksLikeMuseumRewardQuery(String query) {
+        return query.contains("奖励")
+                || query.contains("星之果实")
+                || query.contains("生锈的钥匙")
+                || query.contains("矮人语")
+                || query.contains("给什么")
+                || query.contains("有什么用");
+    }
+
+    private boolean looksLikeMuseumOverviewQuery(String query) {
+        return containsAny(query, "博物馆", "全套收集", "缺古物", "缺文物", "缺矿物", "全套古物", "全套矿物")
+                && !looksLikeSpecificArtifactResourceQuestion(query)
+                && !looksLikeSpecificMineralResourceQuestion(query);
+    }
+
+    private boolean looksLikeSpecificArtifactResourceQuestion(String query) {
+        return containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "在哪", "来源", "掉落", "谁掉", "开哪个", "开什么")
+                && containsAny(query, "古物", "文物", "卷轴")
+                && !containsAny(query, "缺古物", "缺文物", "全套古物", "文物怎么补", "古物怎么补", "博物馆缺");
+    }
+
+    private boolean looksLikeSpecificMineralResourceQuestion(String query) {
+        return containsAny(query, "怎么获得", "获取", "哪里", "哪刷", "在哪", "来源", "开哪个", "开什么", "晶球")
+                && containsAny(query, "矿物", "宝石", "黄水晶", "大理石", "陶瓷碎片", "五彩碎片")
+                && !containsAny(query, "缺矿物", "全套矿物", "矿物怎么补", "博物馆缺");
+    }
+
     private boolean isBroadJellyQuery(String query) {
         return query.contains("果冻")
                 && !query.contains("海果冻")
@@ -3265,6 +3368,28 @@ public class StardewGuideService {
         for (StardewData.FruitTreeGuide tree : trees) {
             if (tree.getSourceUrls() != null) {
                 urls.addAll(tree.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectMuseumSources(
+            Optional<StardewData.GuideTopic> guide,
+            List<StardewData.ResourceGuide> artifacts,
+            List<StardewData.ResourceGuide> minerals
+    ) {
+        Set<String> urls = new LinkedHashSet<>();
+        guide.map(StardewData.GuideTopic::getSourceUrls).ifPresent(urls::addAll);
+        urls.addAll(collectResourceSources(artifacts));
+        urls.addAll(collectResourceSources(minerals));
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectResourceSources(List<StardewData.ResourceGuide> resources) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.ResourceGuide resource : resources) {
+            if (resource.getSourceUrls() != null) {
+                urls.addAll(resource.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

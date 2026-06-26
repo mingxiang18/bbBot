@@ -119,6 +119,11 @@ public class StardewQueryPlannerService {
         if (localType == StardewGuideIntent.UNKNOWN || localType == aiType) {
             return aiType;
         }
+        if (aiType == StardewGuideIntent.GUIDE
+                && localType == StardewGuideIntent.RESOURCE
+                && (looksLikeSpecificArtifactResourceQuery(keyword) || looksLikeSpecificMineralResourceQuery(keyword))) {
+            return localType;
+        }
         if (shouldPreferLocalIntent(aiType, localType)) {
             return localType;
         }
@@ -191,6 +196,7 @@ public class StardewQueryPlannerService {
                 StardewGuideIntent.RESOURCE,
                 StardewGuideIntent.CROP
         ));
+        corrections.put(StardewGuideIntent.MUSEUM, EnumSet.of(StardewGuideIntent.GUIDE));
         corrections.put(StardewGuideIntent.MONSTER_DROP, EnumSet.of(StardewGuideIntent.GUIDE));
         return Map.copyOf(corrections);
     }

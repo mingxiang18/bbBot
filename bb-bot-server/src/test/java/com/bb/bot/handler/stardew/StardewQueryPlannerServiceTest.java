@@ -764,6 +764,34 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localGuardrailPullsBroadMuseumQueriesBackFromGuidePlansButKeepsSpecificItemsAsResources() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {"type":"GUIDE","keywords":["博物馆缺古物怎么补"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["博物馆矿物列表"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["古代玩偶这个古物怎么获得"],"constraints":{}},
+                            {"type":"GUIDE","keywords":["黄水晶这个矿物哪里找"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("博物馆缺古物和矿物，古代玩偶和黄水晶哪里找");
+
+        assertThat(plan.getIntents()).extracting(StardewQueryPlan.PlannedIntent::getType)
+                .containsExactly(
+                        StardewGuideIntent.MUSEUM,
+                        StardewGuideIntent.MUSEUM,
+                        StardewGuideIntent.RESOURCE,
+                        StardewGuideIntent.RESOURCE
+                );
+    }
+
+    @Test
     void localFallbackClassifiesIslandFieldOfficeQueriesAsIslandBeforeMuseumRoute() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
