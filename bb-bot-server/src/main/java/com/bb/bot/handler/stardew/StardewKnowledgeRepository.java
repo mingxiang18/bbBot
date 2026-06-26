@@ -26,11 +26,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -116,6 +116,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.FestivalEvent> festivalEvents() {
         return safe(data.getFestivalEvents());
+    }
+
+    public List<StardewData.FarmMapGuide> farmMaps() {
+        return safe(data.getFarmMaps());
     }
 
     public List<StardewData.GuideTopic> guides() {
@@ -294,6 +298,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(FestivalEventMatch::event)
+                .findFirst();
+    }
+
+    public Optional<StardewData.FarmMapGuide> findFarmMap(String query) {
+        String q = normalize(query);
+        return farmMaps().stream()
+                .map(map -> new FarmMapMatch(map, scoreFarmMap(q, map)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(FarmMapMatch::map)
                 .findFirst();
     }
 
@@ -523,6 +537,30 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreFarmMap(String q, StardewData.FarmMapGuide map) {
+        int score = scoreSearchable(q, map.getName(), map.getNameEn(), map.getAliases());
+        if (score == 0) {
+            return 0;
+        }
+        if (map.getAssociatedSkills() != null) {
+            for (String skill : map.getAssociatedSkills()) {
+                String normalized = normalize(skill);
+                if (!normalized.isEmpty() && q.contains(normalized)) {
+                    score += 10;
+                }
+            }
+        }
+        if (map.getBestFor() != null) {
+            for (String value : map.getBestFor()) {
+                String normalized = normalize(value);
+                if (!normalized.isEmpty() && q.contains(normalized)) {
+                    score += 10;
+                }
+            }
+        }
+        return score;
+    }
+
     private int scoreBundle(String q, StardewData.Bundle bundle) {
         int score = scoreSearchable(q, bundle.getName(), bundle.getId(), bundle.getAliases());
         boolean asksRemixed = q.contains("重混") || q.contains("随机") || q.contains("remixed");
@@ -555,6 +593,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record FestivalEventMatch(StardewData.FestivalEvent event, int score) {
+    }
+
+    private record FarmMapMatch(StardewData.FarmMapGuide map, int score) {
     }
 
     private record BundleMatch(StardewData.Bundle bundle, int score) {

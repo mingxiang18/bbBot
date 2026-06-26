@@ -39,7 +39,52 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.specialOrders()).hasSizeGreaterThanOrEqualTo(28);
         assertThat(repository.skillGuides()).hasSizeGreaterThanOrEqualTo(9);
         assertThat(repository.festivalEvents()).hasSize(12);
+        assertThat(repository.farmMaps()).hasSize(8);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
+    }
+
+    @Test
+    void fullFarmMapTableIsCovered() {
+        Set<String> mapIds = repository.farmMaps().stream()
+                .map(StardewData.FarmMapGuide::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(repository.farmMaps()).hasSize(8);
+        assertThat(mapIds).containsExactlyInAnyOrder(
+                "standard_farm",
+                "riverland_farm",
+                "forest_farm",
+                "hill_top_farm",
+                "wilderness_farm",
+                "four_corners_farm",
+                "beach_farm",
+                "meadowlands_farm"
+        );
+
+        assertThat(repository.findFarmMap("海滩农场洒水器").orElseThrow().getId()).isEqualTo("beach_farm");
+        assertThat(repository.findFarmMap("草原农场开局鸡").orElseThrow().getId()).isEqualTo("meadowlands_farm");
+        assertThat(repository.findFarmMap("四角农场多人").orElseThrow().getId()).isEqualTo("four_corners_farm");
+        assertThat(repository.findFarmMap("森林农场硬木").orElseThrow().getId()).isEqualTo("forest_farm");
+        assertThat(repository.findFarmMap("河流农场鱼熏机").orElseThrow().getId()).isEqualTo("riverland_farm");
+    }
+
+    @Test
+    void allFarmMapsHaveCoreFieldsAndSources() {
+        assertThat(repository.farmMaps())
+                .hasSize(8)
+                .allSatisfy(map -> {
+                    assertThat(map.getId()).isNotBlank();
+                    assertThat(map.getName()).isNotBlank();
+                    assertThat(map.getNameEn()).isNotBlank();
+                    assertThat(map.getAliases()).isNotEmpty();
+                    assertThat(map.getAssociatedSkills()).isNotEmpty();
+                    assertThat(map.getTillableTiles()).isNotNull();
+                    assertThat(map.getLayoutSummary()).isNotBlank();
+                    assertThat(map.getPerks()).isNotEmpty();
+                    assertThat(map.getRecommendations()).isNotEmpty();
+                    assertThat(map.getBestFor()).isNotEmpty();
+                    assertThat(map.getSourceUrls()).contains("https://stardewvalleywiki.com/Farm_Maps");
+                });
     }
 
     @Test

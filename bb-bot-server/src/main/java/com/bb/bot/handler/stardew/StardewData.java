@@ -28,6 +28,7 @@ public class StardewData {
     private List<SpecialOrderGuide> specialOrders = new ArrayList<>();
     private List<SkillGuide> skillGuides = new ArrayList<>();
     private List<FestivalEvent> festivalEvents = new ArrayList<>();
+    private List<FarmMapGuide> farmMaps = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
     @Data
@@ -372,6 +373,25 @@ public class StardewData {
         private List<String> rewards = new ArrayList<>();
         private List<String> shopHighlights = new ArrayList<>();
         private String recommendation;
+        private String note;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class FarmMapGuide {
+        private String id;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private List<String> associatedSkills = new ArrayList<>();
+        private Integer tillableTiles;
+        private Integer nonTillableBuildableTiles;
+        private String layoutSummary;
+        private List<String> perks = new ArrayList<>();
+        private List<String> limits = new ArrayList<>();
+        private List<String> fishing = new ArrayList<>();
+        private List<String> recommendations = new ArrayList<>();
+        private List<String> bestFor = new ArrayList<>();
         private String note;
         private List<String> sourceUrls = new ArrayList<>();
     }

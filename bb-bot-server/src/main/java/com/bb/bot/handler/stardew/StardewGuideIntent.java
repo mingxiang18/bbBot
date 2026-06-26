@@ -20,6 +20,7 @@ public enum StardewGuideIntent {
     SPECIAL_ORDER,
     SKILL,
     FESTIVAL,
+    FARM_MAP,
     MUSEUM,
     GUIDE,
     UNKNOWN

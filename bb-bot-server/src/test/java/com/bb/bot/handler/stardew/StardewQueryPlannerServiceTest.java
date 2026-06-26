@@ -161,6 +161,50 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesFarmMapQueriesSeparatelyFromFarmBuildings() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+        StardewQueryPlan beginner = planner.plan("新手选什么农场");
+        StardewQueryPlan beach = planner.plan("海滩农场洒水器能用吗");
+        StardewQueryPlan meadowlands = planner.plan("草原农场适合养动物吗");
+        StardewQueryPlan buildingList = planner.plan("农场建筑有哪些");
+        StardewQueryPlan coopUpgrade = planner.plan("鸡舍升级材料");
+
+        assertThat(beginner.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(beach.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(meadowlands.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(buildingList.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+        assertThat(coopUpgrade.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+    }
+
+    @Test
+    void localGuardrailSeparatesFarmMapFromGuideAndBuildingAiPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "clarificationQuestion": "",
+                          "intents": [
+                            {"type":"GUIDE","keywords":["海滩农场洒水器能用吗"],"constraints":{}},
+                            {"type":"BUILDING","keywords":["草原农场适合养动物吗"],"constraints":{}},
+                            {"type":"FARM_MAP","keywords":["农场建筑有哪些"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("海滩农场洒水器，草原农场养动物，农场建筑");
+
+        assertThat(plan.getIntents()).hasSize(3);
+        assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.FARM_MAP);
+        assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.BUILDING);
+    }
+
+    @Test
     void localFallbackClassifiesFishingLevelingQueriesAsSkill() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));

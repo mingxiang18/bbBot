@@ -926,6 +926,43 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersFarmMapDetailsThroughTypedIntent() {
+        StardewGuideResult beach = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 海滩农场洒水器能用吗");
+        StardewGuideResult meadowlands = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 草原农场开局有什么");
+        StardewGuideResult forest = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 森林农场硬木怎么样");
+
+        assertThat(beach.getIntent()).isEqualTo("farm_map_detail");
+        assertThat(beach.getAnswer()).contains("海滩农场", "洒水器", "202", "补给箱");
+        assertThat(beach.getSourceUrls()).contains("https://stardewvalleywiki.com/Farm_Maps");
+
+        assertThat(meadowlands.getIntent()).isEqualTo("farm_map_detail");
+        assertThat(meadowlands.getAnswer()).contains("草原农场", "蓝草", "鸡舍", "两只鸡", "15 份干草");
+
+        assertThat(forest.getIntent()).isEqualTo("farm_map_detail");
+        assertThat(forest.getAnswer()).contains("森林农场", "硬木", "大树桩", "木跃鱼");
+    }
+
+    @Test
+    void answersFarmMapRecommendationsThroughTypedIntent() {
+        StardewGuideResult beginner = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 新手选什么农场");
+        StardewGuideResult fishing = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 钓鱼农场推荐");
+        StardewGuideResult multiplayer = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 多人农场推荐");
+        StardewGuideResult sprinklerLimit = service.answerEvidence(StardewGuideIntent.FARM_MAP, "星露谷 哪种农场不能大面积用洒水器");
+        StardewGuideResult building = service.answerEvidence(StardewGuideIntent.BUILDING, "星露谷 农场建筑有哪些");
+
+        assertThat(beginner.getIntent()).isEqualTo("farm_map_available");
+        assertThat(beginner.getAnswer()).contains("标准农场", "草原农场", "新手");
+
+        assertThat(fishing.getAnswer()).contains("河流农场", "海滩农场");
+        assertThat(multiplayer.getAnswer()).contains("四角农场", "多人");
+        assertThat(sprinklerLimit.getAnswer()).contains("海滩农场", "洒水器");
+
+        assertThat(building.getIntent()).isEqualTo("building_available");
+        assertThat(building.getAnswer()).contains("可建/可升级建筑", "鸡舍", "畜棚", "筒仓");
+        assertThat(building.getAnswer()).doesNotContain("农场地图选择", "海滩农场");
+    }
+
+    @Test
     void keepsCrabPotCatchQueriesOnFishRouteAfterCrabPotCraftableIsAdded() {
         StardewGuideResult catchList = service.answer("星露谷 蟹笼能抓什么");
 

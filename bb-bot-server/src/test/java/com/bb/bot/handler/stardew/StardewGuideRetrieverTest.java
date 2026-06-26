@@ -244,6 +244,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedFarmMapIntentRetrievesMapEvidenceWithoutBuildingOrGuideCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.FARM_MAP, "海滩农场洒水器能用吗"),
+                intent(StardewGuideIntent.FARM_MAP, "新手选什么农场"),
+                intent(StardewGuideIntent.BUILDING, "农场建筑有哪些")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("海滩农场限制，新手怎么选，农场建筑有哪些", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.FARM_MAP, StardewGuideIntent.BUILDING);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("farm_map_detail", "farm_map_available", "building_available");
+        assertThat(joinAnswers(evidence))
+                .contains("海滩农场", "洒水器", "标准农场", "草原农场")
+                .contains("可建/可升级建筑", "鸡舍", "畜棚")
+                .doesNotContain("没找到对应攻略条目");
+    }
+
+    @Test
     void typedResourceIntentStillReturnsResourceEvidenceForCraftedItems() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "恐龙蛋黄酱怎么做"));
 

@@ -40908,5 +40908,379 @@
         "https://stardewvalleywiki.com/Feast_of_the_Winter_Star"
       ]
     }
+  ],
+  "farmMaps": [
+    {
+      "id": "standard_farm",
+      "name": "标准农场",
+      "nameEn": "Standard Farm",
+      "aliases": [
+        "普通农场",
+        "默认农场",
+        "标准地图",
+        "Standard Farm",
+        "standard"
+      ],
+      "associatedSkills": [
+        "耕种"
+      ],
+      "tillableTiles": 3427,
+      "nonTillableBuildableTiles": 235,
+      "layoutSummary": "最大、最连续的耕种和建设空间；最大连续可耕矩形约 63x31，共 1953 格。",
+      "perks": [
+        "耕地最多，适合大规模作物、动物建筑、工棚和后期自动化布局。",
+        "没有特殊障碍或玩法压力，新手最容易规划。"
+      ],
+      "limits": [
+        "缺少其他地图的特殊资源、钓鱼、采集、采矿或战斗加成。"
+      ],
+      "fishing": [
+        "农场钓鱼没有特殊优势，通常不作为主要收入来源。"
+      ],
+      "recommendations": [
+        "第一次玩或想追求效率/整齐布局，优先选标准农场。",
+        "适合后期大量洒水器、祝尼魔小屋、酒桶/罐头瓶生产线和动物区分区。"
+      ],
+      "bestFor": [
+        "新手",
+        "大规模种田",
+        "动物养殖",
+        "后期自动化",
+        "整齐布局"
+      ],
+      "note": "开局选定后不能更换农场地图。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "riverland_farm",
+      "name": "河流农场",
+      "nameEn": "Riverland Farm",
+      "aliases": [
+        "河地农场",
+        "河岸农场",
+        "河流地图",
+        "钓鱼农场",
+        "Riverland Farm",
+        "riverland"
+      ],
+      "associatedSkills": [
+        "钓鱼"
+      ],
+      "tillableTiles": 1578,
+      "nonTillableBuildableTiles": 516,
+      "layoutSummary": "大量水域把土地切碎，整体耕种和建筑规划空间偏少。",
+      "perks": [
+        "1.6 起开局自带鱼熏机。",
+        "农场钓鱼可钓鹈鹕镇河鱼和煤矿森林鱼。",
+        "随机气泡点只会在这张农场地图启用。",
+        "6 个灌木可用铜斧或更高斧头砍掉。"
+      ],
+      "limits": [
+        "可耕地只有 1578 格，岛屿式地形会限制大规模作物和整齐建筑布局。"
+      ],
+      "fishing": [
+        "约 70% 钓到城镇河流鱼，约 30% 钓到森林鱼。",
+        "适合早期靠钓鱼和熏鱼补收入。"
+      ],
+      "recommendations": [
+        "喜欢钓鱼、想开局体验鱼熏机可以选；纯效率种田不推荐。",
+        "布局上适合小块分区：一块作物、一块动物、一块机器，别强求大田。"
+      ],
+      "bestFor": [
+        "钓鱼",
+        "鱼熏机",
+        "休闲玩法",
+        "水域布局"
+      ],
+      "note": "水面多意味着移动和摆放都会更碎，后期自动化不如标准农场舒服。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "forest_farm",
+      "name": "森林农场",
+      "nameEn": "Forest Farm",
+      "aliases": [
+        "森林地图",
+        "采集农场",
+        "硬木农场",
+        "秘密森林农场",
+        "Forest Farm",
+        "forest"
+      ],
+      "associatedSkills": [
+        "觅食"
+      ],
+      "tillableTiles": 1413,
+      "nonTillableBuildableTiles": 1490,
+      "layoutSummary": "边界像秘密森林，耕地少但草地、池塘和采集资源多。",
+      "perks": [
+        "西侧空地每天刷新 8 个可再生大树桩，稳定提供硬木。",
+        "会刷新季节采集物和必掉混合种子的特殊杂草。",
+        "有很多灌木，包括浆果灌木；16 个灌木可用铜斧或更高斧头砍掉。",
+        "农场可钓木跃鱼，概率受每日运气影响。"
+      ],
+      "limits": [
+        "耕地只有 1413 格，池塘和草地区域会压缩大田。"
+      ],
+      "fishing": [
+        "木跃鱼基础约 5% 加每日运气；其余部分可钓森林池塘/河流鱼或垃圾。"
+      ],
+      "recommendations": [
+        "喜欢早期硬木、采集和自然风格布局很舒服；想极限种田就不要选。",
+        "可把西侧当硬木/采集区，主田和动物建筑集中在中部可耕区域。"
+      ],
+      "bestFor": [
+        "觅食",
+        "硬木",
+        "自然布局",
+        "混合种子",
+        "木跃鱼"
+      ],
+      "note": "森林农场的硬木很适合早做马厩、升级和后续工艺需求。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "hill_top_farm",
+      "name": "山顶农场",
+      "nameEn": "Hill-top Farm",
+      "aliases": [
+        "山地农场",
+        "矿山农场",
+        "采矿农场",
+        "山顶地图",
+        "Hill-top Farm",
+        "Hilltop Farm",
+        "hilltop"
+      ],
+      "associatedSkills": [
+        "采矿"
+      ],
+      "tillableTiles": 1648,
+      "nonTillableBuildableTiles": 930,
+      "layoutSummary": "地形有悬崖、溪流和西南矿区，耕地中等偏少。",
+      "perks": [
+        "西南矿区会按采矿等级刷新石头、矿石节点、晶球节点和古物点。",
+        "清空矿区后平均每天约刷新 2.4 个节点。",
+        "采矿等级越高，越可能刷铁、金、铱和高级晶球节点。"
+      ],
+      "limits": [
+        "矿区入口可能被大树桩、大原木或巨石挡住，需要钢斧或钢镐处理。",
+        "悬崖和溪流会切碎布局；只有 1648 格可耕地。"
+      ],
+      "fishing": [
+        "约 50% 钓到森林河流鱼，约 50% 钓到垃圾。"
+      ],
+      "recommendations": [
+        "喜欢每天顺手敲矿、想要主题玩法可以选；效率上矿井和骷髅洞穴仍然更重要。",
+        "矿区附近留通道，主生产区按台阶/河流分块规划。"
+      ],
+      "bestFor": [
+        "采矿",
+        "矿石节点",
+        "晶球",
+        "分层布局"
+      ],
+      "note": "山顶矿区是补充资源，不要把它当成主要矿石来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "wilderness_farm",
+      "name": "荒野农场",
+      "nameEn": "Wilderness Farm",
+      "aliases": [
+        "荒地农场",
+        "战斗农场",
+        "怪物农场",
+        "荒野地图",
+        "Wilderness Farm",
+        "wilderness"
+      ],
+      "associatedSkills": [
+        "战斗"
+      ],
+      "tillableTiles": 2131,
+      "nonTillableBuildableTiles": 444,
+      "layoutSummary": "夜间会刷怪，耕地比特殊资源地图宽一些，但有悬崖和池塘。",
+      "perks": [
+        "夜间怪物随战斗等级刷新。",
+        "如果开启农场刷怪选项，这张图能刷更多荒野石魔。",
+        "战斗 9 级后，这张图专属铱石魔有 50% 概率出现，可掉铱矿石和种子点相关种子。"
+      ],
+      "limits": [
+        "农场怪物经验只有正常战斗经验的 1/3；夜间劳作会被打扰。",
+        "不适合只想安静种田的新手。"
+      ],
+      "fishing": [
+        "约 35% 钓到山湖鱼，约 65% 钓到垃圾。"
+      ],
+      "recommendations": [
+        "想要战斗氛围、怪物掉落和挑战感再选；如果只是想快速练战斗，矿井更高效。",
+        "夜间机器区和动物区要留照明与通道，避免被怪物卡位。"
+      ],
+      "bestFor": [
+        "战斗",
+        "夜间怪物",
+        "挑战玩法",
+        "铱石魔"
+      ],
+      "note": "1.6 后铱石魔只在荒野农场出现；但农场刷怪不适合作为主力练级。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "four_corners_farm",
+      "name": "四角农场",
+      "nameEn": "Four Corners Farm",
+      "aliases": [
+        "四角地图",
+        "四分区农场",
+        "多人农场",
+        "Four Corners Farm",
+        "four corners"
+      ],
+      "associatedSkills": [
+        "多人",
+        "耕种",
+        "觅食",
+        "采矿",
+        "钓鱼"
+      ],
+      "tillableTiles": 2952,
+      "nonTillableBuildableTiles": 562,
+      "layoutSummary": "农场被悬崖分成四个区域，每个区域像一种农场地图，天然适合分区。",
+      "perks": [
+        "左上像森林农场，有大树桩和特殊杂草。",
+        "右上像标准农场，耕种空间最大。",
+        "左下有池塘，约 50% 可钓森林池塘鱼。",
+        "右下像山顶农场，有小矿区，按采矿等级刷新石头、矿石和晶球节点。",
+        "可耕地 2952 格，是特殊地图里很宽裕的一张。"
+      ],
+      "limits": [
+        "悬崖和池塘减少整体连续空间，大规模整齐田块不如标准农场。"
+      ],
+      "fishing": [
+        "左下池塘约 50% 钓到森林池塘鱼。"
+      ],
+      "recommendations": [
+        "单人也很好用，适合想自然分区：作物、动物、机器、采集/矿区各占一角。",
+        "多人开局尤其合适，每个玩家可以认领一块区域。"
+      ],
+      "bestFor": [
+        "多人",
+        "分区布局",
+        "综合玩法",
+        "单人舒适",
+        "大空间"
+      ],
+      "note": "四角农场是兼顾空间和特色的稳妥选择，很多玩家单人也会选。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "beach_farm",
+      "name": "海滩农场",
+      "nameEn": "Beach Farm",
+      "aliases": [
+        "沙滩农场",
+        "海边农场",
+        "海滩地图",
+        "高级玩家农场",
+        "Beach Farm",
+        "beach"
+      ],
+      "associatedSkills": [
+        "觅食",
+        "钓鱼"
+      ],
+      "tillableTiles": 2700,
+      "nonTillableBuildableTiles": 1928,
+      "layoutSummary": "开放空间很多，采集和钓鱼优秀，但沙地不能放洒水器。",
+      "perks": [
+        "海边会冲上补给箱。",
+        "森林和海滩采集物都可能出现，季节限定海滩采集物可全年刷新。",
+        "草可以长在沙地上，大片开放区域适合畜棚、鸡舍、鱼塘和工棚。",
+        "可耕地 2700 格，但可使用洒水器的非沙地很有限。"
+      ],
+      "limits": [
+        "沙地不能使用洒水器；只有一块连续 202 格非沙土地可完整用洒水器，另有 28 格零散非沙地。",
+        "官方定位为有经验玩家，不适合第一次玩就追求标准洒水器大田。"
+      ],
+      "fishing": [
+        "约 52.73% 钓到海洋鱼，15% 海草，约 5.1% 牡蛎/珊瑚/蚌/鸟蛤，约 27.17% 垃圾。"
+      ],
+      "recommendations": [
+        "喜欢动物、工棚、鱼塘、采集和海边氛围可以选；想走大规模作物自动化会比较别扭。",
+        "前期把可洒水器区域留给高价值作物，沙地更多放建筑、草地和加工设施。"
+      ],
+      "bestFor": [
+        "老玩家",
+        "钓鱼",
+        "觅食",
+        "动物建筑",
+        "开放布局",
+        "补给箱"
+      ],
+      "note": "海滩农场不是不能种田，而是不能按常规“满地洒水器大田”规划。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    },
+    {
+      "id": "meadowlands_farm",
+      "name": "草原农场",
+      "nameEn": "Meadowlands Farm",
+      "aliases": [
+        "草地农场",
+        "牧场农场",
+        "动物农场",
+        "蓝草农场",
+        "Meadowlands Farm",
+        "meadowlands"
+      ],
+      "associatedSkills": [
+        "耕种",
+        "动物"
+      ],
+      "tillableTiles": 2066,
+      "nonTillableBuildableTiles": 2141,
+      "layoutSummary": "偏动物养殖的 1.6 农场，开局有蓝草、鸡舍和两只鸡。",
+      "perks": [
+        "有动物喜欢的蓝草。",
+        "开局自带鸡舍和两只随机命名的鸡。",
+        "开局不拿刘易斯给的 15 个防风草种子，而是收到 15 份干草。",
+        "非耕地可建空间约 2141 格，适合畜棚、鸡舍、草地和工棚。"
+      ],
+      "limits": [
+        "可耕地 2066 格，低于标准和四角；开局作物路线不如标准农场直接。"
+      ],
+      "fishing": [
+        "在河流或大池塘钓鱼时，约 40% 钓到森林池塘鱼，约 60% 钓到垃圾。"
+      ],
+      "recommendations": [
+        "想开局走动物路线、喜欢轻松养鸡和草地风格，非常适合；想极限作物收益仍选标准。",
+        "优先保留蓝草和动物活动区，早期用鸡蛋收入补作物启动。"
+      ],
+      "bestFor": [
+        "动物养殖",
+        "新手友好",
+        "鸡舍开局",
+        "蓝草",
+        "牧场布局"
+      ],
+      "note": "草原农场是 1.6 新增地图，适合把动物养殖作为主线体验。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Farm_Maps"
+      ]
+    }
   ]
 }

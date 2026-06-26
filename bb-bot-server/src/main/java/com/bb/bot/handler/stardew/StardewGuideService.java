@@ -234,6 +234,7 @@ public class StardewGuideService {
             case COOKING -> typedCookingAnswer(query);
             case SPECIAL_ORDER -> typedSpecialOrderAnswer(query);
             case FESTIVAL -> typedFestivalAnswer(query);
+            case FARM_MAP -> typedFarmMapAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
     }
@@ -386,6 +387,14 @@ public class StardewGuideService {
             return festivalDetailAnswer(event.get());
         }
         return festivalListAnswer(query);
+    }
+
+    private StardewGuideResult typedFarmMapAnswer(String query) {
+        Optional<StardewData.FarmMapGuide> farmMap = repository.findFarmMap(query);
+        if (farmMap.isPresent() && !isBroadFarmMapQuery(query)) {
+            return farmMapDetailAnswer(farmMap.get());
+        }
+        return farmMapListAnswer(query, farmMap);
     }
 
     private boolean looksLikeSpecificCookingRecipeQuery(String query) {
@@ -573,6 +582,55 @@ public class StardewGuideService {
         }
         sb.append("建议：问具体节日名可以看玩法、奖励、商店重点和是否需要喂动物，例如“沙漠节怎么玩”“星露谷展览会怎么拿星之果实”。");
         return result("festival_available", sb.toString().trim(), collectFestivalSources(matched));
+    }
+
+    private StardewGuideResult farmMapDetailAnswer(StardewData.FarmMapGuide map) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(map.getName()).append("：\n");
+        if (StringUtils.isNotBlank(map.getLayoutSummary())) {
+            sb.append("布局：").append(map.getLayoutSummary()).append("\n");
+        }
+        sb.append("关联方向：").append(formatList(map.getAssociatedSkills(), "无固定方向")).append("\n");
+        sb.append("可耕地：").append(map.getTillableTiles() == null ? "未记录" : map.getTillableTiles() + " 格")
+                .append("，不可耕但可建造：")
+                .append(map.getNonTillableBuildableTiles() == null ? "未记录" : map.getNonTillableBuildableTiles() + " 格")
+                .append("\n");
+        appendLines(sb, "优势", map.getPerks());
+        appendLines(sb, "限制", map.getLimits());
+        appendLines(sb, "钓鱼/水域", map.getFishing());
+        appendLines(sb, "适合", map.getBestFor());
+        appendLines(sb, "建议", map.getRecommendations());
+        if (StringUtils.isNotBlank(map.getNote())) {
+            sb.append("提示：").append(map.getNote()).append("\n");
+        }
+        return result("farm_map_detail", sb.toString().trim(), map.getSourceUrls());
+    }
+
+    private StardewGuideResult farmMapListAnswer(String query, Optional<StardewData.FarmMapGuide> preferred) {
+        List<StardewData.FarmMapGuide> matched = repository.farmMaps().stream()
+                .filter(map -> matchesFarmMapQuery(query, map))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::farmMaps);
+        }
+        if (matched.isEmpty()) {
+            return result("farm_map_available", "没找到农场地图资料。可以试试：开局农场怎么选、海滩农场、草原农场。", List.of());
+        }
+
+        StringBuilder sb = new StringBuilder("农场地图选择：\n");
+        for (StardewData.FarmMapGuide map : matched) {
+            sb.append("- ").append(map.getName()).append("：")
+                    .append(StringUtils.defaultIfBlank(map.getLayoutSummary(), "查看详情了解布局特点"));
+            if (map.getBestFor() != null && !map.getBestFor().isEmpty()) {
+                sb.append("；适合：").append(String.join("、", map.getBestFor()));
+            }
+            if (map.getRecommendations() != null && !map.getRecommendations().isEmpty()) {
+                sb.append("；建议：").append(map.getRecommendations().get(0));
+            }
+            sb.append("\n");
+        }
+        sb.append("建议：新手和自动化优先标准/草原；想钓鱼、采矿、硬木、战斗或多人分区，再选对应主题农场。问具体农场名可以看限制和细节。");
+        return result("farm_map_available", sb.toString().trim(), collectFarmMapSources(matched));
     }
 
     private void appendLines(StringBuilder sb, String title, List<String> lines) {
@@ -1858,6 +1916,34 @@ public class StardewGuideService {
                 && repository.findFestivalEvent(query).isEmpty());
     }
 
+    private boolean isBroadFarmMapQuery(String query) {
+        return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "怎么选", "选什么", "推荐", "适合", "新手");
+    }
+
+    private boolean matchesFarmMapQuery(String query, StardewData.FarmMapGuide map) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        int directScore = repository.findFarmMap(query)
+                .filter(found -> found.getId().equals(map.getId()))
+                .map(found -> 100)
+                .orElse(0);
+        if (directScore > 0 && !isBroadFarmMapQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "有哪些", "列表", "总览", "所有", "全部", "农场地图", "农场类型", "开局农场", "农场怎么选", "哪种农场", "哪个农场")) {
+            return true;
+        }
+        return containsAnyNormalized(q, map.getAssociatedSkills())
+                || containsAnyNormalized(q, map.getBestFor())
+                || containsAnyNormalized(q, map.getAliases())
+                || containsAnyNormalized(q, map.getPerks())
+                || containsAnyNormalized(q, map.getLimits())
+                || containsAnyNormalized(q, map.getFishing())
+                || containsAnyNormalized(q, map.getRecommendations())
+                || containsNormalized(q, map.getLayoutSummary())
+                || containsNormalized(q, map.getNote())
+                || containsAny(q, StardewKnowledgeRepository.normalize(map.getName()), StardewKnowledgeRepository.normalize(map.getNameEn()));
+    }
+
     private boolean isFishingQuestion(String query) {
         return query.contains("钓") || query.contains("什么鱼") || query.contains("哪些鱼")
                 || query.contains("能抓") || query.contains("可抓") || query.contains("蟹笼");
@@ -2438,6 +2524,28 @@ public class StardewGuideService {
         return StringUtils.isNotBlank(normalized) && query.contains(normalized);
     }
 
+    private boolean containsAnyNormalized(String query, List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return false;
+        }
+        for (String value : values) {
+            String normalized = StardewKnowledgeRepository.normalize(value);
+            if (StringUtils.isNotBlank(normalized) && (query.contains(normalized)
+                    || (query.contains("新手") && normalized.contains("新手"))
+                    || (query.contains("动物") && normalized.contains("动物"))
+                    || (query.contains("钓鱼") && normalized.contains("钓鱼"))
+                    || (query.contains("采矿") && normalized.contains("采矿"))
+                    || (query.contains("挖矿") && normalized.contains("采矿"))
+                    || (query.contains("硬木") && normalized.contains("硬木"))
+                    || (query.contains("多人") && normalized.contains("多人"))
+                    || (query.contains("战斗") && normalized.contains("战斗"))
+                    || (query.contains("洒水器") && normalized.contains("洒水器")))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String formatTimeWindows(List<StardewData.TimeWindow> windows) {
         if (windows == null || windows.isEmpty()) {
             return "任意时间";
@@ -2564,6 +2672,16 @@ public class StardewGuideService {
         for (StardewData.FestivalEvent event : events) {
             if (event.getSourceUrls() != null) {
                 urls.addAll(event.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectFarmMapSources(List<StardewData.FarmMapGuide> maps) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.FarmMapGuide map : maps) {
+            if (map.getSourceUrls() != null) {
+                urls.addAll(map.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

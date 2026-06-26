@@ -46,7 +46,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, SPECIAL_ORDER, SKILL, FESTIVAL, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -66,6 +66,8 @@ public class StardewQueryPlannerService {
                         - 问特别订单/特殊订单/订单板/齐先生核桃房任务的需求、奖励、期限、怎么做，例如“罗宾资源冲刺奖励是什么”“岛屿食材要什么”“齐瓜怎么做”“五彩农场交什么”，归为 SPECIAL_ORDER。
                         - 节日/活动本身的日期、时间、地点、怎么玩、奖励、小游戏、商店重点、兑换建议，例如“沙漠节怎么玩”“花舞节几点开始”“星露谷展览会怎么拿星之果实”“冬季有哪些节日”，归为 FESTIVAL。
                         - 节日里的具体商品在哪里买/多少钱，如果用户只问商品购买点，例如“草莓种子在哪里买”“万灵节稀有稻草人多少钱”，可归为 SHOP。
+                        - 开局农场、农场地图、农场类型、标准/河流/森林/山顶/荒野/四角/海滩/草原农场的特点、适合谁、布局、洒水器限制、蓝草/鸡舍开局、硬木、矿区、钓鱼水域，归为 FARM_MAP。
+                        - 农场建筑、鸡舍、畜棚、筒仓、鱼塘、马厩、方尖塔、黄金钟、房屋升级的材料、价格、建造/升级条件，仍归为 BUILDING。
                         - 问某个物品怎么获得/哪里刷，例如“虚空精华哪里刷”“蝙蝠翅膀怎么获得”，仍归为 RESOURCE。
                         - 问制作菜单里的配方、材料、怎么做、合成，例如“木栅栏怎么做”“茶苗材料”“树液采集器配方”“迷你锻造台怎么做”，归为 CRAFTING。
                         - 问加工机器/制作物怎么用、材料、配方，例如“小桶怎么做”“鱼熏机材料”“洒水器怎么做”，也归为 CRAFTING；MACHINE 仅作为兼容类型。
@@ -121,6 +123,12 @@ public class StardewQueryPlannerService {
         if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FISH_POND) {
             return true;
         }
+        if (aiType == StardewGuideIntent.BUILDING && localType == StardewGuideIntent.FARM_MAP) {
+            return true;
+        }
+        if (aiType == StardewGuideIntent.FARM_MAP && localType == StardewGuideIntent.BUILDING) {
+            return true;
+        }
         if (aiType == StardewGuideIntent.MACHINE && localType == StardewGuideIntent.CRAFTING) {
             return true;
         }
@@ -129,6 +137,7 @@ public class StardewQueryPlannerService {
                 || localType == StardewGuideIntent.SPECIAL_ORDER
                 || localType == StardewGuideIntent.CRAFTING
                 || localType == StardewGuideIntent.FESTIVAL
+                || localType == StardewGuideIntent.FARM_MAP
                 || localType == StardewGuideIntent.FISH_POND
                 || localType == StardewGuideIntent.MONSTER_DROP);
     }
@@ -195,6 +204,9 @@ public class StardewQueryPlannerService {
         if (looksLikeFestivalQuery(q) && !looksLikeSpecificFestivalShopItemQuery(q)) {
             return StardewGuideIntent.FESTIVAL;
         }
+        if (looksLikeFarmMapQuery(q) && !looksLikeFarmBuildingQuery(q)) {
+            return StardewGuideIntent.FARM_MAP;
+        }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
         }
@@ -212,7 +224,8 @@ public class StardewQueryPlannerService {
                 && containsAny(q, "升级", "多少钱", "材料", "需要", "条件")) {
             return StardewGuideIntent.TOOL;
         }
-        if (containsAny(q, "鸡舍", "畜棚", "筒仓", "马厩", "鱼塘", "史莱姆屋", "方尖塔", "黄金钟", "房屋升级", "社区升级", "罗宾")
+        if (containsAny(q, "农场建筑", "建筑有哪些", "建筑列表",
+                "鸡舍", "畜棚", "筒仓", "马厩", "鱼塘", "史莱姆屋", "方尖塔", "黄金钟", "房屋升级", "社区升级", "罗宾")
                 || (containsAny(q, "建筑", "建造") && containsAny(q, "材料", "需要", "多少钱", "升级"))) {
             return StardewGuideIntent.BUILDING;
         }
@@ -403,6 +416,35 @@ public class StardewQueryPlannerService {
                 && containsAny(query,
                 "草莓种子", "稀有稻草人", "星之果实", "海泡布丁", "南瓜灯", "杰克南瓜灯",
                 "月光水母", "壁纸", "地毯", "装饰", "帽子", "菜谱", "配方");
+    }
+
+    private boolean looksLikeFarmMapQuery(String query) {
+        return containsAny(query,
+                "农场地图", "农场类型", "农场布局", "开局农场", "开局选农场", "农场怎么选", "选什么农场",
+                "哪个农场", "哪种农场", "什么农场适合",
+                "标准农场", "普通农场", "默认农场",
+                "河流农场", "河地农场", "河岸农场", "钓鱼农场",
+                "森林农场", "采集农场", "硬木农场",
+                "山顶农场", "山地农场", "矿山农场", "采矿农场",
+                "荒野农场", "荒地农场", "战斗农场", "怪物农场",
+                "四角农场", "四分区农场", "多人农场",
+                "海滩农场", "沙滩农场", "海边农场", "高级玩家农场",
+                "草原农场", "草地农场", "牧场农场", "动物农场", "蓝草农场",
+                "Standard Farm", "Riverland Farm", "Forest Farm", "Hill-top Farm", "Hilltop Farm",
+                "Wilderness Farm", "Four Corners Farm", "Beach Farm", "Meadowlands Farm")
+                || (containsAny(query, "蓝草", "洒水器不能用", "洒水器不能放", "补给箱", "鱼熏机", "鸡舍开局")
+                && containsAny(query, "农场", "地图", "开局", "适合", "选"));
+    }
+
+    private boolean looksLikeFarmBuildingQuery(String query) {
+        return containsAny(query,
+                "农场建筑", "建筑有哪些", "建筑列表", "鸡舍", "畜棚", "筒仓", "鱼塘", "马厩",
+                "史莱姆屋", "磨坊", "水井", "小屋", "出货箱", "房屋升级", "升级房子",
+                "方尖塔", "方尖碑", "黄金钟", "黄金时钟", "祝尼魔小屋", "祝尼魔屋",
+                "罗宾", "建造材料", "升级材料", "建造费用", "升级费用")
+                || (containsAny(query, "建筑", "建造", "升级", "材料", "多少钱", "价格", "费用")
+                && !containsAny(query, "地图", "类型", "布局", "开局农场", "标准农场", "河流农场", "森林农场",
+                "山顶农场", "荒野农场", "四角农场", "海滩农场", "草原农场"));
     }
 
     private boolean looksLikeSpecificMineralResourceQuery(String query) {
