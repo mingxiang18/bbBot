@@ -946,6 +946,27 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersForgeEnchantingAndInfinityWeaponGuidesLocally() {
+        StardewGuideResult forge = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 银河剑怎么锻造");
+        StardewGuideResult enchant = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 工具附魔哪个好");
+        StardewGuideResult infinity = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 无限武器怎么做，银河之魂怎么用");
+        StardewGuideResult rings = service.answerEvidence(StardewGuideIntent.GUIDE, "星露谷 戒指合成怎么做");
+        StardewGuideResult legacyForge = service.answer("星露谷 银河剑怎么锻造");
+
+        assertThat(forge.getIntent()).isEqualTo("guide");
+        assertThat(forge.getAnswer()).contains("火山地牢第 10 层", "10/15/20 个火山晶石", "红宝石", "绿宝石", "钻石");
+        assertThat(enchant.getIntent()).isEqualTo("guide");
+        assertThat(enchant.getAnswer()).contains("五彩碎片 x1", "火山晶石 x20", "工具附魔会在工具升级后保留", "Bottomless", "Auto-Hook");
+        assertThat(infinity.getIntent()).isEqualTo("guide");
+        assertThat(infinity.getAnswer()).contains("银河之魂 x3", "火山晶石 x60", "无限之刃", "保留已有附魔");
+        assertThat(rings.getIntent()).isEqualTo("guide");
+        assertThat(rings.getAnswer()).contains("两个不同戒指", "火山晶石 x20", "不能把两个相同戒指", "铱环 + 幸运戒指");
+        assertThat(forge.getSourceUrls()).contains("https://stardewvalleywiki.com/Forge");
+        assertThat(legacyForge.getIntent()).isEqualTo("guide");
+        assertThat(legacyForge.getAnswer()).doesNotContain("工具升级总览");
+    }
+
+    @Test
     void explicitUnknownEvidenceDoesNotFallBackToLegacyFreeTextRoute() {
         StardewGuideResult result = service.answerEvidence(StardewGuideIntent.UNKNOWN, "星露谷 鸡舍升级材料");
 

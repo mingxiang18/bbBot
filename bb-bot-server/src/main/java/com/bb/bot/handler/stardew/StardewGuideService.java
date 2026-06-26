@@ -71,6 +71,9 @@ public class StardewGuideService {
             return bundle.map(b -> bundleAnswer(query, b))
                     .orElseGet(() -> wikiFallbackAnswer(query, "没找到对应收集包。可以试试：海鱼收集包、湖鱼收集包、工匠收集包、锅炉房。"));
         }
+        if (guide.isPresent() && shouldPreferForgeGuide(query, guide.get())) {
+            return guideAnswer(guide.get());
+        }
         if (tool.isPresent() || looksLikeToolQuery(query)) {
             if (tool.isPresent()) {
                 return toolUpgradeAnswer(query, tool.get());
@@ -1553,6 +1556,12 @@ public class StardewGuideService {
         return looksLikeBookDetailQuery(query) && !containsAny(query, "在哪里买", "哪里买", "谁卖", "购买");
     }
 
+    private boolean shouldPreferForgeGuide(String query, StardewData.GuideTopic guide) {
+        return guide != null && "forge_enchanting".equals(guide.getId())
+                && containsAny(query, "锻造", "附魔", "火山晶石", "银河之魂", "无限武器",
+                "无限之刃", "无限之锤", "无限匕首", "戒指合成", "戒指组合", "forge", "enchant");
+    }
+
     private boolean looksLikeBookDetailQuery(String query) {
         return query.contains("有什么用") || query.contains("效果") || query.contains("值得")
                 || query.contains("推荐") || query.contains("优先") || query.contains("读了")
@@ -1596,7 +1605,9 @@ public class StardewGuideService {
                 || query.contains("料理") || query.contains("做饭") || query.contains("制作")
                 || query.contains("合成") || query.contains("精通") || query.contains("书商")
                 || query.contains("技能书") || query.contains("职业") || query.contains("洗点")
-                || query.contains("buff") || query.contains("增益");
+                || query.contains("buff") || query.contains("增益") || query.contains("锻造")
+                || query.contains("附魔") || query.contains("银河之魂") || query.contains("无限武器")
+                || query.contains("戒指合成") || query.contains("火山晶石");
     }
 
     private boolean containsAny(String query, String... values) {

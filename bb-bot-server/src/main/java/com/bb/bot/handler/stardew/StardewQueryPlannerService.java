@@ -51,6 +51,7 @@ public class StardewQueryPlannerService {
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
                         - 技能等级怎么升、快速升级、职业怎么选、战斗/采矿/钓鱼/耕种/觅食经验路线归为 SKILL。
+                        - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 保留季节、地点、天气、时间、居民名、物品名、建筑名、收集包名。
                         - 缺少居民位置查询必需的游戏内时间时，needMoreInfo=true，并给 clarificationQuestion。
                         - 不要声称读取存档或当前真实游戏状态。
@@ -94,6 +95,9 @@ public class StardewQueryPlannerService {
         }
         if (containsAny(q, "收集包", "献祭", "社区中心", "电影院", "失踪的包")) {
             return StardewGuideIntent.BUNDLE;
+        }
+        if (looksLikeForgeEnchantingQuery(q)) {
+            return StardewGuideIntent.GUIDE;
         }
         if (containsAny(q, "博物馆", "捐赠", "古物", "矿物", "卷轴")) {
             return StardewGuideIntent.MUSEUM;
@@ -164,6 +168,13 @@ public class StardewQueryPlannerService {
             return StardewGuideIntent.GUIDE;
         }
         return StardewGuideIntent.UNKNOWN;
+    }
+
+    private boolean looksLikeForgeEnchantingQuery(String query) {
+        return containsAny(query,
+                "锻造", "附魔", "火山锻造", "锻造台", "火山晶石", "银河之魂",
+                "无限武器", "无限之刃", "无限之锤", "无限匕首", "戒指合成", "戒指组合",
+                "forge", "enchant", "infinity weapon");
     }
 
     private boolean looksLikeBookQuery(String query) {

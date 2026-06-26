@@ -484,6 +484,26 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedGuideIntentRetrievesForgeEnchantingEvidenceWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.GUIDE, "银河剑怎么锻造"),
+                intent(StardewGuideIntent.GUIDE, "工具附魔哪个好"),
+                intent(StardewGuideIntent.GUIDE, "戒指合成怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("银河剑锻造、工具附魔和戒指合成怎么弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .containsOnly(StardewGuideIntent.GUIDE);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .containsOnly("guide");
+        assertThat(joinAnswers(evidence))
+                .contains("火山锻造与附魔", "火山地牢第 10 层", "10/15/20 个火山晶石")
+                .contains("五彩碎片 x1", "工具附魔会在工具升级后保留", "两个不同戒指")
+                .doesNotContain("工具升级总览", "春季作物：", "夏季鱼类", "在哪里购买");
+    }
+
+    @Test
     void typedIntentMissDoesNotFallBackToFreeTextRouting() {
         StardewQueryPlan plan = plan(intent(StardewGuideIntent.RESOURCE, "鸡舍升级材料"));
 

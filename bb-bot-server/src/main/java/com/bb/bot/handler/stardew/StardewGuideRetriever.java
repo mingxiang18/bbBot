@@ -81,8 +81,17 @@ public class StardewGuideRetriever {
             case COOKING -> ensureContains(withConstraints, "料理");
             case SKILL -> ensureContains(withConstraints, "技能");
             case MUSEUM -> ensureContains(withConstraints, "博物馆");
-            case GUIDE, UNKNOWN -> withConstraints;
+            case GUIDE -> ensureGuideHint(withConstraints);
+            case UNKNOWN -> withConstraints;
         };
+    }
+
+    private String ensureGuideHint(String query) {
+        if (containsAny(query, "锻造", "附魔", "火山晶石", "银河之魂", "无限武器", "戒指合成",
+                "forge", "enchant", "infinity weapon")) {
+            return ensureContains(query, "火山锻造");
+        }
+        return query;
     }
 
     private String appendConstraints(String query, StardewQueryPlan.StardewQueryConstraints constraints) {
@@ -121,5 +130,14 @@ public class StardewGuideRetriever {
             return query;
         }
         return query + " 怎么获得";
+    }
+
+    private boolean containsAny(String query, String... values) {
+        for (String value : values) {
+            if (query.contains(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

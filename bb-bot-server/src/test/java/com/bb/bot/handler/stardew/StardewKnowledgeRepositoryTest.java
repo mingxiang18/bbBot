@@ -32,7 +32,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.resources()).hasSizeGreaterThanOrEqualTo(91);
         assertThat(repository.cookingRecipes()).hasSizeGreaterThanOrEqualTo(83);
         assertThat(repository.books()).hasSizeGreaterThanOrEqualTo(26);
-        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(35);
+        assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(36);
     }
 
     @Test
@@ -51,8 +51,23 @@ class StardewKnowledgeRepositoryTest {
                 "collection",
                 "mining",
                 "crafting",
-                "animals"
+                "animals",
+                "combat"
         );
+    }
+
+    @Test
+    void forgeEnchantingGuideIsCovered() {
+        StardewData.GuideTopic guide = repository.guides().stream()
+                .filter(topic -> "forge_enchanting".equals(topic.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(guide.getName()).isEqualTo("火山锻造与附魔");
+        assertThat(guide.getAliases()).contains("火山锻造", "工具附魔", "银河之魂", "戒指合成");
+        assertThat(guide.getSections()).extracting(StardewData.GuideSection::getTitle)
+                .contains("武器宝石锻造", "武器和工具附魔", "无限武器", "戒指合成和拆解");
+        assertThat(guide.getSourceUrls()).contains("https://stardewvalleywiki.com/Forge");
     }
 
     @Test
