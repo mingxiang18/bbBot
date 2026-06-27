@@ -351,7 +351,6 @@ class StardewGuideServiceTest {
     @Test
     void answersSpecialCurrencyResourcesAndGuideWithoutCrossRouting() {
         StardewGuideResult qiGem = service.answerEvidence(StardewGuideIntent.RESOURCE, "齐钻怎么获得");
-        StardewGuideResult walnut = service.answerEvidence(StardewGuideIntent.RESOURCE, "金核桃怎么用");
         StardewGuideResult qiCoin = service.answerEvidence(StardewGuideIntent.RESOURCE, "齐币在哪里买");
         StardewGuideResult starToken = service.answer("星露谷 星星币怎么刷");
         StardewGuideResult calicoEgg = service.answerEvidence(StardewGuideIntent.RESOURCE, "三花蛋换什么");
@@ -361,7 +360,6 @@ class StardewGuideServiceTest {
 
         assertThat(qiGem.getIntent()).isEqualTo("resource");
         assertThat(qiGem.getAnswer()).contains("齐钻获取方式", "齐先生挑战", "危险矿井", "马笛");
-        assertThat(walnut.getAnswer()).contains("金核桃获取方式", "130", "姜岛", "齐先生核桃房");
         assertThat(qiCoin.getAnswer()).contains("齐币获取方式", "1,000g", "100 齐币", "不能兑换回金币");
         assertThat(starToken.getIntent()).isEqualTo("resource");
         assertThat(starToken.getAnswer()).contains("星星币获取方式", "农庄展览", "2,000", "不保留到下一年")
@@ -375,6 +373,40 @@ class StardewGuideServiceTest {
         assertThat(guide.getAnswer())
                 .contains("特殊货币与兑换物", "齐钻", "金核桃", "齐币", "星星币", "奖券", "三花蛋", "火山晶石", "金色标签")
                 .doesNotContain("工具获取/升级总览", "夏季鱼类");
+    }
+
+    @Test
+    void answersGoldenWalnutLocationsAndRewardsWithoutStealingResourcesOrOrders() {
+        StardewGuideResult all = service.answerEvidence(StardewGuideIntent.GOLDEN_WALNUT, "金核桃怎么获得");
+        StardewGuideResult west = service.answerEvidence(StardewGuideIntent.GOLDEN_WALNUT, "西岛金核桃有哪些");
+        StardewGuideResult journal = service.answerEvidence(StardewGuideIntent.GOLDEN_WALNUT, "日记残页10金核桃在哪");
+        StardewGuideResult rewards = service.answerEvidence(StardewGuideIntent.GOLDEN_WALNUT, "金核桃先解锁什么");
+        StardewGuideResult legacy = service.answer("星露谷 金核桃怎么获得");
+        StardewGuideResult qiGem = service.answerEvidence(StardewGuideIntent.RESOURCE, "齐钻怎么获得");
+        StardewGuideResult qiCrop = service.answer("星露谷 齐瓜怎么做");
+        StardewGuideResult mermaidIsland = service.answer("星露谷 美人鱼谜题怎么做");
+
+        assertThat(all.getIntent()).isEqualTo("golden_walnut_available");
+        assertThat(all.getAnswer())
+                .contains("全岛总计 130 个", "通用 6", "东部 11", "西部 52", "北部/火山 49", "南部/东南部 12")
+                .contains("美食家青蛙", "宝石鸟神龛", "火山地牢", "17 个");
+        assertThat(west.getIntent()).isEqualTo("golden_walnut_available");
+        assertThat(west.getAnswer())
+                .contains("当前筛选 52 个", "美食家青蛙", "海盗妻子", "水晶记忆谜题")
+                .doesNotContain("北部/火山 49");
+        assertThat(journal.getIntent()).isEqualTo("golden_walnut_available");
+        assertThat(journal.getAnswer()).contains("当前筛选 1 个", "日记残页 #10", "火山入口西南方");
+        assertThat(rewards.getIntent()).isEqualTo("golden_walnut_rewards");
+        assertThat(rewards.getAnswer())
+                .contains("解锁姜岛西部：10 个", "修复岛屿农舍：20 个", "海滩度假村：20 个", "鹦鹉快线：10 个")
+                .contains("常规鹦鹉解锁合计 116 个", "1:2 换齐钻");
+        assertThat(legacy.getIntent()).isEqualTo("golden_walnut_available");
+        assertThat(qiGem.getIntent()).isEqualTo("resource");
+        assertThat(qiGem.getAnswer()).contains("齐钻获取方式").doesNotContain("金核桃位置清单");
+        assertThat(qiCrop.getIntent()).isEqualTo("special_order");
+        assertThat(qiCrop.getAnswer()).contains("齐瓜特别订单").doesNotContain("金核桃位置清单");
+        assertThat(mermaidIsland.getIntent()).isEqualTo("island_detail");
+        assertThat(mermaidIsland.getAnswer()).contains("美人鱼谜题", "长笛块").doesNotContain("金核桃位置清单");
     }
 
     @Test
@@ -577,7 +609,7 @@ class StardewGuideServiceTest {
         StardewGuideResult pirateCove = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 海盗湾怎么进");
         StardewGuideResult mermaid = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 美人鱼谜题怎么做");
         StardewGuideResult fieldOffice = service.answerEvidence(StardewGuideIntent.ISLAND, "星露谷 蜗牛教授紫花紫海星答案");
-        StardewGuideResult walnut = service.answerEvidence(StardewGuideIntent.RESOURCE, "星露谷 金核桃怎么获得");
+        StardewGuideResult walnut = service.answerEvidence(StardewGuideIntent.GOLDEN_WALNUT, "星露谷 金核桃怎么获得");
         StardewGuideResult snakeSkull = service.answerEvidence(StardewGuideIntent.RESOURCE, "星露谷 蛇头骨哪里刷");
         StardewGuideResult volcano = service.answerEvidence(StardewGuideIntent.DUNGEON, "星露谷 火山地牢怎么过");
         StardewGuideResult stingray = service.answerEvidence(StardewGuideIntent.FISH, "星露谷 黄貂鱼在哪钓");
@@ -596,8 +628,8 @@ class StardewGuideServiceTest {
         assertThat(mermaid.getAnswer()).contains("雨天", "5 个长笛块", "5 个金核桃");
         assertThat(fieldOffice.getAnswer()).contains("蜗牛教授", "紫色花 22", "紫色海星 18", "鸵鸟孵化器");
 
-        assertThat(walnut.getIntent()).isEqualTo("resource");
-        assertThat(walnut.getAnswer()).contains("金核桃获取方式")
+        assertThat(walnut.getIntent()).isEqualTo("golden_walnut_available");
+        assertThat(walnut.getAnswer()).contains("金核桃位置清单", "全岛总计 130 个")
                 .doesNotContain("姜岛地点/解锁对照");
         assertThat(snakeSkull.getIntent()).isEqualTo("resource");
         assertThat(snakeSkull.getAnswer()).contains("蛇头骨获取方式")

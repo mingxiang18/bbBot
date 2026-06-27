@@ -35,6 +35,8 @@ public class StardewData {
     private List<SpecialAnimalGuide> specialAnimals = new ArrayList<>();
     private List<FruitTreeGuide> fruitTrees = new ArrayList<>();
     private List<IslandGuide> islandGuides = new ArrayList<>();
+    private List<GoldenWalnutLocation> goldenWalnuts = new ArrayList<>();
+    private List<GoldenWalnutReward> goldenWalnutRewards = new ArrayList<>();
     private List<DungeonGuide> dungeonGuides = new ArrayList<>();
     private List<GuideTopic> guides = new ArrayList<>();
 
@@ -495,6 +497,33 @@ public class StardewData {
         private List<String> rewards = new ArrayList<>();
         private List<String> recommendations = new ArrayList<>();
         private String note;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class GoldenWalnutLocation {
+        private String id;
+        private String region;
+        private String regionName;
+        private Integer quantity;
+        private String type;
+        private String typeName;
+        private List<String> aliases = new ArrayList<>();
+        private String requirement;
+        private String howToFind;
+        private String recommendation;
+        private List<String> sourceUrls = new ArrayList<>();
+    }
+
+    @Data
+    public static class GoldenWalnutReward {
+        private String id;
+        private String name;
+        private String nameEn;
+        private Integer cost;
+        private String location;
+        private String description;
+        private String recommendation;
         private List<String> sourceUrls = new ArrayList<>();
     }
 

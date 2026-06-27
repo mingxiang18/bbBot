@@ -36,11 +36,11 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, combatEquipment={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, specialAnimals={}, fruitTrees={}, islandGuides={}, dungeonGuides={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, combatEquipment={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, specialAnimals={}, fruitTrees={}, islandGuides={}, goldenWalnuts={}, goldenWalnutRewards={}, dungeonGuides={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
                     data.getTools().size(), data.getCombatEquipment().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
-                    data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getSpecialAnimals().size(), data.getFruitTrees().size(), data.getIslandGuides().size(), data.getDungeonGuides().size(), data.getGuides().size());
+                    data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getSpecialAnimals().size(), data.getFruitTrees().size(), data.getIslandGuides().size(), data.getGoldenWalnuts().size(), data.getGoldenWalnutRewards().size(), data.getDungeonGuides().size(), data.getGuides().size());
         } catch (Exception e) {
             log.error("Failed to load Stardew knowledge data", e);
             data = new StardewData();
@@ -166,6 +166,14 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.IslandGuide> islandGuides() {
         return safe(data.getIslandGuides());
+    }
+
+    public List<StardewData.GoldenWalnutLocation> goldenWalnuts() {
+        return safe(data.getGoldenWalnuts());
+    }
+
+    public List<StardewData.GoldenWalnutReward> goldenWalnutRewards() {
+        return safe(data.getGoldenWalnutRewards());
     }
 
     public List<StardewData.DungeonGuide> dungeonGuides() {
@@ -408,6 +416,26 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(IslandGuideMatch::island)
+                .findFirst();
+    }
+
+    public Optional<StardewData.GoldenWalnutLocation> findGoldenWalnut(String query) {
+        String q = normalize(query);
+        return goldenWalnuts().stream()
+                .map(walnut -> new GoldenWalnutMatch(walnut, scoreGoldenWalnut(q, walnut)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(GoldenWalnutMatch::walnut)
+                .findFirst();
+    }
+
+    public Optional<StardewData.GoldenWalnutReward> findGoldenWalnutReward(String query) {
+        String q = normalize(query);
+        return goldenWalnutRewards().stream()
+                .map(reward -> new GoldenWalnutRewardMatch(reward, scoreGoldenWalnutReward(q, reward)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(GoldenWalnutRewardMatch::reward)
                 .findFirst();
     }
 
@@ -838,6 +866,42 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreGoldenWalnut(String q, StardewData.GoldenWalnutLocation walnut) {
+        int score = scoreSearchable(q, walnut.getRegionName(), walnut.getId(), walnut.getAliases());
+        if (score == 0) {
+            score = Math.max(score, scoreTextMatches(q, walnut.getRegion(), 20));
+            score = Math.max(score, scoreTextMatches(q, walnut.getTypeName(), 20));
+            score = Math.max(score, scoreTextMatches(q, walnut.getType(), 20));
+            score = Math.max(score, scoreTextMatches(q, walnut.getRequirement(), 20));
+            score = Math.max(score, scoreTextMatches(q, walnut.getHowToFind(), 30));
+        }
+        if (score == 0) {
+            return 0;
+        }
+        score += scoreTextMatches(q, walnut.getRegion(), 10);
+        score += scoreTextMatches(q, walnut.getRegionName(), 10);
+        score += scoreTextMatches(q, walnut.getTypeName(), 10);
+        score += scoreTextMatches(q, walnut.getRequirement(), 10);
+        score += scoreTextMatches(q, walnut.getHowToFind(), 10);
+        score += scoreTextMatches(q, walnut.getRecommendation(), 10);
+        return score;
+    }
+
+    private int scoreGoldenWalnutReward(String q, StardewData.GoldenWalnutReward reward) {
+        int score = scoreSearchable(q, reward.getName(), reward.getNameEn(), List.of());
+        if (score == 0) {
+            score = Math.max(score, scoreTextMatches(q, reward.getLocation(), 20));
+            score = Math.max(score, scoreTextMatches(q, reward.getDescription(), 20));
+        }
+        if (score == 0) {
+            return 0;
+        }
+        score += scoreTextMatches(q, reward.getLocation(), 10);
+        score += scoreTextMatches(q, reward.getDescription(), 10);
+        score += scoreTextMatches(q, reward.getRecommendation(), 10);
+        return score;
+    }
+
     private int scoreStoryQuest(String q, StardewData.StoryQuestGuide quest) {
         int score = scoreSearchable(q, quest.getName(), quest.getNameEn(), quest.getAliases());
         if (score == 0) {
@@ -971,5 +1035,11 @@ public class StardewKnowledgeRepository {
     }
 
     private record FishPondMatch(StardewData.FishPondGuide fishPond, int score) {
+    }
+
+    private record GoldenWalnutMatch(StardewData.GoldenWalnutLocation walnut, int score) {
+    }
+
+    private record GoldenWalnutRewardMatch(StardewData.GoldenWalnutReward reward, int score) {
     }
 }

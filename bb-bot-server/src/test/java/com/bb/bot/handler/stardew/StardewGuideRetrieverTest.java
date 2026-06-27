@@ -360,7 +360,7 @@ class StardewGuideRetrieverTest {
                 intent(StardewGuideIntent.ISLAND, "姜岛怎么解锁"),
                 intent(StardewGuideIntent.ISLAND, "海盗湾怎么进"),
                 intent(StardewGuideIntent.ISLAND, "美人鱼谜题怎么做"),
-                intent(StardewGuideIntent.RESOURCE, "金核桃怎么获得"),
+                intent(StardewGuideIntent.GOLDEN_WALNUT, "金核桃怎么获得"),
                 intent(StardewGuideIntent.DUNGEON, "火山地牢怎么过"),
                 intent(StardewGuideIntent.FISH, "黄貂鱼在哪钓")
         );
@@ -368,13 +368,35 @@ class StardewGuideRetrieverTest {
         List<StardewGuideEvidence> evidence = retriever.retrieve("姜岛探索、金核桃、火山和黄貂鱼", plan);
 
         assertThat(evidence).extracting(StardewGuideEvidence::type)
-                .contains(StardewGuideIntent.ISLAND, StardewGuideIntent.RESOURCE, StardewGuideIntent.DUNGEON, StardewGuideIntent.FISH);
+                .contains(StardewGuideIntent.ISLAND, StardewGuideIntent.GOLDEN_WALNUT, StardewGuideIntent.DUNGEON, StardewGuideIntent.FISH);
         assertThat(evidence).extracting(StardewGuideEvidence::intent)
-                .contains("island_detail", "resource", "dungeon_detail");
+                .contains("island_detail", "golden_walnut_available", "dungeon_detail");
         assertThat(joinAnswers(evidence))
                 .contains("姜岛解锁", "硬木 x200", "海盗湾", "星形潮池", "美人鱼谜题", "长笛块")
-                .contains("金核桃获取方式", "火山地牢", "黄貂鱼")
+                .contains("金核桃位置清单", "全岛总计 130 个", "火山地牢", "黄貂鱼")
                 .doesNotContain("姜岛地点/解锁对照：\n- 金核桃", "地下城/冒险地点对照：\n- 姜岛");
+    }
+
+    @Test
+    void typedGoldenWalnutIntentRetrievesLocationsRewardsAndKeepsQiBoundaries() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.GOLDEN_WALNUT, "金核桃怎么获得"),
+                intent(StardewGuideIntent.GOLDEN_WALNUT, "日记残页10金核桃在哪"),
+                intent(StardewGuideIntent.GOLDEN_WALNUT, "金核桃先解锁什么"),
+                intent(StardewGuideIntent.RESOURCE, "齐钻怎么获得"),
+                intent(StardewGuideIntent.SPECIAL_ORDER, "齐瓜怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("金核桃、齐钻和齐瓜边界", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(StardewGuideIntent.GOLDEN_WALNUT, StardewGuideIntent.RESOURCE, StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("golden_walnut_available", "golden_walnut_rewards", "resource", "special_order");
+        assertThat(joinAnswers(evidence))
+                .contains("金核桃位置清单", "全岛总计 130 个", "日记残页 #10", "常规鹦鹉解锁合计 116 个")
+                .contains("齐钻获取方式", "齐瓜特别订单")
+                .doesNotContain("金核桃获取方式", "齐钻获取方式：金核桃");
     }
 
     @Test

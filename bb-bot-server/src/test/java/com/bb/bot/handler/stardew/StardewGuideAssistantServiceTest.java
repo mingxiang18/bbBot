@@ -62,9 +62,10 @@ class StardewGuideAssistantServiceTest {
         verify(aiChatService).chat(promptCaptor.capture(), eq(ModelTier.CHAT));
         String plannerPrompt = textOf(promptCaptor.getAllValues().get(0).get(0));
         String synthesisPrompt = textOf(promptCaptor.getAllValues().get(1).get(1));
-        assertThat(plannerPrompt).contains("type 只能从这些枚举中选择", "RESOURCE", "BUNDLE", "CRAFTING", "MONSTER_DROP", "FISH_POND", "FESTIVAL", "FARM_MAP", "ANIMAL_CARE", "FRUIT_TREE", "COMBAT_EQUIPMENT", "MUSEUM", "QUEST", "ISLAND", "DUNGEON");
+        assertThat(plannerPrompt).contains("type 只能从这些枚举中选择", "RESOURCE", "BUNDLE", "CRAFTING", "MONSTER_DROP", "FISH_POND", "FESTIVAL", "FARM_MAP", "ANIMAL_CARE", "FRUIT_TREE", "COMBAT_EQUIPMENT", "MUSEUM", "QUEST", "ISLAND", "GOLDEN_WALNUT", "DUNGEON");
         assertThat(plannerPrompt).contains("宠物", "马怎么获得", "史莱姆屋怎么玩");
         assertThat(plannerPrompt).contains("银河剑怎么获得", "戒指有哪些", "太空之靴怎么获得");
+        assertThat(plannerPrompt).contains("金核桃怎么获得", "日记残页10金核桃", "金核桃先解锁什么");
         assertThat(synthesisPrompt)
                 .contains("用户问题", "检索到的资料")
                 .contains("类型：RESOURCE", "查询：恐龙蛋怎么获得", "恐龙蛋获取方式")

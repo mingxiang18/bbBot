@@ -48638,5 +48638,1306 @@
         "https://stardewvalleywiki.com/Slime_Charmer_Ring"
       ]
     }
+  ],
+  "goldenWalnuts": [
+    {
+      "id": "golden_coconut_first",
+      "region": "general",
+      "regionName": "通用/全岛",
+      "quantity": 1,
+      "type": "golden_coconut",
+      "typeName": "金色椰子",
+      "aliases": [
+        "金色椰子金核桃",
+        "第一个金色椰子",
+        "克林特开金色椰子"
+      ],
+      "requirement": "获得金色椰子后带回铁匠铺打开。",
+      "howToFind": "姜岛任意来源获得的第一个金色椰子交给克林特打开，会固定得到 1 个金核桃。",
+      "recommendation": "第一次金色椰子不要卖或留着，先拿去铁匠铺打开。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "island_fishing",
+      "region": "general",
+      "regionName": "通用/全岛",
+      "quantity": 5,
+      "type": "fishing",
+      "typeName": "钓鱼",
+      "aliases": [
+        "姜岛钓鱼金核桃",
+        "钓鱼出金核桃",
+        "全岛钓鱼核桃"
+      ],
+      "requirement": "在姜岛任意水域钓鱼。",
+      "howToFind": "在姜岛任意地点钓鱼最多可获得 5 个金核桃；未拿满前每次抛竿有概率获得。",
+      "recommendation": "探索姜岛时顺手在海滩、河流、海盗湾等钓点补满 5 个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "east_jungle_bush",
+      "region": "island_east",
+      "regionName": "东部丛林",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "东部丛林路上金核桃",
+        "雷欧小屋路上灌木",
+        "Leo小屋路上核桃"
+      ],
+      "requirement": "进入姜岛东部丛林。",
+      "howToFind": "通往雷欧小屋的丛林小路上有一颗藏在灌木里的金核桃。",
+      "recommendation": "第一次去雷欧小屋路上顺手拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "east_banana_shrine",
+      "region": "island_east",
+      "regionName": "东部丛林",
+      "quantity": 3,
+      "type": "puzzle",
+      "typeName": "谜题",
+      "aliases": [
+        "香蕉神龛",
+        "香蕉祭坛",
+        "猩猩金核桃",
+        "雷欧小屋楼梯香蕉"
+      ],
+      "requirement": "带 1 根香蕉到雷欧小屋楼梯旁神龛。",
+      "howToFind": "把香蕉放到雷欧小屋楼梯旁的祭坛上，猩猩会出现并奖励 3 个金核桃。",
+      "recommendation": "香蕉可由香蕉树、姜岛商人或金色椰子路线取得；拿到后优先解这个。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "east_leo_hut_tree",
+      "region": "island_east",
+      "regionName": "东部丛林",
+      "quantity": 1,
+      "type": "puzzle",
+      "typeName": "谜题",
+      "aliases": [
+        "雷欧小屋树",
+        "砍雷欧小屋树",
+        "Leo屋里金核桃"
+      ],
+      "requirement": "进入雷欧小屋。",
+      "howToFind": "用斧头敲/砍雷欧小屋里的树，可掉落 1 个金核桃。",
+      "recommendation": "这个很容易漏，进屋后记得对树用斧头。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "east_gem_bird_hidden_path",
+      "region": "island_east",
+      "regionName": "东部丛林",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "宝石鸟神龛南边",
+        "东部隐藏通道",
+        "宝石鸟隐藏核桃"
+      ],
+      "requirement": "从雷欧小屋楼梯底部找到向东隐藏通道。",
+      "howToFind": "从雷欧小屋楼梯底部沿隐藏通道向东走到宝石鸟神龛，神龛南侧有 1 个金核桃。",
+      "recommendation": "找宝石鸟谜题时一起拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "east_gem_birds_puzzle",
+      "region": "island_east",
+      "regionName": "东部丛林",
+      "quantity": 5,
+      "type": "puzzle",
+      "typeName": "谜题",
+      "aliases": [
+        "宝石鸟谜题",
+        "宝石鸟神龛",
+        "雨天宝石鸟",
+        "四个宝石鸟"
+      ],
+      "requirement": "在雨天观察东西南北各区域宝石鸟掉落的宝石。",
+      "howToFind": "完成宝石鸟神龛谜题可获得 5 个金核桃；把四个区域对应宝石放到正确底座。",
+      "recommendation": "每个存档答案随机，雨天分别记录区域和宝石再一次性摆放。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_island_farm_harvest",
+      "region": "island_west",
+      "regionName": "西岛/岛屿农场",
+      "quantity": 5,
+      "type": "harvesting",
+      "typeName": "收获作物",
+      "aliases": [
+        "岛屿农场收作物金核桃",
+        "姜岛农场种地核桃",
+        "收获作物核桃"
+      ],
+      "requirement": "解锁西岛并在岛屿农场种植非再生、非镰刀收获作物。",
+      "howToFind": "在岛屿农场收获符合条件的作物时，最多可随机获得 5 个金核桃。",
+      "recommendation": "用生长期短的一次性作物批量补，不要用再生作物或需要镰刀收的作物。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_gourmand_frog",
+      "region": "island_west",
+      "regionName": "西岛/岛屿农场",
+      "quantity": 15,
+      "type": "puzzle",
+      "typeName": "美食家青蛙",
+      "aliases": [
+        "美食家青蛙",
+        "青蛙任务",
+        "种甜瓜小麦大蒜",
+        "岛屿农舍青蛙"
+      ],
+      "requirement": "修好岛屿农舍后，和农舍右侧洞穴里的美食家青蛙对话。",
+      "howToFind": "按顺序种出甜瓜、小麦、大蒜；作物成熟后不要收割，给青蛙看。每种作物奖励 5 个，合计 15 个金核桃。",
+      "recommendation": "提前准备种子；展示后再收割，避免成熟后手滑先收。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_journal_scrap_6",
+      "region": "island_west",
+      "regionName": "西岛/岛屿农场",
+      "quantity": 1,
+      "type": "journal_scrap",
+      "typeName": "日记残页 #6",
+      "aliases": [
+        "日记残页6",
+        "Journal Scrap #6",
+        "弯曲棕榈树",
+        "东南海滩悬崖角落"
+      ],
+      "requirement": "先读到日记残页 #6。",
+      "howToFind": "从农场往南到东南角海滩，找到东侧悬崖边弯曲棕榈树，在东侧悬崖和北侧悬崖交汇的角落地块挖掘。",
+      "recommendation": "没有读到残页前挖不出，先补日记残页。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_mussel_nodes",
+      "region": "island_west",
+      "regionName": "西岛/潮汐池",
+      "quantity": 5,
+      "type": "mining",
+      "typeName": "蚌矿节点",
+      "aliases": [
+        "蚌矿金核桃",
+        "牡蛎石头核桃",
+        "潮汐池挖蚌矿"
+      ],
+      "requirement": "解锁西岛潮汐池区域并敲蚌矿节点。",
+      "howToFind": "开采潮汐池的蚌矿节点有概率获得金核桃，最多 5 个。",
+      "recommendation": "每天路过潮汐池就敲，补贝类和金核桃两不误。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_shipwreck",
+      "region": "island_west",
+      "regionName": "西岛/南部海滩",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "沉船金核桃",
+        "西岛沉船",
+        "船里植物核桃"
+      ],
+      "requirement": "进入农场南侧西南角沉船隐藏入口。",
+      "howToFind": "在农场南方海滩西南角找到沉船，从沉船西角隐藏通道进入船内，植物上有 1 个金核桃。",
+      "recommendation": "沉船入口很隐蔽，贴着破船左侧找隐藏路。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_whack_mole",
+      "region": "island_west",
+      "regionName": "西岛/南部海滩",
+      "quantity": 1,
+      "type": "puzzle",
+      "typeName": "打地鼠",
+      "aliases": [
+        "绿色地鼠",
+        "打地鼠金核桃",
+        "Birdie小屋南边地鼠",
+        "浇水壶打地鼠"
+      ],
+      "requirement": "到伯蒂小屋南边的海滩地鼠点。",
+      "howToFind": "用可放置物堵住地鼠其他洞，再用斧头、镐子或喷壶打地鼠；升级喷壶也可不堵洞直接打到。",
+      "recommendation": "最省事是带几个栅栏/箱子堵洞，或用升级喷壶蓄力。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_blue_starfish_triangle",
+      "region": "island_west",
+      "regionName": "西岛/南部海滩",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "蓝色海星三角形",
+        "海星三角",
+        "农场南海滩蓝海星"
+      ],
+      "requirement": "到农场南方海滩。",
+      "howToFind": "找到蓝色海星组成的三角形，在中心挖掘。",
+      "recommendation": "看到规则图案就优先挖中心。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_starfish_diamond",
+      "region": "island_west",
+      "regionName": "西岛/潮汐池",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "海星菱形",
+        "潮汐池海星钻石",
+        "黄色海星菱形"
+      ],
+      "requirement": "到西岛潮汐池附近。",
+      "howToFind": "在潮汐池附近找到海星组成的菱形图案，在中心挖掘；可能被大石头部分遮挡。",
+      "recommendation": "先清石头再找图案中心。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_tide_pool_x",
+      "region": "island_west",
+      "regionName": "西岛/潮汐池",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "沙滩X标记",
+        "潮汐池X",
+        "X形沙地"
+      ],
+      "requirement": "到西岛潮汐池。",
+      "howToFind": "在潮汐池沙地找到 X 标记，在中心挖掘。",
+      "recommendation": "和潮汐池其它海星/凹痕图案一起排查。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_sand_indent_diamond",
+      "region": "island_west",
+      "regionName": "西岛/潮汐池",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "沙地凹痕菱形",
+        "潮汐池左下凹痕",
+        "海边菱形凹痕"
+      ],
+      "requirement": "到潮汐池左下方靠海位置。",
+      "howToFind": "找到沙地凹痕组成的菱形，在中心挖掘。",
+      "recommendation": "容易被地面纹理混淆，沿潮汐池左下靠海扫一圈。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_pond_coconut_tree",
+      "region": "island_west",
+      "regionName": "西岛/池塘",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "池塘西边椰子树",
+        "农场西边池塘",
+        "椰子树后面核桃"
+      ],
+      "requirement": "到农场西侧池塘。",
+      "howToFind": "农场西侧池塘旁的椰子树后藏着 1 个金核桃。",
+      "recommendation": "贴树后方检查。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_pirates_wife",
+      "region": "island_west",
+      "regionName": "西岛/伯蒂",
+      "quantity": 5,
+      "type": "quest",
+      "typeName": "海盗妻子任务",
+      "aliases": [
+        "海盗妻子金核桃",
+        "伯蒂任务",
+        "The Pirate's Wife"
+      ],
+      "requirement": "完成伯蒂的“海盗妻子”任务线。",
+      "howToFind": "完成 The Pirate's Wife 任务会作为奖励获得 5 个金核桃。",
+      "recommendation": "这是西岛推进和剧情任务，能做时优先做。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_journal_scrap_4",
+      "region": "island_west",
+      "regionName": "西岛/伯蒂",
+      "quantity": 1,
+      "type": "journal_scrap",
+      "typeName": "日记残页 #4",
+      "aliases": [
+        "日记残页4",
+        "Journal Scrap #4",
+        "伯蒂小屋北边",
+        "Quality Bobber"
+      ],
+      "requirement": "先读到日记残页 #4。",
+      "howToFind": "在伯蒂小屋北边沙地挖掘，可获得优质浮标和 1 个金核桃。",
+      "recommendation": "没有读到残页前挖不出。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_qi_room_lower_bush",
+      "region": "island_west",
+      "regionName": "西岛/齐先生核桃房",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "齐先生核桃房外下方",
+        "核桃房右下灌木",
+        "Qi房间悬崖核桃"
+      ],
+      "requirement": "沿西海岸往齐先生核桃房方向走。",
+      "howToFind": "沿西海岸向齐先生核桃房走，在靠悬崖的右下方找到灌木金核桃。",
+      "recommendation": "开核桃房前也可以先沿海岸找。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_qi_room_ocean_path",
+      "region": "island_west",
+      "regionName": "西岛/齐先生核桃房",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "齐先生核桃房上方水路",
+        "核桃房海水隐藏路",
+        "Qi房间上面核桃"
+      ],
+      "requirement": "到齐先生核桃房附近。",
+      "howToFind": "经过齐先生核桃房后继续沿海水隐藏路线向上走，可找到一处金核桃灌木。",
+      "recommendation": "贴着水边往上走，不要只看陆地。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_tiger_slime_drop",
+      "region": "island_west",
+      "regionName": "西岛/老虎史莱姆树林",
+      "quantity": 1,
+      "type": "combat",
+      "typeName": "战斗",
+      "aliases": [
+        "老虎史莱姆掉金核桃",
+        "史莱姆树林战斗核桃",
+        "Tiger Slime Grove"
+      ],
+      "requirement": "进入老虎史莱姆树林并击杀史莱姆。",
+      "howToFind": "击杀老虎史莱姆树林里的史莱姆，最多可获得 1 个金核桃。",
+      "recommendation": "顺便刷芒果树苗、史莱姆泥和怪物掉落。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_tiger_grove_mahogany_tree",
+      "region": "island_west",
+      "regionName": "西岛/老虎史莱姆树林",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "老虎树林桃花心木后",
+        "史莱姆树林树后核桃",
+        "mahogany tree walnut"
+      ],
+      "requirement": "进入老虎史莱姆树林。",
+      "howToFind": "老虎史莱姆树林的一棵桃花心木后藏着 1 个金核桃。",
+      "recommendation": "清怪后贴树后检查。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_tiger_grove_grass_circle",
+      "region": "island_west",
+      "regionName": "西岛/老虎史莱姆树林",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "草圈金核桃",
+        "老虎树林草圈",
+        "桃花心木挡住草圈"
+      ],
+      "requirement": "进入老虎史莱姆树林。",
+      "howToFind": "在老虎史莱姆树林中找到一圈草，通常被桃花心木遮挡，在中心挖掘。",
+      "recommendation": "先砍/绕开遮挡视线的树再找圆形草圈。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_parrot_express_bridge_bush",
+      "region": "island_west",
+      "regionName": "西岛/鹦鹉快线附近",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "鹦鹉快线西桥南墙",
+        "农场快线西边桥",
+        "南墙隐藏灌木"
+      ],
+      "requirement": "到岛屿农场鹦鹉快线站点附近。",
+      "howToFind": "从农场鹦鹉快线站点向西过河桥，在南墙遮挡处找到一颗半隐藏的金核桃灌木。",
+      "recommendation": "沿墙贴边走。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_simon_says",
+      "region": "island_west",
+      "regionName": "西岛/水晶洞穴",
+      "quantity": 3,
+      "type": "puzzle",
+      "typeName": "水晶记忆谜题",
+      "aliases": [
+        "Simon Says",
+        "水晶谜题",
+        "彩色水晶洞穴",
+        "老虎史莱姆北边洞"
+      ],
+      "requirement": "进入老虎史莱姆树林北边的水晶洞穴。",
+      "howToFind": "完成彩色水晶 Simon Says 记忆谜题，奖励 3 个金核桃。",
+      "recommendation": "节奏会越来越快，失败可重试；专心记顺序。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_cliff_edge_bush",
+      "region": "island_west",
+      "regionName": "西岛/老虎史莱姆树林东侧",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "史莱姆树林东边悬崖",
+        "绕悬崖金核桃",
+        "清石头杂草隐藏路"
+      ],
+      "requirement": "从老虎史莱姆树林向东沿悬崖探索。",
+      "howToFind": "从老虎史莱姆树林往东，沿悬崖边清掉石头和杂草一路走到尽头，可找到金核桃灌木。",
+      "recommendation": "带工具清障。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_pebble_diamond",
+      "region": "island_west",
+      "regionName": "西岛/鹦鹉快线附近",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "鹅卵石菱形",
+        "快线东边石头菱形",
+        "石子圈金核桃"
+      ],
+      "requirement": "到农场鹦鹉快线站点东侧。",
+      "howToFind": "在农场鹦鹉快线站点东边找到菱形小石子图案，在中心挖掘。",
+      "recommendation": "和附近隐藏路金核桃一起找。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_hidden_path_east_north",
+      "region": "island_west",
+      "regionName": "西岛/鹦鹉快线附近",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "快线东边隐藏通道",
+        "向东再向北隐藏路",
+        "西岛隐藏路尽头"
+      ],
+      "requirement": "到农场鹦鹉快线站点东侧。",
+      "howToFind": "从农场鹦鹉快线站点东边进入隐藏通道，路线先向东再向北，尽头有金核桃灌木。",
+      "recommendation": "贴墙找看不见的路。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "west_south_cliff_farmhouse_view",
+      "region": "island_west",
+      "regionName": "西岛/农舍南侧悬崖",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "农舍南边悬崖",
+        "俯瞰农舍的灌木",
+        "快线南边核桃"
+      ],
+      "requirement": "到农场鹦鹉快线站点南侧悬崖。",
+      "howToFind": "从农场鹦鹉快线站点往南沿悬崖走，再向东绕到俯瞰农舍的位置，可找到金核桃灌木。",
+      "recommendation": "这颗也属于贴墙隐藏路线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_entrance_stone_circle",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "北部入口石圈",
+        "北岛入口楼梯西边",
+        "石头圈中心"
+      ],
+      "requirement": "到姜岛北部入口楼梯上方。",
+      "howToFind": "在北部入口楼梯上方转西，找到石头圆圈并挖中心。",
+      "recommendation": "入口附近先扫掉。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_entrance_hidden_grove",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "北部入口隐藏树林",
+        "楼梯西边隐藏通道",
+        "北岛入口灌木"
+      ],
+      "requirement": "到姜岛北部入口楼梯上方。",
+      "howToFind": "在北部入口楼梯上方转西进入隐藏通道，到小树林里找到金核桃灌木。",
+      "recommendation": "和入口石圈一起拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_entrance_flower_circle",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "北部花圈",
+        "入口东北花圈",
+        "花圈中心"
+      ],
+      "requirement": "到北部入口东北草地。",
+      "howToFind": "从北部入口楼梯上方往东北到草地，找到花圈并挖中心。",
+      "recommendation": "花圈/石圈中心通常都值得挖。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_second_flower_circle",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "第二个花圈",
+        "北部东边草地花圈",
+        "东北再往东花圈"
+      ],
+      "requirement": "到北部入口东北草地后继续向东。",
+      "howToFind": "从第一个花圈所在草地继续向东到另一片草地，在花圈中心挖掘。",
+      "recommendation": "北部入口连续两处花圈都检查。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_sand_patch",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "田野办事处东南沙地",
+        "蜗牛教授办公室附近",
+        "特殊纹理沙地"
+      ],
+      "requirement": "到岛屿田野办事处东南方。",
+      "howToFind": "在田野办事处东南方找到纹理异常的沙地并挖掘。",
+      "recommendation": "救出蜗牛教授后顺路挖。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_dig_site_stone_circle",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "挖掘场北台阶石圈",
+        "挖掘场上方石圈",
+        "dig site stone circle"
+      ],
+      "requirement": "修好挖掘场桥并到挖掘场北侧台阶。",
+      "howToFind": "从挖掘场北侧台阶上去，在石头圆圈中心挖掘。",
+      "recommendation": "挖骨头化石时顺手拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_dig_site_west_bridge_bush",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "挖掘场西桥灌木",
+        "挖掘场北台阶西边",
+        "桥西核桃"
+      ],
+      "requirement": "修好挖掘场桥后，从挖掘场北台阶往西过桥。",
+      "howToFind": "挖掘场北台阶上去后往西过桥，有一颗金核桃植物。",
+      "recommendation": "和挖掘场石圈一起拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_dig_site_east_hidden_passage",
+      "region": "island_north",
+      "regionName": "北部/挖掘场/火山",
+      "quantity": 2,
+      "type": "exploration",
+      "typeName": "隐藏通道",
+      "aliases": [
+        "挖掘场东隐藏通道",
+        "悬崖隐藏路两颗",
+        "挖掘场东桥"
+      ],
+      "requirement": "修好挖掘场桥，到挖掘场北台阶东侧隐藏通道。",
+      "howToFind": "从挖掘场北台阶往东穿过悬崖隐藏通道，出来后向东过桥，可找到 2 颗金核桃植物。",
+      "recommendation": "这是两颗，别拿一颗就走。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_large_animal",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 6,
+      "type": "field_office",
+      "typeName": "田野办事处",
+      "aliases": [
+        "大型动物化石",
+        "蜗牛教授大型动物",
+        "田野办事处6核桃"
+      ],
+      "requirement": "在田野办事处完成大型动物化石收集。",
+      "howToFind": "向蜗牛教授提交大型动物化石整套，奖励 6 个金核桃。",
+      "recommendation": "常见缺口是骨头化石部件，按化石名继续查来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_snake",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 3,
+      "type": "field_office",
+      "typeName": "田野办事处",
+      "aliases": [
+        "蛇化石",
+        "蛇头骨蛇椎骨",
+        "蜗牛教授蛇"
+      ],
+      "requirement": "在田野办事处完成蛇化石收集。",
+      "howToFind": "提交蛇化石整套，奖励 3 个金核桃。",
+      "recommendation": "蛇头骨、蛇椎骨可单独问来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_mummified_frog",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 1,
+      "type": "field_office",
+      "typeName": "田野办事处",
+      "aliases": [
+        "木乃伊青蛙",
+        "青蛙化石",
+        "Mummified Frog"
+      ],
+      "requirement": "向田野办事处捐赠木乃伊青蛙。",
+      "howToFind": "捐赠木乃伊青蛙奖励 1 个金核桃。",
+      "recommendation": "木乃伊青蛙来源可继续问资源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_mummified_bat",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 1,
+      "type": "field_office",
+      "typeName": "田野办事处",
+      "aliases": [
+        "木乃伊蝙蝠",
+        "蝙蝠化石",
+        "Mummified Bat"
+      ],
+      "requirement": "向田野办事处捐赠木乃伊蝙蝠。",
+      "howToFind": "捐赠木乃伊蝙蝠奖励 1 个金核桃。",
+      "recommendation": "木乃伊蝙蝠来源可继续问资源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_purple_flowers",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 1,
+      "type": "field_office",
+      "typeName": "岛屿调查",
+      "aliases": [
+        "紫色花朵数量",
+        "紫花调查",
+        "岛上紫花多少",
+        "22朵紫花"
+      ],
+      "requirement": "解锁田野办事处调查。",
+      "howToFind": "完成紫色花朵数量调查，正确答案是 22，奖励 1 个金核桃。",
+      "recommendation": "答错当天不能重答，记住 22。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_field_office_purple_starfish",
+      "region": "island_north",
+      "regionName": "北部/田野办事处",
+      "quantity": 1,
+      "type": "field_office",
+      "typeName": "岛屿调查",
+      "aliases": [
+        "紫色海星数量",
+        "紫海星调查",
+        "岛上紫海星多少",
+        "18个紫海星"
+      ],
+      "requirement": "解锁田野办事处调查。",
+      "howToFind": "完成紫色海星数量调查，正确答案是 18，奖励 1 个金核桃。",
+      "recommendation": "答错当天不能重答，记住 18。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_volcano_southeast_tree",
+      "region": "island_north",
+      "regionName": "北部/火山入口",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "探索",
+      "aliases": [
+        "火山入口东南树后",
+        "火山入口隐藏树",
+        "火山树后核桃"
+      ],
+      "requirement": "到火山地牢入口东南侧。",
+      "howToFind": "火山地牢入口东南方有一颗被树遮住的金核桃植物。",
+      "recommendation": "火山入口周边隐藏核桃较多，统一扫一圈。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_volcano_east_sand_arc",
+      "region": "island_north",
+      "regionName": "北部/火山入口",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "火山入口东边沙地",
+        "两灌木弧形石头",
+        "火山东侧沙圈"
+      ],
+      "requirement": "到火山地牢入口东边。",
+      "howToFind": "火山入口向东，在两个灌木和弧形石头围出的沙地处挖掘。",
+      "recommendation": "找弧形石头和灌木夹出的明显图案。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_volcano_slingshot_tree",
+      "region": "island_north",
+      "regionName": "北部/火山入口",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "弹弓",
+      "aliases": [
+        "火山弯树弹弓",
+        "火山东北树上核桃",
+        "弹弓打树核桃"
+      ],
+      "requirement": "带弹弓到火山地牢入口东北侧。",
+      "howToFind": "火山入口东北方有一棵从火山边伸出的弯树，用弹弓击落树上的金核桃。",
+      "recommendation": "很多人会漏带弹弓；问战斗装备可查弹弓来源。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_journal_scrap_10",
+      "region": "island_north",
+      "regionName": "北部/火山入口",
+      "quantity": 1,
+      "type": "journal_scrap",
+      "typeName": "日记残页 #10",
+      "aliases": [
+        "日记残页10",
+        "Journal Scrap #10",
+        "火山西南弯曲棕榈树",
+        "火山入口棕榈环"
+      ],
+      "requirement": "先读到日记残页 #10。",
+      "howToFind": "火山入口西南方有一棵从悬崖侧面伸出的弯曲棕榈树，在树环内可见的地块挖掘。",
+      "recommendation": "没有读到残页前挖不出。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_far_northwest_stone_circle",
+      "region": "island_north",
+      "regionName": "北部/火山西侧",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "最西北石圈",
+        "雷欧站的位置",
+        "火山西北角"
+      ],
+      "requirement": "到地图最西北角，雷欧有时会站在那里。",
+      "howToFind": "在地图最西北处的石圈中心挖掘。",
+      "recommendation": "沿火山西侧边界走到最北最西。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_west_volcano_hidden_bush",
+      "region": "island_north",
+      "regionName": "北部/火山西侧",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "隐藏通道",
+      "aliases": [
+        "火山西边隐藏通道",
+        "西墙隐藏灌木",
+        "最西北隐藏核桃"
+      ],
+      "requirement": "到火山西边地图边缘。",
+      "howToFind": "在地图最西北、火山西侧沿墙向西走，再从凹口向北穿过隐藏通道，可找到一颗隐蔽灌木金核桃。",
+      "recommendation": "这颗位置很偏，贴最西边墙找缺口。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_lava_river_watering_can",
+      "region": "island_north",
+      "regionName": "北部/火山入口",
+      "quantity": 2,
+      "type": "exploration",
+      "typeName": "喷壶岩浆路",
+      "aliases": [
+        "火山入口岩浆河西边",
+        "喷壶铺路两颗",
+        "岩浆河尽头"
+      ],
+      "requirement": "带喷壶到火山入口岩浆河。",
+      "howToFind": "在火山入口岩浆河处用喷壶向西铺长路，再向南延伸到河流尽头附近，可取得 2 个金核桃。",
+      "recommendation": "进火山前先带喷壶，顺便开入口路线。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_volcano_dungeon_random",
+      "region": "island_north",
+      "regionName": "北部/火山地牢",
+      "quantity": 17,
+      "type": "mining",
+      "typeName": "火山地牢随机来源",
+      "aliases": [
+        "火山地牢17个",
+        "火山石头箱子怪物核桃",
+        "火山刷金核桃",
+        "火山宝箱金核桃"
+      ],
+      "requirement": "进入火山地牢。",
+      "howToFind": "火山地牢内最多 17 个金核桃来自多种随机来源：敲石头最多 5 个、击杀怪物最多 5 个、破坏箱子最多 5 个，首次普通宝箱和首次稀有宝箱各 1 个。",
+      "recommendation": "通关火山过程中自然刷；若还缺火山核桃，就清石头、怪、箱子并开宝箱。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "north_volcano_forge_plants",
+      "region": "island_north",
+      "regionName": "北部/火山地牢",
+      "quantity": 2,
+      "type": "volcano_dungeon",
+      "typeName": "火山锻造层",
+      "aliases": [
+        "火山锻造层两颗",
+        "Forge入口出口核桃",
+        "火山第10层核桃"
+      ],
+      "requirement": "到达火山地牢第 10 层锻造台。",
+      "howToFind": "到达火山锻造台后，入口和出口各有一颗金核桃植物，合计 2 个。",
+      "recommendation": "第一次到锻造台别急着离开，两侧都检查。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_hidden_cliff_bush",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "隐藏路线",
+      "aliases": [
+        "南部悬崖上核桃",
+        "北部楼梯后隐藏路",
+        "南岛上方灌木"
+      ],
+      "requirement": "从南部通往北部的楼梯处寻找隐藏路线。",
+      "howToFind": "从南部上北部的楼梯处，立刻向东再沿树后隐藏路线向南，可到达南部上方悬崖可见的金核桃灌木。",
+      "recommendation": "不需要修度假村，早期就能拿。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_southeast_tide_pool_fishing",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 1,
+      "type": "fishing",
+      "typeName": "钓鱼",
+      "aliases": [
+        "东南海星池钓鱼",
+        "度假村东南钓核桃",
+        "海星形潮池"
+      ],
+      "requirement": "修好海滩度假村后进入东南部。",
+      "howToFind": "在东南部海星形潮池第一次钓鱼，会获得 1 个金核桃。",
+      "recommendation": "解锁度假村后先去钓一次。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_yellow_starfish_diamond",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "东南黄色海星菱形",
+        "度假村东南海星",
+        "黄色海星中心"
+      ],
+      "requirement": "修好海滩度假村后进入东南部。",
+      "howToFind": "在东南部找到黄色海星组成的菱形，在中心挖掘。",
+      "recommendation": "和海星形潮池钓鱼一起做。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_mermaid_puzzle",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 5,
+      "type": "puzzle",
+      "typeName": "美人鱼谜题",
+      "aliases": [
+        "美人鱼谜题",
+        "雨天美人鱼",
+        "长笛块谜题",
+        "海盗湾美人鱼"
+      ],
+      "requirement": "修好海滩度假村；雨天到东南部；准备 5 个长笛块。",
+      "howToFind": "雨天到东南部，美人鱼会出现在岩石上。按沙滩五块石头提示摆放并调音长笛块，完成后奖励 5 个金核桃。",
+      "recommendation": "石头大小代表音高，先摆好 5 个长笛块再逐个调。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_pirate_darts",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 3,
+      "type": "puzzle",
+      "typeName": "海盗飞镖",
+      "aliases": [
+        "海盗飞镖",
+        "飞镖小游戏",
+        "海盗湾晚上飞镖",
+        "Pirate Cove darts"
+      ],
+      "requirement": "修好度假村；非雨天偶数日晚上 8 点后进入海盗湾。",
+      "howToFind": "在海盗湾赢飞镖小游戏，前三次胜利每次奖励 1 个金核桃，合计 3 个。",
+      "recommendation": "只有非雨天偶数日晚上海盗出现；可以分多晚完成。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "south_pirate_cove_barrels",
+      "region": "island_south",
+      "regionName": "南部/东南部/海盗湾",
+      "quantity": 1,
+      "type": "exploration",
+      "typeName": "挖掘",
+      "aliases": [
+        "海盗湾桶旁沙地",
+        "海盗湾东边桶",
+        "桶中间沙地"
+      ],
+      "requirement": "修好度假村后进入海盗湾。",
+      "howToFind": "在海盗湾水域东侧木桶之间露出的沙地挖掘，可得 1 个金核桃。",
+      "recommendation": "做飞镖时顺手挖。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    }
+  ],
+  "goldenWalnutRewards": [
+    {
+      "id": "unlock_north",
+      "name": "解锁姜岛北部",
+      "nameEn": "Ginger Island North",
+      "cost": 1,
+      "location": "雷欧小屋",
+      "description": "开放通往姜岛北部的路线。",
+      "recommendation": "上岛后第一个关键解锁。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "unlock_west",
+      "name": "解锁姜岛西部",
+      "nameEn": "Ginger Island West",
+      "cost": 10,
+      "location": "姜岛南部",
+      "description": "唤醒挡路乌龟，开放西岛、岛屿农场、伯蒂和齐先生核桃房区域。",
+      "recommendation": "前期优先级最高之一。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "farmhouse",
+      "name": "修复岛屿农舍",
+      "nameEn": "Ginger Island Farmhouse",
+      "cost": 20,
+      "location": "姜岛西部",
+      "description": "修好西岛农舍，可在岛上睡觉过夜。",
+      "recommendation": "想长期经营姜岛农场时优先。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "mailbox",
+      "name": "农舍邮箱",
+      "nameEn": "Farmhouse Mailbox",
+      "cost": 5,
+      "location": "岛屿农舍",
+      "description": "允许在岛屿农舍收信。",
+      "recommendation": "便利性解锁，通常排在农舍后。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "farm_obelisk",
+      "name": "农场方尖碑",
+      "nameEn": "Farm Obelisk",
+      "cost": 20,
+      "location": "岛屿农舍",
+      "description": "允许从岛屿农场传送回星露谷农场。",
+      "recommendation": "经常往返姜岛时价值很高。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "dig_site_bridge",
+      "name": "修复挖掘场桥",
+      "nameEn": "Island Dig Site",
+      "cost": 10,
+      "location": "姜岛北部",
+      "description": "修桥进入挖掘场，推进蜗牛教授、化石和骨头资源。",
+      "recommendation": "需要化石、骨头碎片或田野办事处奖励时优先。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "island_trader",
+      "name": "解锁岛屿商人",
+      "nameEn": "Island Trader",
+      "cost": 10,
+      "location": "姜岛北部",
+      "description": "开放岛屿商人商店。",
+      "recommendation": "需要香蕉树苗、芒果树苗、传送图腾等兑换时解锁。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "volcano_bridge",
+      "name": "火山入口永久桥",
+      "nameEn": "Volcano Bridge",
+      "cost": 5,
+      "location": "火山地牢入口",
+      "description": "修好火山入口永久桥，以后进火山不必每次用喷壶铺路。",
+      "recommendation": "频繁刷火山前很实用。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "volcano_exit_shortcut",
+      "name": "火山 5 层出口捷径",
+      "nameEn": "Volcano Exit Shortcut",
+      "cost": 5,
+      "location": "火山地牢第 5 层",
+      "description": "开放火山 5 层快速离开到姜岛北部的捷径。",
+      "recommendation": "刷火山地牢时提高容错。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "island_resort",
+      "name": "海滩度假村",
+      "nameEn": "Island Resort",
+      "cost": 20,
+      "location": "姜岛南部",
+      "description": "修复南部废墟为海滩度假村，村民偶尔来度假，并解锁东南部和海盗湾。",
+      "recommendation": "想做美人鱼谜题、海盗飞镖和黄貂鱼钓点时必须修。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "parrot_express",
+      "name": "鹦鹉快线",
+      "nameEn": "Parrot Express",
+      "cost": 10,
+      "location": "姜岛",
+      "description": "解锁岛内快速旅行系统。",
+      "recommendation": "岛内跑图频繁后很省时间。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    },
+    {
+      "id": "qi_gem_exchange",
+      "name": "剩余金核桃兑换齐钻",
+      "nameEn": "Qi Gem Exchange",
+      "cost": 1,
+      "location": "齐先生核桃房",
+      "description": "购买所有其它升级后，可把剩余金核桃按 1 个金核桃换 2 个齐钻。",
+      "recommendation": "只在其它解锁都买完后考虑。",
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Golden_Walnut"
+      ]
+    }
   ]
 }

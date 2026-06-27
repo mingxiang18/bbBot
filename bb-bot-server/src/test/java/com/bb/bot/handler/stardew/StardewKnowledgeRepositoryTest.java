@@ -46,6 +46,8 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.specialAnimals()).hasSize(3);
         assertThat(repository.fruitTrees()).hasSize(8);
         assertThat(repository.islandGuides()).hasSize(13);
+        assertThat(repository.goldenWalnuts()).hasSize(60);
+        assertThat(repository.goldenWalnutRewards()).hasSize(12);
         assertThat(repository.dungeonGuides()).hasSize(6);
         assertThat(repository.guides()).hasSizeGreaterThanOrEqualTo(39);
     }
@@ -1621,6 +1623,66 @@ class StardewKnowledgeRepositoryTest {
     }
 
     @Test
+    void fullGoldenWalnutLocationAndRewardSetIsCovered() {
+        assertThat(repository.goldenWalnuts()).hasSize(60);
+        assertThat(repository.goldenWalnuts().stream().mapToInt(StardewData.GoldenWalnutLocation::getQuantity).sum())
+                .isEqualTo(130);
+        assertThat(sumGoldenWalnuts("general")).isEqualTo(6);
+        assertThat(sumGoldenWalnuts("island_east")).isEqualTo(11);
+        assertThat(sumGoldenWalnuts("island_west")).isEqualTo(52);
+        assertThat(sumGoldenWalnuts("island_north")).isEqualTo(49);
+        assertThat(sumGoldenWalnuts("island_south")).isEqualTo(12);
+
+        assertThat(repository.findGoldenWalnut("香蕉神龛金核桃").orElseThrow().getId())
+                .isEqualTo("east_banana_shrine");
+        assertThat(repository.findGoldenWalnut("日记残页10金核桃").orElseThrow().getId())
+                .isEqualTo("north_journal_scrap_10");
+        assertThat(repository.findGoldenWalnut("美人鱼谜题金核桃").orElseThrow().getId())
+                .isEqualTo("south_mermaid_puzzle");
+        assertThat(repository.findGoldenWalnut("美食家青蛙").orElseThrow().getId())
+                .isEqualTo("west_gourmand_frog");
+        assertThat(repository.findGoldenWalnut("火山锻造层两颗").orElseThrow().getId())
+                .isEqualTo("north_volcano_forge_plants");
+
+        assertThat(repository.goldenWalnutRewards()).hasSize(12);
+        assertThat(repository.goldenWalnutRewards().stream()
+                .filter(reward -> !"qi_gem_exchange".equals(reward.getId()))
+                .mapToInt(StardewData.GoldenWalnutReward::getCost)
+                .sum()).isEqualTo(116);
+        assertThat(repository.findGoldenWalnutReward("鹦鹉快线").orElseThrow().getId())
+                .isEqualTo("parrot_express");
+        assertThat(repository.findGoldenWalnutReward("岛屿农舍").orElseThrow().getId())
+                .isEqualTo("farmhouse");
+    }
+
+    @Test
+    void allGoldenWalnutsHaveCoreFieldsAndSources() {
+        assertThat(repository.goldenWalnuts())
+                .hasSize(60)
+                .allSatisfy(walnut -> {
+                    assertThat(walnut.getId()).isNotBlank();
+                    assertThat(walnut.getRegion()).isIn("general", "island_east", "island_west", "island_north", "island_south");
+                    assertThat(walnut.getRegionName()).isNotBlank();
+                    assertThat(walnut.getQuantity()).isPositive();
+                    assertThat(walnut.getType()).isNotBlank();
+                    assertThat(walnut.getTypeName()).isNotBlank();
+                    assertThat(walnut.getAliases()).isNotEmpty();
+                    assertThat(walnut.getHowToFind()).isNotBlank();
+                    assertThat(walnut.getSourceUrls()).contains("https://stardewvalleywiki.com/Golden_Walnut");
+                });
+        assertThat(repository.goldenWalnutRewards())
+                .hasSize(12)
+                .allSatisfy(reward -> {
+                    assertThat(reward.getId()).isNotBlank();
+                    assertThat(reward.getName()).isNotBlank();
+                    assertThat(reward.getNameEn()).isNotBlank();
+                    assertThat(reward.getCost()).isPositive();
+                    assertThat(reward.getDescription()).isNotBlank();
+                    assertThat(reward.getSourceUrls()).contains("https://stardewvalleywiki.com/Golden_Walnut");
+                });
+    }
+
+    @Test
     void fullMonsterDropTableIsCovered() {
         Set<String> monsterIds = repository.monsterDrops().stream()
                 .map(StardewData.MonsterDropGuide::getId)
@@ -1675,5 +1737,12 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(resource.getUsedIn()).isNotEmpty();
                     assertThat(resource.getSourceUrls()).isNotEmpty();
                 });
+    }
+
+    private int sumGoldenWalnuts(String region) {
+        return repository.goldenWalnuts().stream()
+                .filter(walnut -> region.equals(walnut.getRegion()))
+                .mapToInt(StardewData.GoldenWalnutLocation::getQuantity)
+                .sum();
     }
 }

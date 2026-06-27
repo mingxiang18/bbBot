@@ -522,7 +522,7 @@ class StardewQueryPlannerServiceTest {
         assertThat(pirateCove.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(mermaid.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(fieldOffice.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
-        assertThat(walnutResource.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(walnutResource.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
         assertThat(snakeSkull.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(volcano.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
         assertThat(stingray.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.FISH);
@@ -554,8 +554,66 @@ class StardewQueryPlannerServiceTest {
         assertThat(plan.getIntents().get(0).getType()).isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(plan.getIntents().get(1).getType()).isEqualTo(StardewGuideIntent.ISLAND);
         assertThat(plan.getIntents().get(2).getType()).isEqualTo(StardewGuideIntent.ISLAND);
-        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(plan.getIntents().get(3).getType()).isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
         assertThat(plan.getIntents().get(4).getType()).isEqualTo(StardewGuideIntent.DUNGEON);
+    }
+
+    @Test
+    void localFallbackClassifiesGoldenWalnutQueriesSeparatelyFromIslandResourceAndOrders() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("金核桃怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
+        assertThat(planner.plan("西岛金核桃有哪些").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
+        assertThat(planner.plan("日记残页10金核桃在哪").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
+        assertThat(planner.plan("金核桃先解锁什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
+        assertThat(planner.plan("美人鱼谜题给几个").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
+        assertThat(planner.plan("美人鱼谜题怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.ISLAND);
+        assertThat(planner.plan("齐钻怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.RESOURCE);
+        assertThat(planner.plan("齐瓜怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.SPECIAL_ORDER);
+        assertThat(planner.plan("姜岛怎么解锁").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.ISLAND);
+    }
+
+    @Test
+    void localGuardrailPullsGoldenWalnutQueriesBackFromBroadAiPlans() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {"type":"GUIDE","keywords":["金核桃怎么获得"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["金核桃先解锁什么"],"constraints":{}},
+                            {"type":"ISLAND","keywords":["西岛金核桃有哪些"],"constraints":{}},
+                            {"type":"SHOP","keywords":["齐钻怎么获得"],"constraints":{}},
+                            {"type":"GOLDEN_WALNUT","keywords":["齐瓜怎么做"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("金核桃和齐钻边界");
+
+        assertThat(plan.getIntents()).hasSize(5);
+        assertThat(plan.getIntents()).extracting(StardewQueryPlan.PlannedIntent::getType)
+                .containsExactly(
+                        StardewGuideIntent.GOLDEN_WALNUT,
+                        StardewGuideIntent.GOLDEN_WALNUT,
+                        StardewGuideIntent.GOLDEN_WALNUT,
+                        StardewGuideIntent.RESOURCE,
+                        StardewGuideIntent.SPECIAL_ORDER
+                );
     }
 
     @Test
@@ -1016,7 +1074,7 @@ class StardewQueryPlannerServiceTest {
         assertThat(planner.plan("齐钻怎么获得").getIntents().get(0).getType())
                 .isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(planner.plan("金核桃怎么用").getIntents().get(0).getType())
-                .isEqualTo(StardewGuideIntent.RESOURCE);
+                .isEqualTo(StardewGuideIntent.GOLDEN_WALNUT);
         assertThat(planner.plan("三花蛋换什么").getIntents().get(0).getType())
                 .isEqualTo(StardewGuideIntent.RESOURCE);
         assertThat(planner.plan("金色标签怎么获得").getIntents().get(0).getType())

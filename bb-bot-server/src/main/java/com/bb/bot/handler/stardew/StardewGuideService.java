@@ -67,9 +67,13 @@ public class StardewGuideService {
         Optional<StardewData.SpecialOrderGuide> specialOrder = repository.findSpecialOrder(query);
         Optional<StardewData.SkillGuide> skillGuide = repository.findSkillGuide(query);
         Optional<StardewData.FestivalEvent> festivalEvent = repository.findFestivalEvent(query);
+        Optional<StardewData.IslandGuide> island = repository.findIslandGuide(query);
         Optional<StardewData.GuideTopic> guide = repository.findGuide(query);
         List<StardewData.BookGuide> books = repository.findBooks(query);
 
+        if (looksLikeGoldenWalnutQuery(query)) {
+            return typedGoldenWalnutAnswer(query);
+        }
         if (resource.isPresent() && looksLikeSpecificSpecialCurrencyResourceQuery(query)) {
             return resourceAnswer(query, resource.get());
         }
@@ -147,6 +151,12 @@ public class StardewGuideService {
                 return festivalDetailAnswer(festivalEvent.get());
             }
             return festivalListAnswer(query);
+        }
+        if ((island.isPresent() || looksLikeIslandGuideQuery(query))
+                && !isFishingQuestion(query)
+                && !looksLikeCookingQuery(query)
+                && !containsAny(query, "地牢", "地下城", "矿井", "骷髅洞穴", "火山地牢", "哪里刷", "怎么获得")) {
+            return typedIslandAnswer(query);
         }
         if (villager.isPresent() && looksLikeScheduleQuery(query)) {
             return villagerAnswer(query, villager.get());
@@ -253,6 +263,7 @@ public class StardewGuideService {
             case FESTIVAL -> typedFestivalAnswer(query);
             case FARM_MAP -> typedFarmMapAnswer(query);
             case ISLAND -> typedIslandAnswer(query);
+            case GOLDEN_WALNUT -> typedGoldenWalnutAnswer(query);
             case DUNGEON -> typedDungeonAnswer(query);
             case UNKNOWN -> result("unknown", "", List.of());
         };
@@ -459,6 +470,17 @@ public class StardewGuideService {
             return islandDetailAnswer(island.get());
         }
         return islandListAnswer(query, island);
+    }
+
+    private StardewGuideResult typedGoldenWalnutAnswer(String query) {
+        if (looksLikeGoldenWalnutRewardQuery(query)) {
+            return goldenWalnutRewardAnswer(query);
+        }
+        Optional<StardewData.GoldenWalnutLocation> walnut = repository.findGoldenWalnut(query);
+        if (walnut.isPresent() && !isBroadGoldenWalnutQuery(query)) {
+            return goldenWalnutDetailAnswer(walnut.get());
+        }
+        return goldenWalnutListAnswer(query, walnut);
     }
 
     private StardewGuideResult typedDungeonAnswer(String query) {
@@ -1028,6 +1050,103 @@ public class StardewGuideService {
         }
         sb.append("建议：问具体地点名可以看路线、鹦鹉解锁、金核桃来源和推进顺序，例如“海盗湾怎么进”“岛屿农场先修什么”。");
         return result("island_available", sb.toString().trim(), collectIslandSources(matched));
+    }
+
+    private StardewGuideResult goldenWalnutDetailAnswer(StardewData.GoldenWalnutLocation walnut) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("金核桃位置：").append(walnut.getRegionName()).append(" / ")
+                .append(walnut.getTypeName()).append("（").append(walnut.getQuantity()).append(" 个）\n");
+        if (StringUtils.isNotBlank(walnut.getRequirement())) {
+            sb.append("前置：").append(walnut.getRequirement()).append("\n");
+        }
+        if (StringUtils.isNotBlank(walnut.getHowToFind())) {
+            sb.append("获取：").append(walnut.getHowToFind()).append("\n");
+        }
+        if (StringUtils.isNotBlank(walnut.getRecommendation())) {
+            sb.append("建议：").append(walnut.getRecommendation()).append("\n");
+        }
+        return result("golden_walnut_detail", sb.toString().trim(), walnut.getSourceUrls());
+    }
+
+    private StardewGuideResult goldenWalnutListAnswer(String query, Optional<StardewData.GoldenWalnutLocation> preferred) {
+        List<StardewData.GoldenWalnutLocation> matched = repository.goldenWalnuts().stream()
+                .filter(walnut -> matchesGoldenWalnutQuery(query, walnut))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::goldenWalnuts);
+        }
+        if (matched.isEmpty()) {
+            return result("golden_walnut_available", "没找到金核桃位置资料。可以试试：金核桃怎么获得、西岛金核桃、日记残页10金核桃、美人鱼谜题。", List.of());
+        }
+        int total = matched.stream().mapToInt(w -> w.getQuantity() == null ? 0 : w.getQuantity()).sum();
+        StringBuilder sb = new StringBuilder();
+        sb.append("金核桃位置清单（当前筛选 ").append(total).append(" 个；全岛总计 130 个）：\n");
+        appendGoldenWalnutRegionSummary(sb, matched);
+        for (StardewData.GoldenWalnutLocation walnut : matched) {
+            sb.append("- ").append(walnut.getRegionName()).append(" / ").append(walnut.getTypeName())
+                    .append("：").append(walnut.getQuantity()).append(" 个。");
+            if (StringUtils.isNotBlank(walnut.getHowToFind())) {
+                sb.append(walnut.getHowToFind());
+            }
+            sb.append("\n");
+        }
+        sb.append("提示：如果你问“还差几个”，我不能读取存档；可以按区域或线索继续问，比如“西岛金核桃”“火山金核桃”“日记残页金核桃”。");
+        return result("golden_walnut_available", sb.toString().trim(), collectGoldenWalnutSources(matched));
+    }
+
+    private StardewGuideResult goldenWalnutRewardAnswer(String query) {
+        List<StardewData.GoldenWalnutReward> rewards = repository.goldenWalnutRewards().stream()
+                .filter(reward -> matchesGoldenWalnutRewardQuery(query, reward))
+                .toList();
+        if (rewards.isEmpty() || isBroadGoldenWalnutRewardQuery(query)) {
+            rewards = repository.goldenWalnutRewards();
+        }
+        if (rewards.isEmpty()) {
+            return result("golden_walnut_rewards", "没找到金核桃解锁资料。可以试试：金核桃先解锁什么、岛屿农舍、鹦鹉快线、度假村。", List.of());
+        }
+        int normalCost = repository.goldenWalnutRewards().stream()
+                .filter(reward -> !"qi_gem_exchange".equals(reward.getId()))
+                .mapToInt(reward -> reward.getCost() == null ? 0 : reward.getCost())
+                .sum();
+        StringBuilder sb = new StringBuilder();
+        sb.append("金核桃用途/鹦鹉解锁：\n");
+        for (StardewData.GoldenWalnutReward reward : rewards) {
+            sb.append("- ").append(reward.getName()).append("：").append(reward.getCost()).append(" 个");
+            if (StringUtils.isNotBlank(reward.getLocation())) {
+                sb.append("，位置：").append(reward.getLocation());
+            }
+            if (StringUtils.isNotBlank(reward.getDescription())) {
+                sb.append("；").append(reward.getDescription());
+            }
+            if (StringUtils.isNotBlank(reward.getRecommendation())) {
+                sb.append("；建议：").append(reward.getRecommendation());
+            }
+            sb.append("\n");
+        }
+        sb.append("常规鹦鹉解锁合计 ").append(normalCost)
+                .append(" 个；其它拿到的金核桃主要用于进入齐先生核桃房门槛，全部常规解锁后可在核桃房把剩余金核桃按 1:2 换齐钻。");
+        return result("golden_walnut_rewards", sb.toString().trim(), collectGoldenWalnutRewardSources(rewards));
+    }
+
+    private void appendGoldenWalnutRegionSummary(StringBuilder sb, List<StardewData.GoldenWalnutLocation> matched) {
+        int general = sumGoldenWalnuts(matched, "general");
+        int east = sumGoldenWalnuts(matched, "island_east");
+        int west = sumGoldenWalnuts(matched, "island_west");
+        int north = sumGoldenWalnuts(matched, "island_north");
+        int south = sumGoldenWalnuts(matched, "island_south");
+        sb.append("分区：通用 ").append(general)
+                .append("，东部 ").append(east)
+                .append("，西部 ").append(west)
+                .append("，北部/火山 ").append(north)
+                .append("，南部/东南部 ").append(south)
+                .append("。\n");
+    }
+
+    private int sumGoldenWalnuts(List<StardewData.GoldenWalnutLocation> walnuts, String region) {
+        return walnuts.stream()
+                .filter(walnut -> region.equals(walnut.getRegion()))
+                .mapToInt(walnut -> walnut.getQuantity() == null ? 0 : walnut.getQuantity())
+                .sum();
     }
 
     private StardewGuideResult dungeonListAnswer(String query, Optional<StardewData.DungeonGuide> preferred) {
@@ -2636,6 +2755,54 @@ public class StardewGuideService {
                 || (containsAny(query, "姜岛", "岛屿", "金核桃解锁", "鹦鹉解锁") && containsAny(query, "哪些", "列表", "所有", "全部", "总览", "顺序", "先做", "先解锁"));
     }
 
+    private boolean looksLikeIslandGuideQuery(String query) {
+        if (looksLikeGoldenWalnutQuery(query)
+                || looksLikeSpecialOrderQuery(query)
+                || isFishingQuestion(query)
+                || containsAny(query, "地牢", "地下城", "矿井", "骷髅洞穴", "火山地牢", "哪里刷", "怎么获得")) {
+            return false;
+        }
+        return containsAny(query,
+                "姜岛", "岛屿农场", "岛屿商人", "海滩度假村", "海盗湾",
+                "美人鱼谜题", "宝石鸟", "蜗牛教授", "田野办事处", "挖掘场",
+                "齐先生核桃房", "鹦鹉快线", "香蕉神龛", "美食家青蛙");
+    }
+
+    private boolean looksLikeGoldenWalnutQuery(String query) {
+        if (containsAny(query,
+                "齐钻怎么获得", "齐钻商店", "齐钻奖励",
+                "核桃房任务", "核桃房订单", "齐先生任务", "齐先生挑战",
+                "齐瓜", "齐豆", "齐果", "五彩农场", "饥饿挑战", "骷髅洞穴入侵")) {
+            return false;
+        }
+        if (containsAny(query, "金核桃", "黄金核桃", "Golden Walnut", "Golden Walnuts",
+                "火山金核桃", "田野办事处金核桃", "蜗牛教授金核桃", "鹦鹉解锁")) {
+            return true;
+        }
+        if (containsAny(query, "核桃房")) {
+            return containsAny(query, "怎么进", "门槛", "需要多少", "100", "一百", "解锁", "剩余");
+        }
+        if (containsAny(query, "香蕉神龛", "宝石鸟", "美人鱼谜题", "美食家青蛙", "日记残页",
+                "海盗飞镖", "水晶谜题", "蜗牛教授", "田野办事处")) {
+            return containsAny(query, "几个", "多少", "位置", "在哪", "在哪里", "获得", "拿", "补齐");
+        }
+        return false;
+    }
+
+    private boolean isBroadGoldenWalnutQuery(String query) {
+        return containsAny(query, "怎么获得", "在哪里", "在哪", "位置", "清单", "列表", "有哪些", "全部", "所有", "总计", "总数", "还差", "补齐", "路线", "分布")
+                || containsAny(query, "东部", "西部", "北部", "南部", "东岛", "西岛", "北岛", "南岛", "火山", "日记残页", "姜岛农场", "田野办事处", "海盗湾", "东南部");
+    }
+
+    private boolean looksLikeGoldenWalnutRewardQuery(String query) {
+        return containsAny(query, "怎么用", "用途", "花", "先解锁", "优先解锁", "解锁顺序", "鹦鹉解锁", "换什么", "兑换", "剩余")
+                || (containsAny(query, "金核桃", "黄金核桃") && containsAny(query, "农舍", "方尖碑", "邮箱", "挖掘场", "岛屿商人", "度假村", "鹦鹉快线", "火山桥", "齐钻"));
+    }
+
+    private boolean isBroadGoldenWalnutRewardQuery(String query) {
+        return containsAny(query, "怎么用", "用途", "花", "先解锁", "优先", "顺序", "哪些", "列表", "所有", "全部", "总计", "合计");
+    }
+
     private boolean isBroadStoryQuestQuery(String query) {
         return containsAny(query, "任务有哪些", "普通任务有哪些", "剧情任务有哪些", "任务列表", "普通任务列表", "剧情任务列表", "所有任务", "全部任务", "总览")
                 || (containsAny(query, "普通任务", "剧情任务", "任务日志") && containsAny(query, "哪些", "列表", "总览", "所有", "全部"));
@@ -2821,6 +2988,77 @@ public class StardewGuideService {
                 || containsAnyNormalized(q, island.getRewards())
                 || containsAnyNormalized(q, island.getRecommendations())
                 || containsNormalized(q, island.getNote());
+    }
+
+    private boolean matchesGoldenWalnutQuery(String query, StardewData.GoldenWalnutLocation walnut) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        String region = parseGoldenWalnutRegion(query);
+        if (StringUtils.isNotBlank(region) && !region.equals(walnut.getRegion())) {
+            return false;
+        }
+        if (containsAny(query, "火山") && !containsAnyNormalized(q, walnut.getAliases())
+                && !containsNormalized(q, walnut.getRegionName())
+                && !containsNormalized(q, walnut.getHowToFind())
+                && !containsNormalized(q, walnut.getRequirement())) {
+            return false;
+        }
+        if (containsAny(query, "日记残页") && !"journal_scrap".equals(walnut.getType())) {
+            return false;
+        }
+        if (containsAny(query, "田野办事处", "蜗牛教授", "化石", "紫花", "紫色花", "紫海星", "紫色海星")
+                && !"field_office".equals(walnut.getType())) {
+            return false;
+        }
+        if (StringUtils.isNotBlank(region) && isBroadGoldenWalnutQuery(query)) {
+            return true;
+        }
+        Optional<StardewData.GoldenWalnutLocation> direct = repository.findGoldenWalnut(query);
+        if (direct.isPresent() && direct.get().getId().equals(walnut.getId()) && !isBroadGoldenWalnutQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "金核桃怎么获得", "黄金核桃怎么获得", "金核桃位置", "金核桃清单", "全部金核桃", "所有金核桃", "金核桃列表")) {
+            return true;
+        }
+        return containsAnyNormalized(q, walnut.getAliases())
+                || containsNormalized(q, walnut.getRegion())
+                || containsNormalized(q, walnut.getRegionName())
+                || containsNormalized(q, walnut.getType())
+                || containsNormalized(q, walnut.getTypeName())
+                || containsNormalized(q, walnut.getRequirement())
+                || containsNormalized(q, walnut.getHowToFind())
+                || containsNormalized(q, walnut.getRecommendation());
+    }
+
+    private boolean matchesGoldenWalnutRewardQuery(String query, StardewData.GoldenWalnutReward reward) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.GoldenWalnutReward> direct = repository.findGoldenWalnutReward(query);
+        if (direct.isPresent() && direct.get().getId().equals(reward.getId()) && !isBroadGoldenWalnutRewardQuery(query)) {
+            return true;
+        }
+        return containsNormalized(q, reward.getName())
+                || containsNormalized(q, reward.getNameEn())
+                || containsNormalized(q, reward.getLocation())
+                || containsNormalized(q, reward.getDescription())
+                || containsNormalized(q, reward.getRecommendation());
+    }
+
+    private String parseGoldenWalnutRegion(String query) {
+        if (containsAny(query, "通用", "全岛", "钓鱼", "金色椰子")) {
+            return "general";
+        }
+        if (containsAny(query, "东部", "东岛", "东边", "雷欧", "宝石鸟", "香蕉神龛")) {
+            return "island_east";
+        }
+        if (containsAny(query, "西部", "西岛", "西边", "岛屿农场", "美食家青蛙", "伯蒂", "齐先生核桃房", "老虎史莱姆", "水晶谜题")) {
+            return "island_west";
+        }
+        if (containsAny(query, "北部", "北岛", "北边", "火山", "挖掘场", "田野办事处", "蜗牛教授")) {
+            return "island_north";
+        }
+        if (containsAny(query, "南部", "南岛", "南边", "东南部", "海盗湾", "度假村", "美人鱼", "飞镖")) {
+            return "island_south";
+        }
+        return null;
     }
 
     private boolean containsAnimalProduct(String query, List<StardewData.AnimalProduct> products) {
@@ -3786,6 +4024,26 @@ public class StardewGuideService {
         for (StardewData.IslandGuide island : islands) {
             if (island.getSourceUrls() != null) {
                 urls.addAll(island.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectGoldenWalnutSources(List<StardewData.GoldenWalnutLocation> walnuts) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.GoldenWalnutLocation walnut : walnuts) {
+            if (walnut.getSourceUrls() != null) {
+                urls.addAll(walnut.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectGoldenWalnutRewardSources(List<StardewData.GoldenWalnutReward> rewards) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.GoldenWalnutReward reward : rewards) {
+            if (reward.getSourceUrls() != null) {
+                urls.addAll(reward.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

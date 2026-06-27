@@ -53,7 +53,7 @@ public class StardewQueryPlannerService {
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
                         ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, COMBAT_EQUIPMENT, BUILDING, CRAFTING, MACHINE, SHOP,
-                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, ISLAND, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
+                        COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, ISLAND, GOLDEN_WALNUT, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
                         - keywords 必须是适合检索的中文短句，保留动作，例如“怎么获得”“怎么做”“升级材料”“在哪里”“怎么种”。
@@ -64,8 +64,9 @@ public class StardewQueryPlannerService {
                         - 工具本身的升级、购买、获取、用途和条件，例如斧头、镐子、锄头、喷壶、垃圾桶、鱼竿、高级铱金鱼竿、铜盘/钢盘/金盘/铱盘、镰刀/金镰刀/铱金镰刀、背包、奶桶、剪刀，归为 TOOL。
                         - 战斗装备本体的获取、属性、效果、价格、列表、推荐，例如“银河剑怎么获得”“黑曜石之刃在哪拿”“武器有哪些”“戒指有哪些”“窃贼戒指怎么拿”“幸运戒指效果”“鞋类有哪些”“太空之靴怎么获得”，归为 COMBAT_EQUIPMENT。
                         - 具体戒指作为制作配方问“怎么做/材料/配方”时可归为 CRAFTING；问戒指效果、来源、装备推荐时归为 COMBAT_EQUIPMENT。
+                        - 金核桃完整位置、区域缺口、谜题、日记残页、火山/东岛/西岛/南岛/北岛金核桃、以及金核桃用途和鹦鹉解锁顺序，例如“金核桃怎么获得”“西岛金核桃有哪些”“日记残页10金核桃在哪”“美人鱼谜题给几个”“金核桃先解锁什么”，归为 GOLDEN_WALNUT。
                         - 泛问特殊货币、兑换货币、节日货币有哪些/怎么规划，例如“特殊货币有哪些”“各种币怎么花”，归为 GUIDE。
-                        - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“金核桃怎么用”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE。
+                        - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE；金核桃除外，归为 GOLDEN_WALNUT。
                         - 岛屿办事处、姜岛化石、蜗牛教授、紫花、紫海星、化石捐赠顺序/奖励，归为 GUIDE。
                         - 具体姜岛办事处化石或火山/姜岛资源怎么获得，例如“蛇头骨怎么获得”“蛇椎骨哪里刷”“木乃伊蝙蝠哪里刷”“金色椰子怎么开”“生姜怎么获得”“岩浆菇哪里找”，归为 RESOURCE。
                         - 具体矿物/宝石怎么获得、哪里找、开哪个晶球，例如“黄水晶哪里找”“大理石怎么获得”“陶瓷碎片开哪个晶球”，归为 RESOURCE。
@@ -152,7 +153,14 @@ public class StardewQueryPlannerService {
         ));
         corrections.put(StardewGuideIntent.SPECIAL_ORDER, EnumSet.of(
                 StardewGuideIntent.GUIDE,
-                StardewGuideIntent.QUEST
+                StardewGuideIntent.QUEST,
+                StardewGuideIntent.GOLDEN_WALNUT
+        ));
+        corrections.put(StardewGuideIntent.RESOURCE, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.SHOP,
+                StardewGuideIntent.ISLAND,
+                StardewGuideIntent.GOLDEN_WALNUT
         ));
         corrections.put(StardewGuideIntent.QUEST, EnumSet.of(
                 StardewGuideIntent.GUIDE,
@@ -184,6 +192,12 @@ public class StardewQueryPlannerService {
                 StardewGuideIntent.SHOP,
                 StardewGuideIntent.RESOURCE,
                 StardewGuideIntent.MACHINE
+        ));
+        corrections.put(StardewGuideIntent.GOLDEN_WALNUT, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.ISLAND,
+                StardewGuideIntent.SHOP
         ));
         corrections.put(StardewGuideIntent.BUILDING, EnumSet.of(
                 StardewGuideIntent.FISH_POND,
@@ -237,6 +251,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeMasteryQuery(q)) {
             return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeGoldenWalnutQuery(q)) {
+            return StardewGuideIntent.GOLDEN_WALNUT;
         }
         if (looksLikeSpecificCurrencyResourceQuery(q)) {
             return StardewGuideIntent.RESOURCE;
@@ -393,6 +410,27 @@ public class StardewQueryPlannerService {
                 "戒指有哪些", "戒指列表", "戒指效果", "戒指推荐", "铱环", "幸运戒指", "窃贼戒指", "史莱姆克星戒指",
                 "鞋类", "鞋子", "靴", "太空之靴", "灰烬小丑鞋", "煤渣小丑鞋", "美人鱼靴", "龙鳞靴", "水晶鞋")
                 && containsAny(query, "怎么获得", "获取", "哪里", "在哪", "哪里拿", "在哪拿", "来源", "属性", "效果", "有哪些", "列表", "推荐", "好用吗", "多少钱", "购买");
+    }
+
+    private boolean looksLikeGoldenWalnutQuery(String query) {
+        if (containsAny(query,
+                "齐钻怎么获得", "齐钻商店", "齐钻奖励",
+                "核桃房任务", "核桃房订单", "齐先生任务", "齐先生挑战",
+                "齐瓜", "齐豆", "齐果", "五彩农场", "饥饿挑战", "骷髅洞穴入侵")) {
+            return false;
+        }
+        if (containsAny(query, "金核桃", "黄金核桃", "Golden Walnut", "Golden Walnuts",
+                "火山金核桃", "田野办事处金核桃", "蜗牛教授金核桃", "鹦鹉解锁")) {
+            return true;
+        }
+        if (containsAny(query, "核桃房")) {
+            return containsAny(query, "怎么进", "门槛", "需要多少", "100", "一百", "解锁", "剩余");
+        }
+        if (containsAny(query, "香蕉神龛", "宝石鸟", "美人鱼谜题", "美食家青蛙", "日记残页",
+                "海盗飞镖", "水晶谜题", "蜗牛教授", "田野办事处")) {
+            return containsAny(query, "几个", "多少", "位置", "在哪", "在哪里", "获得", "拿", "补齐");
+        }
+        return false;
     }
 
     private boolean looksLikeToolQuery(String query) {

@@ -24,6 +24,7 @@ public enum StardewGuideIntent {
     FESTIVAL,
     FARM_MAP,
     ISLAND,
+    GOLDEN_WALNUT,
     DUNGEON,
     MUSEUM,
     GUIDE,

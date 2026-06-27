@@ -89,6 +89,7 @@ public class StardewGuideRetriever {
             case FESTIVAL -> ensureContains(withConstraints, "节日");
             case FARM_MAP -> ensureContains(withConstraints, "农场地图");
             case ISLAND -> ensureContains(withConstraints, "姜岛探索");
+            case GOLDEN_WALNUT -> ensureContains(withConstraints, "金核桃");
             case DUNGEON -> ensureContains(withConstraints, "地下城攻略");
             case MUSEUM -> ensureContains(withConstraints, "博物馆");
             case GUIDE -> ensureGuideHint(withConstraints);
