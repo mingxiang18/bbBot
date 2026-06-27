@@ -15,8 +15,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 启动期扫描所有 Spring bean，把带 {@link AiTool} 注解的方法注册成可被 AI 调用的工具。
@@ -151,18 +153,34 @@ public class AiToolRegistry {
     public List<com.bb.bot.common.util.aiChat.provider.ToolDefinition> toToolDefinitions() {
         List<com.bb.bot.common.util.aiChat.provider.ToolDefinition> list = new ArrayList<>();
         for (AiToolDescriptor desc : tools.values()) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> wrapped = desc.toOpenAiSchema();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> fn = (Map<String, Object>) wrapped.get("function");
-            @SuppressWarnings("unchecked")
-            Map<String, Object> params = (Map<String, Object>) fn.get("parameters");
-            list.add(com.bb.bot.common.util.aiChat.provider.ToolDefinition.builder()
-                    .name((String) fn.get("name"))
-                    .description((String) fn.get("description"))
-                    .parametersSchema(params)
-                    .build());
+            list.add(toToolDefinition(desc));
         }
         return list;
+    }
+
+    /** 按名称返回工具定义；不存在的工具会被跳过，由调用方决定是否降级。 */
+    public List<com.bb.bot.common.util.aiChat.provider.ToolDefinition> toToolDefinitions(Collection<String> names) {
+        if (names == null || names.isEmpty()) {
+            return List.of();
+        }
+        return names.stream()
+                .map(tools::get)
+                .filter(Objects::nonNull)
+                .map(this::toToolDefinition)
+                .collect(Collectors.toList());
+    }
+
+    private com.bb.bot.common.util.aiChat.provider.ToolDefinition toToolDefinition(AiToolDescriptor desc) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> wrapped = desc.toOpenAiSchema();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> fn = (Map<String, Object>) wrapped.get("function");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> params = (Map<String, Object>) fn.get("parameters");
+        return com.bb.bot.common.util.aiChat.provider.ToolDefinition.builder()
+                .name((String) fn.get("name"))
+                .description((String) fn.get("description"))
+                .parametersSchema(params)
+                .build();
     }
 }
