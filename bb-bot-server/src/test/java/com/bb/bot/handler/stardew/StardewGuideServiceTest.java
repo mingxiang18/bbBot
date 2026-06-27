@@ -1059,6 +1059,28 @@ class StardewGuideServiceTest {
     }
 
     @Test
+    void answersCombatEquipmentDetailsAndListsWithoutStealingCraftingOrForgeQueries() {
+        StardewGuideResult galaxySword = service.answerEvidence(StardewGuideIntent.COMBAT_EQUIPMENT, "银河剑怎么获得");
+        StardewGuideResult rings = service.answerEvidence(StardewGuideIntent.COMBAT_EQUIPMENT, "戒指有哪些");
+        StardewGuideResult spaceBoots = service.answerEvidence(StardewGuideIntent.COMBAT_EQUIPMENT, "太空之靴怎么获得");
+        StardewGuideResult ringRecipe = service.answer("星露谷 光辉戒指怎么做");
+        StardewGuideResult forge = service.answerEvidence(StardewGuideIntent.GUIDE, "银河剑怎么锻造");
+
+        assertThat(galaxySword.getIntent()).isEqualTo("combat_equipment_detail");
+        assertThat(galaxySword.getAnswer()).contains("银河剑", "类别：武器/剑", "沙漠", "五彩碎片", "购买价格：50,000g");
+        assertThat(galaxySword.getSourceUrls()).contains("https://stardewvalleywiki.com/Weapons");
+        assertThat(rings.getIntent()).isEqualTo("combat_equipment_available");
+        assertThat(rings.getAnswer()).contains("戒指清单", "小型光辉戒指", "铱环", "幸运戒指", "辉石戒指");
+        assertThat(rings.getSourceUrls()).contains("https://stardewvalleywiki.com/Rings");
+        assertThat(spaceBoots.getIntent()).isEqualTo("combat_equipment_detail");
+        assertThat(spaceBoots.getAnswer()).contains("太空之靴", "类别：鞋类", "防御（+4）", "免疫（+4）", "矿井110层箱子奖励");
+        assertThat(ringRecipe.getIntent()).isEqualTo("machine_detail");
+        assertThat(ringRecipe.getAnswer()).contains("光辉戒指", "太阳精华 x5", "铁锭 x5");
+        assertThat(forge.getIntent()).isEqualTo("guide");
+        assertThat(forge.getAnswer()).contains("火山地牢第 10 层", "五彩碎片 x1", "火山晶石");
+    }
+
+    @Test
     void answersCraftingConsumableCategoryLists() {
         StardewGuideResult fertilizers = service.answer("星露谷 肥料有哪些");
         StardewGuideResult totems = service.answer("星露谷 传送图腾有哪些");
@@ -1068,8 +1090,8 @@ class StardewGuideServiceTest {
         assertThat(fertilizers.getAnswer()).contains("肥料/土壤", "基础肥料", "高级生长激素", "树肥");
         assertThat(totems.getIntent()).isEqualTo("machine_available");
         assertThat(totems.getAnswer()).contains("图腾/传送", "海滩传送图腾", "农场传送图腾", "雨水图腾");
-        assertThat(rings.getIntent()).isEqualTo("machine_available");
-        assertThat(rings.getAnswer()).contains("戒指", "坚固戒指", "光辉戒指", "铱环");
+        assertThat(rings.getIntent()).isEqualTo("combat_equipment_available");
+        assertThat(rings.getAnswer()).contains("戒指清单", "结实戒指", "光辉戒指", "铱环");
     }
 
     @Test

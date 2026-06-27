@@ -92,6 +92,58 @@ class StardewQueryPlannerServiceTest {
     }
 
     @Test
+    void localFallbackClassifiesCombatEquipmentWithoutStealingToolForgeOrRingCraftingQueries() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT))).thenThrow(new RuntimeException("ai down"));
+
+        StardewQueryPlannerService planner = new StardewQueryPlannerService(aiChatService);
+
+        assertThat(planner.plan("银河剑怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.COMBAT_EQUIPMENT);
+        assertThat(planner.plan("戒指有哪些").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.COMBAT_EQUIPMENT);
+        assertThat(planner.plan("太空之靴怎么获得").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.COMBAT_EQUIPMENT);
+        assertThat(planner.plan("光辉戒指怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.CRAFTING);
+        assertThat(planner.plan("戒指合成怎么做").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("银河剑怎么锻造").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.GUIDE);
+        assertThat(planner.plan("斧头升级需要什么").getIntents().get(0).getType())
+                .isEqualTo(StardewGuideIntent.TOOL);
+    }
+
+    @Test
+    void localGuardrailSeparatesCombatEquipmentBodyFromRingCraftingWhenAiIsBroad() {
+        AiChatService aiChatService = mock(AiChatService.class);
+        when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))
+                .thenReturn("""
+                        {
+                          "needMoreInfo": false,
+                          "intents": [
+                            {"type":"GUIDE","keywords":["银河剑怎么获得"],"constraints":{}},
+                            {"type":"MACHINE","keywords":["戒指有哪些"],"constraints":{}},
+                            {"type":"RESOURCE","keywords":["太空之靴怎么获得"],"constraints":{}},
+                            {"type":"COMBAT_EQUIPMENT","keywords":["光辉戒指怎么做"],"constraints":{}}
+                          ]
+                        }
+                        """);
+
+        StardewQueryPlan plan = new StardewQueryPlannerService(aiChatService)
+                .plan("战斗装备边界");
+
+        assertThat(plan.getIntents()).hasSize(4);
+        assertThat(plan.getIntents()).extracting(StardewQueryPlan.PlannedIntent::getType)
+                .containsExactly(
+                        StardewGuideIntent.COMBAT_EQUIPMENT,
+                        StardewGuideIntent.COMBAT_EQUIPMENT,
+                        StardewGuideIntent.COMBAT_EQUIPMENT,
+                        StardewGuideIntent.CRAFTING
+                );
+    }
+
+    @Test
     void localGuardrailPullsConcreteToolQueriesBackFromBroadAiPlans() {
         AiChatService aiChatService = mock(AiChatService.class);
         when(aiChatService.chat(anyList(), eq(ModelTier.LIGHT)))

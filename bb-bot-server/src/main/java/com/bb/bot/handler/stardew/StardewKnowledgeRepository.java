@@ -36,9 +36,9 @@ public class StardewKnowledgeRepository {
     public void load() {
         try (InputStream in = new ClassPathResource("stardew/guide-data.json").getInputStream()) {
             data = objectMapper.readValue(in, StardewData.class);
-            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, specialAnimals={}, fruitTrees={}, islandGuides={}, dungeonGuides={}, guides={}",
+            log.info("Stardew knowledge loaded: fish={}, bundles={}, crops={}, buildings={}, tools={}, combatEquipment={}, craftingRecipes={}, machines={}, shops={}, villagers={}, resources={}, monsterDrops={}, fishPonds={}, cookingRecipes={}, books={}, storyQuests={}, specialOrders={}, skillGuides={}, festivalEvents={}, farmMaps={}, farmAnimals={}, specialAnimals={}, fruitTrees={}, islandGuides={}, dungeonGuides={}, guides={}",
                     data.getFish().size(), data.getBundles().size(), data.getCrops().size(), data.getBuildings().size(),
-                    data.getTools().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
+                    data.getTools().size(), data.getCombatEquipment().size(), data.getCraftingRecipes().size(), data.getMachines().size(), data.getShops().size(), data.getVillagers().size(),
                     data.getResources().size(), data.getMonsterDrops().size(), data.getFishPonds().size(), data.getCookingRecipes().size(),
                     data.getBooks().size(), data.getStoryQuests().size(), data.getSpecialOrders().size(), data.getSkillGuides().size(), data.getFestivalEvents().size(), data.getFarmMaps().size(), data.getFarmAnimals().size(), data.getSpecialAnimals().size(), data.getFruitTrees().size(), data.getIslandGuides().size(), data.getDungeonGuides().size(), data.getGuides().size());
         } catch (Exception e) {
@@ -73,6 +73,10 @@ public class StardewKnowledgeRepository {
 
     public List<StardewData.Tool> tools() {
         return safe(data.getTools());
+    }
+
+    public List<StardewData.CombatEquipmentGuide> combatEquipment() {
+        return safe(data.getCombatEquipment());
     }
 
     public List<StardewData.CraftingRecipe> craftingRecipes() {
@@ -261,6 +265,16 @@ public class StardewKnowledgeRepository {
                 .filter(match -> match.score() > 0)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .map(ToolMatch::tool)
+                .findFirst();
+    }
+
+    public Optional<StardewData.CombatEquipmentGuide> findCombatEquipment(String query) {
+        String q = normalize(query);
+        return combatEquipment().stream()
+                .map(equipment -> new CombatEquipmentMatch(equipment, scoreCombatEquipment(q, equipment)))
+                .filter(match -> match.score() > 0)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
+                .map(CombatEquipmentMatch::equipment)
                 .findFirst();
     }
 
@@ -754,6 +768,29 @@ public class StardewKnowledgeRepository {
         return score;
     }
 
+    private int scoreCombatEquipment(String q, StardewData.CombatEquipmentGuide equipment) {
+        int score = scoreSearchable(q, equipment.getName(), equipment.getNameEn(), equipment.getAliases());
+        if (score == 0) {
+            score = Math.max(score, scoreTextMatches(q, equipment.getTypeName(), 20));
+            score = Math.max(score, scoreTextMatches(q, equipment.getType(), 20));
+            score = Math.max(score, scoreTextMatches(q, equipment.getCategory(), 20));
+            score = Math.max(score, scoreTextMatches(q, equipment.getSource(), 20));
+            score = Math.max(score, scoreTextMatches(q, equipment.getEffect(), 20));
+            score = Math.max(score, scoreTextMatches(q, equipment.getStats(), 20));
+        }
+        if (score == 0) {
+            return 0;
+        }
+        score += scoreTextMatches(q, equipment.getCategory(), 10);
+        score += scoreTextMatches(q, equipment.getType(), 10);
+        score += scoreTextMatches(q, equipment.getTypeName(), 10);
+        score += scoreTextMatches(q, equipment.getSource(), 10);
+        score += scoreTextMatches(q, equipment.getEffect(), 10);
+        score += scoreTextMatches(q, equipment.getStats(), 10);
+        score += scoreTextMatches(q, equipment.getRecommendation(), 10);
+        return score;
+    }
+
     private int scoreDungeonGuide(String q, StardewData.DungeonGuide dungeon) {
         int score = scoreSearchable(q, dungeon.getName(), dungeon.getNameEn(), dungeon.getAliases());
         if (score == 0) {
@@ -901,6 +938,9 @@ public class StardewKnowledgeRepository {
     }
 
     private record ToolMatch(StardewData.Tool tool, int score) {
+    }
+
+    private record CombatEquipmentMatch(StardewData.CombatEquipmentGuide equipment, int score) {
     }
 
     private record MachineMatch(StardewData.Machine machine, int score) {

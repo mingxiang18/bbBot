@@ -845,6 +845,35 @@ class StardewGuideRetrieverTest {
     }
 
     @Test
+    void typedCombatEquipmentIntentRetrievesEquipmentWithoutCrossRouting() {
+        StardewQueryPlan plan = plan(
+                intent(StardewGuideIntent.COMBAT_EQUIPMENT, "银河剑怎么获得"),
+                intent(StardewGuideIntent.COMBAT_EQUIPMENT, "戒指有哪些"),
+                intent(StardewGuideIntent.COMBAT_EQUIPMENT, "太空之靴怎么获得"),
+                intent(StardewGuideIntent.CRAFTING, "光辉戒指怎么做"),
+                intent(StardewGuideIntent.GUIDE, "戒指合成怎么做")
+        );
+
+        List<StardewGuideEvidence> evidence = retriever.retrieve("银河剑、戒指、太空之靴和戒指制作/合成分别怎么弄", plan);
+
+        assertThat(evidence).extracting(StardewGuideEvidence::type)
+                .contains(
+                        StardewGuideIntent.COMBAT_EQUIPMENT,
+                        StardewGuideIntent.CRAFTING,
+                        StardewGuideIntent.GUIDE
+                );
+        assertThat(evidence).extracting(StardewGuideEvidence::intent)
+                .contains("combat_equipment_detail", "combat_equipment_available", "crafting_detail", "guide");
+        assertThat(joinAnswers(evidence))
+                .contains("银河剑", "沙漠", "五彩碎片")
+                .contains("戒指清单", "铱环", "幸运戒指")
+                .contains("太空之靴", "防御（+4）", "矿井110层箱子奖励")
+                .contains("光辉戒指", "太阳精华 x5", "铁锭 x5")
+                .contains("两个不同戒指", "火山晶石 x20")
+                .doesNotContain("工具获取/升级总览", "夏季鱼类", "鸡舍");
+    }
+
+    @Test
     void typedGuideIntentRetrievesMasteryEvidenceWithoutCrossRouting() {
         StardewQueryPlan plan = plan(
                 intent(StardewGuideIntent.GUIDE, "精通先选哪个"),

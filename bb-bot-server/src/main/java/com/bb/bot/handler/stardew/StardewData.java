@@ -16,6 +16,7 @@ public class StardewData {
     private List<Crop> crops = new ArrayList<>();
     private List<Building> buildings = new ArrayList<>();
     private List<Tool> tools = new ArrayList<>();
+    private List<CombatEquipmentGuide> combatEquipment = new ArrayList<>();
     private List<CraftingRecipe> craftingRecipes = new ArrayList<>();
     private List<Machine> machines = new ArrayList<>();
     private List<Shop> shops = new ArrayList<>();
@@ -140,6 +141,29 @@ public class StardewData {
         private List<MaterialCost> materials = new ArrayList<>();
         private String effect;
         private String prerequisite;
+    }
+
+    @Data
+    public static class CombatEquipmentGuide {
+        private String id;
+        private String category;
+        private String type;
+        private String typeName;
+        private String name;
+        private String nameEn;
+        private List<String> aliases = new ArrayList<>();
+        private String level;
+        private String description;
+        private String damage;
+        private String criticalChance;
+        private String stats;
+        private String effect;
+        private String source;
+        private String ingredients;
+        private String purchasePrice;
+        private String sellPrice;
+        private String recommendation;
+        private List<String> sourceUrls = new ArrayList<>();
     }
 
     @Data

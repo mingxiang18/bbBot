@@ -56,6 +56,7 @@ public class StardewGuideService {
         Optional<StardewData.Crop> crop = repository.findCrop(query);
         Optional<StardewData.Building> building = repository.findBuilding(query);
         Optional<StardewData.Tool> tool = repository.findTool(query);
+        Optional<StardewData.CombatEquipmentGuide> combatEquipment = repository.findCombatEquipment(query);
         Optional<StardewData.Machine> machine = repository.findMachine(query);
         Optional<StardewData.Shop> shop = repository.findShop(query);
         Optional<ShopStockMatch> shopItem = findShopStock(query);
@@ -87,6 +88,11 @@ public class StardewGuideService {
                 return toolDetailAnswer(query, tool.get());
             }
             return toolListAnswer();
+        }
+        if ((combatEquipment.isPresent() || looksLikeCombatEquipmentQuery(query))
+                && !looksLikeForgeEquipmentSystemQuery(query)
+                && !looksLikeCombatEquipmentCraftingQuestion(query)) {
+            return typedCombatEquipmentAnswer(query);
         }
         if (!books.isEmpty() && shouldPreferBookGuideOverShop(query)) {
             return bookAnswer(query, books);
@@ -236,6 +242,7 @@ public class StardewGuideService {
             case SKILL -> typedSkillAnswer(query);
             case CROP -> typedCropAnswer(query);
             case TOOL -> typedToolAnswer(query);
+            case COMBAT_EQUIPMENT -> typedCombatEquipmentAnswer(query);
             case BUILDING -> typedBuildingAnswer(query);
             case CRAFTING -> typedCraftingAnswer(query);
             case MACHINE -> typedMachineAnswer(query);
@@ -353,6 +360,14 @@ public class StardewGuideService {
         return repository.findTool(query)
                 .map(tool -> toolDetailAnswer(query, tool))
                 .orElseGet(this::toolListAnswer);
+    }
+
+    private StardewGuideResult typedCombatEquipmentAnswer(String query) {
+        Optional<StardewData.CombatEquipmentGuide> equipment = repository.findCombatEquipment(query);
+        if (equipment.isPresent() && !isBroadCombatEquipmentQuery(query)) {
+            return combatEquipmentDetailAnswer(equipment.get());
+        }
+        return combatEquipmentListAnswer(query, equipment);
     }
 
     private StardewGuideResult typedBuildingAnswer(String query) {
@@ -1491,6 +1506,94 @@ public class StardewGuideService {
                 .max(Comparator.comparingInt(upgrade -> StringUtils.length(StardewKnowledgeRepository.normalize(upgrade.getName()))));
     }
 
+    private StardewGuideResult combatEquipmentDetailAnswer(StardewData.CombatEquipmentGuide equipment) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(equipment.getName()).append("：\n")
+                .append("类别：").append(formatCombatEquipmentType(equipment)).append("\n");
+        if (StringUtils.isNotBlank(equipment.getLevel())) {
+            sb.append("等级：").append(equipment.getLevel()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getDescription())) {
+            sb.append("说明：").append(equipment.getDescription()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getDamage())) {
+            sb.append("伤害：").append(equipment.getDamage()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getCriticalChance())) {
+            sb.append("暴击率：").append(equipment.getCriticalChance()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getStats())) {
+            sb.append("属性：").append(equipment.getStats()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getEffect())) {
+            sb.append("效果：").append(equipment.getEffect()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getIngredients())) {
+            sb.append("制作材料：").append(equipment.getIngredients()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getSource())) {
+            sb.append("获取：").append(equipment.getSource()).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getPurchasePrice())) {
+            sb.append("购买价格：").append(formatCombatEquipmentPrice(equipment.getPurchasePrice())).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getSellPrice())) {
+            sb.append("出售价格：").append(formatCombatEquipmentPrice(equipment.getSellPrice())).append("\n");
+        }
+        if (StringUtils.isNotBlank(equipment.getRecommendation())) {
+            sb.append("建议：").append(equipment.getRecommendation()).append("\n");
+        }
+        return result("combat_equipment_detail", sb.toString().trim(), equipment.getSourceUrls());
+    }
+
+    private StardewGuideResult combatEquipmentListAnswer(String query, Optional<StardewData.CombatEquipmentGuide> preferred) {
+        String category = parseCombatEquipmentCategory(query);
+        String type = parseCombatEquipmentType(query);
+        List<StardewData.CombatEquipmentGuide> matched = repository.combatEquipment().stream()
+                .filter(equipment -> StringUtils.isBlank(category) || category.equals(equipment.getCategory()))
+                .filter(equipment -> StringUtils.isBlank(type) || type.equals(equipment.getType()))
+                .filter(equipment -> matchesCombatEquipmentQuery(query, equipment))
+                .toList();
+        if (matched.isEmpty()) {
+            matched = repository.combatEquipment().stream()
+                    .filter(equipment -> StringUtils.isBlank(category) || category.equals(equipment.getCategory()))
+                    .filter(equipment -> StringUtils.isBlank(type) || type.equals(equipment.getType()))
+                    .toList();
+        }
+        if (matched.isEmpty()) {
+            matched = preferred.map(List::of).orElseGet(repository::combatEquipment);
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(formatCombatEquipmentListTitle(category, type)).append("：\n");
+        int limit = Math.min(60, matched.size());
+        for (int i = 0; i < limit; i++) {
+            StardewData.CombatEquipmentGuide equipment = matched.get(i);
+            sb.append(i + 1).append(". ").append(equipment.getName())
+                    .append("：").append(formatCombatEquipmentType(equipment));
+            if (StringUtils.isNotBlank(equipment.getDamage())) {
+                sb.append("，伤害 ").append(equipment.getDamage());
+            }
+            if (StringUtils.isNotBlank(equipment.getStats())) {
+                sb.append("，").append(equipment.getStats());
+            }
+            if (StringUtils.isNotBlank(equipment.getEffect())) {
+                sb.append("，").append(equipment.getEffect());
+            }
+            if (StringUtils.isNotBlank(equipment.getSource())) {
+                sb.append("；来源：").append(equipment.getSource());
+            }
+            if (StringUtils.isNotBlank(equipment.getPurchasePrice())) {
+                sb.append("；购买 ").append(formatCombatEquipmentPrice(equipment.getPurchasePrice()));
+            }
+            sb.append("\n");
+        }
+        if (matched.size() > limit) {
+            sb.append("还有 ").append(matched.size() - limit).append(" 件未展开；可问具体装备名查看完整来源和属性。\n");
+        }
+        sb.append("建议：武器优先看伤害和手感；戒指按目标选铱环、窃贼戒指、幸运戒指、史莱姆克星戒指；鞋类按防御/免疫替换。锻造、附魔、戒指合成可继续问对应系统攻略。");
+        return result("combat_equipment_available", sb.toString().trim(), collectCombatEquipmentSources(matched));
+    }
+
     private StardewGuideResult machineListAnswer(String query) {
         String category = parseMachineCategory(query);
         List<StardewData.Machine> matched = repository.machines().stream()
@@ -2424,6 +2527,30 @@ public class StardewGuideService {
                 && containsAny(query, "果树", "水果树"));
     }
 
+    private boolean isBroadCombatEquipmentQuery(String query) {
+        return containsAny(query, "有哪些", "列表", "总览", "所有", "全部", "推荐", "哪个好", "哪些")
+                || (looksLikeCombatEquipmentQuery(query) && repository.findCombatEquipment(query).isEmpty());
+    }
+
+    private boolean looksLikeCombatEquipmentQuery(String query) {
+        return containsAny(query,
+                "武器", "剑", "匕首", "短剑", "小刀", "棍棒", "锤", "弹弓",
+                "银河剑", "银河之剑", "银河匕首", "银河之锤", "无限之刃", "无限匕首", "无限之锤",
+                "黑曜石之刃", "熔岩武士刀",
+                "戒指", "铱环", "幸运戒指", "窃贼戒指", "史莱姆克星戒指", "辉石戒指",
+                "鞋", "靴", "鞋子", "鞋类", "太空之靴", "灰烬小丑鞋", "煤渣小丑鞋", "美人鱼靴", "龙鳞靴", "水晶鞋")
+                && !looksLikeToolQuery(query);
+    }
+
+    private boolean looksLikeCombatEquipmentCraftingQuestion(String query) {
+        return containsAny(query, "怎么做", "制作", "材料", "配方", "合成")
+                && containsAny(query, "戒指", "指环", "铱环", "光辉戒指", "辉石戒指", "战士戒指", "结实戒指", "由巴戒指", "约巴戒指");
+    }
+
+    private boolean looksLikeForgeEquipmentSystemQuery(String query) {
+        return containsAny(query, "锻造", "附魔", "戒指合成", "戒指组合", "银河之魂", "无限武器", "火山锻造", "火山晶石");
+    }
+
     private boolean looksLikeFruitTreeCultivationQuery(String query) {
         if (!containsAny(query, "果树", "水果树", "树苗", "苹果树", "石榴树", "香蕉树", "芒果树",
                 "杏子树", "樱桃树", "橙子树", "桃子树")) {
@@ -2621,6 +2748,34 @@ public class StardewGuideService {
                 || containsAnyNormalized(q, animal.getBenefits())
                 || containsAnyNormalized(q, animal.getRecommendations())
                 || containsNormalized(q, animal.getNote());
+    }
+
+    private boolean matchesCombatEquipmentQuery(String query, StardewData.CombatEquipmentGuide equipment) {
+        String q = StardewKnowledgeRepository.normalize(query);
+        Optional<StardewData.CombatEquipmentGuide> direct = repository.findCombatEquipment(query);
+        if (direct.isPresent() && direct.get().getId().equals(equipment.getId()) && !isBroadCombatEquipmentQuery(query)) {
+            return true;
+        }
+        if (containsAny(q, "装备", "战斗装备", "所有装备", "全部装备")) {
+            return true;
+        }
+        String category = parseCombatEquipmentCategory(query);
+        String type = parseCombatEquipmentType(query);
+        if (StringUtils.isNotBlank(category) && category.equals(equipment.getCategory())) {
+            return true;
+        }
+        if (StringUtils.isNotBlank(type) && type.equals(equipment.getType())) {
+            return true;
+        }
+        return containsAnyNormalized(q, equipment.getAliases())
+                || containsNormalized(q, equipment.getName())
+                || containsNormalized(q, equipment.getNameEn())
+                || containsNormalized(q, equipment.getTypeName())
+                || containsNormalized(q, equipment.getDescription())
+                || containsNormalized(q, equipment.getSource())
+                || containsNormalized(q, equipment.getEffect())
+                || containsNormalized(q, equipment.getStats())
+                || containsNormalized(q, equipment.getRecommendation());
     }
 
     private boolean matchesDungeonQuery(String query, StardewData.DungeonGuide dungeon) {
@@ -3076,7 +3231,6 @@ public class StardewGuideService {
                 || query.contains("肥料有哪些") || query.contains("肥料列表")
                 || query.contains("保湿土壤有哪些") || query.contains("生长激素有哪些")
                 || query.contains("图腾有哪些") || query.contains("传送图腾有哪些")
-                || query.contains("戒指有哪些") || query.contains("戒指列表")
                 || query.contains("消耗品有哪些")
                 || query.contains("钓具有哪些") || query.contains("鱼饵有哪些")
                 || query.contains("钓鱼装备有哪些") || query.contains("钓鱼制作有哪些");
@@ -3097,6 +3251,35 @@ public class StardewGuideService {
                 || query.contains("家具配方有哪些")
                 || query.contains("种子配方有哪些")
                 || query.contains("野生种子有哪些");
+    }
+
+    private String parseCombatEquipmentCategory(String query) {
+        if (containsAny(query, "戒指", "铱环", "指环")) {
+            return "ring";
+        }
+        if (containsAny(query, "鞋", "靴", "鞋子", "鞋类")) {
+            return "footwear";
+        }
+        if (containsAny(query, "武器", "剑", "匕首", "短剑", "小刀", "棍棒", "锤", "弹弓", "银河", "无限")) {
+            return "weapon";
+        }
+        return null;
+    }
+
+    private String parseCombatEquipmentType(String query) {
+        if (containsAny(query, "弹弓")) {
+            return "slingshot";
+        }
+        if (containsAny(query, "匕首", "短剑", "小刀")) {
+            return "dagger";
+        }
+        if (containsAny(query, "棍棒", "锤", "之锤", "锤类")) {
+            return "club";
+        }
+        if (containsAny(query, "剑", "刀", "武士刀", "弯刀", "之刃") && !containsAny(query, "匕首", "短剑", "小刀")) {
+            return "sword";
+        }
+        return null;
     }
 
     private String parseMachineCategory(String query) {
@@ -3208,6 +3391,40 @@ public class StardewGuideService {
         };
     }
 
+    private String formatCombatEquipmentListTitle(String category, String type) {
+        if (StringUtils.isNotBlank(type)) {
+            return switch (type) {
+                case "sword" -> "剑类武器";
+                case "dagger" -> "匕首类武器";
+                case "club" -> "棍棒/锤类武器";
+                case "slingshot" -> "弹弓";
+                default -> type;
+            };
+        }
+        if (StringUtils.isNotBlank(category)) {
+            return switch (category) {
+                case "weapon" -> "武器清单";
+                case "ring" -> "戒指清单";
+                case "footwear" -> "鞋类清单";
+                default -> category;
+            };
+        }
+        return "战斗装备清单";
+    }
+
+    private String formatCombatEquipmentType(StardewData.CombatEquipmentGuide equipment) {
+        if ("weapon".equals(equipment.getCategory())) {
+            return "武器/" + StringUtils.defaultIfBlank(equipment.getTypeName(), equipment.getType());
+        }
+        if ("ring".equals(equipment.getCategory())) {
+            return "戒指";
+        }
+        if ("footwear".equals(equipment.getCategory())) {
+            return "鞋类";
+        }
+        return StringUtils.defaultIfBlank(equipment.getTypeName(), equipment.getCategory());
+    }
+
     private boolean isCrabPotCatchQuery(String query) {
         return query.contains("蟹笼")
                 && !query.contains("怎么做")
@@ -3265,6 +3482,17 @@ public class StardewGuideService {
             return "无固定金币花费";
         }
         return String.format(Locale.ROOT, "%,dg", gold);
+    }
+
+    private String formatCombatEquipmentPrice(String price) {
+        String trimmed = StringUtils.trimToEmpty(price);
+        if (trimmed.isEmpty()) {
+            return "";
+        }
+        if (trimmed.endsWith("g") || trimmed.endsWith("金") || !trimmed.matches("[0-9,]+")) {
+            return trimmed;
+        }
+        return trimmed + "g";
     }
 
     private String formatMaterials(List<StardewData.MaterialCost> materials) {
@@ -3407,6 +3635,16 @@ public class StardewGuideService {
         for (StardewData.Tool tool : tools) {
             if (tool.getSourceUrls() != null) {
                 urls.addAll(tool.getSourceUrls());
+            }
+        }
+        return new ArrayList<>(urls);
+    }
+
+    private List<String> collectCombatEquipmentSources(List<StardewData.CombatEquipmentGuide> equipmentList) {
+        Set<String> urls = new LinkedHashSet<>();
+        for (StardewData.CombatEquipmentGuide equipment : equipmentList) {
+            if (equipment.getSourceUrls() != null) {
+                urls.addAll(equipment.getSourceUrls());
             }
         }
         return new ArrayList<>(urls);

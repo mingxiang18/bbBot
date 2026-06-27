@@ -12,6 +12,7 @@ public enum StardewGuideIntent {
     FRUIT_TREE,
     CROP,
     TOOL,
+    COMBAT_EQUIPMENT,
     BUILDING,
     CRAFTING,
     MACHINE,

@@ -27,6 +27,7 @@ class StardewKnowledgeRepositoryTest {
         assertThat(repository.crops()).hasSizeGreaterThanOrEqualTo(30);
         assertThat(repository.buildings()).hasSizeGreaterThanOrEqualTo(27);
         assertThat(repository.tools()).hasSizeGreaterThanOrEqualTo(11);
+        assertThat(repository.combatEquipment()).hasSize(110);
         assertThat(repository.craftingRecipes()).hasSizeGreaterThanOrEqualTo(150);
         assertThat(repository.machines()).hasSizeGreaterThanOrEqualTo(80);
         assertThat(repository.shops()).hasSizeGreaterThanOrEqualTo(29);
@@ -139,6 +140,55 @@ class StardewKnowledgeRepositoryTest {
                     assertThat(animal.getBenefits()).isNotEmpty();
                     assertThat(animal.getRecommendations()).isNotEmpty();
                     assertThat(animal.getSourceUrls()).isNotEmpty();
+                });
+    }
+
+    @Test
+    void fullCombatEquipmentGuideSetIsCovered() {
+        assertThat(repository.combatEquipment()).hasSize(110);
+        assertThat(repository.combatEquipment().stream().filter(e -> "weapon".equals(e.getCategory())).count()).isEqualTo(62);
+        assertThat(repository.combatEquipment().stream().filter(e -> "ring".equals(e.getCategory())).count()).isEqualTo(30);
+        assertThat(repository.combatEquipment().stream().filter(e -> "footwear".equals(e.getCategory())).count()).isEqualTo(18);
+        assertThat(repository.combatEquipment().stream().filter(e -> "sword".equals(e.getType())).count()).isEqualTo(28);
+        assertThat(repository.combatEquipment().stream().filter(e -> "dagger".equals(e.getType())).count()).isEqualTo(16);
+        assertThat(repository.combatEquipment().stream().filter(e -> "club".equals(e.getType())).count()).isEqualTo(16);
+        assertThat(repository.combatEquipment().stream().filter(e -> "slingshot".equals(e.getType())).count()).isEqualTo(2);
+
+        assertThat(repository.findCombatEquipment("银河剑怎么获得").orElseThrow().getId()).isEqualTo("galaxy_sword");
+        assertThat(repository.findCombatEquipment("黑曜石之刃在哪拿").orElseThrow().getId()).isEqualTo("obsidian_edge");
+        assertThat(repository.findCombatEquipment("窃贼戒指怎么拿").orElseThrow().getId()).isEqualTo("burglars_ring");
+        assertThat(repository.findCombatEquipment("铱环效果").orElseThrow().getId()).isEqualTo("iridium_band");
+        assertThat(repository.findCombatEquipment("太空之靴怎么获得").orElseThrow().getId()).isEqualTo("space_boots");
+        assertThat(repository.findCombatEquipment("灰烬小丑鞋属性").orElseThrow().getId()).isEqualTo("cinderclown_shoes");
+    }
+
+    @Test
+    void allCombatEquipmentHaveCoreFieldsAndSources() {
+        assertThat(repository.combatEquipment())
+                .hasSize(110)
+                .allSatisfy(equipment -> {
+                    assertThat(equipment.getId()).isNotBlank();
+                    assertThat(equipment.getName()).isNotBlank();
+                    assertThat(equipment.getNameEn()).isNotBlank();
+                    assertThat(equipment.getAliases()).isNotEmpty();
+                    assertThat(equipment.getCategory()).isIn("weapon", "ring", "footwear");
+                    assertThat(equipment.getType()).isNotBlank();
+                    assertThat(equipment.getTypeName()).isNotBlank();
+                    assertThat(equipment.getSourceUrls()).isNotEmpty();
+                    if ("weapon".equals(equipment.getCategory())) {
+                        assertThat(equipment.getDamage()).isNotBlank();
+                        assertThat(equipment.getSource()).isNotBlank();
+                        assertThat(equipment.getSourceUrls()).contains("https://stardewvalleywiki.com/Weapons");
+                    }
+                    if ("ring".equals(equipment.getCategory())) {
+                        assertThat(equipment.getEffect() + equipment.getSource()).isNotBlank();
+                        assertThat(equipment.getSourceUrls()).contains("https://stardewvalleywiki.com/Rings");
+                    }
+                    if ("footwear".equals(equipment.getCategory())) {
+                        assertThat(equipment.getStats()).isNotBlank();
+                        assertThat(equipment.getSource()).isNotBlank();
+                        assertThat(equipment.getSourceUrls()).contains("https://stardewvalleywiki.com/Footwear");
+                    }
                 });
     }
 

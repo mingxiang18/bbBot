@@ -7826,6 +7826,3797 @@
       ]
     }
   ],
+  "combatEquipment": [
+    {
+      "id": "rusty_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "生锈的剑",
+      "nameEn": "Rusty Sword",
+      "aliases": [
+        "生锈的剑",
+        "Rusty Sword",
+        "生锈的剑怎么获得",
+        "生锈的剑哪里拿",
+        "生锈的剑在哪拿",
+        "生锈的剑属性",
+        "生锈的剑武器",
+        "生锈的剑好用吗",
+        "剑类武器"
+      ],
+      "level": "1",
+      "description": "一把又锈又旧的钝剑。",
+      "damage": "2-5",
+      "criticalChance": "0.02",
+      "stats": "",
+      "effect": "",
+      "source": "矿井入口",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "第一把过渡武器，拿到矿井 20/40/90 层奖励或探险家公会武器后就可替换。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "steel_smallsword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "钢制轻剑",
+      "nameEn": "Steel Smallsword",
+      "aliases": [
+        "钢制轻剑",
+        "Steel Smallsword",
+        "钢制轻剑怎么获得",
+        "钢制轻剑哪里拿",
+        "钢制轻剑在哪拿",
+        "钢制轻剑属性",
+        "钢制轻剑武器",
+        "钢制轻剑好用吗",
+        "剑类武器"
+      ],
+      "level": "1",
+      "description": "一把标准的金属刀。",
+      "damage": "4-8",
+      "criticalChance": "0.02",
+      "stats": "速度（+2）",
+      "effect": "",
+      "source": "矿井20层宝箱奖励",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "wooden_blade",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "木剑",
+      "nameEn": "Wooden Blade",
+      "aliases": [
+        "木剑",
+        "Wooden Blade",
+        "木剑怎么获得",
+        "木剑哪里拿",
+        "木剑在哪拿",
+        "木剑属性",
+        "木剑武器",
+        "木剑好用吗",
+        "剑类武器"
+      ],
+      "level": "1",
+      "description": "对于一块木雕来说不错了。",
+      "damage": "3-7",
+      "criticalChance": "0.02",
+      "stats": "",
+      "effect": "",
+      "source": "矿井10层宝箱奖励（仅随机矿井宝箱模式）；探险家公会",
+      "ingredients": "",
+      "purchasePrice": "250",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "pirates_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "海盗剑",
+      "nameEn": "Pirate's Sword",
+      "aliases": [
+        "海盗剑",
+        "Pirate's Sword",
+        "海盗剑怎么获得",
+        "海盗剑哪里拿",
+        "海盗剑在哪拿",
+        "海盗剑属性",
+        "海盗剑武器",
+        "海盗剑好用吗",
+        "剑类武器"
+      ],
+      "level": "2",
+      "description": "看上去曾经是一位海盗的武器。",
+      "damage": "8-14",
+      "criticalChance": "0.02",
+      "stats": "速度（+2）",
+      "effect": "",
+      "source": "矿井50层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井30层后）",
+      "ingredients": "",
+      "purchasePrice": "850",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "silver_saber",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "镀银军刀",
+      "nameEn": "Silver Saber",
+      "aliases": [
+        "镀银军刀",
+        "Silver Saber",
+        "镀银军刀怎么获得",
+        "镀银军刀哪里拿",
+        "镀银军刀在哪拿",
+        "镀银军刀属性",
+        "镀银军刀武器",
+        "镀银军刀好用吗",
+        "剑类武器"
+      ],
+      "level": "2",
+      "description": "镀银以防锈。",
+      "damage": "8-15",
+      "criticalChance": "0.02",
+      "stats": "防御（+1）",
+      "effect": "",
+      "source": "矿井50层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井20层后）",
+      "ingredients": "",
+      "purchasePrice": "750",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "cutlass",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "弯刀",
+      "nameEn": "Cutlass",
+      "aliases": [
+        "弯刀",
+        "Cutlass",
+        "弯刀怎么获得",
+        "弯刀哪里拿",
+        "弯刀在哪拿",
+        "弯刀属性",
+        "弯刀武器",
+        "弯刀好用吗",
+        "剑类武器"
+      ],
+      "level": "3",
+      "description": "质量上乘的刀刃。",
+      "damage": "9-17",
+      "criticalChance": "0.02",
+      "stats": "速度（+2）",
+      "effect": "",
+      "source": "矿井60层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井25层后）",
+      "ingredients": "",
+      "purchasePrice": "1,500",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "forest_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "森林剑",
+      "nameEn": "Forest Sword",
+      "aliases": [
+        "森林剑",
+        "Forest Sword",
+        "森林剑怎么获得",
+        "森林剑哪里拿",
+        "森林剑在哪拿",
+        "森林剑属性",
+        "森林剑武器",
+        "森林剑好用吗",
+        "剑类武器"
+      ],
+      "level": "3",
+      "description": "由森林魔法打造的强力之剑。",
+      "damage": "8-18",
+      "criticalChance": "0.02",
+      "stats": "速度（+2） 防御（+1）",
+      "effect": "",
+      "source": "矿井（20-60层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "iron_edge",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "铁刃",
+      "nameEn": "Iron Edge",
+      "aliases": [
+        "铁刃",
+        "Iron Edge",
+        "铁刃怎么获得",
+        "铁刃哪里拿",
+        "铁刃在哪拿",
+        "铁刃属性",
+        "铁刃武器",
+        "铁刃好用吗",
+        "剑类武器"
+      ],
+      "level": "3",
+      "description": "很重的阔剑。",
+      "damage": "12-25",
+      "criticalChance": "0.02",
+      "stats": "速度（−2） 防御（+1） 重量（+3）",
+      "effect": "",
+      "source": "矿井60层宝箱奖励（仅随机矿井宝箱模式）；矿井（41-59层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "insect_head",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "骨剑",
+      "nameEn": "Insect Head",
+      "aliases": [
+        "骨剑",
+        "Insect Head",
+        "骨剑怎么获得",
+        "骨剑哪里拿",
+        "骨剑在哪拿",
+        "骨剑属性",
+        "骨剑武器",
+        "骨剑好用吗",
+        "剑类武器"
+      ],
+      "level": "5",
+      "description": "磨尖的骨头打造的轻剑。",
+      "damage": "20-30",
+      "criticalChance": "0.02",
+      "stats": "速度（+4） 重量（+2）",
+      "effect": "",
+      "source": "矿井90层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井75层后）；骷髅掉落",
+      "ingredients": "",
+      "purchasePrice": "6,000",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "bone_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "双刃大剑",
+      "nameEn": "Bone Sword",
+      "aliases": [
+        "双刃大剑",
+        "Bone Sword",
+        "双刃大剑怎么获得",
+        "双刃大剑哪里拿",
+        "双刃大剑在哪拿",
+        "双刃大剑属性",
+        "双刃大剑武器",
+        "双刃大剑好用吗",
+        "剑类武器"
+      ],
+      "level": "5",
+      "description": "非常沉重。",
+      "damage": "20-32",
+      "criticalChance": "0.02",
+      "stats": "速度（−4） 防御（+2） 重量（+3）",
+      "effect": "",
+      "source": "矿井80层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井45层后）",
+      "ingredients": "",
+      "purchasePrice": "2,000",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "claymore",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "海王星大剑",
+      "nameEn": "Claymore",
+      "aliases": [
+        "海王星大剑",
+        "Claymore",
+        "海王星大剑怎么获得",
+        "海王星大剑哪里拿",
+        "海王星大剑在哪拿",
+        "海王星大剑属性",
+        "海王星大剑武器",
+        "海王星大剑好用吗",
+        "剑类武器"
+      ],
+      "level": "5",
+      "description": "来自宝石海的传家宝。",
+      "damage": "18-35",
+      "criticalChance": "0.02",
+      "stats": "速度（−1） 防御（+2） 重量（+4）",
+      "effect": "",
+      "source": "钓鱼宝箱（钓鱼等级2+）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "neptunes_glaive",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "圣堂之刃",
+      "nameEn": "Neptune's Glaive",
+      "aliases": [
+        "圣堂之刃",
+        "Neptune's Glaive",
+        "圣堂之刃怎么获得",
+        "圣堂之刃哪里拿",
+        "圣堂之刃在哪拿",
+        "圣堂之刃属性",
+        "圣堂之刃武器",
+        "圣堂之刃好用吗",
+        "剑类武器"
+      ],
+      "level": "5",
+      "description": "曾属于一位高尚的圣殿骑士。",
+      "damage": "22-29",
+      "criticalChance": "0",
+      "stats": "防御（+1）",
+      "effect": "",
+      "source": "矿井80层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井55层后）",
+      "ingredients": "",
+      "purchasePrice": "4,000",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "templars_blade",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "昆虫头部",
+      "nameEn": "Templar's Blade",
+      "aliases": [
+        "昆虫头部",
+        "Templar's Blade",
+        "昆虫头部怎么获得",
+        "昆虫头部哪里拿",
+        "昆虫头部在哪拿",
+        "昆虫头部属性",
+        "昆虫头部武器",
+        "昆虫头部好用吗",
+        "剑类武器"
+      ],
+      "level": "6",
+      "description": "挥起来很不舒服。",
+      "damage": "20-30",
+      "criticalChance": "0.04",
+      "stats": "速度（+2） 暴击率（+2）",
+      "effect": "",
+      "source": "探险家公会击杀80只臭虫奖励",
+      "ingredients": "",
+      "purchasePrice": "10,000",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "obsidian_edge",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "黑曜石之刃",
+      "nameEn": "Obsidian Edge",
+      "aliases": [
+        "黑曜石之刃",
+        "Obsidian Edge",
+        "黑曜石之刃怎么获得",
+        "黑曜石之刃哪里拿",
+        "黑曜石之刃在哪拿",
+        "黑曜石之刃属性",
+        "黑曜石之刃武器",
+        "黑曜石之刃好用吗",
+        "剑类武器"
+      ],
+      "level": "6",
+      "description": "这东西锋利无比。",
+      "damage": "30-45",
+      "criticalChance": "0.02",
+      "stats": "速度（−1） 暴击力量（+10）",
+      "effect": "",
+      "source": "矿井90层宝箱奖励",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "300",
+      "recommendation": "矿井 90 层固定宝箱奖励，足够用到矿井底和早期骷髅洞穴。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "ossified_blade",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "骨化剑",
+      "nameEn": "Ossified Blade",
+      "aliases": [
+        "骨化剑",
+        "Ossified Blade",
+        "骨化剑怎么获得",
+        "骨化剑哪里拿",
+        "骨化剑在哪拿",
+        "骨化剑属性",
+        "骨化剑武器",
+        "骨化剑好用吗",
+        "剑类武器"
+      ],
+      "level": "6",
+      "description": "由骨头形成的巨大而锋利的剑刃。",
+      "damage": "26-42",
+      "criticalChance": "0.02",
+      "stats": "速度（−2） 防御（+1） 重量（+2）",
+      "effect": "",
+      "source": "矿井90层宝箱奖励（仅随机矿井宝箱模式）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "holy_blade",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "圣剑",
+      "nameEn": "Holy Blade",
+      "aliases": [
+        "圣剑",
+        "Holy Blade",
+        "圣剑怎么获得",
+        "圣剑哪里拿",
+        "圣剑在哪拿",
+        "圣剑属性",
+        "圣剑武器",
+        "圣剑好用吗",
+        "剑类武器"
+      ],
+      "level": "7",
+      "description": "握在手里，充满正能量。",
+      "damage": "20-27",
+      "criticalChance": "0.02",
+      "stats": "速度（+4） 防御（+2） 十字军",
+      "effect": "",
+      "source": "矿井80层以上",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "tempered_broadsword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "淬火阔剑",
+      "nameEn": "Tempered Broadsword",
+      "aliases": [
+        "淬火阔剑",
+        "Tempered Broadsword",
+        "淬火阔剑怎么获得",
+        "淬火阔剑哪里拿",
+        "淬火阔剑在哪拿",
+        "淬火阔剑属性",
+        "淬火阔剑武器",
+        "淬火阔剑好用吗",
+        "剑类武器"
+      ],
+      "level": "7",
+      "description": "看上去能够抵挡任何东西。",
+      "damage": "29-44",
+      "criticalChance": "0.02",
+      "stats": "速度（−3） 防御（+3） 重量（+3）",
+      "effect": "",
+      "source": "矿井90层宝箱奖励（仅随机矿井宝箱模式）；矿井（81-99层）；骷髅洞穴",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "yeti_tooth",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "雪怪之牙",
+      "nameEn": "Yeti Tooth",
+      "aliases": [
+        "雪怪之牙",
+        "Yeti Tooth",
+        "雪怪之牙怎么获得",
+        "雪怪之牙哪里拿",
+        "雪怪之牙在哪拿",
+        "雪怪之牙属性",
+        "雪怪之牙武器",
+        "雪怪之牙好用吗",
+        "剑类武器"
+      ],
+      "level": "7",
+      "description": "寒冷冻人。",
+      "damage": "26-42",
+      "criticalChance": "0.02",
+      "stats": "防御（+4） 暴击力量（+10）",
+      "effect": "",
+      "source": "矿井（81-99层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "steel_falchion",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "钢刀",
+      "nameEn": "Steel Falchion",
+      "aliases": [
+        "钢刀",
+        "Steel Falchion",
+        "钢刀怎么获得",
+        "钢刀哪里拿",
+        "钢刀在哪拿",
+        "钢刀属性",
+        "钢刀武器",
+        "钢刀好用吗",
+        "剑类武器"
+      ],
+      "level": "8",
+      "description": "轻便，威力强大。",
+      "damage": "28-46",
+      "criticalChance": "0.02",
+      "stats": "速度（+4） 暴击力量（+20）",
+      "effect": "",
+      "source": "矿井110层宝箱奖励（仅随机矿井宝箱模式）；矿井（101层以上）；骷髅洞穴；探险家公会（到达矿井90层后）",
+      "ingredients": "",
+      "purchasePrice": "9,000",
+      "sellPrice": "400",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dark_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "黑暗剑",
+      "nameEn": "Dark Sword",
+      "aliases": [
+        "黑暗剑",
+        "Dark Sword",
+        "黑暗剑怎么获得",
+        "黑暗剑哪里拿",
+        "黑暗剑在哪拿",
+        "黑暗剑属性",
+        "黑暗剑武器",
+        "黑暗剑好用吗",
+        "剑类武器"
+      ],
+      "level": "9",
+      "description": "散发着神秘的能量。",
+      "damage": "30-45",
+      "criticalChance": "0.04",
+      "stats": "速度（-5） 重量（+5） 暴击率（+2）吸血附魔",
+      "effect": "",
+      "source": "幽灵头骨掉落",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "450",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "lava_katana",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "熔岩武士刀",
+      "nameEn": "Lava Katana",
+      "aliases": [
+        "熔岩武士刀",
+        "Lava Katana",
+        "熔岩武士刀怎么获得",
+        "熔岩武士刀哪里拿",
+        "熔岩武士刀在哪拿",
+        "熔岩武士刀属性",
+        "熔岩武士刀武器",
+        "熔岩武士刀好用吗",
+        "剑类武器"
+      ],
+      "level": "10",
+      "description": "用火山熔岩打造的强大刀刃。",
+      "damage": "55-64",
+      "criticalChance": "0.015",
+      "stats": "防御（+3） 暴击力量（+25） 重量（+3）",
+      "effect": "",
+      "source": "探险家公会(到达矿井120层后)",
+      "ingredients": "",
+      "purchasePrice": "25,000",
+      "sellPrice": "500",
+      "recommendation": "矿井到底后可买，拿到银河剑前非常稳。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dragontooth_cutlass",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "龙牙弯刀",
+      "nameEn": "Dragontooth Cutlass",
+      "aliases": [
+        "龙牙弯刀",
+        "Dragontooth Cutlass",
+        "龙牙弯刀怎么获得",
+        "龙牙弯刀哪里拿",
+        "龙牙弯刀在哪拿",
+        "龙牙弯刀属性",
+        "龙牙弯刀武器",
+        "龙牙弯刀好用吗",
+        "剑类武器"
+      ],
+      "level": "13",
+      "description": "这把刀是用一颗充满魔力的牙齿锻造而成的。",
+      "damage": "75-90",
+      "criticalChance": "0.02",
+      "stats": "暴击力量（+50）",
+      "effect": "",
+      "source": "火山地牢稀有宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "650",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dwarf_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "矮人剑",
+      "nameEn": "Dwarf Sword",
+      "aliases": [
+        "矮人剑",
+        "Dwarf Sword",
+        "矮人剑怎么获得",
+        "矮人剑哪里拿",
+        "矮人剑在哪拿",
+        "矮人剑属性",
+        "矮人剑武器",
+        "矮人剑好用吗",
+        "剑类武器"
+      ],
+      "level": "13",
+      "description": "很古老，但剑锋未曾变钝。",
+      "damage": "65-75",
+      "criticalChance": "0.02",
+      "stats": "速度（+2） 防御（+4）",
+      "effect": "",
+      "source": "火山地牢普通宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "650",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "galaxy_sword",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "银河剑",
+      "nameEn": "Galaxy Sword",
+      "aliases": [
+        "银河剑",
+        "Galaxy Sword",
+        "银河剑怎么获得",
+        "银河剑哪里拿",
+        "银河剑在哪拿",
+        "银河剑属性",
+        "银河剑武器",
+        "银河剑好用吗",
+        "银河武器",
+        "剑类武器",
+        "银河之剑"
+      ],
+      "level": "13",
+      "description": "谁与争锋。",
+      "damage": "60-80",
+      "criticalChance": "0.02",
+      "stats": "速度（+4）",
+      "effect": "",
+      "source": "沙漠（拿着五彩碎片走到三根柱子中心）",
+      "ingredients": "",
+      "purchasePrice": "50,000",
+      "sellPrice": "650",
+      "recommendation": "五彩碎片到手后优先获取，是后期进入锻造和无限武器路线的核心。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "infinity_blade",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "无限之刃",
+      "nameEn": "Infinity Blade",
+      "aliases": [
+        "无限之刃",
+        "Infinity Blade",
+        "无限之刃怎么获得",
+        "无限之刃哪里拿",
+        "无限之刃在哪拿",
+        "无限之刃属性",
+        "无限之刃武器",
+        "无限之刃好用吗",
+        "剑类武器",
+        "无限剑"
+      ],
+      "level": "17",
+      "description": "银河剑的真实形态。",
+      "damage": "80-100",
+      "criticalChance": "0.02",
+      "stats": "速度（+4） 防御（+2）",
+      "effect": "",
+      "source": "由 银河剑与 银河之魂（3）结合并花费 火山晶石（60）锻造而成",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "850",
+      "recommendation": "银河剑后期终点，适合常规剑流。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "haleys_iron",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "海莉的烫发棒",
+      "nameEn": "Haley's Iron",
+      "aliases": [
+        "海莉的烫发棒",
+        "Haley's Iron",
+        "海莉的烫发棒怎么获得",
+        "海莉的烫发棒哪里拿",
+        "海莉的烫发棒在哪拿",
+        "海莉的烫发棒属性",
+        "海莉的烫发棒武器",
+        "海莉的烫发棒好用吗",
+        "剑类武器"
+      ],
+      "level": "6",
+      "description": "非常烫手，散发着跟海莉的头发一样的味道。",
+      "damage": "30-45",
+      "criticalChance": "0.02",
+      "stats": "速度（-1） 暴击力量（+10）",
+      "effect": "",
+      "source": "海莉（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70卡利科三花蛋",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "leahs_whittler",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "莉亚的削木刀",
+      "nameEn": "Leah's Whittler",
+      "aliases": [
+        "莉亚的削木刀",
+        "Leah's Whittler",
+        "莉亚的削木刀怎么获得",
+        "莉亚的削木刀哪里拿",
+        "莉亚的削木刀在哪拿",
+        "莉亚的削木刀属性",
+        "莉亚的削木刀武器",
+        "莉亚的削木刀好用吗",
+        "剑类武器"
+      ],
+      "level": "6",
+      "description": "莉亚用来削木的最爱工具。",
+      "damage": "30-45",
+      "criticalChance": "0.02",
+      "stats": "速度（-1） 暴击力量（+10）",
+      "effect": "",
+      "source": "莉亚（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70卡利科三花蛋",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "meowmere",
+      "category": "weapon",
+      "type": "sword",
+      "typeName": "剑",
+      "name": "彩虹猫之刃",
+      "nameEn": "Meowmere",
+      "aliases": [
+        "彩虹猫之刃",
+        "Meowmere",
+        "彩虹猫之刃怎么获得",
+        "彩虹猫之刃哪里拿",
+        "彩虹猫之刃在哪拿",
+        "彩虹猫之刃属性",
+        "彩虹猫之刃武器",
+        "彩虹猫之刃好用吗",
+        "剑类武器"
+      ],
+      "level": "4",
+      "description": "来自异界的罕见武器……",
+      "damage": "20-20",
+      "criticalChance": "0.02",
+      "stats": "速度（+4） 重量（+2）",
+      "effect": "",
+      "source": "将异界晶石放置在法师塔地下室的晶塔底座获得",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "carving_knife",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "刻刀",
+      "nameEn": "Carving Knife",
+      "aliases": [
+        "刻刀",
+        "Carving Knife",
+        "刻刀怎么获得",
+        "刻刀哪里拿",
+        "刻刀在哪拿",
+        "刻刀属性",
+        "刻刀武器",
+        "刻刀好用吗",
+        "匕首武器"
+      ],
+      "level": "1",
+      "description": "很轻的小刀。",
+      "damage": "1-3",
+      "criticalChance": "0.04",
+      "stats": "暴击率（+2）",
+      "effect": "",
+      "source": "矿井（1-19层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "iron_dirk",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "铁制短剑",
+      "nameEn": "Iron Dirk",
+      "aliases": [
+        "铁制短剑",
+        "Iron Dirk",
+        "铁制短剑怎么获得",
+        "铁制短剑哪里拿",
+        "铁制短剑在哪拿",
+        "铁制短剑属性",
+        "铁制短剑武器",
+        "铁制短剑好用吗",
+        "匕首武器"
+      ],
+      "level": "1",
+      "description": "一把普通的匕首。",
+      "damage": "2-4",
+      "criticalChance": "0.03",
+      "stats": "暴击率（+2）",
+      "effect": "",
+      "source": "矿井10层宝箱奖励（仅随机矿井宝箱模式）；探险家公会（到达矿井15层后）",
+      "ingredients": "",
+      "purchasePrice": "500",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "wind_spire",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "疾风利剑",
+      "nameEn": "Wind Spire",
+      "aliases": [
+        "疾风利剑",
+        "Wind Spire",
+        "疾风利剑怎么获得",
+        "疾风利剑哪里拿",
+        "疾风利剑在哪拿",
+        "疾风利剑属性",
+        "疾风利剑武器",
+        "疾风利剑好用吗",
+        "匕首武器"
+      ],
+      "level": "1",
+      "description": "轻便的小刀。",
+      "damage": "1-5",
+      "criticalChance": "0.02",
+      "stats": "暴击率（+1） 暴击力量（+10） 重量（+5）",
+      "effect": "",
+      "source": "矿井10层宝箱奖励（仅随机矿井宝箱模式）；矿井（21-39层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "elf_blade",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "精灵之刃",
+      "nameEn": "Elf Blade",
+      "aliases": [
+        "精灵之刃",
+        "Elf Blade",
+        "精灵之刃怎么获得",
+        "精灵之刃哪里拿",
+        "精灵之刃在哪拿",
+        "精灵之刃属性",
+        "精灵之刃武器",
+        "精灵之刃好用吗",
+        "匕首武器"
+      ],
+      "level": "2",
+      "description": "唯有精灵的巧手才能打造出这件物品。",
+      "damage": "3-5",
+      "criticalChance": "0.04",
+      "stats": "暴击率（+2）",
+      "effect": "",
+      "source": "矿井20层宝箱奖励（仅随机矿井宝箱模式）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "burglars_shank",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "飞贼之胫",
+      "nameEn": "Burglar's Shank",
+      "aliases": [
+        "飞贼之胫",
+        "Burglar's Shank",
+        "飞贼之胫怎么获得",
+        "飞贼之胫哪里拿",
+        "飞贼之胫在哪拿",
+        "飞贼之胫属性",
+        "飞贼之胫武器",
+        "飞贼之胫好用吗",
+        "匕首武器"
+      ],
+      "level": "4",
+      "description": "身手敏捷、行动隐秘的人首选之武器。",
+      "damage": "7-12",
+      "criticalChance": "0.04",
+      "stats": "暴击率（+2） 暴击力量（+25）",
+      "effect": "",
+      "source": "矿井60层宝箱奖励（仅随机矿井宝箱模式）；矿井（81层以上）；骷髅洞穴",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "crystal_dagger",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "水晶匕首",
+      "nameEn": "Crystal Dagger",
+      "aliases": [
+        "水晶匕首",
+        "Crystal Dagger",
+        "水晶匕首怎么获得",
+        "水晶匕首哪里拿",
+        "水晶匕首在哪拿",
+        "水晶匕首属性",
+        "水晶匕首武器",
+        "水晶匕首好用吗",
+        "匕首武器"
+      ],
+      "level": "4",
+      "description": "此刀由纯石英打造。",
+      "damage": "4-10",
+      "criticalChance": "0.03",
+      "stats": "暴击率（+2） 暴击力量（+50） 重量（+5）",
+      "effect": "",
+      "source": "矿井60层宝箱奖励",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "shadow_dagger",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "暗影匕首",
+      "nameEn": "Shadow Dagger",
+      "aliases": [
+        "暗影匕首",
+        "Shadow Dagger",
+        "暗影匕首怎么获得",
+        "暗影匕首哪里拿",
+        "暗影匕首在哪拿",
+        "暗影匕首属性",
+        "暗影匕首武器",
+        "暗影匕首好用吗",
+        "匕首武器"
+      ],
+      "level": "4",
+      "description": "把刀放到耳旁，能听见千百条灵魂的哀嚎。",
+      "damage": "10-20",
+      "criticalChance": "0.04",
+      "stats": "暴击率（+2）",
+      "effect": "",
+      "source": "矿井80层宝箱奖励（仅随机矿井宝箱模式）；矿井（61-79层，101-119层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "broken_trident",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "残破的三叉戟",
+      "nameEn": "Broken Trident",
+      "aliases": [
+        "残破的三叉戟",
+        "Broken Trident",
+        "残破的三叉戟怎么获得",
+        "残破的三叉戟哪里拿",
+        "残破的三叉戟在哪拿",
+        "残破的三叉戟属性",
+        "残破的三叉戟武器",
+        "残破的三叉戟好用吗",
+        "匕首武器"
+      ],
+      "level": "5",
+      "description": "来自海洋，依然尖锐。",
+      "damage": "15-26",
+      "criticalChance": "0.02",
+      "stats": "暴击率（+1）",
+      "effect": "",
+      "source": "钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "wicked_kris",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "蛇形邪剑",
+      "nameEn": "Wicked Kris",
+      "aliases": [
+        "蛇形邪剑",
+        "Wicked Kris",
+        "蛇形邪剑怎么获得",
+        "蛇形邪剑哪里拿",
+        "蛇形邪剑在哪拿",
+        "蛇形邪剑属性",
+        "蛇形邪剑武器",
+        "蛇形邪剑好用吗",
+        "匕首武器"
+      ],
+      "level": "8",
+      "description": "使用铱合金打造的刀刃。",
+      "damage": "24-30",
+      "criticalChance": "0.06",
+      "stats": "暴击率（+4）",
+      "effect": "",
+      "source": "矿井90层宝箱奖励（仅随机矿井宝箱模式）；骷髅洞穴",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "400",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "galaxy_dagger",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "银河匕首",
+      "nameEn": "Galaxy Dagger",
+      "aliases": [
+        "银河匕首",
+        "Galaxy Dagger",
+        "银河匕首怎么获得",
+        "银河匕首哪里拿",
+        "银河匕首在哪拿",
+        "银河匕首属性",
+        "银河匕首武器",
+        "银河匕首好用吗",
+        "银河武器",
+        "匕首武器",
+        "银河短剑"
+      ],
+      "level": "8",
+      "description": "你闻所未闻。",
+      "damage": "30-40",
+      "criticalChance": "0.02",
+      "stats": "速度（+1） 暴击率（+1） 重量（+5）",
+      "effect": "",
+      "source": "探险家公会（已获得银河剑)",
+      "ingredients": "",
+      "purchasePrice": "35,000",
+      "sellPrice": "400",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dwarf_dagger",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "矮人匕首",
+      "nameEn": "Dwarf Dagger",
+      "aliases": [
+        "矮人匕首",
+        "Dwarf Dagger",
+        "矮人匕首怎么获得",
+        "矮人匕首哪里拿",
+        "矮人匕首在哪拿",
+        "矮人匕首属性",
+        "矮人匕首武器",
+        "矮人匕首好用吗",
+        "匕首武器"
+      ],
+      "level": "11",
+      "description": "它很古老，但刃锋未曾变钝。",
+      "damage": "32-38",
+      "criticalChance": "0.03",
+      "stats": "速度（+1） 防御（+6） 暴击率（+2） 重量（+5）",
+      "effect": "",
+      "source": "火山地牢普通宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "550",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dragontooth_shiv",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "龙牙小刀",
+      "nameEn": "Dragontooth Shiv",
+      "aliases": [
+        "龙牙小刀",
+        "Dragontooth Shiv",
+        "龙牙小刀怎么获得",
+        "龙牙小刀哪里拿",
+        "龙牙小刀在哪拿",
+        "龙牙小刀属性",
+        "龙牙小刀武器",
+        "龙牙小刀好用吗",
+        "匕首武器"
+      ],
+      "level": "12",
+      "description": "这把刀是用一颗充满魔力的牙齿锻造而成的。",
+      "damage": "40-50",
+      "criticalChance": "0.05",
+      "stats": "暴击率（+3） 暴击力量（+100） 重量（+5）",
+      "effect": "",
+      "source": "火山地牢稀有宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "600",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "iridium_needle",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "铱针",
+      "nameEn": "Iridium Needle",
+      "aliases": [
+        "铱针",
+        "Iridium Needle",
+        "铱针怎么获得",
+        "铱针哪里拿",
+        "铱针在哪拿",
+        "铱针属性",
+        "铱针武器",
+        "铱针好用吗",
+        "匕首武器"
+      ],
+      "level": "12",
+      "description": "其尖锐超出想象，甚至微观到原子层面也是无比尖锐。",
+      "damage": "20-35",
+      "criticalChance": "0.10",
+      "stats": "暴击率（+6） 暴击力量（+200）",
+      "effect": "",
+      "source": "当挑战之神庙激活时，有14%的机会由特殊史莱姆中掉落。",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "600",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "infinity_dagger",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "无限匕首",
+      "nameEn": "Infinity Dagger",
+      "aliases": [
+        "无限匕首",
+        "Infinity Dagger",
+        "无限匕首怎么获得",
+        "无限匕首哪里拿",
+        "无限匕首在哪拿",
+        "无限匕首属性",
+        "无限匕首武器",
+        "无限匕首好用吗",
+        "匕首武器",
+        "无限短剑"
+      ],
+      "level": "16",
+      "description": "银河匕首的真实形态。",
+      "damage": "50-70",
+      "criticalChance": "0.06",
+      "stats": "速度（+1） 防御（+3） 暴击率（+4） 重量（+5）",
+      "effect": "",
+      "source": "由 银河匕首与 银河之魂（3）结合并花费 火山晶石（60）锻造而成",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "800",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "elliotts_pencil",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "艾利欧特的铅笔",
+      "nameEn": "Elliott's Pencil",
+      "aliases": [
+        "艾利欧特的铅笔",
+        "Elliott's Pencil",
+        "艾利欧特的铅笔怎么获得",
+        "艾利欧特的铅笔哪里拿",
+        "艾利欧特的铅笔在哪拿",
+        "艾利欧特的铅笔属性",
+        "艾利欧特的铅笔武器",
+        "艾利欧特的铅笔好用吗",
+        "匕首武器"
+      ],
+      "level": "8",
+      "description": "艾利欧特用它来写书。非常尖锐！",
+      "damage": "24-30",
+      "criticalChance": "0.06",
+      "stats": "暴击率（+4）",
+      "effect": "",
+      "source": "艾利欧特（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "abbys_planchette",
+      "category": "weapon",
+      "type": "dagger",
+      "typeName": "匕首",
+      "name": "阿比盖尔的占卜写板",
+      "nameEn": "Abby's Planchette",
+      "aliases": [
+        "阿比盖尔的占卜写板",
+        "Abby's Planchette",
+        "阿比盖尔的占卜写板怎么获得",
+        "阿比盖尔的占卜写板哪里拿",
+        "阿比盖尔的占卜写板在哪拿",
+        "阿比盖尔的占卜写板属性",
+        "阿比盖尔的占卜写板武器",
+        "阿比盖尔的占卜写板好用吗",
+        "匕首武器"
+      ],
+      "level": "8",
+      "description": "用大理石木打造而成。",
+      "damage": "24-30",
+      "criticalChance": "0.06",
+      "stats": "暴击率（+4）",
+      "effect": "",
+      "source": "阿比盖尔（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "femur",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "股骨",
+      "nameEn": "Femur",
+      "aliases": [
+        "股骨",
+        "Femur",
+        "股骨怎么获得",
+        "股骨哪里拿",
+        "股骨在哪拿",
+        "股骨属性",
+        "股骨武器",
+        "股骨好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "2",
+      "description": "一根古老沉重的骨头，覆盖着数个世纪的尘垢。",
+      "damage": "6-11",
+      "criticalChance": "0.02",
+      "stats": "速度（+2）",
+      "effect": "",
+      "source": "矿井10层宝箱奖励（仅随机矿井宝箱模式）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "wood_club",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "木棒",
+      "nameEn": "Wood Club",
+      "aliases": [
+        "木棒",
+        "Wood Club",
+        "木棒怎么获得",
+        "木棒哪里拿",
+        "木棒在哪拿",
+        "木棒属性",
+        "木棒武器",
+        "木棒好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "2",
+      "description": "沉重的木，粗糙地打造成棍子的型状。",
+      "damage": "9-16",
+      "criticalChance": "0.02",
+      "stats": "",
+      "effect": "",
+      "source": "矿井20层宝箱奖励（仅随机矿井宝箱模式）；矿井（1-39层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "wood_mallet",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "木锤",
+      "nameEn": "Wood Mallet",
+      "aliases": [
+        "木锤",
+        "Wood Mallet",
+        "木锤怎么获得",
+        "木锤哪里拿",
+        "木锤在哪拿",
+        "木锤属性",
+        "木锤武器",
+        "木锤好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "3",
+      "description": "坚固的头部威力强大。对于一把棍棒来说，重量有点轻。",
+      "damage": "15-24",
+      "criticalChance": "0.02",
+      "stats": "速度（+2） 重量（+2）",
+      "effect": "",
+      "source": "矿井60层宝箱奖励（仅随机矿井宝箱模式）；矿井（41-79层）；探险家公会（到达矿井40层后）",
+      "ingredients": "",
+      "purchasePrice": "2,000",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "lead_rod",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "铅棒",
+      "nameEn": "Lead Rod",
+      "aliases": [
+        "铅棒",
+        "Lead Rod",
+        "铅棒怎么获得",
+        "铅棒哪里拿",
+        "铅棒在哪拿",
+        "铅棒属性",
+        "铅棒武器",
+        "铅棒好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "4",
+      "description": "异常的沉。",
+      "damage": "18-27",
+      "criticalChance": "0.02",
+      "stats": "速度（−4）",
+      "effect": "",
+      "source": "矿井（41-79层）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "kudgel",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "长柄锤",
+      "nameEn": "Kudgel",
+      "aliases": [
+        "长柄锤",
+        "Kudgel",
+        "长柄锤怎么获得",
+        "长柄锤哪里拿",
+        "长柄锤在哪拿",
+        "长柄锤属性",
+        "长柄锤武器",
+        "长柄锤好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "5",
+      "description": "野蛮人的最佳伙伴。",
+      "damage": "27-40",
+      "criticalChance": "0.02",
+      "stats": "速度（−1） 暴击力量（+50） 重量（+2）",
+      "effect": "",
+      "source": "矿井80层宝箱奖励（仅随机矿井宝箱模式）；矿井（101层以上）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "250",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "the_slammer",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "巨锤",
+      "nameEn": "The Slammer",
+      "aliases": [
+        "巨锤",
+        "The Slammer",
+        "巨锤怎么获得",
+        "巨锤哪里拿",
+        "巨锤在哪拿",
+        "巨锤属性",
+        "巨锤武器",
+        "巨锤好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "超级重的锤子，能够击飞敌人。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（−2）",
+      "effect": "",
+      "source": "矿井110层宝箱奖励（仅随机矿井宝箱模式）；矿井（81-99层）；骷髅洞穴",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "galaxy_hammer",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "银河之锤",
+      "nameEn": "Galaxy Hammer",
+      "aliases": [
+        "银河之锤",
+        "Galaxy Hammer",
+        "银河之锤怎么获得",
+        "银河之锤哪里拿",
+        "银河之锤在哪拿",
+        "银河之锤属性",
+        "银河之锤武器",
+        "银河之锤好用吗",
+        "银河武器",
+        "锤类武器",
+        "棍棒武器",
+        "银河锤"
+      ],
+      "level": "12",
+      "description": "用一种你闻所未闻的超轻材料打造而成。",
+      "damage": "70-90",
+      "criticalChance": "0.02",
+      "stats": "速度（+2） 重量（+5）",
+      "effect": "",
+      "source": "探险家公会（已获得银河剑）",
+      "ingredients": "",
+      "purchasePrice": "75,000",
+      "sellPrice": "600",
+      "recommendation": "锤类爆发高，适合喜欢特殊攻击的后期打法。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dwarf_hammer",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "矮人锤",
+      "nameEn": "Dwarf Hammer",
+      "aliases": [
+        "矮人锤",
+        "Dwarf Hammer",
+        "矮人锤怎么获得",
+        "矮人锤哪里拿",
+        "矮人锤在哪拿",
+        "矮人锤属性",
+        "矮人锤武器",
+        "矮人锤好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "13",
+      "description": "它会发出微弱的嗡嗡声。",
+      "damage": "75-85",
+      "criticalChance": "0.02",
+      "stats": "防御（+2） 重量（+5）",
+      "effect": "",
+      "source": "火山地牢普通宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "650",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "dragontooth_club",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "龙牙棒",
+      "nameEn": "Dragontooth Club",
+      "aliases": [
+        "龙牙棒",
+        "Dragontooth Club",
+        "龙牙棒怎么获得",
+        "龙牙棒哪里拿",
+        "龙牙棒在哪拿",
+        "龙牙棒属性",
+        "龙牙棒武器",
+        "龙牙棒好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "14",
+      "description": "这根棍子是用一颗充满魔力的牙齿锻造而成的。",
+      "damage": "80-100",
+      "criticalChance": "0.02",
+      "stats": "暴击力量（+50） 重量（+3）",
+      "effect": "",
+      "source": "火山地牢稀有宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "700",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "infinity_gavel",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "无限之锤",
+      "nameEn": "Infinity Gavel",
+      "aliases": [
+        "无限之锤",
+        "Infinity Gavel",
+        "无限之锤怎么获得",
+        "无限之锤哪里拿",
+        "无限之锤在哪拿",
+        "无限之锤属性",
+        "无限之锤武器",
+        "无限之锤好用吗",
+        "锤类武器",
+        "棍棒武器",
+        "无限锤"
+      ],
+      "level": "17",
+      "description": "银河之锤的真实形态。",
+      "damage": "100-120",
+      "criticalChance": "0.02",
+      "stats": "速度（+2） 防御（+1） 重量（+5）",
+      "effect": "",
+      "source": "由 银河之锤与 银河之魂（3）结合并花费 火山晶石（60）锻造而成",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "850",
+      "recommendation": "锤类后期终点，成型成本高但爆发强。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "alexs_bat",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "亚历克斯的棒球棍",
+      "nameEn": "Alex's Bat",
+      "aliases": [
+        "亚历克斯的棒球棍",
+        "Alex's Bat",
+        "亚历克斯的棒球棍怎么获得",
+        "亚历克斯的棒球棍哪里拿",
+        "亚历克斯的棒球棍在哪拿",
+        "亚历克斯的棒球棍属性",
+        "亚历克斯的棒球棍武器",
+        "亚历克斯的棒球棍好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "亚历克斯赢得大满贯的棒球棍。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "亚历克斯（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "harveys_mallet",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "哈维的锤子",
+      "nameEn": "Harvey's Mallet",
+      "aliases": [
+        "哈维的锤子",
+        "Harvey's Mallet",
+        "哈维的锤子怎么获得",
+        "哈维的锤子哪里拿",
+        "哈维的锤子在哪拿",
+        "哈维的锤子属性",
+        "哈维的锤子武器",
+        "哈维的锤子好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "让人想起哈维的诊所。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "哈维（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "marus_wrench",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "玛鲁的扳手",
+      "nameEn": "Maru's Wrench",
+      "aliases": [
+        "玛鲁的扳手",
+        "Maru's Wrench",
+        "玛鲁的扳手怎么获得",
+        "玛鲁的扳手哪里拿",
+        "玛鲁的扳手在哪拿",
+        "玛鲁的扳手属性",
+        "玛鲁的扳手武器",
+        "玛鲁的扳手好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "巨大的金属扳手。闻起来很有玛鲁的味道。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "玛鲁（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "pennys_fryer",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "潘妮的煎锅",
+      "nameEn": "Penny's Fryer",
+      "aliases": [
+        "潘妮的煎锅",
+        "Penny's Fryer",
+        "潘妮的煎锅怎么获得",
+        "潘妮的煎锅哪里拿",
+        "潘妮的煎锅在哪拿",
+        "潘妮的煎锅属性",
+        "潘妮的煎锅武器",
+        "潘妮的煎锅好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "潘妮最爱的煎锅。里面凝固着一些胶状物。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "潘妮（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "sams_old_guitar",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "山姆的旧吉他",
+      "nameEn": "Sam's Old Guitar",
+      "aliases": [
+        "山姆的旧吉他",
+        "Sam's Old Guitar",
+        "山姆的旧吉他怎么获得",
+        "山姆的旧吉他哪里拿",
+        "山姆的旧吉他在哪拿",
+        "山姆的旧吉他属性",
+        "山姆的旧吉他武器",
+        "山姆的旧吉他好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "陈旧落魄。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "山姆（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "sebs_lost_mace",
+      "category": "weapon",
+      "type": "club",
+      "typeName": "棍棒",
+      "name": "塞巴斯蒂安的遗失之锤",
+      "nameEn": "Seb's Lost Mace",
+      "aliases": [
+        "塞巴斯蒂安的遗失之锤",
+        "Seb's Lost Mace",
+        "塞巴斯蒂安的遗失之锤怎么获得",
+        "塞巴斯蒂安的遗失之锤哪里拿",
+        "塞巴斯蒂安的遗失之锤在哪拿",
+        "塞巴斯蒂安的遗失之锤属性",
+        "塞巴斯蒂安的遗失之锤武器",
+        "塞巴斯蒂安的遗失之锤好用吗",
+        "锤类武器",
+        "棍棒武器"
+      ],
+      "level": "7",
+      "description": "塞巴斯蒂安的中世纪仿制品之一。",
+      "damage": "40-55",
+      "criticalChance": "0.02",
+      "stats": "速度（-2）",
+      "effect": "",
+      "source": "塞巴斯蒂安（沙漠节期间出售）",
+      "ingredients": "",
+      "purchasePrice": "70 卡利科三花蛋",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "slingshot",
+      "category": "weapon",
+      "type": "slingshot",
+      "typeName": "弹弓",
+      "name": "弹弓",
+      "nameEn": "Slingshot",
+      "aliases": [
+        "弹弓",
+        "Slingshot",
+        "弹弓怎么获得",
+        "弹弓哪里拿",
+        "弹弓在哪拿",
+        "弹弓属性",
+        "弹弓武器",
+        "弹弓好用吗"
+      ],
+      "level": "",
+      "description": "需要石子当弹药。",
+      "damage": "取决于使用的弹药",
+      "criticalChance": "0.02",
+      "stats": "",
+      "effect": "",
+      "source": "矿井（40层宝箱奖励）",
+      "ingredients": "",
+      "purchasePrice": "500",
+      "sellPrice": "不能售出",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "master_slingshot",
+      "category": "weapon",
+      "type": "slingshot",
+      "typeName": "弹弓",
+      "name": "高级弹弓",
+      "nameEn": "Master Slingshot",
+      "aliases": [
+        "高级弹弓",
+        "Master Slingshot",
+        "高级弹弓怎么获得",
+        "高级弹弓哪里拿",
+        "高级弹弓在哪拿",
+        "高级弹弓属性",
+        "高级弹弓武器",
+        "高级弹弓好用吗",
+        "弹弓武器"
+      ],
+      "level": "",
+      "description": "需要石子当弹药。",
+      "damage": "取决于使用的弹药",
+      "criticalChance": "0.02",
+      "stats": "",
+      "effect": "",
+      "source": "矿井（70层宝箱奖励）",
+      "ingredients": "",
+      "purchasePrice": "1,000",
+      "sellPrice": "不能售出",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/武器",
+        "https://stardewvalleywiki.com/Weapons"
+      ]
+    },
+    {
+      "id": "small_glow_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "小型光辉戒指",
+      "nameEn": "Small Glow Ring",
+      "aliases": [
+        "小型光辉戒指",
+        "Small Glow Ring",
+        "小型光辉戒指怎么获得",
+        "小型光辉戒指哪里拿",
+        "小型光辉戒指在哪拿",
+        "小型光辉戒指属性",
+        "小型光辉戒指效果",
+        "小型光辉戒指戒指",
+        "小型光辉戒指怎么拿"
+      ],
+      "level": "",
+      "description": "发出微小而又恒定的光。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "发出半径5格的光。光效与其他发光戒指叠加",
+      "source": "击杀矿井40层之前的史莱姆； 釣魚宝箱； 完成 夜间垂钓收集包的奖励",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "glow_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "光辉戒指",
+      "nameEn": "Glow Ring",
+      "aliases": [
+        "光辉戒指",
+        "Glow Ring",
+        "光辉戒指怎么获得",
+        "光辉戒指哪里拿",
+        "光辉戒指在哪拿",
+        "光辉戒指属性",
+        "光辉戒指效果",
+        "光辉戒指戒指",
+        "光辉戒指怎么拿"
+      ],
+      "level": "",
+      "description": "发出非常绚丽的光芒。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "发出半径10格的光。光效与其他发光戒指叠加",
+      "source": "击杀矿井40层之前的史莱姆； 击杀矿井70-79层的骷髅； 破坏矿井里的各种桶和盒子",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "small_magnet_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "小型磁铁戒指",
+      "nameEn": "Small Magnet Ring",
+      "aliases": [
+        "小型磁铁戒指",
+        "Small Magnet Ring",
+        "小型磁铁戒指怎么获得",
+        "小型磁铁戒指哪里拿",
+        "小型磁铁戒指在哪拿",
+        "小型磁铁戒指属性",
+        "小型磁铁戒指效果",
+        "小型磁铁戒指戒指",
+        "小型磁铁戒指怎么拿"
+      ],
+      "level": "",
+      "description": "些许增加你收集物品的半径。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加1格的 磁性。它自身能与普通的磁铁戒指和铱环叠加",
+      "source": "完成 冒险家的收集包的奖励； 钓鱼宝箱； 破坏矿井里的各种桶和盒子",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "magnet_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "磁铁戒指",
+      "nameEn": "Magnet Ring",
+      "aliases": [
+        "磁铁戒指",
+        "Magnet Ring",
+        "磁铁戒指怎么获得",
+        "磁铁戒指哪里拿",
+        "磁铁戒指在哪拿",
+        "磁铁戒指属性",
+        "磁铁戒指效果",
+        "磁铁戒指戒指",
+        "磁铁戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加你收集物品的半径。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加2格的 磁性。它自身能与小型磁铁戒指和铱环叠加",
+      "source": "矿井40-80层的怪物掉落； 破坏矿井里的各种桶和盒子",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "slime_charmer_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "史莱姆克星戒指",
+      "nameEn": "Slime Charmer Ring",
+      "aliases": [
+        "史莱姆克星戒指",
+        "Slime Charmer Ring",
+        "史莱姆克星戒指怎么获得",
+        "史莱姆克星戒指哪里拿",
+        "史莱姆克星戒指在哪拿",
+        "史莱姆克星戒指属性",
+        "史莱姆克星戒指效果",
+        "史莱姆克星戒指戒指",
+        "史莱姆克星戒指怎么拿"
+      ],
+      "level": "",
+      "description": "防止史莱姆的破坏。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "防止来自史莱姆的伤害并防止粘滑的效果",
+      "source": "击杀1000只史莱姆后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "25,000",
+      "sellPrice": "350",
+      "recommendation": "史莱姆屋、矿井和史莱姆层体验提升很大。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "warrior_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "战士戒指",
+      "nameEn": "Warrior Ring",
+      "aliases": [
+        "战士戒指",
+        "Warrior Ring",
+        "战士戒指怎么获得",
+        "战士戒指哪里拿",
+        "战士戒指在哪拿",
+        "战士戒指属性",
+        "战士戒指效果",
+        "战士戒指戒指",
+        "战士戒指怎么拿"
+      ],
+      "level": "",
+      "description": "在杀死怪物后，偶尔输送“战士能量”给佩戴者。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "击杀怪物后有几率获得 战士能量",
+      "source": "战斗4级后可打造",
+      "ingredients": "铁锭（10） 煤炭（25） 泪晶（10）",
+      "purchasePrice": "",
+      "sellPrice": "750",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "vampire_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "吸血戒指",
+      "nameEn": "Vampire Ring",
+      "aliases": [
+        "吸血戒指",
+        "Vampire Ring",
+        "吸血戒指怎么获得",
+        "吸血戒指哪里拿",
+        "吸血戒指在哪拿",
+        "吸血戒指属性",
+        "吸血戒指效果",
+        "吸血戒指戒指",
+        "吸血戒指怎么拿"
+      ],
+      "level": "",
+      "description": "每次杀死一个怪物后获得一点生命值。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "击杀一只怪物获得2点生命值",
+      "source": "击杀200只蝙蝠后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "15,000",
+      "sellPrice": "750",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "savage_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "野蛮人戒指",
+      "nameEn": "Savage Ring",
+      "aliases": [
+        "野蛮人戒指",
+        "Savage Ring",
+        "野蛮人戒指怎么获得",
+        "野蛮人戒指哪里拿",
+        "野蛮人戒指在哪拿",
+        "野蛮人戒指属性",
+        "野蛮人戒指效果",
+        "野蛮人戒指戒指",
+        "野蛮人戒指怎么拿",
+        "野人戒指"
+      ],
+      "level": "",
+      "description": "当你杀死一个怪物后获得一点加速。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "击杀一只怪物获得2秒的 速度（+2）效果",
+      "source": "击杀150只暗影人后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "25,000",
+      "sellPrice": "750",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "ring_of_yoba",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "由巴的戒指",
+      "nameEn": "Ring of Yoba",
+      "aliases": [
+        "由巴的戒指",
+        "Ring of Yoba",
+        "由巴的戒指怎么获得",
+        "由巴的戒指哪里拿",
+        "由巴的戒指在哪拿",
+        "由巴的戒指属性",
+        "由巴的戒指效果",
+        "由巴的戒指戒指",
+        "由巴的戒指怎么拿",
+        "尤巴戒指",
+        "约巴戒指"
+      ],
+      "level": "",
+      "description": "偶尔为佩戴者抵挡伤害。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "受到伤害后有几率获得 由巴的祝福。你的生命值越低或者运气值越高，越有可能获得这个效果。",
+      "source": "战斗7级后可打造",
+      "ingredients": "铁锭（5） 金锭（5） 钻石（1）",
+      "purchasePrice": "",
+      "sellPrice": "750",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "sturdy_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "结实戒指",
+      "nameEn": "Sturdy Ring",
+      "aliases": [
+        "结实戒指",
+        "Sturdy Ring",
+        "结实戒指怎么获得",
+        "结实戒指哪里拿",
+        "结实戒指在哪拿",
+        "结实戒指属性",
+        "结实戒指效果",
+        "结实戒指戒指",
+        "结实戒指怎么拿",
+        "坚固戒指"
+      ],
+      "level": "",
+      "description": "减少负状态影响持续时间的一半。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "负面效果（眩晕，倒霉的，粘滑的）的持续时间减少一半",
+      "source": "战斗1级后可打造",
+      "ingredients": "铜锭（2） 虫肉（25） 史莱姆泥（25）",
+      "purchasePrice": "",
+      "sellPrice": "750",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "burglars_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "窃贼戒指",
+      "nameEn": "Burglar's Ring",
+      "aliases": [
+        "窃贼戒指",
+        "Burglar's Ring",
+        "窃贼戒指怎么获得",
+        "窃贼戒指哪里拿",
+        "窃贼戒指在哪拿",
+        "窃贼戒指属性",
+        "窃贼戒指效果",
+        "窃贼戒指戒指",
+        "窃贼戒指怎么拿"
+      ],
+      "level": "",
+      "description": "怪物有很大机会掉落战利品。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "怪物更容易掉落物品。装备该戒指时游戏在扫描怪物掉落物时会执行2次，所以有2次掉落物品的机会",
+      "source": "击杀500只灰尘精灵后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "20,000",
+      "sellPrice": "750",
+      "recommendation": "刷怪物掉落、煤炭和材料时优先级很高。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "iridium_band",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "铱环",
+      "nameEn": "Iridium Band",
+      "aliases": [
+        "铱环",
+        "Iridium Band",
+        "铱环怎么获得",
+        "铱环哪里拿",
+        "铱环在哪拿",
+        "铱环属性",
+        "铱环效果",
+        "铱环戒指",
+        "铱环怎么拿"
+      ],
+      "level": "",
+      "description": "光辉，吸引物品，增加 10% 的攻击伤害。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "结合了光辉戒指、磁铁戒指和红宝石戒指的效果",
+      "source": "战斗9级后可打造； 钓鱼宝箱",
+      "ingredients": "铱锭（5） 太阳精华（50） 虚空精华（50）",
+      "purchasePrice": "",
+      "sellPrice": "1,000",
+      "recommendation": "通用强戒指，发光、吸附和增伤一体，战斗 9 级后优先做。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "jukebox_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "点唱机戒指",
+      "nameEn": "Jukebox Ring",
+      "aliases": [
+        "点唱机戒指",
+        "Jukebox Ring",
+        "点唱机戒指怎么获得",
+        "点唱机戒指哪里拿",
+        "点唱机戒指在哪拿",
+        "点唱机戒指属性",
+        "点唱机戒指效果",
+        "点唱机戒指戒指",
+        "点唱机戒指怎么拿"
+      ],
+      "level": "",
+      "description": "随机播放你已听过的音乐类型。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "未知",
+      "source": "无法获得",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "amethyst_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "紫水晶戒指",
+      "nameEn": "Amethyst Ring",
+      "aliases": [
+        "紫水晶戒指",
+        "Amethyst Ring",
+        "紫水晶戒指怎么获得",
+        "紫水晶戒指哪里拿",
+        "紫水晶戒指在哪拿",
+        "紫水晶戒指属性",
+        "紫水晶戒指效果",
+        "紫水晶戒指戒指",
+        "紫水晶戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加 10% 的击退率。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加10% 击退范围",
+      "source": "完成 “入门”任务后在探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "1,000",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "topaz_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "黄水晶戒指",
+      "nameEn": "Topaz Ring",
+      "aliases": [
+        "黄水晶戒指",
+        "Topaz Ring",
+        "黄水晶戒指怎么获得",
+        "黄水晶戒指哪里拿",
+        "黄水晶戒指在哪拿",
+        "黄水晶戒指属性",
+        "黄水晶戒指效果",
+        "黄水晶戒指戒指",
+        "黄水晶戒指怎么拿"
+      ],
+      "level": "",
+      "description": "戴着这个会感觉安全一点点。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "防御+1",
+      "source": "完成 “入门”任务后在探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "1,000",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "aquamarine_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "海蓝宝石戒指",
+      "nameEn": "Aquamarine Ring",
+      "aliases": [
+        "海蓝宝石戒指",
+        "Aquamarine Ring",
+        "海蓝宝石戒指怎么获得",
+        "海蓝宝石戒指哪里拿",
+        "海蓝宝石戒指在哪拿",
+        "海蓝宝石戒指属性",
+        "海蓝宝石戒指效果",
+        "海蓝宝石戒指戒指",
+        "海蓝宝石戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加 10% 的致命一击机会。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加 10% 的致命一击机会。",
+      "source": "矿井40层后在探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "2,500",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "jade_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "翡翠戒指",
+      "nameEn": "Jade Ring",
+      "aliases": [
+        "翡翠戒指",
+        "Jade Ring",
+        "翡翠戒指怎么获得",
+        "翡翠戒指哪里拿",
+        "翡翠戒指在哪拿",
+        "翡翠戒指属性",
+        "翡翠戒指效果",
+        "翡翠戒指戒指",
+        "翡翠戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加 10% 的致命一击能量。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加10% 暴击力量",
+      "source": "矿井40层后在探险家公会购买； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "2,500",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "emerald_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "绿宝石戒指",
+      "nameEn": "Emerald Ring",
+      "aliases": [
+        "绿宝石戒指",
+        "Emerald Ring",
+        "绿宝石戒指怎么获得",
+        "绿宝石戒指哪里拿",
+        "绿宝石戒指在哪拿",
+        "绿宝石戒指属性",
+        "绿宝石戒指效果",
+        "绿宝石戒指戒指",
+        "绿宝石戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加 10% 的武器速度。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加10% 武器速度",
+      "source": "矿井80层后在探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "5,000",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "ruby_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "红宝石戒指",
+      "nameEn": "Ruby Ring",
+      "aliases": [
+        "红宝石戒指",
+        "Ruby Ring",
+        "红宝石戒指怎么获得",
+        "红宝石戒指哪里拿",
+        "红宝石戒指在哪拿",
+        "红宝石戒指属性",
+        "红宝石戒指效果",
+        "红宝石戒指戒指",
+        "红宝石戒指怎么拿"
+      ],
+      "level": "",
+      "description": "增加 10% 的攻击。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "提升10% 攻击力",
+      "source": "矿井80层后在探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "5,000",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "wedding_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "结婚戒指",
+      "nameEn": "Wedding Ring",
+      "aliases": [
+        "结婚戒指",
+        "Wedding Ring",
+        "结婚戒指怎么获得",
+        "结婚戒指哪里拿",
+        "结婚戒指在哪拿",
+        "结婚戒指属性",
+        "结婚戒指效果",
+        "结婚戒指戒指",
+        "结婚戒指怎么拿"
+      ],
+      "level": "",
+      "description": "祖祖城的古老传统……用来向另一位农夫求婚。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "在合作模式中，允許你向其他玩家提出婚姻",
+      "source": "从 旅行货车 使用 500 购买 打造配方",
+      "ingredients": "铱锭（5） 五彩碎片（1）",
+      "purchasePrice": "",
+      "sellPrice": "1,000",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "crabshell_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "蟹壳戒指",
+      "nameEn": "Crabshell Ring",
+      "aliases": [
+        "蟹壳戒指",
+        "Crabshell Ring",
+        "蟹壳戒指怎么获得",
+        "蟹壳戒指哪里拿",
+        "蟹壳戒指在哪拿",
+        "蟹壳戒指属性",
+        "蟹壳戒指效果",
+        "蟹壳戒指戒指",
+        "蟹壳戒指怎么拿"
+      ],
+      "level": "",
+      "description": "戒指的顶部是由附魔的蟹壳制成的。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "防御+5",
+      "source": "击杀60只岩石蟹后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "15,000",
+      "sellPrice": "1,000",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "napalm_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "燃烧弹戒指",
+      "nameEn": "Napalm Ring",
+      "aliases": [
+        "燃烧弹戒指",
+        "Napalm Ring",
+        "燃烧弹戒指怎么获得",
+        "燃烧弹戒指哪里拿",
+        "燃烧弹戒指在哪拿",
+        "燃烧弹戒指属性",
+        "燃烧弹戒指效果",
+        "燃烧弹戒指戒指",
+        "燃烧弹戒指怎么拿"
+      ],
+      "level": "",
+      "description": "当你击败敌人时，它们会爆炸。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "击杀怪物会产生爆炸，摧毁物体并伤害敌人。玩家不会受到伤害。",
+      "source": "击杀250只飞蛇后探险家公会奖励",
+      "ingredients": "",
+      "purchasePrice": "30,000",
+      "sellPrice": "1,000",
+      "recommendation": "刷怪顺带清场，矿洞效率好，但要注意爆炸影响。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "thorns_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "荆棘戒指",
+      "nameEn": "Thorns Ring",
+      "aliases": [
+        "荆棘戒指",
+        "Thorns Ring",
+        "荆棘戒指怎么获得",
+        "荆棘戒指哪里拿",
+        "荆棘戒指在哪拿",
+        "荆棘戒指属性",
+        "荆棘戒指效果",
+        "荆棘戒指戒指",
+        "荆棘戒指怎么拿"
+      ],
+      "level": "",
+      "description": "当敌人对你造成伤害时，他们也将受到伤害。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "怪物受到的伤害等同于其对玩家未减轻的伤害",
+      "source": "战斗7级后可打造",
+      "ingredients": "骨头碎片（50） 石头（50） 金锭（1）",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "lucky_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "幸运戒指",
+      "nameEn": "Lucky Ring",
+      "aliases": [
+        "幸运戒指",
+        "Lucky Ring",
+        "幸运戒指怎么获得",
+        "幸运戒指哪里拿",
+        "幸运戒指在哪拿",
+        "幸运戒指属性",
+        "幸运戒指效果",
+        "幸运戒指戒指",
+        "幸运戒指怎么拿"
+      ],
+      "level": "",
+      "description": "象征月亮的标志，据说可以给佩戴它的人带来好运。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "运气+1",
+      "source": "骷髅洞穴中的特殊物品掉落，或淘盘稀有产物",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "提高运气，适合骷髅洞穴、钓宝箱和日常收益。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "hot_java_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "热咖啡戒指",
+      "nameEn": "Hot Java Ring",
+      "aliases": [
+        "热咖啡戒指",
+        "Hot Java Ring",
+        "热咖啡戒指怎么获得",
+        "热咖啡戒指哪里拿",
+        "热咖啡戒指在哪拿",
+        "热咖啡戒指属性",
+        "热咖啡戒指效果",
+        "热咖啡戒指戒指",
+        "热咖啡戒指怎么拿"
+      ],
+      "level": "",
+      "description": "大幅增加狩猎怪物时找到咖啡饮料的概率。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加击杀怪物时掉落咖啡和三倍浓缩咖啡的几率",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "protection_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "保护戒指",
+      "nameEn": "Protection Ring",
+      "aliases": [
+        "保护戒指",
+        "Protection Ring",
+        "保护戒指怎么获得",
+        "保护戒指哪里拿",
+        "保护戒指在哪拿",
+        "保护戒指属性",
+        "保护戒指效果",
+        "保护戒指戒指",
+        "保护戒指怎么拿"
+      ],
+      "level": "",
+      "description": "在受到伤害后，保持一定时间的无敌状态。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "增加0.4秒受伤后的无敌时间",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "soul_sapper_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "吸魂戒指",
+      "nameEn": "Soul Sapper Ring",
+      "aliases": [
+        "吸魂戒指",
+        "Soul Sapper Ring",
+        "吸魂戒指怎么获得",
+        "吸魂戒指哪里拿",
+        "吸魂戒指在哪拿",
+        "吸魂戒指属性",
+        "吸魂戒指效果",
+        "吸魂戒指戒指",
+        "吸魂戒指怎么拿"
+      ],
+      "level": "",
+      "description": "每次杀死一个怪物，都会获得一点能量。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "击杀怪物后获得4点能量",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "phoenix_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "凤凰戒指",
+      "nameEn": "Phoenix Ring",
+      "aliases": [
+        "凤凰戒指",
+        "Phoenix Ring",
+        "凤凰戒指怎么获得",
+        "凤凰戒指哪里拿",
+        "凤凰戒指在哪拿",
+        "凤凰戒指属性",
+        "凤凰戒指效果",
+        "凤凰戒指戒指",
+        "凤凰戒指怎么拿"
+      ],
+      "level": "",
+      "description": "在战斗中被击倒后恢复些许生命值，一天仅限一次。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "一天一次，被击倒后回复50%生命值",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "immunity_band",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "免疫指环",
+      "nameEn": "Immunity Band",
+      "aliases": [
+        "免疫指环",
+        "Immunity Band",
+        "免疫指环怎么获得",
+        "免疫指环哪里拿",
+        "免疫指环在哪拿",
+        "免疫指环属性",
+        "免疫指环效果",
+        "免疫指环戒指",
+        "免疫指环怎么拿"
+      ],
+      "level": "",
+      "description": "戒指的顶部是由附魔的紫色毛绒制成的。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "免疫+4",
+      "source": "骷髅洞穴、采石场矿井和100层以上的矿井中特殊物品掉落",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "500",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "glowstone_ring",
+      "category": "ring",
+      "type": "ring",
+      "typeName": "戒指",
+      "name": "辉石戒指",
+      "nameEn": "Glowstone Ring",
+      "aliases": [
+        "辉石戒指",
+        "Glowstone Ring",
+        "辉石戒指怎么获得",
+        "辉石戒指哪里拿",
+        "辉石戒指在哪拿",
+        "辉石戒指属性",
+        "辉石戒指效果",
+        "辉石戒指戒指",
+        "辉石戒指怎么拿",
+        "光辉戒指怎么做"
+      ],
+      "level": "",
+      "description": "散发出稳定的光芒，并增加收集物品的范围。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "",
+      "effect": "光辉戒指和磁铁戒指的结合：发出半径10格的光并且增加2格的 磁性",
+      "source": "采矿4级后可打造",
+      "ingredients": "太阳精华（5） 铁锭（5）",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "采矿 4 级可做，早期兼顾发光和吸附。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/戒指",
+        "https://stardewvalleywiki.com/Rings"
+      ]
+    },
+    {
+      "id": "sneakers",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "运动鞋",
+      "nameEn": "Sneakers",
+      "aliases": [
+        "运动鞋",
+        "Sneakers",
+        "运动鞋怎么获得",
+        "运动鞋哪里拿",
+        "运动鞋在哪拿",
+        "运动鞋属性",
+        "运动鞋鞋子",
+        "运动鞋靴子",
+        "运动鞋防御",
+        "运动鞋免疫"
+      ],
+      "level": "",
+      "description": "有点单薄……但是时尚嘛！",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+1）",
+      "effect": "",
+      "source": "完成\"入门\"之后探险家公会购买； 在矿井1-40层特殊史莱姆随机掉落； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "500",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "rubber_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "橡胶靴",
+      "nameEn": "Rubber Boots",
+      "aliases": [
+        "橡胶靴",
+        "Rubber Boots",
+        "橡胶靴怎么获得",
+        "橡胶靴哪里拿",
+        "橡胶靴在哪拿",
+        "橡胶靴属性",
+        "橡胶靴鞋子",
+        "橡胶靴靴子",
+        "橡胶靴防御",
+        "橡胶靴免疫"
+      ],
+      "level": "",
+      "description": "提供元素保护。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "免疫（+1）",
+      "effect": "",
+      "source": "在矿井1-40层特殊史莱姆随机掉落； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "50",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "leather_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "皮靴",
+      "nameEn": "Leather Boots",
+      "aliases": [
+        "皮靴",
+        "Leather Boots",
+        "皮靴怎么获得",
+        "皮靴哪里拿",
+        "皮靴在哪拿",
+        "皮靴属性",
+        "皮靴鞋子",
+        "皮靴靴子",
+        "皮靴防御",
+        "皮靴免疫"
+      ],
+      "level": "",
+      "description": "这种皮革非常柔软。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+1） 免疫（+1）",
+      "effect": "",
+      "source": "矿井10层箱子奖励； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "500",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "work_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "工作靴",
+      "nameEn": "Work Boots",
+      "aliases": [
+        "工作靴",
+        "Work Boots",
+        "工作靴怎么获得",
+        "工作靴哪里拿",
+        "工作靴在哪拿",
+        "工作靴属性",
+        "工作靴鞋子",
+        "工作靴靴子",
+        "工作靴防御",
+        "工作靴免疫"
+      ],
+      "level": "",
+      "description": "加固了钢铁作为额外防护。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+2）",
+      "effect": "",
+      "source": "钓鱼宝箱； 矿井10层宝箱可能的奖励（仅随机矿井宝箱模式）； 矿井10层之后探险家公会购买",
+      "ingredients": "",
+      "purchasePrice": "700",
+      "sellPrice": "100",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "combat_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "战靴",
+      "nameEn": "Combat Boots",
+      "aliases": [
+        "战靴",
+        "Combat Boots",
+        "战靴怎么获得",
+        "战靴哪里拿",
+        "战靴在哪拿",
+        "战靴属性",
+        "战靴鞋子",
+        "战靴靴子",
+        "战靴防御",
+        "战靴免疫"
+      ],
+      "level": "",
+      "description": "加固了铁丝作防护。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+3）",
+      "effect": "",
+      "source": "探险家公会购买； 钓鱼宝箱； 矿井60-79层木箱和木桶和特殊史莱姆或骷髅洞穴0-39层； 矿井40层宝箱可能的奖励（仅随机矿井宝箱模式）",
+      "ingredients": "",
+      "purchasePrice": "1,250",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "tundra_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "冻土靴",
+      "nameEn": "Tundra Boots",
+      "aliases": [
+        "冻土靴",
+        "Tundra Boots",
+        "冻土靴怎么获得",
+        "冻土靴哪里拿",
+        "冻土靴在哪拿",
+        "冻土靴属性",
+        "冻土靴鞋子",
+        "冻土靴靴子",
+        "冻土靴防御",
+        "冻土靴免疫"
+      ],
+      "level": "",
+      "description": "毛绒绒的材质保持你的脚跟温暖。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+2） 免疫（+1）",
+      "effect": "",
+      "source": "矿井50层之后探险家公会购买； 矿井50层箱子奖励； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "750",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "thermal_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "热能靴",
+      "nameEn": "Thermal Boots",
+      "aliases": [
+        "热能靴",
+        "Thermal Boots",
+        "热能靴怎么获得",
+        "热能靴哪里拿",
+        "热能靴在哪拿",
+        "热能靴属性",
+        "热能靴鞋子",
+        "热能靴靴子",
+        "热能靴防御",
+        "热能靴免疫"
+      ],
+      "level": "",
+      "description": "设计于恶劣气候地带使用。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+1） 免疫（+2）",
+      "effect": "",
+      "source": "矿井40-79层木箱和木桶和特殊史莱姆或骷髅洞穴0-39层； 矿井40层宝箱可能的奖励（仅随机矿井宝箱模式）； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "dark_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "黑暗之靴",
+      "nameEn": "Dark Boots",
+      "aliases": [
+        "黑暗之靴",
+        "Dark Boots",
+        "黑暗之靴怎么获得",
+        "黑暗之靴哪里拿",
+        "黑暗之靴在哪拿",
+        "黑暗之靴属性",
+        "黑暗之靴鞋子",
+        "黑暗之靴靴子",
+        "黑暗之靴防御",
+        "黑暗之靴免疫"
+      ],
+      "level": "",
+      "description": "使用黑色粗厚皮革所打造。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+4） 免疫（+2）",
+      "effect": "",
+      "source": "矿井80层之后探险家公会购买； 矿井80-119层木箱和木桶和特殊史莱姆或骷髅洞穴0-39层； 矿井80层宝箱可能的奖励（仅随机矿井宝箱模式）； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "2,500",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "firewalker_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "蹈火者靴",
+      "nameEn": "Firewalker Boots",
+      "aliases": [
+        "蹈火者靴",
+        "Firewalker Boots",
+        "蹈火者靴怎么获得",
+        "蹈火者靴哪里拿",
+        "蹈火者靴在哪拿",
+        "蹈火者靴属性",
+        "蹈火者靴鞋子",
+        "蹈火者靴靴子",
+        "蹈火者靴防御",
+        "蹈火者靴免疫"
+      ],
+      "level": "",
+      "description": "据说能够承受最高温的熔岩。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+3） 免疫（+3）",
+      "effect": "",
+      "source": "矿井80层箱子奖励； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "2,000",
+      "sellPrice": "300",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "genie_shoes",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "神怪之鞋",
+      "nameEn": "Genie Shoes",
+      "aliases": [
+        "神怪之鞋",
+        "Genie Shoes",
+        "神怪之鞋怎么获得",
+        "神怪之鞋哪里拿",
+        "神怪之鞋在哪拿",
+        "神怪之鞋属性",
+        "神怪之鞋鞋子",
+        "神怪之鞋靴子",
+        "神怪之鞋防御",
+        "神怪之鞋免疫"
+      ],
+      "level": "",
+      "description": "奇怪的能量围绕着鞋面。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+1） 免疫（+6）",
+      "effect": "",
+      "source": "骷髅洞穴掉落； 钓鱼宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "space_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "太空之靴",
+      "nameEn": "Space Boots",
+      "aliases": [
+        "太空之靴",
+        "Space Boots",
+        "太空之靴怎么获得",
+        "太空之靴哪里拿",
+        "太空之靴在哪拿",
+        "太空之靴属性",
+        "太空之靴鞋子",
+        "太空之靴靴子",
+        "太空之靴防御",
+        "太空之靴免疫",
+        "太空靴"
+      ],
+      "level": "",
+      "description": "铱编织，所以散发着紫色亮光。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+4） 免疫（+4）",
+      "effect": "",
+      "source": "矿井110层箱子奖励",
+      "ingredients": "",
+      "purchasePrice": "5,000",
+      "sellPrice": "400",
+      "recommendation": "矿井 110 层固定宝箱奖励，是进入骷髅洞穴前的稳妥鞋。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "cowboy_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "牛仔之靴",
+      "nameEn": "Cowboy Boots",
+      "aliases": [
+        "牛仔之靴",
+        "Cowboy Boots",
+        "牛仔之靴怎么获得",
+        "牛仔之靴哪里拿",
+        "牛仔之靴在哪拿",
+        "牛仔之靴属性",
+        "牛仔之靴鞋子",
+        "牛仔之靴靴子",
+        "牛仔之靴防御",
+        "牛仔之靴免疫"
+      ],
+      "level": "",
+      "description": "乡下人的时尚高度。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+2） 免疫（+2）",
+      "effect": "",
+      "source": "无法获得",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "200",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "emilys_magic_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "艾米丽的魔法靴",
+      "nameEn": "Emily's Magic Boots",
+      "aliases": [
+        "艾米丽的魔法靴",
+        "Emily's Magic Boots",
+        "艾米丽的魔法靴怎么获得",
+        "艾米丽的魔法靴哪里拿",
+        "艾米丽的魔法靴在哪拿",
+        "艾米丽的魔法靴属性",
+        "艾米丽的魔法靴鞋子",
+        "艾米丽的魔法靴靴子",
+        "艾米丽的魔法靴防御",
+        "艾米丽的魔法靴免疫"
+      ],
+      "level": "",
+      "description": "艾米丽爱心打造。100% 可降解！",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+4） 免疫（+4）",
+      "effect": "",
+      "source": "经艾米丽的14心事件获得。",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "400",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "leprechaun_shoes",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "矮精灵鞋子",
+      "nameEn": "Leprechaun Shoes",
+      "aliases": [
+        "矮精灵鞋子",
+        "Leprechaun Shoes",
+        "矮精灵鞋子怎么获得",
+        "矮精灵鞋子哪里拿",
+        "矮精灵鞋子在哪拿",
+        "矮精灵鞋子属性",
+        "矮精灵鞋子鞋子",
+        "矮精灵鞋子靴子",
+        "矮精灵鞋子防御",
+        "矮精灵鞋子免疫"
+      ],
+      "level": "",
+      "description": "搭扣是纯金做的。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+2） 免疫（+1）",
+      "effect": "",
+      "source": "火车掉落",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "150",
+      "recommendation": "问具体装备时重点看来源、属性和是否值得替换；武器看伤害/速度，戒指看效果，鞋类看防御和免疫。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "cinderclown_shoes",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "灰烬小丑鞋",
+      "nameEn": "Cinderclown Shoes",
+      "aliases": [
+        "灰烬小丑鞋",
+        "Cinderclown Shoes",
+        "灰烬小丑鞋怎么获得",
+        "灰烬小丑鞋哪里拿",
+        "灰烬小丑鞋在哪拿",
+        "灰烬小丑鞋属性",
+        "灰烬小丑鞋鞋子",
+        "灰烬小丑鞋靴子",
+        "灰烬小丑鞋防御",
+        "灰烬小丑鞋免疫",
+        "煤渣小丑鞋"
+      ],
+      "level": "",
+      "description": "这双神奇鞋子的主人是一位著名的矮人小丑。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+6） 免疫（+5）",
+      "effect": "",
+      "source": "火山地牢商店",
+      "ingredients": "",
+      "purchasePrice": "火山晶石（100）",
+      "sellPrice": "550",
+      "recommendation": "火山地牢矮人商店购买，防御和免疫都很高。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "mermaid_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "美人鱼靴",
+      "nameEn": "Mermaid Boots",
+      "aliases": [
+        "美人鱼靴",
+        "Mermaid Boots",
+        "美人鱼靴怎么获得",
+        "美人鱼靴哪里拿",
+        "美人鱼靴在哪拿",
+        "美人鱼靴属性",
+        "美人鱼靴鞋子",
+        "美人鱼靴靴子",
+        "美人鱼靴防御",
+        "美人鱼靴免疫"
+      ],
+      "level": "",
+      "description": "美人鱼鳞片给这双靴子赋予了保护光环。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+5） 免疫（+8）",
+      "effect": "",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "650",
+      "recommendation": "高免疫鞋，适合讨厌负面状态的打法。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "dragonscale_boots",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "龙鳞靴",
+      "nameEn": "Dragonscale Boots",
+      "aliases": [
+        "龙鳞靴",
+        "Dragonscale Boots",
+        "龙鳞靴怎么获得",
+        "龙鳞靴哪里拿",
+        "龙鳞靴在哪拿",
+        "龙鳞靴属性",
+        "龙鳞靴鞋子",
+        "龙鳞靴靴子",
+        "龙鳞靴防御",
+        "龙鳞靴免疫"
+      ],
+      "level": "",
+      "description": "这双闪烁光芒的靴子非常坚韧。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+7）",
+      "effect": "",
+      "source": "火山地牢宝箱",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "350",
+      "recommendation": "高防御鞋，适合想硬吃伤害的打法。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    },
+    {
+      "id": "crystal_shoes",
+      "category": "footwear",
+      "type": "footwear",
+      "typeName": "鞋类",
+      "name": "水晶鞋",
+      "nameEn": "Crystal Shoes",
+      "aliases": [
+        "水晶鞋",
+        "Crystal Shoes",
+        "水晶鞋怎么获得",
+        "水晶鞋哪里拿",
+        "水晶鞋在哪拿",
+        "水晶鞋属性",
+        "水晶鞋鞋子",
+        "水晶鞋靴子",
+        "水晶鞋防御",
+        "水晶鞋免疫"
+      ],
+      "level": "",
+      "description": "这双闪闪发光的鞋子会保护好你的脚。",
+      "damage": "",
+      "criticalChance": "",
+      "stats": "防御（+3） 免疫（+5）",
+      "effect": "",
+      "source": "骷髅洞穴掉落； 矿井110层宝箱可能的奖励（仅随机矿井宝箱模式）",
+      "ingredients": "",
+      "purchasePrice": "",
+      "sellPrice": "400",
+      "recommendation": "高防御高免疫，矿井重混奖励或头骨山洞特殊掉落时可作为终局鞋。",
+      "sourceUrls": [
+        "https://zh.stardewvalleywiki.com/鞋类",
+        "https://stardewvalleywiki.com/Footwear"
+      ]
+    }
+  ],
   "machines": [
     {
       "id": "keg",
@@ -22306,650 +26097,1376 @@
       "id": "quest_introductions",
       "name": "自我介绍",
       "nameEn": "Introductions",
-      "aliases": ["Introductions", "介绍自己", "认识村民", "28个人", "见所有人"],
+      "aliases": [
+        "Introductions",
+        "介绍自己",
+        "认识村民",
+        "28个人",
+        "见所有人"
+      ],
       "trigger": "开局自动获得。",
-      "requirements": ["向镇上 28 位居民打招呼。"],
-      "walkthrough": ["优先逛鹈鹕镇、沙滩、矿山区域和酒吧；没见到的人通常受日程、天气或商店时间影响。"],
-      "rewards": ["与每位已认识 NPC 增加 100 友谊点。"],
+      "requirements": [
+        "向镇上 28 位居民打招呼。"
+      ],
+      "walkthrough": [
+        "优先逛鹈鹕镇、沙滩、矿山区域和酒吧；没见到的人通常受日程、天气或商店时间影响。"
+      ],
+      "rewards": [
+        "与每位已认识 NPC 增加 100 友谊点。"
+      ],
       "recommendation": "第一周顺路完成即可，不必为了个别人硬等整天。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_how_to_win_friends",
       "name": "交朋友",
       "nameEn": "How to Win Friends",
-      "aliases": ["How to Win Friends", "如何赢得朋友", "送礼任务", "给礼物"],
+      "aliases": [
+        "How to Win Friends",
+        "如何赢得朋友",
+        "送礼任务",
+        "给礼物"
+      ],
       "trigger": "完成“自我介绍”后获得。",
-      "requirements": ["给任意居民一件礼物。"],
-      "walkthrough": ["用安全的喜欢礼物完成即可；不确定喜好时优先送通用喜欢物品。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "给任意居民一件礼物。"
+      ],
+      "walkthrough": [
+        "用安全的喜欢礼物完成即可；不确定喜好时优先送通用喜欢物品。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "顺手给常见居民送一件喜欢礼物，不要用讨厌礼物硬交差。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_getting_started_crop",
       "name": "开始耕种",
       "nameEn": "Getting Started",
-      "aliases": ["Getting Started", "种防风草", "种植入门", "收获防风草", "普通农场开局任务"],
+      "aliases": [
+        "Getting Started",
+        "种防风草",
+        "种植入门",
+        "收获防风草",
+        "普通农场开局任务"
+      ],
       "trigger": "普通开局时房间包裹触发。",
-      "requirements": ["耕地、播种并收获 1 个防风草。"],
-      "walkthrough": ["每天浇水，防风草成熟后收获即可完成。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "耕地、播种并收获 1 个防风草。"
+      ],
+      "walkthrough": [
+        "每天浇水，防风草成熟后收获即可完成。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "第一天就把初始防风草种下，避免早期节奏拖慢。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_getting_started_meadowlands",
       "name": "开始耕种（草原农场）",
       "nameEn": "Getting Started",
-      "aliases": ["Getting Started Meadowlands", "草原农场开局任务", "收获鸡蛋", "开局鸡蛋任务"],
+      "aliases": [
+        "Getting Started Meadowlands",
+        "草原农场开局任务",
+        "收获鸡蛋",
+        "开局鸡蛋任务"
+      ],
       "trigger": "选择草原农场时，房间包裹触发。",
-      "requirements": ["从成熟鸡身上收获 1 个鸡蛋。"],
-      "walkthrough": ["每天喂鸡并抚摸；鸡成熟后从鸡舍地面拾取鸡蛋。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "从成熟鸡身上收获 1 个鸡蛋。"
+      ],
+      "walkthrough": [
+        "每天喂鸡并抚摸；鸡成熟后从鸡舍地面拾取鸡蛋。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "草原农场先保证鸡有草或干草，鸡蛋任务会自然完成。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_to_the_beach",
       "name": "前往海滩",
       "nameEn": "To The Beach",
-      "aliases": ["To The Beach", "去海滩", "威利鱼竿", "竹鱼竿", "海滩南边"],
+      "aliases": [
+        "To The Beach",
+        "去海滩",
+        "威利鱼竿",
+        "竹鱼竿",
+        "海滩南边"
+      ],
       "trigger": "春季第 2 天收到威利来信。",
-      "requirements": ["17:00 前到镇南海滩见威利。"],
-      "walkthrough": ["从小镇南侧进入海滩触发剧情。"],
-      "rewards": ["竹鱼竿。"],
+      "requirements": [
+        "17:00 前到镇南海滩见威利。"
+      ],
+      "walkthrough": [
+        "从小镇南侧进入海滩触发剧情。"
+      ],
+      "rewards": [
+        "竹鱼竿。"
+      ],
       "recommendation": "尽早完成以解锁钓鱼赚钱和收集包进度。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_raising_animals",
       "name": "饲养动物",
       "nameEn": "Raising Animals",
-      "aliases": ["Raising Animals", "养动物任务", "建鸡舍任务", "罗宾建鸡舍"],
+      "aliases": [
+        "Raising Animals",
+        "养动物任务",
+        "建鸡舍任务",
+        "罗宾建鸡舍"
+      ],
       "trigger": "完成“开始耕种”后获得。",
-      "requirements": ["建造 1 个鸡舍；不要求购买动物。"],
-      "walkthrough": ["准备木材、石头和金币后找罗宾建造鸡舍。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "建造 1 个鸡舍；不要求购买动物。"
+      ],
+      "walkthrough": [
+        "准备木材、石头和金币后找罗宾建造鸡舍。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "如果资源紧，先建筒仓再割草会让后续养动物更顺。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_feeding_animals",
       "name": "喂养动物",
       "nameEn": "Feeding Animals",
-      "aliases": ["Feeding Animals", "喂动物任务", "建筒仓任务", "草原农场筒仓"],
+      "aliases": [
+        "Feeding Animals",
+        "喂动物任务",
+        "建筒仓任务",
+        "草原农场筒仓"
+      ],
       "trigger": "草原农场完成“开始耕种”后获得。",
-      "requirements": ["建造 1 个筒仓。"],
-      "walkthrough": ["找罗宾建筒仓；之后用镰刀割草可储存干草。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "建造 1 个筒仓。"
+      ],
+      "walkthrough": [
+        "找罗宾建筒仓；之后用镰刀割草可储存干草。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "草原农场很早就有鸡，筒仓优先级高。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_advancement",
       "name": "进步",
       "nameEn": "Advancement",
-      "aliases": ["Advancement", "稻草人任务", "农业1级", "耕种1级"],
+      "aliases": [
+        "Advancement",
+        "稻草人任务",
+        "农业1级",
+        "耕种1级"
+      ],
       "trigger": "完成“开始耕种”后获得。",
-      "requirements": ["耕种达到 1 级并制作 1 个稻草人。"],
-      "walkthrough": ["收获作物获得耕种经验；解锁配方后用木材、煤炭、纤维制作稻草人。"],
-      "rewards": ["100g。"],
+      "requirements": [
+        "耕种达到 1 级并制作 1 个稻草人。"
+      ],
+      "walkthrough": [
+        "收获作物获得耕种经验；解锁配方后用木材、煤炭、纤维制作稻草人。"
+      ],
+      "rewards": [
+        "100g。"
+      ],
       "recommendation": "第一批防风草收完通常就接近完成，稻草人能保护后续作物。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_explore_the_mine",
       "name": "探索矿井",
       "nameEn": "Explore The Mine",
-      "aliases": ["Explore The Mine", "探索矿洞", "矿井5层", "矿洞5层"],
+      "aliases": [
+        "Explore The Mine",
+        "探索矿洞",
+        "矿井5层",
+        "矿洞5层"
+      ],
       "trigger": "进入矿井后获得。",
-      "requirements": ["到达矿井第 5 层。"],
-      "walkthrough": ["带食物和武器下矿，找到梯子后逐层推进；5 层解锁电梯。"],
-      "rewards": ["解锁后续矿井推进。"],
+      "requirements": [
+        "到达矿井第 5 层。"
+      ],
+      "walkthrough": [
+        "带食物和武器下矿，找到梯子后逐层推进；5 层解锁电梯。"
+      ],
+      "rewards": [
+        "解锁后续矿井推进。"
+      ],
       "recommendation": "优先到 5 层开电梯，之后下矿效率会明显提升。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_deeper_in_the_mine",
       "name": "深入矿井",
       "nameEn": "Deeper In The Mine",
-      "aliases": ["Deeper In The Mine", "矿井40层", "矿洞40层", "深入矿洞"],
+      "aliases": [
+        "Deeper In The Mine",
+        "矿井40层",
+        "矿洞40层",
+        "深入矿洞"
+      ],
       "trigger": "到达矿井第 5 层后获得。",
-      "requirements": ["到达矿井第 40 层。"],
-      "walkthrough": ["每 5 层开一次电梯，优先保存进度；带足食物和照明。"],
-      "rewards": ["解锁更深层矿井进度。"],
+      "requirements": [
+        "到达矿井第 40 层。"
+      ],
+      "walkthrough": [
+        "每 5 层开一次电梯，优先保存进度；带足食物和照明。"
+      ],
+      "rewards": [
+        "解锁更深层矿井进度。"
+      ],
       "recommendation": "不要贪矿到太晚，先推进电梯层数更关键。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_to_the_bottom",
       "name": "到达底部？",
       "nameEn": "To The Bottom?",
-      "aliases": ["To The Bottom", "矿井底层", "矿井120层", "到矿底"],
+      "aliases": [
+        "To The Bottom",
+        "矿井底层",
+        "矿井120层",
+        "到矿底"
+      ],
       "trigger": "到达矿井第 40 层后获得。",
-      "requirements": ["到达矿井底部。"],
-      "walkthrough": ["继续推进到 120 层；每 5 层利用电梯保存进度。"],
-      "rewards": ["完成矿井主线推进。"],
+      "requirements": [
+        "到达矿井底部。"
+      ],
+      "walkthrough": [
+        "继续推进到 120 层；每 5 层利用电梯保存进度。"
+      ],
+      "rewards": [
+        "完成矿井主线推进。"
+      ],
       "recommendation": "武器、防御和食物跟不上时先升级装备再继续深挖。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_archaeology",
       "name": "考古学",
       "nameEn": "Archaeology",
-      "aliases": ["Archaeology", "博物馆任务", "冈瑟捐赠", "捐矿物", "捐古物"],
+      "aliases": [
+        "Archaeology",
+        "博物馆任务",
+        "冈瑟捐赠",
+        "捐矿物",
+        "捐古物"
+      ],
       "trigger": "携带矿物或古物进入博物馆后获得。",
-      "requirements": ["向博物馆捐赠 1 个物品。"],
-      "walkthrough": ["把尚未捐赠的矿物或古物交给冈瑟。"],
-      "rewards": ["250g。"],
+      "requirements": [
+        "向博物馆捐赠 1 个物品。"
+      ],
+      "walkthrough": [
+        "把尚未捐赠的矿物或古物交给冈瑟。"
+      ],
+      "rewards": [
+        "250g。"
+      ],
       "recommendation": "早期优先捐重复价值低的古物/矿物，逐步解锁博物馆奖励。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_rat_problem",
       "name": "老鼠肆虐",
       "nameEn": "Rat Problem",
-      "aliases": ["Rat Problem", "社区中心老鼠", "金色卷轴", "工艺室卷轴"],
+      "aliases": [
+        "Rat Problem",
+        "社区中心老鼠",
+        "金色卷轴",
+        "工艺室卷轴"
+      ],
       "trigger": "春季 5 日后晴天 8:00-13:00 从巴士站进入鹈鹕镇触发社区中心剧情。",
-      "requirements": ["进入社区中心并查看工艺室的金色卷轴。"],
-      "walkthrough": ["看完卷轴后，第二天会收到法师来信。"],
-      "rewards": ["触发“拜访法师”任务。"],
+      "requirements": [
+        "进入社区中心并查看工艺室的金色卷轴。"
+      ],
+      "walkthrough": [
+        "看完卷轴后，第二天会收到法师来信。"
+      ],
+      "rewards": [
+        "触发“拜访法师”任务。"
+      ],
       "recommendation": "社区中心路线尽早触发，方便开始收集包规划。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_meet_the_wizard",
       "name": "拜访法师",
       "nameEn": "Meet The Wizard",
-      "aliases": ["Meet The Wizard", "见法师", "法师塔", "看懂祝尼魔文字"],
+      "aliases": [
+        "Meet The Wizard",
+        "见法师",
+        "法师塔",
+        "看懂祝尼魔文字"
+      ],
       "trigger": "查看社区中心第一张金色卷轴后的第二天收到法师来信。",
-      "requirements": ["进入法师塔。"],
-      "walkthrough": ["去煤矿森林西侧法师塔触发剧情。"],
-      "rewards": ["获得能读懂祝尼魔文字的能力。"],
+      "requirements": [
+        "进入法师塔。"
+      ],
+      "walkthrough": [
+        "去煤矿森林西侧法师塔触发剧情。"
+      ],
+      "rewards": [
+        "获得能读懂祝尼魔文字的能力。"
+      ],
       "recommendation": "完成后才能正式查看收集包需求，是社区中心路线关键节点。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_forging_ahead",
       "name": "锻造前进",
       "nameEn": "Forging Ahead",
-      "aliases": ["Forging Ahead", "熔炉任务", "制作熔炉", "克林特熔炉"],
+      "aliases": [
+        "Forging Ahead",
+        "熔炉任务",
+        "制作熔炉",
+        "克林特熔炉"
+      ],
       "trigger": "采集到铜矿石后的第二天，克林特来访并给熔炉图纸。",
-      "requirements": ["制作 1 个熔炉。"],
-      "walkthrough": ["收集石头和铜矿石，按配方制作熔炉。"],
-      "rewards": ["解锁后续“冶炼”任务。"],
+      "requirements": [
+        "制作 1 个熔炉。"
+      ],
+      "walkthrough": [
+        "收集石头和铜矿石，按配方制作熔炉。"
+      ],
+      "rewards": [
+        "解锁后续“冶炼”任务。"
+      ],
       "recommendation": "熔炉越早做越好，工具升级和机器制作都需要金属锭。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_smelting",
       "name": "冶炼",
       "nameEn": "Smelting",
-      "aliases": ["Smelting", "熔炼铜锭", "做铜锭", "铜锭任务"],
+      "aliases": [
+        "Smelting",
+        "熔炼铜锭",
+        "做铜锭",
+        "铜锭任务"
+      ],
       "trigger": "完成“锻造前进”后获得。",
-      "requirements": ["用熔炉冶炼 1 个铜锭。"],
-      "walkthrough": ["把 5 个铜矿石和 1 个煤炭放入熔炉。"],
-      "rewards": ["完成基础冶炼教程。"],
+      "requirements": [
+        "用熔炉冶炼 1 个铜锭。"
+      ],
+      "walkthrough": [
+        "把 5 个铜矿石和 1 个煤炭放入熔炉。"
+      ],
+      "rewards": [
+        "完成基础冶炼教程。"
+      ],
       "recommendation": "铜锭优先用于工具升级和基础机器。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_initiation",
       "name": "入会仪式",
       "nameEn": "Initiation",
-      "aliases": ["Initiation", "冒险家公会", "杀10个史莱姆", "10史莱姆"],
+      "aliases": [
+        "Initiation",
+        "冒险家公会",
+        "杀10个史莱姆",
+        "10史莱姆"
+      ],
       "trigger": "到达矿井第 5 层后的第二天邮箱收到。",
-      "requirements": ["击杀 10 只史莱姆。"],
-      "walkthrough": ["可在矿井、秘密森林或农场击杀史莱姆计数。"],
-      "rewards": ["可以进入冒险家公会。"],
+      "requirements": [
+        "击杀 10 只史莱姆。"
+      ],
+      "walkthrough": [
+        "可在矿井、秘密森林或农场击杀史莱姆计数。"
+      ],
+      "rewards": [
+        "可以进入冒险家公会。"
+      ],
       "recommendation": "完成后尽快进公会，方便买武器和查看杀怪目标。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_robins_lost_axe",
       "name": "罗宾丢失的斧子",
       "nameEn": "Robin's Lost Axe",
-      "aliases": ["Robin's Lost Axe", "罗宾斧头", "罗宾的斧头", "罗宾斧子", "罗宾丢斧子"],
+      "aliases": [
+        "Robin's Lost Axe",
+        "罗宾斧头",
+        "罗宾的斧头",
+        "罗宾斧子",
+        "罗宾丢斧子"
+      ],
       "trigger": "春季 11 日收到罗宾来信。",
-      "requirements": ["找到罗宾的斧子并交还给罗宾。"],
-      "walkthrough": ["斧子在煤矿森林南部、玛妮牧场南边附近，靠近下水道管道区域。"],
-      "rewards": ["250g。", "罗宾 1 颗心友谊。"],
+      "requirements": [
+        "找到罗宾的斧子并交还给罗宾。"
+      ],
+      "walkthrough": [
+        "斧子在煤矿森林南部、玛妮牧场南边附近，靠近下水道管道区域。"
+      ],
+      "rewards": [
+        "250g。",
+        "罗宾 1 颗心友谊。"
+      ],
       "recommendation": "去煤矿森林采集或找玛妮时顺路拿，别误跑到罗宾家周围找。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_jodis_request",
       "name": "乔迪的请求",
       "nameEn": "Jodi's Request",
-      "aliases": ["Jodi's Request", "乔迪花椰菜", "乔迪菜花", "新鲜花椰菜"],
+      "aliases": [
+        "Jodi's Request",
+        "乔迪花椰菜",
+        "乔迪菜花",
+        "新鲜花椰菜"
+      ],
       "trigger": "春季 19 日收到乔迪来信。",
-      "requirements": ["带给乔迪 1 个花椰菜。"],
-      "walkthrough": ["春季种花椰菜或从可用来源取得后交给乔迪。"],
-      "rewards": ["350g。", "乔迪 1 颗心友谊。"],
+      "requirements": [
+        "带给乔迪 1 个花椰菜。"
+      ],
+      "walkthrough": [
+        "春季种花椰菜或从可用来源取得后交给乔迪。"
+      ],
+      "rewards": [
+        "350g。",
+        "乔迪 1 颗心友谊。"
+      ],
       "recommendation": "第一年春季提前种花椰菜，避免错过季节后要等旅行货车。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_mayors_shorts",
       "name": "镇长的短裤",
       "nameEn": "Mayor's Shorts",
-      "aliases": ["Mayor's Shorts", "刘易斯短裤", "镇长短裤", "紫色短裤", "玛妮卧室短裤"],
+      "aliases": [
+        "Mayor's Shorts",
+        "刘易斯短裤",
+        "镇长短裤",
+        "紫色短裤",
+        "玛妮卧室短裤"
+      ],
       "trigger": "夏季 3 日收到刘易斯来信。",
-      "requirements": ["找到并归还刘易斯的紫色短裤。"],
-      "walkthrough": ["短裤在玛妮卧室；通常需要和玛妮有足够好感进入房间，也可用楼梯彩蛋路径。"],
-      "rewards": ["750g。", "刘易斯 1 颗心友谊。"],
+      "requirements": [
+        "找到并归还刘易斯的紫色短裤。"
+      ],
+      "walkthrough": [
+        "短裤在玛妮卧室；通常需要和玛妮有足够好感进入房间，也可用楼梯彩蛋路径。"
+      ],
+      "rewards": [
+        "750g。",
+        "刘易斯 1 颗心友谊。"
+      ],
       "recommendation": "正常路线先给玛妮送礼到能进卧室，再取短裤；短裤也有展览会和汤锅等彩蛋用途。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_blackberry_basket",
       "name": "黑莓篮子",
       "nameEn": "Blackberry Basket",
-      "aliases": ["Blackberry Basket", "莱纳斯篮子", "Linus篮子", "黑莓季篮子"],
+      "aliases": [
+        "Blackberry Basket",
+        "莱纳斯篮子",
+        "Linus篮子",
+        "黑莓季篮子"
+      ],
       "trigger": "秋季 8 日收到莱纳斯来信。",
-      "requirements": ["找到莱纳斯的篮子并还给他。"],
-      "walkthrough": ["篮子在巴士站左侧隧道入口附近的后山小路。"],
-      "rewards": ["莱纳斯 1 颗心友谊。"],
+      "requirements": [
+        "找到莱纳斯的篮子并还给他。"
+      ],
+      "walkthrough": [
+        "篮子在巴士站左侧隧道入口附近的后山小路。"
+      ],
+      "rewards": [
+        "莱纳斯 1 颗心友谊。"
+      ],
       "recommendation": "从农场去巴士站时顺路往左找，不在煤矿森林黑莓灌木旁。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_marnies_request",
       "name": "玛妮的请求",
       "nameEn": "Marnie's Request",
-      "aliases": ["Marnie's Request", "玛妮洞穴萝卜", "山洞萝卜", "cave carrot"],
+      "aliases": [
+        "Marnie's Request",
+        "玛妮洞穴萝卜",
+        "山洞萝卜",
+        "cave carrot"
+      ],
       "trigger": "与玛妮达到 3 心后，她到农舍拜访触发。",
-      "requirements": ["把 1 个山洞萝卜带到玛妮牧场。"],
-      "walkthrough": ["山洞萝卜常见于矿井泥土地或箱子；带进玛妮商店完成。"],
-      "rewards": ["100 友谊点。"],
+      "requirements": [
+        "把 1 个山洞萝卜带到玛妮牧场。"
+      ],
+      "walkthrough": [
+        "山洞萝卜常见于矿井泥土地或箱子；带进玛妮商店完成。"
+      ],
+      "rewards": [
+        "100 友谊点。"
+      ],
       "recommendation": "早期下矿时留一个山洞萝卜，不要全吃掉。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_pam_is_thirsty",
       "name": "帕姆渴了",
       "nameEn": "Pam Is Thirsty",
-      "aliases": ["Pam Is Thirsty", "帕姆淡啤酒", "淡啤酒任务", "pale ale"],
+      "aliases": [
+        "Pam Is Thirsty",
+        "帕姆淡啤酒",
+        "淡啤酒任务",
+        "pale ale"
+      ],
       "trigger": "夏季 14 日收到帕姆来信。",
-      "requirements": ["带给帕姆 1 个淡啤酒。"],
-      "walkthrough": ["种啤酒花，放入小桶加工为淡啤酒。"],
-      "rewards": ["350g。", "帕姆 1 颗心友谊。"],
+      "requirements": [
+        "带给帕姆 1 个淡啤酒。"
+      ],
+      "walkthrough": [
+        "种啤酒花，放入小桶加工为淡啤酒。"
+      ],
+      "rewards": [
+        "350g。",
+        "帕姆 1 颗心友谊。"
+      ],
       "recommendation": "如果还没小桶，先推进耕种等级和橡树树脂；这任务没有时限。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_dark_reagent",
       "name": "黑暗试剂",
       "nameEn": "A Dark Reagent",
-      "aliases": ["A Dark Reagent", "黑暗试剂", "法师虚空精华", "虚空精华任务"],
+      "aliases": [
+        "A Dark Reagent",
+        "黑暗试剂",
+        "法师虚空精华",
+        "虚空精华任务"
+      ],
       "trigger": "冬季 12 日收到法师来信。",
-      "requirements": ["带给法师 1 个虚空精华。"],
-      "walkthrough": ["虚空精华可从矿井暗影怪等来源获得，也可后期从科罗布斯处购买。"],
-      "rewards": ["1,000g。", "法师 1 颗心友谊。"],
+      "requirements": [
+        "带给法师 1 个虚空精华。"
+      ],
+      "walkthrough": [
+        "虚空精华可从矿井暗影怪等来源获得，也可后期从科罗布斯处购买。"
+      ],
+      "rewards": [
+        "1,000g。",
+        "法师 1 颗心友谊。"
+      ],
       "recommendation": "矿井 80 层后刷暗影怪通常更自然；不急着当天完成。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_cows_delight",
       "name": "奶牛的喜悦",
       "nameEn": "Cow's Delight",
-      "aliases": ["Cow's Delight", "玛妮苋菜", "苋菜任务", "amaranth"],
+      "aliases": [
+        "Cow's Delight",
+        "玛妮苋菜",
+        "苋菜任务",
+        "amaranth"
+      ],
       "trigger": "秋季 3 日收到玛妮来信。",
-      "requirements": ["带给玛妮 1 个苋菜。"],
-      "walkthrough": ["秋季种植苋菜，成熟后交给玛妮。"],
-      "rewards": ["500g。", "玛妮 1 颗心友谊。"],
+      "requirements": [
+        "带给玛妮 1 个苋菜。"
+      ],
+      "walkthrough": [
+        "秋季种植苋菜，成熟后交给玛妮。"
+      ],
+      "rewards": [
+        "500g。",
+        "玛妮 1 颗心友谊。"
+      ],
       "recommendation": "秋季早些种一批苋菜，顺便兼顾动物相关任务。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_skull_key",
       "name": "骷髅钥匙",
       "nameEn": "The Skull Key",
-      "aliases": ["The Skull Key", "骷髅钥匙", "沙漠矿洞钥匙", "头骨钥匙"],
+      "aliases": [
+        "The Skull Key",
+        "骷髅钥匙",
+        "沙漠矿洞钥匙",
+        "头骨钥匙"
+      ],
       "trigger": "到达矿井底层后获得骷髅钥匙。",
-      "requirements": ["发现骷髅钥匙的用途。"],
-      "walkthrough": ["修复巴士后去沙漠，用骷髅钥匙进入骷髅洞穴。"],
-      "rewards": ["解锁沙漠骷髅洞穴。"],
+      "requirements": [
+        "发现骷髅钥匙的用途。"
+      ],
+      "walkthrough": [
+        "修复巴士后去沙漠，用骷髅钥匙进入骷髅洞穴。"
+      ],
+      "rewards": [
+        "解锁沙漠骷髅洞穴。"
+      ],
       "recommendation": "这是矿井到沙漠洞穴的关键衔接；进洞前准备食物、炸弹和楼梯。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_crop_research",
       "name": "作物研究",
       "nameEn": "Crop Research",
-      "aliases": ["Crop Research", "德米特里厄斯甜瓜", "甜瓜任务"],
+      "aliases": [
+        "Crop Research",
+        "德米特里厄斯甜瓜",
+        "甜瓜任务"
+      ],
       "trigger": "夏季 20 日收到德米特里厄斯来信。",
-      "requirements": ["带给德米特里厄斯 1 个甜瓜。"],
-      "walkthrough": ["夏季种甜瓜，成熟后交给德米特里厄斯。"],
-      "rewards": ["550g。", "德米特里厄斯 1 颗心友谊。"],
+      "requirements": [
+        "带给德米特里厄斯 1 个甜瓜。"
+      ],
+      "walkthrough": [
+        "夏季种甜瓜，成熟后交给德米特里厄斯。"
+      ],
+      "rewards": [
+        "550g。",
+        "德米特里厄斯 1 颗心友谊。"
+      ],
       "recommendation": "甜瓜成长较慢，想当季完成就提前种。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_knee_therapy",
       "name": "膝盖疗法",
       "nameEn": "Knee Therapy",
-      "aliases": ["Knee Therapy", "乔治辣椒", "辣椒任务", "hot pepper"],
+      "aliases": [
+        "Knee Therapy",
+        "乔治辣椒",
+        "辣椒任务",
+        "hot pepper"
+      ],
       "trigger": "夏季 25 日收到乔治来信。",
-      "requirements": ["带给乔治 1 个辣椒。"],
-      "walkthrough": ["夏季种辣椒，成熟后交给乔治。"],
-      "rewards": ["200g。", "乔治 1 颗心友谊。"],
+      "requirements": [
+        "带给乔治 1 个辣椒。"
+      ],
+      "walkthrough": [
+        "夏季种辣椒，成熟后交给乔治。"
+      ],
+      "rewards": [
+        "200g。",
+        "乔治 1 颗心友谊。"
+      ],
       "recommendation": "辣椒会多次结果，夏初种几株很容易覆盖任务和礼物。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_robins_request",
       "name": "罗宾的请求",
       "nameEn": "Robin's Request",
-      "aliases": ["Robin's Request", "罗宾硬木", "10硬木", "硬木任务"],
+      "aliases": [
+        "Robin's Request",
+        "罗宾硬木",
+        "10硬木",
+        "硬木任务"
+      ],
       "trigger": "冬季 21 日收到罗宾来信。",
-      "requirements": ["带给罗宾 10 个硬木。"],
-      "walkthrough": ["秘密森林、农场大树桩或硬木桃花心木树都是主要来源。"],
-      "rewards": ["500g。", "罗宾 1 颗心友谊。"],
+      "requirements": [
+        "带给罗宾 10 个硬木。"
+      ],
+      "walkthrough": [
+        "秘密森林、农场大树桩或硬木桃花心木树都是主要来源。"
+      ],
+      "rewards": [
+        "500g。",
+        "罗宾 1 颗心友谊。"
+      ],
       "recommendation": "硬木用途很多，平时留一些库存能直接交任务。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_qis_challenge",
       "name": "齐先生的挑战",
       "nameEn": "Qi's Challenge",
-      "aliases": ["Qi's Challenge", "齐先生挑战", "骷髅洞穴25层", "沙漠矿洞25层"],
+      "aliases": [
+        "Qi's Challenge",
+        "齐先生挑战",
+        "骷髅洞穴25层",
+        "沙漠矿洞25层"
+      ],
       "trigger": "第一次进入骷髅洞穴后的第二天收到来信。",
-      "requirements": ["到达骷髅洞穴第 25 层。"],
-      "walkthrough": ["使用炸弹、食物和楼梯加速下层。"],
-      "rewards": ["次日邮件获得 10,000g。"],
+      "requirements": [
+        "到达骷髅洞穴第 25 层。"
+      ],
+      "walkthrough": [
+        "使用炸弹、食物和楼梯加速下层。"
+      ],
+      "rewards": [
+        "次日邮件获得 10,000g。"
+      ],
       "recommendation": "第一次挑战不用硬冲 100 层，先完成 25 层建立资源循环。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_the_mysterious_qi",
       "name": "神秘的齐",
       "nameEn": "The Mysterious Qi",
-      "aliases": ["The Mysterious Qi", "神秘齐", "齐先生任务链", "赌场会员卡", "沙龙龙最后一餐", "sand dragon"],
+      "aliases": [
+        "The Mysterious Qi",
+        "神秘齐",
+        "齐先生任务链",
+        "赌场会员卡",
+        "沙龙龙最后一餐",
+        "sand dragon"
+      ],
       "trigger": "把电池组放入巴士站隧道里的秘密盒子后开始。",
-      "requirements": ["按齐先生纸条完成整条寻物链。"],
+      "requirements": [
+        "按齐先生纸条完成整条寻物链。"
+      ],
       "walkthrough": [
         "把彩虹贝壳放进火车站台的盒子。",
         "把 10 个甜菜放进刘易斯家的冰箱。",
         "把太阳精华放进沙漠龙骨嘴里。",
         "调查农舍旁的木材堆。"
       ],
-      "rewards": ["会员卡，可进入绿洲赌场。"],
+      "rewards": [
+        "会员卡，可进入绿洲赌场。"
+      ],
       "recommendation": "甜菜需要沙漠商店种子，通常在解锁沙漠后再推进最顺。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_carving_pumpkins",
       "name": "雕刻南瓜",
       "nameEn": "Carving Pumpkins",
-      "aliases": ["Carving Pumpkins", "卡洛琳南瓜", "南瓜任务"],
+      "aliases": [
+        "Carving Pumpkins",
+        "卡洛琳南瓜",
+        "南瓜任务"
+      ],
       "trigger": "秋季 19 日收到卡洛琳来信。",
-      "requirements": ["带给卡洛琳 1 个南瓜。"],
-      "walkthrough": ["秋季种南瓜，成熟后交给卡洛琳。"],
-      "rewards": ["500g。", "卡洛琳 1 颗心友谊。"],
+      "requirements": [
+        "带给卡洛琳 1 个南瓜。"
+      ],
+      "walkthrough": [
+        "秋季种南瓜，成熟后交给卡洛琳。"
+      ],
+      "rewards": [
+        "500g。",
+        "卡洛琳 1 颗心友谊。"
+      ],
       "recommendation": "南瓜成长较慢，想当季完成就提前种。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_a_winter_mystery",
       "name": "冬日谜团",
       "nameEn": "A Winter Mystery",
-      "aliases": ["A Winter Mystery", "冬日谜团", "放大镜", "暗影人", "冬天公交站剧情"],
+      "aliases": [
+        "A Winter Mystery",
+        "冬日谜团",
+        "放大镜",
+        "暗影人",
+        "冬天公交站剧情"
+      ],
       "trigger": "冬季 6:00-16:00 从农场进入巴士站触发可疑身影剧情。",
-      "requirements": ["找到可疑身影留下的线索。"],
-      "walkthrough": ["调查鹈鹕镇游乐场右侧的灌木。"],
-      "rewards": ["放大镜，可阅读秘密纸条。"],
+      "requirements": [
+        "找到可疑身影留下的线索。"
+      ],
+      "walkthrough": [
+        "调查鹈鹕镇游乐场右侧的灌木。"
+      ],
+      "rewards": [
+        "放大镜，可阅读秘密纸条。"
+      ],
       "recommendation": "冬季尽早触发，秘密纸条会打开很多隐藏任务和线索。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_strange_note",
       "name": "奇怪纸条",
       "nameEn": "Strange Note",
-      "aliases": ["Strange Note", "秘密纸条23", "may-pal serrup", "枫糖浆熊", "熊的知识"],
+      "aliases": [
+        "Strange Note",
+        "秘密纸条23",
+        "may-pal serrup",
+        "枫糖浆熊",
+        "熊的知识"
+      ],
       "trigger": "阅读秘密纸条 #23 后获得。",
-      "requirements": ["带着枫糖浆在 6:00-19:00 进入秘密森林。"],
-      "walkthrough": ["触发熊剧情后完成。"],
-      "rewards": ["熊的知识。"],
+      "requirements": [
+        "带着枫糖浆在 6:00-19:00 进入秘密森林。"
+      ],
+      "walkthrough": [
+        "触发熊剧情后完成。"
+      ],
+      "rewards": [
+        "熊的知识。"
+      ],
       "recommendation": "先装树液采集器产枫糖浆，再去秘密森林触发。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_cryptic_note",
       "name": "隐秘纸条",
       "nameEn": "Cryptic Note",
-      "aliases": ["Cryptic Note", "秘密纸条10", "骷髅洞穴100层", "齐先生100层", "铱蛇奶"],
+      "aliases": [
+        "Cryptic Note",
+        "秘密纸条10",
+        "骷髅洞穴100层",
+        "齐先生100层",
+        "铱蛇奶"
+      ],
       "trigger": "阅读秘密纸条 #10 后获得。",
-      "requirements": ["到达骷髅洞穴第 100 层。"],
-      "walkthrough": ["准备楼梯、炸弹和高回复食物；到 100 层见齐先生。"],
-      "rewards": ["铱蛇奶，永久增加 25 点生命值。"],
+      "requirements": [
+        "到达骷髅洞穴第 100 层。"
+      ],
+      "walkthrough": [
+        "准备楼梯、炸弹和高回复食物；到 100 层见齐先生。"
+      ],
+      "rewards": [
+        "铱蛇奶，永久增加 25 点生命值。"
+      ],
       "recommendation": "等装备、资金和补给成熟后再冲，成功率高很多。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_fresh_fruit",
       "name": "新鲜水果",
       "nameEn": "Fresh Fruit",
-      "aliases": ["Fresh Fruit", "艾米丽杏子", "杏子任务", "apricot"],
+      "aliases": [
+        "Fresh Fruit",
+        "艾米丽杏子",
+        "杏子任务",
+        "apricot"
+      ],
       "trigger": "第 2 年春季 6 日收到艾米丽来信。",
-      "requirements": ["带给艾米丽 1 个杏子。"],
-      "walkthrough": ["春季成熟的杏树产杏子，也可从其他可用来源取得。"],
-      "rewards": ["600g。", "艾米丽 1 颗心友谊。"],
+      "requirements": [
+        "带给艾米丽 1 个杏子。"
+      ],
+      "walkthrough": [
+        "春季成熟的杏树产杏子，也可从其他可用来源取得。"
+      ],
+      "rewards": [
+        "600g。",
+        "艾米丽 1 颗心友谊。"
+      ],
       "recommendation": "想稳定完成就提前一个月种杏树，或用温室果树补。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_aquatic_research",
       "name": "水生研究",
       "nameEn": "Aquatic Research",
-      "aliases": ["Aquatic Research", "德米特里厄斯河豚", "河豚任务"],
+      "aliases": [
+        "Aquatic Research",
+        "德米特里厄斯河豚",
+        "河豚任务"
+      ],
       "trigger": "第 2 年夏季 6 日收到德米特里厄斯来信。",
-      "requirements": ["带给德米特里厄斯 1 条河豚。"],
-      "walkthrough": ["夏季晴天 12:00-16:00 在海洋钓河豚，也可用姜岛海洋等来源。"],
-      "rewards": ["1,000g。", "德米特里厄斯 1 颗心友谊。"],
+      "requirements": [
+        "带给德米特里厄斯 1 条河豚。"
+      ],
+      "walkthrough": [
+        "夏季晴天 12:00-16:00 在海洋钓河豚，也可用姜岛海洋等来源。"
+      ],
+      "rewards": [
+        "1,000g。",
+        "德米特里厄斯 1 颗心友谊。"
+      ],
       "recommendation": "河豚窗口短，提前留库存最省心。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_soldiers_star",
       "name": "士兵的星星",
       "nameEn": "A Soldier's Star",
-      "aliases": ["A Soldier's Star", "肯特杨桃", "星星果", "杨桃任务"],
+      "aliases": [
+        "A Soldier's Star",
+        "肯特杨桃",
+        "星星果",
+        "杨桃任务"
+      ],
       "trigger": "第 2 年夏季 15 日收到肯特来信。",
-      "requirements": ["带给肯特 1 个杨桃。"],
-      "walkthrough": ["从沙漠购买杨桃种子，夏季种植或温室种植。"],
-      "rewards": ["500g。", "肯特 1 颗心友谊。"],
+      "requirements": [
+        "带给肯特 1 个杨桃。"
+      ],
+      "walkthrough": [
+        "从沙漠购买杨桃种子，夏季种植或温室种植。"
+      ],
+      "rewards": [
+        "500g。",
+        "肯特 1 颗心友谊。"
+      ],
       "recommendation": "如果还没解锁沙漠，留到后面完成即可。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_mayors_need",
       "name": "镇长的需求",
       "nameEn": "Mayor's Need",
-      "aliases": ["Mayor's Need", "刘易斯松露油", "镇长松露油", "truffle oil"],
+      "aliases": [
+        "Mayor's Need",
+        "刘易斯松露油",
+        "镇长松露油",
+        "truffle oil"
+      ],
       "trigger": "第 2 年夏季 21 日收到刘易斯来信。",
-      "requirements": ["带给刘易斯 1 瓶松露油。"],
-      "walkthrough": ["养猪获得松露，再用产油机加工成松露油。"],
-      "rewards": ["750g。", "刘易斯 1 颗心友谊。"],
+      "requirements": [
+        "带给刘易斯 1 瓶松露油。"
+      ],
+      "walkthrough": [
+        "养猪获得松露，再用产油机加工成松露油。"
+      ],
+      "rewards": [
+        "750g。",
+        "刘易斯 1 颗心友谊。"
+      ],
       "recommendation": "这通常是中后期任务，未养猪时不用急。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_wanted_lobster",
       "name": "通缉：龙虾",
       "nameEn": "Wanted: Lobster",
-      "aliases": ["Wanted Lobster", "龙虾通缉", "格斯龙虾", "lobster"],
+      "aliases": [
+        "Wanted Lobster",
+        "龙虾通缉",
+        "格斯龙虾",
+        "lobster"
+      ],
       "trigger": "第 2 年秋季 6 日收到格斯来信。",
-      "requirements": ["带给格斯 1 个龙虾。"],
-      "walkthrough": ["在海洋蟹笼中获得龙虾。"],
-      "rewards": ["500g。", "格斯 1 颗心友谊。"],
+      "requirements": [
+        "带给格斯 1 个龙虾。"
+      ],
+      "walkthrough": [
+        "在海洋蟹笼中获得龙虾。"
+      ],
+      "rewards": [
+        "500g。",
+        "格斯 1 颗心友谊。"
+      ],
       "recommendation": "提前在海边放蟹笼可以很轻松完成。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_pam_needs_juice",
       "name": "帕姆需要果汁",
       "nameEn": "Pam Needs Juice",
-      "aliases": ["Pam Needs Juice", "帕姆电池", "电视遥控器", "电池组任务"],
+      "aliases": [
+        "Pam Needs Juice",
+        "帕姆电池",
+        "电视遥控器",
+        "电池组任务"
+      ],
       "trigger": "第 2 年秋季 19 日收到帕姆来信。",
-      "requirements": ["带给帕姆 1 个电池组。"],
-      "walkthrough": ["避雷针、太阳能板、旅行货车等来源可获得电池组。"],
-      "rewards": ["400g。", "帕姆 1 颗心友谊。"],
+      "requirements": [
+        "带给帕姆 1 个电池组。"
+      ],
+      "walkthrough": [
+        "避雷针、太阳能板、旅行货车等来源可获得电池组。"
+      ],
+      "rewards": [
+        "400g。",
+        "帕姆 1 颗心友谊。"
+      ],
       "recommendation": "电池组用途多，雨季用避雷针攒库存。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_fish_casserole",
       "name": "鱼肉砂锅",
       "nameEn": "Fish Casserole",
-      "aliases": ["Fish Casserole", "乔迪鱼肉砂锅", "乔迪大嘴鲈鱼", "晚餐7点"],
+      "aliases": [
+        "Fish Casserole",
+        "乔迪鱼肉砂锅",
+        "乔迪大嘴鲈鱼",
+        "晚餐7点"
+      ],
       "trigger": "乔迪 4 心事件；周一 6:00-9:30 离开农舍触发邀请。",
-      "requirements": ["在非节日的任意一天 19:00 带着大嘴鲈鱼进入乔迪家。"],
-      "walkthrough": ["大嘴鲈鱼可在山湖钓；到点进乔迪家触发晚餐。"],
-      "rewards": ["剧情事件。"],
+      "requirements": [
+        "在非节日的任意一天 19:00 带着大嘴鲈鱼进入乔迪家。"
+      ],
+      "walkthrough": [
+        "大嘴鲈鱼可在山湖钓；到点进乔迪家触发晚餐。"
+      ],
+      "rewards": [
+        "剧情事件。"
+      ],
       "recommendation": "注意时间是晚上 7 点，不是白天交给乔迪。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_catch_a_squid",
       "name": "抓鱿鱼",
       "nameEn": "Catch a Squid",
-      "aliases": ["Catch a Squid", "威利鱿鱼", "鱿鱼任务"],
+      "aliases": [
+        "Catch a Squid",
+        "威利鱿鱼",
+        "鱿鱼任务"
+      ],
       "trigger": "冬季 2 日收到威利来信。",
-      "requirements": ["带给威利 1 条鱿鱼。"],
-      "walkthrough": ["冬季夜晚在海洋钓鱿鱼。"],
-      "rewards": ["800g。", "威利 1 颗心友谊。"],
+      "requirements": [
+        "带给威利 1 条鱿鱼。"
+      ],
+      "walkthrough": [
+        "冬季夜晚在海洋钓鱿鱼。"
+      ],
+      "rewards": [
+        "800g。",
+        "威利 1 颗心友谊。"
+      ],
       "recommendation": "鱿鱼是冬季夜间鱼，白天去海边不会出。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_fish_stew",
       "name": "鱼汤",
       "nameEn": "Fish Stew",
-      "aliases": ["Fish Stew", "格斯长鳍金枪鱼", "albacore", "鱼汤任务"],
+      "aliases": [
+        "Fish Stew",
+        "格斯长鳍金枪鱼",
+        "albacore",
+        "鱼汤任务"
+      ],
       "trigger": "冬季 26 日收到格斯来信。",
-      "requirements": ["带给格斯 1 条长鳍金枪鱼。"],
-      "walkthrough": ["秋季或冬季在海洋对应时段钓长鳍金枪鱼。"],
-      "rewards": ["400g。", "格斯 1 颗心友谊。"],
+      "requirements": [
+        "带给格斯 1 条长鳍金枪鱼。"
+      ],
+      "walkthrough": [
+        "秋季或冬季在海洋对应时段钓长鳍金枪鱼。"
+      ],
+      "rewards": [
+        "400g。",
+        "格斯 1 颗心友谊。"
+      ],
       "recommendation": "冬末收到任务时仍可当季完成，注意钓鱼时段。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_pierres_notice",
       "name": "皮埃尔的通知",
       "nameEn": "Pierre's Notice",
-      "aliases": ["Pierre's Notice", "皮埃尔生鱼片", "sashimi", "生鱼片任务"],
+      "aliases": [
+        "Pierre's Notice",
+        "皮埃尔生鱼片",
+        "sashimi",
+        "生鱼片任务"
+      ],
       "trigger": "第 2 年春季 21 日收到皮埃尔来信。",
-      "requirements": ["带给皮埃尔 1 份生鱼片。"],
-      "walkthrough": ["学会生鱼片配方后，用任意鱼制作并交给皮埃尔。"],
-      "rewards": ["1,000g。", "皮埃尔 1 颗心友谊。"],
+      "requirements": [
+        "带给皮埃尔 1 份生鱼片。"
+      ],
+      "walkthrough": [
+        "学会生鱼片配方后，用任意鱼制作并交给皮埃尔。"
+      ],
+      "rewards": [
+        "1,000g。",
+        "皮埃尔 1 颗心友谊。"
+      ],
       "recommendation": "如果还没莱纳斯 3 心拿配方，先送礼解锁。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_clints_attempt",
       "name": "克林特的尝试",
       "nameEn": "Clint's Attempt",
-      "aliases": ["Clint's Attempt", "克林特紫水晶", "给艾米丽紫水晶", "紫水晶任务"],
+      "aliases": [
+        "Clint's Attempt",
+        "克林特紫水晶",
+        "给艾米丽紫水晶",
+        "紫水晶任务"
+      ],
       "trigger": "冬季 6 日收到克林特来信。",
-      "requirements": ["把紫水晶带给艾米丽，并说明来自克林特。"],
-      "walkthrough": ["紫水晶常见于矿井和晶球；交给艾米丽完成。"],
-      "rewards": ["艾米丽 1 颗心友谊。"],
+      "requirements": [
+        "把紫水晶带给艾米丽，并说明来自克林特。"
+      ],
+      "walkthrough": [
+        "紫水晶常见于矿井和晶球；交给艾米丽完成。"
+      ],
+      "rewards": [
+        "艾米丽 1 颗心友谊。"
+      ],
       "recommendation": "奖励是艾米丽好感，不是克林特好感；别交错对象。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_a_favor_for_clint",
       "name": "给克林特的帮助",
       "nameEn": "A Favor For Clint",
-      "aliases": ["A Favor For Clint", "克林特铁锭", "铁锭任务"],
+      "aliases": [
+        "A Favor For Clint",
+        "克林特铁锭",
+        "铁锭任务"
+      ],
       "trigger": "冬季 17 日收到克林特来信。",
-      "requirements": ["带给克林特 1 个铁锭。"],
-      "walkthrough": ["用 5 个铁矿石和 1 个煤炭冶炼铁锭。"],
-      "rewards": ["500g。", "克林特 1 颗心友谊。"],
+      "requirements": [
+        "带给克林特 1 个铁锭。"
+      ],
+      "walkthrough": [
+        "用 5 个铁矿石和 1 个煤炭冶炼铁锭。"
+      ],
+      "rewards": [
+        "500g。",
+        "克林特 1 颗心友谊。"
+      ],
       "recommendation": "铁锭用途很多，平时留一两个库存。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_staff_of_power",
       "name": "力量之杖",
       "nameEn": "Staff of Power",
-      "aliases": ["Staff of Power", "法师铱锭", "铱锭任务", "法杖任务"],
+      "aliases": [
+        "Staff of Power",
+        "法师铱锭",
+        "铱锭任务",
+        "法杖任务"
+      ],
       "trigger": "第 2 年冬季 5 日收到法师来信。",
-      "requirements": ["带给法师 1 个铱锭。"],
-      "walkthrough": ["用铱矿石和煤炭冶炼铱锭，或从后期来源取得。"],
-      "rewards": ["5,000g。", "法师 1 颗心友谊。"],
+      "requirements": [
+        "带给法师 1 个铱锭。"
+      ],
+      "walkthrough": [
+        "用铱矿石和煤炭冶炼铱锭，或从后期来源取得。"
+      ],
+      "rewards": [
+        "5,000g。",
+        "法师 1 颗心友谊。"
+      ],
       "recommendation": "铱锭早期很珍贵，确认工具/洒水器优先级后再交也可以。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_grannys_gift",
       "name": "奶奶的礼物",
       "nameEn": "Granny's Gift",
-      "aliases": ["Granny's Gift", "艾芙琳韭葱", "韭葱任务"],
+      "aliases": [
+        "Granny's Gift",
+        "艾芙琳韭葱",
+        "韭葱任务"
+      ],
       "trigger": "第 2 年春季 15 日收到艾芙琳来信。",
-      "requirements": ["带给艾芙琳 1 个韭葱。"],
-      "walkthrough": ["春季采集韭葱，或用春季种子种出。"],
-      "rewards": ["500g。", "艾芙琳 1 颗心友谊。"],
+      "requirements": [
+        "带给艾芙琳 1 个韭葱。"
+      ],
+      "walkthrough": [
+        "春季采集韭葱，或用春季种子种出。"
+      ],
+      "rewards": [
+        "500g。",
+        "艾芙琳 1 颗心友谊。"
+      ],
       "recommendation": "春季觅食物别全卖，韭葱同时也是乔治喜爱礼物。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_exotic_spirits",
       "name": "异域烈酒",
       "nameEn": "Exotic Spirits",
-      "aliases": ["Exotic Spirits", "格斯椰子", "椰子任务"],
+      "aliases": [
+        "Exotic Spirits",
+        "格斯椰子",
+        "椰子任务"
+      ],
       "trigger": "第 2 年冬季 19 日收到格斯来信。",
-      "requirements": ["带给格斯 1 个椰子。"],
-      "walkthrough": ["沙漠觅食或旅行货车等来源可获得椰子。"],
-      "rewards": ["600g。", "格斯 1 颗心友谊。"],
+      "requirements": [
+        "带给格斯 1 个椰子。"
+      ],
+      "walkthrough": [
+        "沙漠觅食或旅行货车等来源可获得椰子。"
+      ],
+      "rewards": [
+        "600g。",
+        "格斯 1 颗心友谊。"
+      ],
       "recommendation": "解锁沙漠后很容易完成；没解锁就先留任务。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_catch_a_lingcod",
       "name": "抓蛇齿单线鱼",
       "nameEn": "Catch a Lingcod",
-      "aliases": ["Catch a Lingcod", "威利蛇齿单线鱼", "lingcod", "冬季lingcod"],
+      "aliases": [
+        "Catch a Lingcod",
+        "威利蛇齿单线鱼",
+        "lingcod",
+        "冬季lingcod"
+      ],
       "trigger": "第 2 年冬季 13 日收到威利来信。",
-      "requirements": ["带给威利 1 条蛇齿单线鱼；接受前钓到的也可以。"],
-      "walkthrough": ["冬季在河流、山湖等水域钓蛇齿单线鱼。"],
-      "rewards": ["550g。", "威利 1 颗心友谊。"],
+      "requirements": [
+        "带给威利 1 条蛇齿单线鱼；接受前钓到的也可以。"
+      ],
+      "walkthrough": [
+        "冬季在河流、山湖等水域钓蛇齿单线鱼。"
+      ],
+      "rewards": [
+        "550g。",
+        "威利 1 颗心友谊。"
+      ],
       "recommendation": "难度偏高，钓鱼等级低时带陷阱浮标或加钓鱼 buff。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_dark_talisman",
       "name": "黑暗护身符",
       "nameEn": "Dark Talisman",
-      "aliases": ["Dark Talisman", "黑暗护符", "女巫沼泽", "突变虫穴", "科罗布斯护身符"],
+      "aliases": [
+        "Dark Talisman",
+        "黑暗护符",
+        "女巫沼泽",
+        "突变虫穴",
+        "科罗布斯护身符"
+      ],
       "trigger": "完成社区中心或 Joja 仓库后，在铁路区域触发剧情。",
-      "requirements": ["向科罗布斯询问黑暗护身符，并从突变虫穴取回。"],
-      "walkthrough": ["进入下水道找科罗布斯；穿过突变虫穴拿护身符；回铁路洞口。"],
-      "rewards": ["进入女巫沼泽。"],
+      "requirements": [
+        "向科罗布斯询问黑暗护身符，并从突变虫穴取回。"
+      ],
+      "walkthrough": [
+        "进入下水道找科罗布斯；穿过突变虫穴拿护身符；回铁路洞口。"
+      ],
+      "rewards": [
+        "进入女巫沼泽。"
+      ],
       "recommendation": "这是解锁法师建筑和女巫小屋前置链条的第一步。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_goblin_problem",
       "name": "哥布林问题",
       "nameEn": "Goblin Problem",
-      "aliases": ["Goblin Problem", "哥布林挡路", "虚空蛋黄酱", "魔法墨水", "法师建筑"],
+      "aliases": [
+        "Goblin Problem",
+        "哥布林挡路",
+        "虚空蛋黄酱",
+        "魔法墨水",
+        "法师建筑"
+      ],
       "trigger": "完成“黑暗护身符”并穿过铁路洞穴后获得。",
-      "requirements": ["让女巫小屋前的哥布林让路，并取回魔法墨水。"],
-      "walkthrough": ["给哥布林虚空蛋黄酱；进入女巫小屋取得魔法墨水；交给法师。"],
-      "rewards": ["解锁法师建筑。", "女巫小屋黑暗神龛可用。"],
+      "requirements": [
+        "让女巫小屋前的哥布林让路，并取回魔法墨水。"
+      ],
+      "walkthrough": [
+        "给哥布林虚空蛋黄酱；进入女巫小屋取得魔法墨水；交给法师。"
+      ],
+      "rewards": [
+        "解锁法师建筑。",
+        "女巫小屋黑暗神龛可用。"
+      ],
       "recommendation": "提前准备虚空蛋黄酱，任务会非常顺。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_the_pirates_wife",
       "name": "海盗的妻子",
       "nameEn": "The Pirate's Wife",
-      "aliases": ["The Pirate's Wife", "海盗妻子", "伯蒂任务", "海盗项链", "姜岛老太太"],
+      "aliases": [
+        "The Pirate's Wife",
+        "海盗妻子",
+        "伯蒂任务",
+        "海盗项链",
+        "姜岛老太太"
+      ],
       "trigger": "在姜岛与伯蒂对话。",
-      "requirements": ["完成一串纪念物交换，找回海盗项链交给伯蒂。"],
+      "requirements": [
+        "完成一串纪念物交换，找回海盗项链交给伯蒂。"
+      ],
       "walkthrough": [
         "把战争纪念物给肯特。",
         "把美食家番茄盐给格斯。",
@@ -22959,21 +27476,40 @@
         "把蠕动蚯蚓给威利。",
         "把海盗项链交给伯蒂。"
       ],
-      "rewards": ["仙尘配方。", "5 个金核桃。"],
+      "rewards": [
+        "仙尘配方。",
+        "5 个金核桃。"
+      ],
       "recommendation": "这条链没有战斗压力，按 NPC 顺序跑图即可；先确认每个 NPC 当天位置。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     },
     {
       "id": "quest_the_giant_stump",
       "name": "巨大树桩",
       "nameEn": "The Giant Stump",
-      "aliases": ["The Giant Stump", "大树桩", "浣熊任务", "修树桩", "100硬木树桩"],
+      "aliases": [
+        "The Giant Stump",
+        "大树桩",
+        "浣熊任务",
+        "修树桩",
+        "100硬木树桩"
+      ],
       "trigger": "风暴剧情后，煤矿森林南侧巨大树桩可互动。",
-      "requirements": ["用 100 个硬木修复巨大树桩。"],
-      "walkthrough": ["收集 100 个硬木后与巨大树桩互动修复。"],
-      "rewards": ["解锁浣熊任务。"],
+      "requirements": [
+        "用 100 个硬木修复巨大树桩。"
+      ],
+      "walkthrough": [
+        "收集 100 个硬木后与巨大树桩互动修复。"
+      ],
+      "rewards": [
+        "解锁浣熊任务。"
+      ],
       "recommendation": "硬木需求高，修复前确认马厩、房屋升级和其他硬木用途优先级。",
-      "sourceUrls": ["https://stardewvalleywiki.com/Quests"]
+      "sourceUrls": [
+        "https://stardewvalleywiki.com/Quests"
+      ]
     }
   ],
   "specialOrders": [

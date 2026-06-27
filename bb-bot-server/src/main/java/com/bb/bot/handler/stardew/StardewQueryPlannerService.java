@@ -52,7 +52,7 @@ public class StardewQueryPlannerService {
                         }
                         type 只能从这些枚举中选择：
                         FISH, BUNDLE, VILLAGER_SCHEDULE, VILLAGER_PROFILE, RESOURCE, MONSTER_DROP, FISH_POND,
-                        ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, BUILDING, CRAFTING, MACHINE, SHOP,
+                        ANIMAL_CARE, FRUIT_TREE, CROP, TOOL, COMBAT_EQUIPMENT, BUILDING, CRAFTING, MACHINE, SHOP,
                         COOKING, QUEST, SPECIAL_ORDER, SKILL, FESTIVAL, FARM_MAP, ISLAND, DUNGEON, MUSEUM, GUIDE, UNKNOWN。
                         规划规则：
                         - 可以拆成 1-4 个 intent；组合问题要拆开，例如“动物怎么养，大壶牛奶为什么不出”拆 ANIMAL_CARE + RESOURCE。
@@ -62,6 +62,8 @@ public class StardewQueryPlannerService {
                         - 小饰品、饰品、铁砧重铸、仙女盒、青蛙蛋、寒冰法杖、魔法箭筒、鹦鹉蛋、蜥怪的爪子、魔法发胶归为 GUIDE。
                         - 火山锻造台、武器锻造、工具附魔、武器附魔、戒指合成、无限武器、银河之魂怎么用归为 GUIDE。
                         - 工具本身的升级、购买、获取、用途和条件，例如斧头、镐子、锄头、喷壶、垃圾桶、鱼竿、高级铱金鱼竿、铜盘/钢盘/金盘/铱盘、镰刀/金镰刀/铱金镰刀、背包、奶桶、剪刀，归为 TOOL。
+                        - 战斗装备本体的获取、属性、效果、价格、列表、推荐，例如“银河剑怎么获得”“黑曜石之刃在哪拿”“武器有哪些”“戒指有哪些”“窃贼戒指怎么拿”“幸运戒指效果”“鞋类有哪些”“太空之靴怎么获得”，归为 COMBAT_EQUIPMENT。
+                        - 具体戒指作为制作配方问“怎么做/材料/配方”时可归为 CRAFTING；问戒指效果、来源、装备推荐时归为 COMBAT_EQUIPMENT。
                         - 泛问特殊货币、兑换货币、节日货币有哪些/怎么规划，例如“特殊货币有哪些”“各种币怎么花”，归为 GUIDE。
                         - 具体特殊货币怎么获得/怎么用/换什么，例如“齐钻怎么获得”“金核桃怎么用”“三花蛋换什么”“金色标签怎么获得”，归为 RESOURCE。
                         - 岛屿办事处、姜岛化石、蜗牛教授、紫花、紫海星、化石捐赠顺序/奖励，归为 GUIDE。
@@ -177,6 +179,12 @@ public class StardewQueryPlannerService {
                 StardewGuideIntent.RESOURCE,
                 StardewGuideIntent.CRAFTING
         ));
+        corrections.put(StardewGuideIntent.COMBAT_EQUIPMENT, EnumSet.of(
+                StardewGuideIntent.GUIDE,
+                StardewGuideIntent.SHOP,
+                StardewGuideIntent.RESOURCE,
+                StardewGuideIntent.MACHINE
+        ));
         corrections.put(StardewGuideIntent.BUILDING, EnumSet.of(
                 StardewGuideIntent.FISH_POND,
                 StardewGuideIntent.FARM_MAP,
@@ -188,7 +196,8 @@ public class StardewQueryPlannerService {
         ));
         corrections.put(StardewGuideIntent.CRAFTING, EnumSet.of(
                 StardewGuideIntent.GUIDE,
-                StardewGuideIntent.MACHINE
+                StardewGuideIntent.MACHINE,
+                StardewGuideIntent.COMBAT_EQUIPMENT
         ));
         corrections.put(StardewGuideIntent.SKILL, EnumSet.of(StardewGuideIntent.GUIDE));
         corrections.put(StardewGuideIntent.FESTIVAL, EnumSet.of(StardewGuideIntent.GUIDE));
@@ -243,6 +252,9 @@ public class StardewQueryPlannerService {
         }
         if (looksLikeForgeEnchantingQuery(q)) {
             return StardewGuideIntent.GUIDE;
+        }
+        if (looksLikeCombatEquipmentQuery(q)) {
+            return StardewGuideIntent.COMBAT_EQUIPMENT;
         }
         if (looksLikeSpecificArtifactResourceQuery(q)) {
             return StardewGuideIntent.RESOURCE;
@@ -366,6 +378,21 @@ public class StardewQueryPlannerService {
                 "锻造", "附魔", "火山锻造", "锻造台", "火山晶石", "银河之魂",
                 "无限武器", "无限之刃", "无限之锤", "无限匕首", "戒指合成", "戒指组合",
                 "forge", "enchant", "infinity weapon");
+    }
+
+    private boolean looksLikeCombatEquipmentQuery(String query) {
+        if (containsAny(query, "斧头", "斧子", "镐", "锄头", "喷壶", "垃圾桶", "鱼竿", "钓竿", "淘盘", "镰刀", "背包", "奶桶", "剪刀")) {
+            return false;
+        }
+        if (containsAny(query, "怎么做", "材料", "配方", "合成") && containsAny(query, "戒指", "铱环", "辉石戒指", "光辉戒指", "战士戒指", "结实戒指", "由巴")) {
+            return false;
+        }
+        return containsAny(query,
+                "战斗装备", "武器", "剑", "匕首", "短剑", "小刀", "棍棒", "锤", "弹弓",
+                "银河剑", "银河之剑", "银河匕首", "银河之锤", "黑曜石之刃", "熔岩武士刀",
+                "戒指有哪些", "戒指列表", "戒指效果", "戒指推荐", "铱环", "幸运戒指", "窃贼戒指", "史莱姆克星戒指",
+                "鞋类", "鞋子", "靴", "太空之靴", "灰烬小丑鞋", "煤渣小丑鞋", "美人鱼靴", "龙鳞靴", "水晶鞋")
+                && containsAny(query, "怎么获得", "获取", "哪里", "在哪", "哪里拿", "在哪拿", "来源", "属性", "效果", "有哪些", "列表", "推荐", "好用吗", "多少钱", "购买");
     }
 
     private boolean looksLikeToolQuery(String query) {

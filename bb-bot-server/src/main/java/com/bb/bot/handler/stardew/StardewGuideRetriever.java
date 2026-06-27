@@ -77,6 +77,7 @@ public class StardewGuideRetriever {
             case FRUIT_TREE -> ensureContains(withConstraints, "果树");
             case CROP -> ensureContains(withConstraints, "作物");
             case TOOL -> ensureContains(withConstraints, "工具");
+            case COMBAT_EQUIPMENT -> ensureContains(withConstraints, "战斗装备");
             case BUILDING -> ensureContains(withConstraints, "建筑");
             case CRAFTING -> ensureContains(withConstraints, "制作配方");
             case MACHINE -> ensureContains(withConstraints, "机器");

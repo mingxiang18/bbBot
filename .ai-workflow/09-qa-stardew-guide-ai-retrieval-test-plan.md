@@ -1,7 +1,7 @@
 # 星露谷攻略 AI 检索链路测试方案
 
 > 阶段：QA test plan
-> 日期：2026-06-26
+> 日期：2026-06-27
 > 分支：`master`
 > 范围：`/星露谷` 命令入口、`stardew_guide` AI tool、AI 分类计划、typed evidence 检索、证据整合、自然语言回复
 > 明确排除：不做存档解析，不读取或推断玩家本地存档
@@ -31,7 +31,7 @@
 
 - JSON typed plan：AI 返回 JSON 时，服务应解析 `intents[].type`、`keywords`、`constraints`，再交给 retriever 检索。
 - Planner 不可用：LIGHT 模型返回空、异常或不可解析 JSON 时，应使用本地高置信 fallback plan，而不是调用旧自由文本 `StardewGuideService.answer`。
-- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING`、`FESTIVAL`、`FARM_MAP`、`ANIMAL_CARE`、`FRUIT_TREE`、`QUEST`、`ISLAND`、`DUNGEON` 或 `MUSEUM`，以及普通任务与特别订单/资源/居民、农场地图与农场建筑、农场动物/特殊动物与农场建筑/资源、果树与水果资源/作物/树苗商店、姜岛探索与资源/地牢/鱼类/特别订单、地下城与资源/怪物/鱼类、博物馆与具体资源互相误判。
+- 分类职责边界：AI 返回具体非 `GUIDE` 类型时以 AI 分类为主；本地规则只纠偏高风险串路，例如通用 `GUIDE` 被拉回明确的 `CRAFTING`、`FESTIVAL`、`FARM_MAP`、`ANIMAL_CARE`、`FRUIT_TREE`、`COMBAT_EQUIPMENT`、`QUEST`、`ISLAND`、`DUNGEON` 或 `MUSEUM`，以及普通任务与特别订单/资源/居民、农场地图与农场建筑、农场动物/特殊动物与农场建筑/资源、果树与水果资源/作物/树苗商店、战斗装备与工具/锻造/戒指配方、姜岛探索与资源/地牢/鱼类/特别订单、地下城与资源/怪物/鱼类、博物馆与具体资源互相误判。
 - 证据整合 prompt：最终整合 prompt 必须包含用户问题和 typed evidence，且不携带 `sourceUrls`、`gameVersion`、`lastCheckedAt` 这类内部字段。
 - 自然回复返回：当 CHAT 模型返回非空答案时，命令层直接使用该自然语言答案。
 - CHAT 空返回：应退回第一条 typed evidence 的原文答案；如果没有可靠证据，则给出补充条件提示。
@@ -46,6 +46,9 @@
 - `星露谷 斧头升级需要什么`
 - `星露谷 铱盘升级需要什么`
 - `星露谷 背包升级多少钱`
+- `星露谷 银河剑怎么获得`
+- `星露谷 戒指有哪些`
+- `星露谷 太空之靴怎么获得`
 - `星露谷 海滩农场洒水器能用吗`
 - `星露谷 罗宾斧头在哪`
 
@@ -91,6 +94,7 @@
 - 礼物：生日、最爱礼物、喜欢礼物、通用送礼规则。
 - 资源：硬木、电池组、恐龙蛋、恐龙蛋黄酱、矮人卷轴、兔子的脚、红叶卷心菜、鱼籽酱、龙牙等。
 - 工具：11 类工具的升级、购买、获取、用途和条件，覆盖斧头、镐子、喷壶、锄头、垃圾桶、鱼竿、铜盘/钢盘/金盘/铱盘、镰刀/金镰刀/铱金镰刀、背包、奶桶、剪刀。
+- 战斗装备：110 件装备，覆盖 62 件武器、30 枚戒指、18 双鞋类；装备本体的来源、属性、效果、价格、列表和推荐归 `COMBAT_EQUIPMENT`。
 - 建筑：鸡舍、畜棚、筒仓、鱼塘、马厩、房屋升级等。
 - 制作配方：完整制作页 150 条，覆盖栅栏、种子、地板/路径、照明、家具、标牌、精炼设备、工匠设备、肥料、图腾、戒指、钓具和杂项。
 - 机器兼容：小桶、罐头瓶、蛋黄酱机、鱼熏机、脱水机、诱饵制造机等旧 `MACHINE` 路径仍能回答。
@@ -118,6 +122,9 @@
 - `农场建筑有哪些`、`鸡舍升级材料` 应走 `BUILDING`，不能误判为 `FARM_MAP`。
 - `铱盘升级需要什么`、`背包升级多少钱`、`奶桶在哪里买` 应走 `TOOL`，不能误判为 `GUIDE`、`SHOP`、`RESOURCE` 或 `ANIMAL_CARE`。
 - `工具附魔哪个好`、`精通先选哪个` 应继续走 `GUIDE`，不能因为包含工具词而误判为 `TOOL`。
+- `银河剑怎么获得`、`戒指有哪些`、`太空之靴怎么获得` 应走 `COMBAT_EQUIPMENT`，不能被 `GUIDE`、`SHOP` 或 `RESOURCE` 抢走。
+- `银河剑怎么锻造`、`工具附魔哪个好`、`戒指合成怎么做` 应走 `GUIDE`，不能被装备本体抢走。
+- `光辉戒指怎么做`、`铱环怎么做` 应走 `CRAFTING`，不能被戒指装备详情抢走；`铱环效果` 应走 `COMBAT_EQUIPMENT`。
 - `兔子的脚怎么出`、`猪松露怎么赚钱` 应走 `ANIMAL_CARE` 的动物详情，不能退成动物列表或资源泛答。
 - `后期养什么动物赚钱` 应走 `ANIMAL_CARE` 的动物对照列表，并突出猪、松露和松露油。
 - `鸡舍升级材料`、`畜棚多少钱` 应走 `BUILDING`，不能被农场动物抢走。
@@ -150,7 +157,7 @@
 - 每个收集包都有房间、奖励、物品和来源字段。
 - 高频资源、料理、工具、建筑、机器、商店、节日/活动条目能够成功加载。
 - 博物馆馆藏派生结果固定为 42 件古物和 53 件矿物；渠道资源和汇总资源不进入馆藏结果。
-- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=11、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、specialAnimals=3、fruitTrees=8、islandGuides=13、dungeonGuides=6、guides=39。
+- 本地数据加载日志规模符合预期：fish=74、bundles=58、crops=30、buildings=27、tools=11、combatEquipment=110、craftingRecipes=150、machines=80、shops=29、villagers=34、resources=181、monsterDrops=58、fishPonds=73、cookingRecipes=83、books=26、storyQuests=55、specialOrders=28、skillGuides=9、festivalEvents=12、farmMaps=8、farmAnimals=11、specialAnimals=3、fruitTrees=8、islandGuides=13、dungeonGuides=6、guides=39。
 
 ### 2.6 `StardewWikiApiClientTest`
 
@@ -257,6 +264,30 @@
 - `金钱` 不误判为金级工具。
 - 制作菜单里的配方问题归 `CRAFTING`；旧 `MACHINE` 只作为兼容入口。
 - 机器加工产物和资源交叉问题应按动词判断，例如“树脂怎么获得”优先资源，“小桶怎么做”优先制作配方，“恐龙蛋黄酱怎么做”优先资源获取/加工方式。
+
+### 3.5.1 战斗装备
+
+- `银河剑怎么获得`
+- `黑曜石之刃在哪拿`
+- `武器有哪些`
+- `匕首有哪些`
+- `弹弓有哪些`
+- `戒指有哪些`
+- `窃贼戒指怎么拿`
+- `幸运戒指效果`
+- `铱环效果`
+- `光辉戒指怎么做`
+- `戒指合成怎么做`
+- `鞋类有哪些`
+- `太空之靴怎么获得`
+- `灰烬小丑鞋属性`
+
+验收点：
+
+- 装备本体问题归 `COMBAT_EQUIPMENT`，回答来源、属性、效果、价格和建议。
+- `武器有哪些`、`戒指有哪些`、`鞋类有哪些` 能列出对应完整类目，不退回制作列表或通用攻略。
+- `光辉戒指怎么做`、`铱环怎么做` 归 `CRAFTING`；`戒指合成怎么做` 归 `GUIDE`。
+- `银河剑怎么锻造`、`工具附魔哪个好` 归 `GUIDE`，不能被 `COMBAT_EQUIPMENT` 抢走；斧头、鱼竿、背包、奶桶、剪刀等仍归 `TOOL`。
 
 ### 3.6 节日/活动
 
@@ -541,7 +572,7 @@ AI tool 验收：
   test
 ```
 
-当前结果：271 tests, 0 failures, 0 errors, 0 skipped。
+当前结果：277 tests, 0 failures, 0 errors, 0 skipped。
 
 模块编译：
 
@@ -563,7 +594,7 @@ AI tool 验收：
 - AI tool 输出契约确认不包含来源、版本、日期等面向用户不应展示的字段。
 - 命令回复确认不再拼接来源、数据版本、校验日期。
 - AI 空返回或异常时有本地检索回退。
-- 居民、工具、资源、收集包、鱼类、农场动物、特殊动物/伴侣动物、果树、普通任务、姜岛探索、地下城、博物馆十二类高频问题至少各有一条人工验收通过。
+- 居民、工具、战斗装备、资源、收集包、鱼类、农场动物、特殊动物/伴侣动物、果树、普通任务、姜岛探索、地下城、博物馆十三类高频问题至少各有一条人工验收通过。
 - 明确记录未做存档解析，不对“当前真实游戏状态”做无依据承诺。
 
 ## 7. 后续测试补强
