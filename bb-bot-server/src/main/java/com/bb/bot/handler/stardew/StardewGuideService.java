@@ -13,12 +13,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class StardewGuideService {
 
     private static final Pattern HH_MM = Pattern.compile("([01]?\\d|2[0-3])[:：]([0-5]\\d)");
-    private static final Pattern HOUR_ZH = Pattern.compile("(上午|中午|下午|晚上|凌晨)?\\s*(\\d{1,2})\\s*[点时]");
+    private static final Pattern HOUR_ZH = Pattern.compile("(上午|中午|下午|晚上|凌晨)?\\s*(\\d{1,2}|[一二两三四五六七八九十]{1,3})\\s*[点时]");
     private static final Pattern DAY = Pattern.compile("(春季|夏季|秋季|冬季|春天|夏天|秋天|冬天|春|夏|秋|冬)?\\s*(\\d{1,2})\\s*[日号]");
 
     private final StardewKnowledgeRepository repository;
@@ -1820,10 +1821,7 @@ public class StardewGuideService {
     private StardewGuideResult villagerAnswer(String query, StardewData.Villager v) {
         QueryContext ctx = parseContext(query);
         if (ctx.timeMinutes == null) {
-            return result("villager_schedule", v.getName() + "住在：" + v.getLivesAt() + "\n"
-                    + "要判断“现在在哪”，请至少补充游戏内时间；有季节、日期、星期、天气会更准。例如：星露谷 居民 "
-                    + v.getName() + " 夏季 12日 15:00 晴天。\n"
-                    + "如果遇到雨天、节日、姜岛度假、好感条件，日程会覆盖普通日程。", v.getSourceUrls());
+            return villagerScheduleOverviewAnswer(v, ctx);
         }
 
         List<StardewData.ScheduleRule> candidates = v.getSchedules().stream()
@@ -1842,11 +1840,9 @@ public class StardewGuideService {
         StardewData.ScheduleRule rule = candidates.get(0);
         StardewData.ScheduleEvent current = resolveEvent(rule.getEvents(), ctx.timeMinutes);
         StringBuilder sb = new StringBuilder();
-        sb.append("按：").append(ctx.season);
-        if (ctx.day != null) sb.append(ctx.day).append("日");
-        if (ctx.weekday != null) sb.append(" ").append(ctx.weekday);
-        if (ctx.weather != null) sb.append(" ").append(ctx.weather);
-        sb.append(" ").append(ctx.timeText).append("\n");
+        sb.append("按：");
+        appendContextSummary(sb, ctx, true);
+        sb.append("\n");
         if (current != null) {
             sb.append(v.getName()).append("大概率在：").append(current.getLocation()).append("\n");
         } else {
@@ -1863,6 +1859,54 @@ public class StardewGuideService {
             sb.append("\n").append(event.getTime()).append(" ").append(event.getLocation());
         }
         return result("villager_schedule", sb.toString(), v.getSourceUrls());
+    }
+
+    private StardewGuideResult villagerScheduleOverviewAnswer(StardewData.Villager v, QueryContext ctx) {
+        List<StardewData.ScheduleRule> matched = v.getSchedules().stream()
+                .filter(rule -> matchesKnownContext(rule.getCondition(), ctx))
+                .sorted(Comparator.comparing(StardewData.ScheduleRule::getPriority).reversed())
+                .toList();
+        if (hasScheduleContext(ctx)) {
+            List<StardewData.ScheduleRule> specific = matched.stream()
+                    .filter(rule -> rule.getCondition() != null && !isEmptyCondition(rule.getCondition()))
+                    .toList();
+            if (!specific.isEmpty()) {
+                matched = specific;
+            }
+        }
+        if (matched.isEmpty()) {
+            matched = v.getSchedules();
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(v.getName()).append("日程参考：\n");
+        sb.append("住址：").append(StringUtils.defaultIfBlank(v.getLivesAt(), "暂未记录")).append("\n");
+        if (hasScheduleContext(ctx)) {
+            sb.append("已按条件筛选：");
+            appendContextSummary(sb, ctx, false);
+            sb.append("\n");
+        } else {
+            sb.append("没有给游戏内时间时，先给可用日程路线；要判断当前位置，请补充例如“夏季 12日 15:00 晴天”。\n");
+        }
+        int count = 0;
+        for (StardewData.ScheduleRule rule : matched) {
+            if (count++ >= 4) {
+                sb.append("- 还有 ").append(matched.size() - 4).append(" 条较低优先级日程，问季节/星期/天气可以继续缩小。\n");
+                break;
+            }
+            sb.append("- ").append(rule.getLabel());
+            String condition = describeCondition(rule.getCondition());
+            if (StringUtils.isNotBlank(condition)) {
+                sb.append("（").append(condition).append("）");
+            }
+            sb.append("：");
+            sb.append(compactEvents(rule.getEvents()));
+            if (StringUtils.isNotBlank(rule.getNote())) {
+                sb.append("；注意：").append(rule.getNote());
+            }
+            sb.append("\n");
+        }
+        sb.append("提醒：节日、剧情、姜岛度假、婚后和部分好感条件会覆盖普通日程。");
+        return result("villager_schedule", sb.toString().trim(), v.getSourceUrls());
     }
 
     private StardewGuideResult villagerBestEffortScheduleAnswer(String query, StardewData.Villager v, QueryContext ctx) {
@@ -2374,6 +2418,99 @@ public class StardewGuideService {
         return true;
     }
 
+    private boolean matchesKnownContext(StardewData.Condition c, QueryContext ctx) {
+        if (c == null || isEmptyCondition(c)) {
+            return true;
+        }
+        if (ctx.season != null && c.getSeasons() != null && !c.getSeasons().isEmpty()
+                && !c.getSeasons().contains(ctx.season)) {
+            return false;
+        }
+        if (ctx.day != null && c.getDays() != null && !c.getDays().isEmpty()
+                && !c.getDays().contains(ctx.day)) {
+            return false;
+        }
+        if (ctx.weekday != null && c.getWeekdays() != null && !c.getWeekdays().isEmpty()
+                && !c.getWeekdays().contains(ctx.weekday)) {
+            return false;
+        }
+        if (ctx.weather != null && c.getWeather() != null && !c.getWeather().isEmpty()
+                && !c.getWeather().contains(ctx.weather)) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean hasScheduleContext(QueryContext ctx) {
+        return ctx.season != null || ctx.day != null || ctx.weekday != null || ctx.weather != null;
+    }
+
+    private void appendContextSummary(StringBuilder sb, QueryContext ctx, boolean includeTime) {
+        boolean appended = false;
+        if (ctx.season != null) {
+            sb.append(ctx.season);
+            appended = true;
+        }
+        if (ctx.day != null) {
+            if (appended) sb.append(" ");
+            sb.append(ctx.day).append("日");
+            appended = true;
+        }
+        if (ctx.weekday != null) {
+            if (appended) sb.append(" ");
+            sb.append(ctx.weekday);
+            appended = true;
+        }
+        if (ctx.weather != null) {
+            if (appended) sb.append(" ");
+            sb.append(ctx.weather);
+            appended = true;
+        }
+        if (includeTime && ctx.timeText != null) {
+            if (appended) sb.append(" ");
+            sb.append(ctx.timeText);
+            appended = true;
+        }
+        if (!appended) {
+            sb.append("未指定");
+        }
+    }
+
+    private String describeCondition(StardewData.Condition c) {
+        if (c == null || isEmptyCondition(c)) {
+            return "";
+        }
+        List<String> parts = new ArrayList<>();
+        if (c.getSeasons() != null && !c.getSeasons().isEmpty()) {
+            parts.add(String.join("/", c.getSeasons()));
+        }
+        if (c.getDays() != null && !c.getDays().isEmpty()) {
+            parts.add(c.getDays().stream()
+                    .map(day -> day + "日")
+                    .collect(Collectors.joining("/")));
+        }
+        if (c.getWeekdays() != null && !c.getWeekdays().isEmpty()) {
+            parts.add(String.join("/", c.getWeekdays()));
+        }
+        if (c.getWeather() != null && !c.getWeather().isEmpty()) {
+            parts.add(String.join("/", c.getWeather()));
+        }
+        if (StringUtils.isNotBlank(c.getNote())) {
+            parts.add(c.getNote());
+        }
+        return String.join("，", parts);
+    }
+
+    private String compactEvents(List<StardewData.ScheduleEvent> events) {
+        if (events == null || events.isEmpty()) {
+            return "暂无分时记录";
+        }
+        return events.stream()
+                .limit(7)
+                .map(event -> event.getTime() + " " + event.getLocation())
+                .collect(Collectors.joining(" -> "));
+    }
+
     private boolean isEmptyCondition(StardewData.Condition c) {
         return (c.getSeasons() == null || c.getSeasons().isEmpty())
                 && (c.getDays() == null || c.getDays().isEmpty())
@@ -2515,7 +2652,11 @@ public class StardewGuideService {
         matcher = HOUR_ZH.matcher(value);
         if (matcher.find()) {
             String period = matcher.group(1);
-            int hour = Integer.parseInt(matcher.group(2));
+            Integer parsedHour = parseHourNumber(matcher.group(2));
+            if (parsedHour == null) {
+                return null;
+            }
+            int hour = parsedHour;
             if (("下午".equals(period) || "晚上".equals(period)) && hour < 12) {
                 hour += 12;
             }
@@ -2528,6 +2669,30 @@ public class StardewGuideService {
             return hour * 60;
         }
         return null;
+    }
+
+    private Integer parseHourNumber(String raw) {
+        if (StringUtils.isBlank(raw)) {
+            return null;
+        }
+        if (raw.chars().allMatch(Character::isDigit)) {
+            return Integer.parseInt(raw);
+        }
+        return switch (raw) {
+            case "一" -> 1;
+            case "二", "两" -> 2;
+            case "三" -> 3;
+            case "四" -> 4;
+            case "五" -> 5;
+            case "六" -> 6;
+            case "七" -> 7;
+            case "八" -> 8;
+            case "九" -> 9;
+            case "十" -> 10;
+            case "十一" -> 11;
+            case "十二" -> 12;
+            default -> null;
+        };
     }
 
     private String cleanQuery(String rawQuery) {

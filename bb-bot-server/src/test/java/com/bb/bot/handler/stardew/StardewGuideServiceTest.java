@@ -186,11 +186,12 @@ class StardewGuideServiceTest {
     }
 
     @Test
-    void asksForMissingVillagerContext() {
+    void answersVillagerScheduleOverviewWhenTimeIsMissing() {
         StardewGuideResult result = service.answer("星露谷 阿比盖尔现在在哪");
 
         assertThat(result.getIntent()).isEqualTo("villager_schedule");
-        assertThat(result.getAnswer()).contains("请至少补充游戏内时间");
+        assertThat(result.getAnswer()).contains("阿比盖尔日程参考", "普通日程", "雨天选项");
+        assertThat(result.getAnswer()).contains("要判断当前位置，请补充");
     }
 
     @Test
@@ -228,6 +229,19 @@ class StardewGuideServiceTest {
         assertThat(krobus.getAnswer()).contains("科罗布斯大概率在", "下水道商店", "常驻日程");
         assertThat(vincent.getIntent()).isEqualTo("villager_schedule");
         assertThat(vincent.getAnswer()).contains("文森特大概率在", "博物馆上课", "上课日程");
+    }
+
+    @Test
+    void answersVillagerLocationWithPartialContextWithoutLeakingNull() {
+        StardewGuideResult robin = service.answer("星露谷 罗宾下午两点在哪");
+        StardewGuideResult rainyHaley = service.answer("星露谷 海莉雨天日程");
+
+        assertThat(robin.getIntent()).isEqualTo("villager_schedule");
+        assertThat(robin.getAnswer()).contains("罗宾大概率在", "木匠的商店柜台", "14:00");
+        assertThat(robin.getAnswer()).doesNotContain("null");
+        assertThat(rainyHaley.getIntent()).isEqualTo("villager_schedule");
+        assertThat(rainyHaley.getAnswer()).contains("已按条件筛选：雨天", "雨天日程", "家中卧室");
+        assertThat(rainyHaley.getAnswer()).doesNotContain("- 普通日程");
     }
 
     @Test
