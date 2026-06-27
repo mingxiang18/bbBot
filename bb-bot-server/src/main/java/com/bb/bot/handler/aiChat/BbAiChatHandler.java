@@ -24,7 +24,6 @@ import com.bb.bot.common.util.aiChat.provider.AIException;
 import com.bb.bot.common.util.aiChat.provider.AiCallContext;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
-import com.bb.bot.common.util.aiChat.provider.ModelRouter;
 import com.bb.bot.common.util.aiChat.provider.ModelTier;
 import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
@@ -93,9 +92,9 @@ public class BbAiChatHandler {
     @Autowired
     private AiChatService aiChatService;
 
-    /** 廉价模型分类器：判断本轮是轻量还是重度任务，决定走 LIGHT 还是 CHAT。 */
+    /** 上下文感知工具路由：判断是否挂工具、挂全部还是只挂指定工具。 */
     @Autowired
-    private ModelRouter modelRouter;
+    private AiToolRouter aiToolRouter;
 
     /** 月度限额拦截：超额硬阻断。 */
     @Autowired
@@ -177,10 +176,6 @@ public class BbAiChatHandler {
     @Value("${aiChat.imageToolMaxSteps:3}")
     private int imageToolMaxSteps;
 
-    /** 选择性识图：判断视觉是否配置 + 复用其两层缓存。 */
-    @Autowired
-    private com.bb.bot.common.util.aiChat.provider.VisionDescriber visionDescriber;
-
     /** 挂载工具时追加到 system prompt 的工具使用引导。 */
     @Value("${aiChat.toolGuidance:你不仅能聊天，还能调用工具真正帮用户干活——" +
             "查实时/外部信息、读写文件、跑命令、联网搜索等。当用户明确要求执行某个操作、" +
@@ -222,26 +217,24 @@ public class BbAiChatHandler {
         ChatHistory replyTarget = findReplyTarget(bbReceiveMessage, historyList);
         List<BbMessageContent> currentContent = stripLegacyAgentPrefix(bbReceiveMessage.getMessageContentList());
 
-        // 闲聊还是干活：直接对话用廉价模型分类；群聊概率自动回复一律按闲聊（轻模型、不挂工具）。
-        // 干活(CHAT) → 重模型 + 工具循环；闲聊(LIGHT) → 轻模型纯聊天。
-        ModelTier tier;
-        if (decision.isDirectTrigger()) {
-            ChatMessage ask = MessageBuilder.buildAskMessage(currentContent, replyTarget);
-            tier = modelRouter.classify(Collections.singletonList(ask));
-        } else {
-            tier = ModelTier.LIGHT;
-        }
-        boolean useTools = toolsEnabled && tier == ModelTier.CHAT;
-        // 不挂全量工具、但本轮/近期历史含图片 ref 且视觉已配置 → 挂「仅 analyze_image」的轻量工具循环，
-        // 让 AI（群聊随机回复 / @闲聊）自行决定是否看图。无图则维持纯聊天，不开循环、不烧 token。
-        boolean imageToolOnly = !useTools
-                && visionDescriber.enabled()
-                && hasImageRef(currentContent, historyList);
+        AiChatTurnContext turnContext = AiChatTurnContext.builder()
+                .message(bbReceiveMessage)
+                .currentContent(currentContent)
+                .historyList(historyList)
+                .replyTarget(replyTarget)
+                .currentText(extractPlainText(bbReceiveMessage))
+                .directTrigger(decision.isDirectTrigger())
+                .autoReply(!decision.isDirectTrigger())
+                .build();
+        ToolRouteDecision route = aiToolRouter.decide(turnContext, toolsEnabled);
+        ModelTier tier = route.getTier();
+        boolean useTools = route.usesTools();
+        log.info("AI 工具路由 mode={} tier={} tools={} reason={}",
+                route.getMode(), tier, route.getToolNames(), route.getReason());
 
         // 群里没人点你的概率插话(非 directTrigger) → 追加极简约束；@机器人 / 私聊延续完整人格。
-        boolean autoReply = !decision.isDirectTrigger();
         String personality = composePersonality(bbReceiveMessage.getUserId(), bbReceiveMessage.getGroupId(),
-                bbReceiveMessage.getBotType(), extractPlainText(bbReceiveMessage), useTools, autoReply);
+                bbReceiveMessage.getBotType(), turnContext.getCurrentText(), useTools, turnContext.isAutoReply());
 
         // 挂工具时把入站文件 / 图片落盘到该用户目录：文件类附件的 data 被改写成本地路径，
         // 模型即可经 file_read 读取真实内容（群聊概率回复不挂工具、无 file_read，跳过）。
@@ -259,9 +252,11 @@ public class BbAiChatHandler {
                 bbReceiveMessage.getBotType(),
                 "chat-" + bbReceiveMessage.getMessageId());
         try {
-            if (useTools) {
+            if (ToolRouteMode.ALL_TOOLS.equals(route.getMode())) {
                 toolLoopReply(bbReceiveMessage, messages);
-            } else if (imageToolOnly) {
+            } else if (ToolRouteMode.SELECTED_TOOLS.equals(route.getMode())) {
+                toolLoopReply(bbReceiveMessage, messages, toolRegistry.toToolDefinitions(route.getToolNames()), maxSteps);
+            } else if (ToolRouteMode.IMAGE_ONLY.equals(route.getMode())) {
                 toolLoopReply(bbReceiveMessage, messages, imageOnlyTools(), imageToolMaxSteps);
             } else if (Boolean.TRUE.equals(streamEnabled)) {
                 streamAiReply(bbReceiveMessage, messages, tier);
@@ -681,27 +676,6 @@ public class BbAiChatHandler {
     // =========================================================================
     // helpers
     // =========================================================================
-
-    /** 本轮消息或近期历史里是否出现图片 ref（决定是否给非工具回复挂 analyze_image）。包级 static 便于单测。 */
-    static boolean hasImageRef(List<BbMessageContent> current, List<ChatHistory> history) {
-        if (current != null) {
-            for (BbMessageContent c : current) {
-                if (BbSendMessageType.NET_IMAGE.equals(c.getType())) {
-                    return true;
-                }
-            }
-        }
-        if (history != null) {
-            int seen = 0;
-            for (int i = history.size() - 1; i >= 0 && seen < 8; i--, seen++) {
-                String t = history.get(i).getText();
-                if (t != null && (t.contains("netImage") || t.contains("图片 ref="))) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     /** 只取 analyze_image 一个工具，给「随机回复 / @闲聊看图」的轻量循环用。 */
     private List<ToolDefinition> imageOnlyTools() {
