@@ -459,8 +459,7 @@ public class BbAiChatHandler {
             return;
         }
         List<BbMessageContent> answerMessage = Collections.singletonList(BbMessageContent.buildTextContent(answer));
-        persistBotReply(msg, answerMessage);
-        bbReplies.send(msg, answerMessage);
+        bbReplies.sendWithMemoryKind(msg, answerMessage, "chat_reply");
     }
 
     /** 流式分支：走 AiChatService.chatStream（轻/重模型由 tier 决定）。 */

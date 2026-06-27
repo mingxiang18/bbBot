@@ -104,10 +104,10 @@ public class MemoryCompiler {
             return; // 已经编译过
         }
         try {
-            // 拉 session 内所有 chat / chat_reply / agent_cmd / agent_reply 事件
+            // 拉 session 内所有用户和机器人可见对话事件；kind 仅作审计，不阻断长期蒸馏输入。
             List<AiMemoryEvent> events = eventService.list(new LambdaQueryWrapper<AiMemoryEvent>()
                     .eq(AiMemoryEvent::getSessionId, s.getSessionId())
-                    .in(AiMemoryEvent::getKind, Arrays.asList("chat", "chat_reply", "agent_cmd", "agent_reply"))
+                    .in(AiMemoryEvent::getSource, Arrays.asList("user", "bot"))
                     .orderByAsc(AiMemoryEvent::getCreatedAt));
             if (events.isEmpty()) return;
 

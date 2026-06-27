@@ -5,6 +5,7 @@ import com.bb.bot.api.discord.DiscordMessageApi;
 import com.bb.bot.api.oneBot.OneBotMessageApi;
 import com.bb.bot.api.qq.QqToBbMessageApi;
 import com.bb.bot.api.telegram.TelegramMessageApi;
+import com.bb.bot.aiAgent.memory.MemoryEventRecorder;
 import com.bb.bot.constant.BotType;
 import com.bb.bot.entity.bb.BbSendMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -34,24 +35,36 @@ public class BbMessageApiImpl implements BbMessageApi{
     @Autowired
     private DiscordMessageApi discordMessageApi;
 
+    @Autowired(required = false)
+    private MemoryEventRecorder memoryEventRecorder;
+
     /**
      * 发送消息
      */
     public void sendMessage(BbSendMessage bbSendMessage) {
+        boolean sent = false;
         //安装机器人类型调用不同的api
         if (BotType.QQ.equals(bbSendMessage.getBotType())) {
             qqToBbMessageApi.sendMessage(bbSendMessage);
+            sent = true;
         }else if (BotType.ONEBOT.equals(bbSendMessage.getBotType())) {
             oneBotMessageApi.sendMessage(bbSendMessage);
+            sent = true;
         }else if (BotType.BB.equals(bbSendMessage.getBotType())) {
             bbToBbMessageApi.sendMessage(bbSendMessage);
+            sent = true;
         }else if (BotType.TELEGRAM.equals(bbSendMessage.getBotType())) {
             telegramMessageApi.sendMessage(bbSendMessage);
+            sent = true;
         }else if (BotType.DISCORD.equals(bbSendMessage.getBotType())) {
             discordMessageApi.sendMessage(bbSendMessage);
+            sent = true;
         }else {
             log.warn("未知平台类型，消息未发送 botType={} group={} user={}",
                     bbSendMessage.getBotType(), bbSendMessage.getGroupId(), bbSendMessage.getUserId());
+        }
+        if (sent && memoryEventRecorder != null) {
+            memoryEventRecorder.recordOutbound(bbSendMessage, "handler_reply");
         }
     };
 

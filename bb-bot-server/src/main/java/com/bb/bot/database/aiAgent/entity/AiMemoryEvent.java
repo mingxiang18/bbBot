@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
  * AI 记忆 / 对话事件流。
  *
  * <p>统一记录用户、bot、系统、工具产生的全部事件，并按 source / kind 分类，
- * 实现"完整记录"和"上下文按类型筛选"的分离：</p>
+ * 实现"完整记录"和"kind 审计标记"的分离：</p>
  * <ul>
  *   <li>所有 event 都进表（包括 agent 命令、admin 命令、工具调用）→ 完整可审计</li>
- *   <li>BbAiChatHandler 等只读取 kind ∈ {chat, chat_reply} 的当前 session 事件作为上下文</li>
+ *   <li>BbAiChatHandler 读取当前 session 内 source ∈ {user, bot} 的可见近邻事件作为短期上下文</li>
  *   <li>30 分钟无消息自动切新 session，避免跨主题污染</li>
  * </ul>
  */
@@ -42,7 +42,9 @@ public class AiMemoryEvent {
      * 事件类型，决定哪些上下文加载器会拉它：
      * <ul>
      *   <li>chat —— 用户自由聊天（不带 agent / 命令前缀）</li>
+     *   <li>command —— 命中规则命令的用户消息</li>
      *   <li>chat_reply —— bot 的聊天人格回复</li>
+     *   <li>handler_reply —— bot 的规则 / 工具 / 普通 handler 可见回复</li>
      *   <li>agent_cmd —— 用户的 agent xxx 派活</li>
      *   <li>agent_reply —— agent 模式最终回复（不包含工具内部循环）</li>
      *   <li>admin_cmd —— /aiAgent.* 等管理命令</li>
