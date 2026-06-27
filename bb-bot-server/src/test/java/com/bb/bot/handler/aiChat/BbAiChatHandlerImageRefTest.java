@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 覆盖 {@link BbAiChatHandler#hasImageRef}（决定非工具回复是否挂 analyze_image）。 */
+/** 覆盖 {@link AiToolRouter#hasImageRef}（决定非工具回复是否挂 analyze_image）。 */
 class BbAiChatHandlerImageRefTest {
 
     private static ChatHistory hist(String text) {
@@ -24,30 +24,30 @@ class BbAiChatHandlerImageRefTest {
     void currentNetImage_true() {
         List<BbMessageContent> cur = List.of(
                 BbMessageContent.builder().type(BbSendMessageType.NET_IMAGE).data("/img/h.png").build());
-        assertTrue(BbAiChatHandler.hasImageRef(cur, null));
+        assertTrue(AiToolRouter.hasImageRef(cur, null));
     }
 
     @Test
     void historyWithRefMarker_true() {
         List<BbMessageContent> cur = List.of(BbMessageContent.buildTextContent("hi"));
-        assertTrue(BbAiChatHandler.hasImageRef(cur, List.of(hist("[图片 ref=abc 链接:/img/abc.png]"))));
+        assertTrue(AiToolRouter.hasImageRef(cur, List.of(hist("[图片 ref=abc 链接:/img/abc.png]"))));
     }
 
     @Test
     void historyWithNetImageJson_true() {
-        assertTrue(BbAiChatHandler.hasImageRef(null,
+        assertTrue(AiToolRouter.hasImageRef(null,
                 List.of(hist("[{\"type\":\"netImage\",\"data\":\"/img/x.png\"}]"))));
     }
 
     @Test
     void noImage_false() {
-        assertFalse(BbAiChatHandler.hasImageRef(
+        assertFalse(AiToolRouter.hasImageRef(
                 List.of(BbMessageContent.buildTextContent("hi")), List.of(hist("just text"))));
     }
 
     @Test
     void nulls_false() {
-        assertFalse(BbAiChatHandler.hasImageRef(null, null));
+        assertFalse(AiToolRouter.hasImageRef(null, null));
     }
 
     @Test
@@ -58,6 +58,6 @@ class BbAiChatHandlerImageRefTest {
         for (int i = 0; i < 8; i++) {
             history.add(hist("plain " + i));
         }
-        assertFalse(BbAiChatHandler.hasImageRef(null, history));
+        assertFalse(AiToolRouter.hasImageRef(null, history));
     }
 }

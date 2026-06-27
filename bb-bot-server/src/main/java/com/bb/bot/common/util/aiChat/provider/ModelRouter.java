@@ -25,7 +25,8 @@ import java.util.List;
 public class ModelRouter {
 
     private static final String CLASSIFY_PROMPT =
-            "你是任务分类器。判断用户这条消息属于哪类，只回一个词，不要解释、不要标点：\n" +
+            "你是任务分类器。判断【最新用户消息】属于哪类，只回一个词，不要解释、不要标点。\n" +
+            "历史只用于理解省略、代词、追问和领域延续，不要重复处理历史消息。\n" +
             "- 闲聊、问候、简单问答、不需要执行任何操作 → 回 SIMPLE\n" +
             "- 需要执行操作（查实时/外部信息、读写文件、跑命令、联网搜索、写代码、多步骤任务）→ 回 COMPLEX";
 
@@ -57,7 +58,7 @@ public class ModelRouter {
         try {
             List<ChatMessage> req = List.of(
                     ChatMessage.system(CLASSIFY_PROMPT),
-                    ChatMessage.user(text));
+                    ChatMessage.user(renderForClassification(messages)));
             String verdict = aiChatService.chat(req, ModelTier.LIGHT);
             if (verdict != null && verdict.toUpperCase().contains("SIMPLE")) {
                 log.debug("ModelRouter → LIGHT: {}", abbreviate(text));
@@ -86,6 +87,38 @@ public class ModelRouter {
         for (MessageContent c : m.getContents()) {
             if (c.getType() == MessageContent.Type.TEXT && c.getValue() != null) {
                 sb.append(c.getValue());
+            }
+        }
+        return sb.toString().trim();
+    }
+
+    private String renderForClassification(List<ChatMessage> messages) {
+        if (messages == null || messages.isEmpty()) {
+            return "";
+        }
+        int lastUserIndex = -1;
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            if (messages.get(i).getRole() == ChatMessage.Role.USER) {
+                lastUserIndex = i;
+                break;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < messages.size(); i++) {
+            ChatMessage message = messages.get(i);
+            if (message.getRole() == ChatMessage.Role.SYSTEM || message.getRole() == ChatMessage.Role.TOOL) {
+                continue;
+            }
+            String text = textOf(message);
+            if (StringUtils.isBlank(text)) {
+                continue;
+            }
+            if (i == lastUserIndex) {
+                sb.append("最新用户消息：").append(text).append('\n');
+            } else if (message.getRole() == ChatMessage.Role.USER) {
+                sb.append("历史用户：").append(text).append('\n');
+            } else if (message.getRole() == ChatMessage.Role.ASSISTANT) {
+                sb.append("历史助手：").append(text).append('\n');
             }
         }
         return sb.toString().trim();
