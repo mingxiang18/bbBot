@@ -31,7 +31,7 @@ template:
       fsGroup: 1001
     containers:
       - name: runner
-        image: 10.8.0.26:30500/misuaa/misu-ci-runner:latest
+        image: 10.8.0.26:30500/misuaa/misu-ci-runner:v2.337.0
         imagePullPolicy: Always
         command: ["/home/runner/run.sh"]
         env:

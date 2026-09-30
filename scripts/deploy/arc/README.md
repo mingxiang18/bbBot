@@ -2,7 +2,7 @@
 
 复用 misu-server 已经装好的整套 ARC 基础设施（一个集群只需装一次 controller）：
 - ARC controller（`arc-systems` ns）—— **已装，复用**
-- runner 镜像 `10.8.0.26:30500/misuaa/misu-ci-runner:latest`（jdk17+maven+kaniko+kubectl）—— **复用**
+- runner 镜像 `10.8.0.26:30500/misuaa/misu-ci-runner:v2.337.0`（jdk17+maven+kaniko+kubectl）—— **复用**
   - 里面的 kaniko wrapper 自动处理 Alpine 3.20 字体问题（FROM 换 -fonts、删 apk RUN），对 bbBot 的 DockerfileLocal 同样生效
 - 字体 base 镜像 `10.8.0.26:30500/library/amazoncorretto:17-alpine3.20-jdk-fonts` —— **复用**
 - GitHub App 凭据 secret `arc-runners/gh-app-creds` —— **复用**（同账号 mingxiang18）
