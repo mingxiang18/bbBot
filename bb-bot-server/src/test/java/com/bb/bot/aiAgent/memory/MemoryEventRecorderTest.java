@@ -65,6 +65,15 @@ class MemoryEventRecorderTest {
         assertThat(captureSaved().getKind()).isEqualTo("chat_reply");
     }
 
+    @Test
+    void recordOutbound_retainsGatewayIdSoQuotedRepliesCanFindTheBotMessage() {
+        BbSendMessage out = sendMessage(List.of(BbMessageContent.buildTextContent("ack")));
+        out.setBotType("onebot");
+        out.setSentMessageId("-456");
+        recorder.recordOutbound(out, "handler_reply");
+        assertThat(captureSaved().getMessageId()).isEqualTo("-456");
+    }
+
     private BbSendMessage sendMessage(List<BbMessageContent> contents) {
         BbSendMessage out = new BbSendMessage();
         out.setBotType("qq");

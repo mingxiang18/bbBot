@@ -95,7 +95,16 @@ public class BotConnectionManager {
      */
     private void initOnebotConnection(String botName, OnebotConfig onebotConfig) {
         if (onebotConfig.isEnable()) {
+            onebotConfig.setBotName(botName);
             WebSocketConfig webSocket = onebotConfig.getWebSocket();
+            if (webSocket == null) {
+                log.error("OneBot {} enabled without WebSocket configuration", botName);
+                return;
+            }
+            if (webSocket.getClient() != null && webSocket.getServer() != null) {
+                log.error("OneBot {} must configure either client or server, not both", botName);
+                return;
+            }
             //初始化客户端连接
             if (webSocket.getClient() != null && StringUtils.isNoneBlank(webSocket.getClient().getServerUrl())) {
                 webSocketClientList.add(new OnebotWebSocketClient(botName, onebotConfig, publisher, URI.create(webSocket.getClient().getServerUrl())));
@@ -134,6 +143,15 @@ public class BotConnectionManager {
 
     @PreDestroy
     public void destroyBotConnections() {
+        for (WebSocketClient client : webSocketClientList) {
+            if (client instanceof OnebotWebSocketClient onebot) onebot.shutdown();
+        }
+        for (WebSocketServer server : webSocketServerList) {
+            if (server instanceof OnebotWebSocketServer onebot) {
+                try { onebot.shutdown(); }
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+            }
+        }
         for (JDA jda : discordClientList) {
             try {
                 jda.shutdown();

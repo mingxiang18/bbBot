@@ -128,7 +128,7 @@ public class MemoryEventRecorder {
             e.setUserName("bot");
             e.setSource("bot");
             e.setKind(currentOutboundKind(defaultKind));
-            e.setMessageId(IdWorker.getIdStr());
+            e.setMessageId(StringUtils.defaultIfBlank(out.getSentMessageId(), IdWorker.getIdStr()));
             e.setText(renderText(contents));
             e.setPayload(serializeContentList(contents));
             e.setCreatedAt(LocalDateTime.now());

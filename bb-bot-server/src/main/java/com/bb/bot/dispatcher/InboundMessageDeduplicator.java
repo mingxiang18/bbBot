@@ -3,6 +3,9 @@ package com.bb.bot.dispatcher;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;
+import com.bb.bot.config.OnebotConfig;
+import com.bb.bot.entity.bb.BbReceiveMessage;
+import com.bb.bot.constant.BotType;
 
 import java.time.Duration;
 
@@ -36,5 +39,15 @@ public class InboundMessageDeduplicator {
             return true;
         }
         return seen.asMap().putIfAbsent(messageId, PRESENT) == null;
+    }
+
+    /** Gateway message IDs are local to an account/conversation; retain raw IDs
+     * on the message so quoted replies can still refer to the original ID. */
+    public boolean firstSeenMessage(BbReceiveMessage message) {
+        if (!BotType.ONEBOT.equals(message.getBotType()) || message.getMessageId() == null
+                || message.getMessageId().isEmpty()) return firstSeen(message.getMessageId());
+        String account = message.getConfig() instanceof OnebotConfig config ? config.getQq() : "";
+        String scope = message.getGroupId() == null ? "private:" + message.getUserId() : "group:" + message.getGroupId();
+        return firstSeen("onebot:" + account + ":" + scope + ":" + message.getMessageId());
     }
 }
