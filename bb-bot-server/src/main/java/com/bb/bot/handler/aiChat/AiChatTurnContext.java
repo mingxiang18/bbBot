@@ -9,6 +9,7 @@ import lombok.Getter;
 import java.util.Collections;
 import java.util.List;
 
+/** 单轮聊天输入：集中保存当前消息、历史与引用目标，供路由和图片输入共用。 */
 @Getter
 @Builder
 public class AiChatTurnContext {
@@ -18,6 +19,7 @@ public class AiChatTurnContext {
     private final List<ChatHistory> historyList;
     private final ChatHistory replyTarget;
     private final String currentText;
+    /** 私聊、@机器人等直接触发；与群聊概率插话区分。 */
     private final boolean directTrigger;
     private final boolean autoReply;
 

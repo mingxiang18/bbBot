@@ -37,10 +37,16 @@ public class ToolRouteDecision {
         return new ToolRouteDecision(ToolRouteMode.IMAGE_ONLY, tier, List.of("analyze_image"), reason);
     }
 
+    /**
+     * 原图已可直接交给当前模型：取消仅为识图开启的工具循环，保留其它业务工具。
+     * tier 必须保持原值，不能因为带图就把当前聊天模型切换成 vision 辅助模型。
+     */
     public ToolRouteDecision withDirectImages() {
-        return new ToolRouteDecision(mode == ToolRouteMode.IMAGE_ONLY ? ToolRouteMode.NONE : mode,
-                tier, mode == ToolRouteMode.IMAGE_ONLY ? List.of() : toolNames,
-                "DIRECT_MULTIMODAL_" + reason);
+        String directReason = "DIRECT_MULTIMODAL_" + reason;
+        if (mode == ToolRouteMode.IMAGE_ONLY) {
+            return none(tier, directReason);
+        }
+        return new ToolRouteDecision(mode, tier, toolNames, directReason);
     }
 
     public boolean usesTools() {

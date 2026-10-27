@@ -143,13 +143,19 @@ public class BotConnectionManager {
 
     @PreDestroy
     public void destroyBotConnections() {
+        // OneBot 退出时不仅关闭连接，也停止重连线程和等待回执的请求。
         for (WebSocketClient client : webSocketClientList) {
-            if (client instanceof OnebotWebSocketClient onebot) onebot.shutdown();
+            if (client instanceof OnebotWebSocketClient onebot) {
+                onebot.shutdown();
+            }
         }
         for (WebSocketServer server : webSocketServerList) {
             if (server instanceof OnebotWebSocketServer onebot) {
-                try { onebot.shutdown(); }
-                catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                try {
+                    onebot.shutdown();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         for (JDA jda : discordClientList) {

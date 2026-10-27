@@ -24,6 +24,7 @@ import com.bb.bot.common.util.aiChat.provider.AIException;
 import com.bb.bot.common.util.aiChat.provider.AiCallContext;
 import com.bb.bot.common.util.aiChat.provider.AiChatService;
 import com.bb.bot.common.util.aiChat.provider.ChatMessage;
+import com.bb.bot.common.util.aiChat.provider.MessageContent;
 import com.bb.bot.common.util.aiChat.provider.ModelTier;
 import com.bb.bot.common.util.aiChat.provider.StreamHandler;
 import com.bb.bot.common.util.aiChat.provider.ToolCall;
@@ -60,20 +61,15 @@ import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
 
 /**
- * 统一 AI 处理器：一个 handler 同时承担「聊天」和「干活」。
+ * 统一 AI 聊天入口，负责回复判断、上下文组装和模型/工具路由。
  *
- * <p>不再需要 {@code agent } 前缀显式切换。直接对话（私聊 / @机器人）时把已注册的
- * 工具一并交给模型，由模型自己通过 function calling 决定是闲聊还是调用工具完成任务
- * ——模型的工具决策本身就是路由器，无需额外的意图分类调用。</p>
+ * <p>先判断当前消息是否需要回复并检查用量，再由 AiToolRouter 结合历史选择模型与工具。
+ * 当前模型支持视觉时附带原图；不支持时保留原有图片分析工具链路。</p>
  *
- * <ul>
- *   <li>直接对话 + {@code aiChat.toolsEnabled} → 走 {@link ToolLoopExecutor} 工具循环，
- *       system prompt = 人格 + 工具引导 + 技能目录 + 长期记忆，全程流式</li>
- *   <li>群聊概率自动回复 → 纯聊天（不挂工具，省 token、防误触发）</li>
- * </ul>
+ * <p>选定模型后，根据工具范围进入工具循环或普通聊天。群聊概率回复使用简短人格约束，
+ * 私聊和直接 @ 机器人保留完整人格；两种回复都会记录到聊天记忆。</p>
  *
- * <p>历史上为单独的 {@code BbAiAgentHandler}，已合并至此；老的 {@code agent } 前缀
- * 仍被识别并剥离，保证向后兼容。</p>
+ * <p>旧的 agent 前缀仍会被识别并剥离，保持历史使用方式兼容。</p>
  *
  * @author ren
  */
@@ -96,6 +92,7 @@ public class BbAiChatHandler {
     @Autowired
     private AiToolRouter aiToolRouter;
 
+    /** 当前模型支持视觉时，将缓存原图与本轮提问一起交给该模型。 */
     @Autowired
     private MultimodalChatInput multimodalChatInput;
 
@@ -230,8 +227,12 @@ public class BbAiChatHandler {
                 .autoReply(!decision.isDirectTrigger())
                 .build();
         ToolRouteDecision route = aiToolRouter.decide(turnContext, toolsEnabled);
-        List<com.bb.bot.common.util.aiChat.provider.MessageContent> directImages = multimodalChatInput.prepare(turnContext, route.getTier());
-        if (!directImages.isEmpty()) route = route.withDirectImages();
+        // 先选择聊天模型，再按该模型的视觉能力决定是否附带原图。
+        // 无视觉能力时返回空列表，继续沿用 analyze_image 的描述缓存链路。
+        List<MessageContent> directImages = multimodalChatInput.prepare(turnContext, route.getTier());
+        if (!directImages.isEmpty()) {
+            route = route.withDirectImages();
+        }
         ModelTier tier = route.getTier();
         boolean useTools = route.usesTools();
         log.info("AI 工具路由 mode={} tier={} tools={} reason={}",
@@ -326,8 +327,10 @@ public class BbAiChatHandler {
     private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages,
                                List<ToolDefinition> tools, int steps, ModelTier tier) {
         if (messages.stream().anyMatch(ChatMessage::hasImage)) {
-            tools = tools.stream().filter(t -> !"analyze_image".equals(t.getName()))
-                    .collect(java.util.stream.Collectors.toList());
+            // 模型已经拿到原图，无需再调用描述工具；搜索等其它工具仍然可用。
+            tools = tools.stream()
+                    .filter(tool -> !"analyze_image".equals(tool.getName()))
+                    .collect(Collectors.toList());
         }
         String sessionKey = AgentRunRegistry.sessionKey(msg.getBotType(), msg.getGroupId(), msg.getUserId());
         RunHandle handle = agentRunRegistry.beginOrSteer(sessionKey, extractPlainText(msg));

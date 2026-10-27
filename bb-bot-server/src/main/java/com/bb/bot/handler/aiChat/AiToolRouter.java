@@ -39,6 +39,7 @@ public class AiToolRouter {
     @Autowired
     private VisionDescriber visionDescriber;
 
+    /** 领域工具优先，其次区分复杂任务、仅识图和普通聊天。 */
     public ToolRouteDecision decide(AiChatTurnContext context, boolean toolsEnabled) {
         if (context == null) {
             return ToolRouteDecision.none(ModelTier.LIGHT, "NO_CONTEXT");
@@ -68,6 +69,7 @@ public class AiToolRouter {
                 TOOL_ROUTING_PROMPT, context.currentContent(), context.historyList(), context.getReplyTarget());
     }
 
+    /** 明确的领域问题及同领域追问只开放对应工具，避免每次挂载全部工具。 */
     private ToolRouteDecision selectedDomainTool(AiChatTurnContext context, boolean toolsEnabled) {
         if (!toolsEnabled) {
             return ToolRouteDecision.none(ModelTier.LIGHT, "TOOLS_DISABLED");
@@ -123,6 +125,7 @@ public class AiToolRouter {
         return containsAny(t, "这个", "那个", "它", "他", "她", "上面", "刚才", "继续");
     }
 
+    /** 新问题已切换话题时，不继承历史中提到的星露谷工具。 */
     private boolean looksLikeTopicSwitch(String text) {
         String t = normalize(text);
         return containsAny(t, "天气", "新闻", "热搜", "股价", "股票", "汇率", "日程", "splatoon",
