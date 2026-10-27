@@ -96,6 +96,9 @@ public class BbAiChatHandler {
     @Autowired
     private AiToolRouter aiToolRouter;
 
+    @Autowired
+    private MultimodalChatInput multimodalChatInput;
+
     /** 月度限额拦截：超额硬阻断。 */
     @Autowired
     private com.bb.bot.common.util.aiChat.billing.QuotaGuard quotaGuard;
@@ -227,6 +230,8 @@ public class BbAiChatHandler {
                 .autoReply(!decision.isDirectTrigger())
                 .build();
         ToolRouteDecision route = aiToolRouter.decide(turnContext, toolsEnabled);
+        List<com.bb.bot.common.util.aiChat.provider.MessageContent> directImages = multimodalChatInput.prepare(turnContext);
+        if (!directImages.isEmpty()) route = route.withDirectImages();
         ModelTier tier = route.getTier();
         boolean useTools = route.usesTools();
         log.info("AI 工具路由 mode={} tier={} tools={} reason={}",
@@ -245,6 +250,7 @@ public class BbAiChatHandler {
 
         List<ChatMessage> messages = MessageBuilder.buildContextMessages(
                 personality, currentContent, historyList, replyTarget);
+        messages = multimodalChatInput.attach(messages, directImages);
 
         // 把调用方身份带到 provider 层，供 token 用量按 用户/平台/会话 归属
         AiCallContext.setIdentity(
@@ -253,9 +259,9 @@ public class BbAiChatHandler {
                 "chat-" + bbReceiveMessage.getMessageId());
         try {
             if (ToolRouteMode.ALL_TOOLS.equals(route.getMode())) {
-                toolLoopReply(bbReceiveMessage, messages);
+                toolLoopReply(bbReceiveMessage, messages, toolRegistry.toToolDefinitions(), maxSteps, tier);
             } else if (ToolRouteMode.SELECTED_TOOLS.equals(route.getMode())) {
-                toolLoopReply(bbReceiveMessage, messages, toolRegistry.toToolDefinitions(route.getToolNames()), maxSteps);
+                toolLoopReply(bbReceiveMessage, messages, toolRegistry.toToolDefinitions(route.getToolNames()), maxSteps, tier);
             } else if (ToolRouteMode.IMAGE_ONLY.equals(route.getMode())) {
                 toolLoopReply(bbReceiveMessage, messages, imageOnlyTools(), imageToolMaxSteps);
             } else if (Boolean.TRUE.equals(streamEnabled)) {
@@ -314,6 +320,15 @@ public class BbAiChatHandler {
 
     private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages,
                                List<ToolDefinition> tools, int steps) {
+        toolLoopReply(msg, messages, tools, steps, ModelTier.CHAT);
+    }
+
+    private void toolLoopReply(BbReceiveMessage msg, List<ChatMessage> messages,
+                               List<ToolDefinition> tools, int steps, ModelTier tier) {
+        if (messages.stream().anyMatch(ChatMessage::hasImage)) {
+            tools = tools.stream().filter(t -> !"analyze_image".equals(t.getName()))
+                    .collect(java.util.stream.Collectors.toList());
+        }
         String sessionKey = AgentRunRegistry.sessionKey(msg.getBotType(), msg.getGroupId(), msg.getUserId());
         RunHandle handle = agentRunRegistry.beginOrSteer(sessionKey, extractPlainText(msg));
         if (handle == null) {
@@ -398,7 +413,7 @@ public class BbAiChatHandler {
                             session.fail(err);
                         }
                     },
-                    handle);
+                    handle, tier);
         } finally {
             List<String> leftover = handle.close();
             agentRunRegistry.end(sessionKey, handle);

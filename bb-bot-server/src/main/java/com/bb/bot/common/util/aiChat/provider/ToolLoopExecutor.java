@@ -87,11 +87,17 @@ public class ToolLoopExecutor {
                     StreamHandler outputHandler,
                     RunHandle handle) {
 
+        run(initialMessages, tools, toolInvoker, maxSteps, outputHandler, handle, ModelTier.CHAT);
+    }
+
+    public void run(List<ChatMessage> initialMessages, List<ToolDefinition> tools,
+                    BiFunction<String, String, String> toolInvoker, int maxSteps,
+                    StreamHandler outputHandler, RunHandle handle, ModelTier tier) {
         AIProvider provider = aiChatService.provider();
-        ModelSpec spec = aiChatService.heavySpec();
+        ModelSpec spec = tier == ModelTier.CHAT ? aiChatService.heavySpec() : aiChatService.specForTier(tier);
         if (spec == null || !spec.isConfigured()) {
             outputHandler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
-                    "no configured AI model (role heavy)"));
+                    "no configured AI model (tier " + tier + ")"));
             return;
         }
 

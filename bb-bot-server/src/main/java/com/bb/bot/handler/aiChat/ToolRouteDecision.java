@@ -37,6 +37,12 @@ public class ToolRouteDecision {
         return new ToolRouteDecision(ToolRouteMode.IMAGE_ONLY, tier, List.of("analyze_image"), reason);
     }
 
+    public ToolRouteDecision withDirectImages() {
+        return new ToolRouteDecision(mode == ToolRouteMode.IMAGE_ONLY ? ToolRouteMode.NONE : mode,
+                ModelTier.VISION, mode == ToolRouteMode.IMAGE_ONLY ? List.of() : toolNames,
+                "DIRECT_MULTIMODAL_" + reason);
+    }
+
     public boolean usesTools() {
         return mode == ToolRouteMode.ALL_TOOLS
                 || mode == ToolRouteMode.SELECTED_TOOLS
