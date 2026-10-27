@@ -87,11 +87,25 @@ public class ToolLoopExecutor {
                     StreamHandler outputHandler,
                     RunHandle handle) {
 
+        run(initialMessages, tools, toolInvoker, maxSteps, outputHandler, handle, ModelTier.CHAT);
+    }
+
+    /**
+     * 使用调用方已选定的模型执行工具循环，避免带图请求在进入循环后又切回 heavy。
+     * 旧重载仍默认 CHAT，保证定时任务等未指定模型的调用保持原有行为。
+     */
+    public void run(List<ChatMessage> initialMessages,
+                    List<ToolDefinition> tools,
+                    BiFunction<String, String, String> toolInvoker,
+                    int maxSteps,
+                    StreamHandler outputHandler,
+                    RunHandle handle,
+                    ModelTier tier) {
         AIProvider provider = aiChatService.provider();
-        ModelSpec spec = aiChatService.heavySpec();
+        ModelSpec spec = tier == ModelTier.CHAT ? aiChatService.heavySpec() : aiChatService.specForTier(tier);
         if (spec == null || !spec.isConfigured()) {
             outputHandler.onError(new AIException(AIException.ErrorType.UNAUTHORIZED,
-                    "no configured AI model (role heavy)"));
+                    "no configured AI model (tier " + tier + ")"));
             return;
         }
 

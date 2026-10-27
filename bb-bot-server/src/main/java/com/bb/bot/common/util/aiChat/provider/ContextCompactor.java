@@ -70,6 +70,13 @@ public class ContextCompactor {
         while (start < body.size() && body.get(start).getRole() == ChatMessage.Role.TOOL) {
             start++;
         }
+        // 工具循环仍可能需要原图；不能把最后一条含图提问压成纯文字摘要。
+        for (int i = 0; i < start; i++) {
+            if (body.get(i).hasImage()) {
+                start = i;
+                break;
+            }
+        }
         if (start <= 0 || start >= body.size()) {
             // 没有可压缩的中段（近期消息已占满预算 / 全是 tool 尾巴）
             return messages;

@@ -3,6 +3,9 @@ package com.bb.bot.dispatcher;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;
+import com.bb.bot.config.OnebotConfig;
+import com.bb.bot.entity.bb.BbReceiveMessage;
+import com.bb.bot.constant.BotType;
 
 import java.time.Duration;
 
@@ -36,5 +39,21 @@ public class InboundMessageDeduplicator {
             return true;
         }
         return seen.asMap().putIfAbsent(messageId, PRESENT) == null;
+    }
+
+    /**
+     * OneBot 的消息 ID 可能在不同账号、会话中重复，因此只在去重键中追加作用域。
+     * 消息对象仍保留网关原始 ID，后续引用回复才能指向 QQ 中的原消息。
+     */
+    public boolean firstSeenMessage(BbReceiveMessage message) {
+        if (!BotType.ONEBOT.equals(message.getBotType()) || message.getMessageId() == null
+                || message.getMessageId().isEmpty()) {
+            return firstSeen(message.getMessageId());
+        }
+        String account = message.getConfig() instanceof OnebotConfig config ? config.getQq() : "";
+        String scope = message.getGroupId() == null
+                ? "private:" + message.getUserId()
+                : "group:" + message.getGroupId();
+        return firstSeen("onebot:" + account + ":" + scope + ":" + message.getMessageId());
     }
 }

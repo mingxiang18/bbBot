@@ -3,143 +3,117 @@ package com.bb.bot.connection.onebot;
 import com.bb.bot.config.OnebotConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.URI;
 
-/**
- * onebot机器人websocket客户端连接
- * @author ren
- */
+/** OneBot 正向 WebSocket 客户端：携带认证头连接网关，并维护断线重连。 */
 @Slf4j
 public class OnebotWebSocketClient extends WebSocketClient {
 
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int CONNECTION_LOST_TIMEOUT_SECONDS = 60;
+    private static final long RECONNECT_INTERVAL_MS = 5_000;
+    private static final long HANDSHAKE_TIMEOUT_MS = 15_000;
+
     private final String name;
-    private final OnebotConfig onebotConfig;
+    private final OnebotConfig config;
     private final ApplicationEventPublisher publisher;
+    private final Thread connectThread;
 
-    /**
-     * 连接线程间隔
-     */
-    private static final long CONNECT_INTERVAL = 30 * 1000; // 30 seconds
-    /**
-     * 两次重连尝试之间的最小间隔，避免握手未完成时反复 reconnect 造成线程风暴。
-     */
-    private static final long MIN_RECONNECT_INTERVAL_MS = 10_000L;
-    /**
-     * 上一次发起连接/重连的时间戳，用于重连退避。
-     */
-    private volatile long lastConnectAttemptAt = 0L;
-    private Thread connectThread;
+    /** 主动关闭后不再重连；由关闭线程和连接线程共同访问。 */
+    private volatile boolean stopped;
 
-    /**
-     * 构造方法
-     *
-     * @param serverUri
-     */
-    public OnebotWebSocketClient(String name, OnebotConfig onebotConfig, ApplicationEventPublisher publisher, URI serverUri) {
-        super(serverUri);
+    public OnebotWebSocketClient(
+            String name, OnebotConfig config, ApplicationEventPublisher publisher, URI uri) {
+        super(
+                uri,
+                new Draft_6455(),
+                OneBotAuth.headers(config.getAccessToken()),
+                CONNECT_TIMEOUT_MS);
         this.name = name;
-        this.onebotConfig = onebotConfig;
+        this.config = config;
         this.publisher = publisher;
-        log.info("【" + name + "】WebSocket客户端初始化:" + serverUri.toString());
-        //记为首次连接尝试，避免守护线程在握手期间又触发一次 reconnect
-        lastConnectAttemptAt = System.currentTimeMillis();
-        connect();
-        startConnectThread();
-    }
+        setConnectionLostTimeout(CONNECTION_LOST_TIMEOUT_SECONDS);
+        log.info("OneBot {} connecting to {}", name, OneBotAuth.endpoint(uri));
 
-    /**
-     * 打开连接时的方法
-     *
-     * @param serverHandshake
-     */
-    @Override
-    public void onOpen(ServerHandshake serverHandshake) {
-        log.info("【" + name + "】WebSocket客户端连接成功");
-    }
-
-    /**
-     * 收到消息时
-     *
-     * @param s
-     */
-    @Override
-    public void onMessage(String s) {
-        //调用机器人事件处理者分发接收到的消息
-        OneBotMessageHandler.handleMessage(name, onebotConfig.getQq(), this, s, publisher);
-    }
-
-    /**
-     * 当连接关闭时
-     *
-     * @param i
-     * @param s
-     * @param b
-     */
-    @Override
-    public void onClose(int i, String s, boolean b) {
-        log.info("【" + name + "】WebSocket客户端连接关闭:" + s);
-    }
-
-    /**
-     * 发生error时
-     *
-     * @param e
-     */
-    @Override
-    public void onError(Exception e) {
-        log.info("【" + name + "】WebSocket客户端出现异常: " + e.getMessage());
-    }
-
-    /**
-     * 子线程定时连接检查
-     */
-    private void startConnectThread() {
-        if (connectThread != null && connectThread.isAlive()) {
-            return;
-        }
         connectThread = new Thread(this::connectLoop, "onebot-ws-reconnect-" + name);
         connectThread.setDaemon(true);
         connectThread.start();
     }
 
-    /**
-     * 长生命周期守护线程，必须永不退出（与 SDK BbWebSocketClient 同样的兜底逻辑）：
-     * 捕获 {@link Throwable} 防止 OOM 等 Error 打挂线程；中断不再向上抛；重连用退避，
-     * 避免握手期间反复 {@code reconnect()} 造成线程风暴。
-     */
+    @Override
+    public void onOpen(ServerHandshake handshake) {
+        if (stopped) {
+            close();
+            return;
+        }
+        config.getSession().bind(this);
+        log.info("OneBot {} connected", name);
+    }
+
+    @Override
+    public void onMessage(String raw) {
+        OneBotMessageHandler.handleMessage(name, config, this, raw, publisher);
+    }
+
+    @Override
+    public void onClose(int code, String reason, boolean remote) {
+        config.getSession().disconnected(this);
+        log.info("OneBot {} disconnected code={} remote={}", name, code, remote);
+    }
+
+    @Override
+    public void onError(Exception error) {
+        // 异常信息可能带有含 token 的连接地址，只记录异常类型。
+        log.warn("OneBot {} transport error {}", name, error.getClass().getSimpleName());
+    }
+
+    /** 每次只发起一次连接；握手尚未完成时等待，超时后关闭并进入下一轮重连。 */
     private void connectLoop() {
-        while (true) {
+        boolean initialConnection = true;
+        long lastAttemptAt = 0;
+        while (!stopped) {
             try {
-                if (shouldReconnect()) {
-                    lastConnectAttemptAt = System.currentTimeMillis();
-                    log.info("【" + name + "】WebSocket客户端检测到未连接(open=" + isOpen()
-                            + ",closing=" + isClosing() + ",closed=" + isClosed() + ")，触发重连");
-                    reconnect();
+                if (!isOpen()) {
+                    if (initialConnection) {
+                        initialConnection = false;
+                        lastAttemptAt = System.currentTimeMillis();
+                        connect();
+                    } else if (isClosed()) {
+                        lastAttemptAt = System.currentTimeMillis();
+                        reconnect();
+                    } else if (System.currentTimeMillis() - lastAttemptAt > HANDSHAKE_TIMEOUT_MS) {
+                        // 对端可能接受 TCP 后一直不完成 WebSocket 握手，不能无限等待。
+                        closeConnection(1006, "OneBot handshake timed out");
+                    }
                 }
-            } catch (Throwable t) {
-                //捕获 Throwable（含 OutOfMemoryError 等），守护线程绝不能因此退出
-                log.error("【" + name + "】WebSocket客户端重连检查异常", t);
-            }
-            try {
-                Thread.sleep(CONNECT_INTERVAL);
+                Thread.sleep(RECONNECT_INTERVAL_MS);
             } catch (InterruptedException e) {
-                //底层重连会中断相关线程；不能因中断而杀死本守护线程，清除标志后继续
-                Thread.interrupted();
+                if (stopped) {
+                    return;
+                }
+            } catch (RuntimeException e) {
+                log.warn("OneBot {} reconnect failed {}", name, e.getClass().getSimpleName());
+                try {
+                    Thread.sleep(RECONNECT_INTERVAL_MS);
+                } catch (InterruptedException ignored) {
+                    if (stopped) {
+                        return;
+                    }
+                }
             }
         }
     }
 
-    /**
-     * 是否需要重连：已连接（OPEN）或正在关闭（CLOSING）时不重连，其余状态用最小间隔退避。
-     */
-    private boolean shouldReconnect() {
-        if (isOpen() || isClosing()) {
-            return false;
-        }
-        return System.currentTimeMillis() - lastConnectAttemptAt >= MIN_RECONNECT_INTERVAL_MS;
+    /** 停止重连，释放当前连接的等待请求与业务队列。 */
+    public void shutdown() {
+        stopped = true;
+        connectThread.interrupt();
+        config.getSession().disconnected(this);
+        close();
+        config.getSession().close();
     }
-
 }

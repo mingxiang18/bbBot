@@ -35,6 +35,8 @@ public class BbSendMessage {
      * 要回复的消息唯一id
      */
     private String receiveMessageId;
+    /** Gateway ID returned after a confirmed send, used for quoted-reply lookup. */
+    private String sentMessageId;
 
     /**
      * 回复序号，如果同一条消息回复多次要填

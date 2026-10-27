@@ -48,7 +48,7 @@ public class BbEventListener {
 
             // 入站幂等去重：QQ webhook 在被动回复超时后会重推同一条消息（msg_id 相同），
             // 没有这道拦截就会处理两遍、给用户发两张一模一样的图。放在最前面，连记忆落库和分发都不重复。
-            if (!inboundMessageDeduplicator.firstSeen(bbReceiveMessage.getMessageId())) {
+            if (!inboundMessageDeduplicator.firstSeenMessage(bbReceiveMessage)) {
                 log.warn("重复入站消息，已跳过 messageId={}", bbReceiveMessage.getMessageId());
                 messageTraceRecorder.onDuplicate(traceId);
                 return;
