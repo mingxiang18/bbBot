@@ -18,13 +18,13 @@ import java.util.*;
 public class MultimodalChatInput {
     @Autowired private InboundImageStore imageStore;
     @Autowired private AiChatService aiChatService;
-    @Value("${aiChat.directMultimodal.enabled:false}") private boolean enabled;
     @Value("${aiChat.directMultimodal.maxImages:4}") private int maxImages;
     private static final int MAX_BYTES = 20 * 1024 * 1024;
     private static final String LEGACY_HINT = "（想了解图片内容就用 analyze_image 工具分析这个 ref）";
 
-    public List<MessageContent> prepare(AiChatTurnContext context) {
-        if (!enabled || !aiChatService.visionConfigured()) return List.of();
+    public List<MessageContent> prepare(AiChatTurnContext context, ModelTier tier) {
+        ModelSpec currentModel = aiChatService.specForTier(tier);
+        if (currentModel == null || !currentModel.isConfigured() || !currentModel.isVision()) return List.of();
         List<BbMessageContent> candidates = new ArrayList<>(context.currentContent());
         candidates.addAll(contents(context.getReplyTarget()));
         // 普通文字闲聊不带无关历史图；明确追问图片时补最近一条用户图片消息。

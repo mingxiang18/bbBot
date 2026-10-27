@@ -230,7 +230,7 @@ public class BbAiChatHandler {
                 .autoReply(!decision.isDirectTrigger())
                 .build();
         ToolRouteDecision route = aiToolRouter.decide(turnContext, toolsEnabled);
-        List<com.bb.bot.common.util.aiChat.provider.MessageContent> directImages = multimodalChatInput.prepare(turnContext);
+        List<com.bb.bot.common.util.aiChat.provider.MessageContent> directImages = multimodalChatInput.prepare(turnContext, route.getTier());
         if (!directImages.isEmpty()) route = route.withDirectImages();
         ModelTier tier = route.getTier();
         boolean useTools = route.usesTools();
@@ -263,7 +263,7 @@ public class BbAiChatHandler {
             } else if (ToolRouteMode.SELECTED_TOOLS.equals(route.getMode())) {
                 toolLoopReply(bbReceiveMessage, messages, toolRegistry.toToolDefinitions(route.getToolNames()), maxSteps, tier);
             } else if (ToolRouteMode.IMAGE_ONLY.equals(route.getMode())) {
-                toolLoopReply(bbReceiveMessage, messages, imageOnlyTools(), imageToolMaxSteps);
+                toolLoopReply(bbReceiveMessage, messages, imageOnlyTools(), imageToolMaxSteps, tier);
             } else if (Boolean.TRUE.equals(streamEnabled)) {
                 streamAiReply(bbReceiveMessage, messages, tier);
             } else {

@@ -39,7 +39,7 @@ public class ToolRouteDecision {
 
     public ToolRouteDecision withDirectImages() {
         return new ToolRouteDecision(mode == ToolRouteMode.IMAGE_ONLY ? ToolRouteMode.NONE : mode,
-                ModelTier.VISION, mode == ToolRouteMode.IMAGE_ONLY ? List.of() : toolNames,
+                tier, mode == ToolRouteMode.IMAGE_ONLY ? List.of() : toolNames,
                 "DIRECT_MULTIMODAL_" + reason);
     }
 
